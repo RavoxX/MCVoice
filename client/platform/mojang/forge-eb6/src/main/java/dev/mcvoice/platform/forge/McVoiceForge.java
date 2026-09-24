@@ -18,10 +18,16 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
+//#if MC < 1.20.2
 import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
+//#endif
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+//#if MC >= 1.20.6
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+//#else
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+//#endif
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GameShuttingDownEvent;
@@ -32,13 +38,20 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
+//#if MC >= 1.20.2
+import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.EventNetworkChannel;
+import net.minecraftforge.network.PacketDistributor;
+//#else
 import net.minecraftforge.network.event.EventNetworkChannel;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
+//#endif
 
 /**
  * Forge entry point for Forge generations with EventBus 6 (MinecraftForge.EVENT_BUS and the
- * mod event bus) and NetworkRegistry event channels. Client-only mod.
+ * mod event bus): Minecraft 1.20.1-1.21.5. Client-only mod.
  */
 @Mod("mcvoice")
 public final class McVoiceForge {
@@ -63,17 +76,34 @@ public final class McVoiceForge {
             }
         });
         modBus.addListener((FMLClientSetupEvent e) -> client = new VoiceClient(adapter, modVersion));
+        //#if MC >= 1.20.6
+        // Forge 1.20.6-1.21.x has no HUD layer registration; the chat overlay event fires every frame the HUD is visible
+        MinecraftForge.EVENT_BUS.addListener((CustomizeGuiOverlayEvent.Chat e) -> {
+            if (client != null) {
+                client.renderHud(new McCanvas(e.getGuiGraphics()));
+            }
+        });
+        //#else
         modBus.addListener((RegisterGuiOverlaysEvent e) -> e.registerAboveAll("hud",
             (gui, graphics, partialTick, width, height) -> {
                 if (client != null) {
                     client.renderHud(new McCanvas(graphics));
                 }
             }));
+        //#endif
+        //#if MC >= 1.20.6
+        MinecraftForge.EVENT_BUS.addListener((TickEvent.ClientTickEvent.Post e) -> {
+            if (client != null) {
+                client.clientTick();
+            }
+        });
+        //#else
         MinecraftForge.EVENT_BUS.addListener((TickEvent.ClientTickEvent e) -> {
             if (e.phase == TickEvent.Phase.END && client != null) {
                 client.clientTick();
             }
         });
+        //#endif
         MinecraftForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> {
             if (client != null) {
                 client.invalidateWorld("disconnect");
@@ -92,6 +122,25 @@ public final class McVoiceForge {
         private volatile Receiver receiver;
 
         ForgeSvcChannels() {
+            //#if MC >= 1.20.2
+            for (String ch : SvcChannelNames.CLIENTBOUND) {
+                EventNetworkChannel c = ChannelBuilder.named(McIds.parse(ch)).optional().eventNetworkChannel();
+                c.addListener((CustomPayloadEvent e) -> {
+                    FriendlyByteBuf buf = e.getPayload();
+                    Receiver r = receiver;
+                    if (buf != null && r != null && e.getSource().isClientSide()) {
+                        byte[] data = new byte[buf.readableBytes()];
+                        buf.readBytes(data);
+                        e.getSource().enqueueWork(() -> r.onPayload(ch, data));
+                    }
+                    e.getSource().setPacketHandled(true);
+                });
+                channels.put(ch, c);
+            }
+            for (String ch : SvcChannelNames.SERVERBOUND) {
+                channels.put(ch, ChannelBuilder.named(McIds.parse(ch)).optional().eventNetworkChannel());
+            }
+            //#else
             for (String ch : SvcChannelNames.CLIENTBOUND) {
                 // optional on both sides: servers without the channel (or without Forge) are fine
                 EventNetworkChannel c = NetworkRegistry.newEventChannel(McIds.parse(ch), () -> "1", v -> true, v -> true);
@@ -111,6 +160,7 @@ public final class McVoiceForge {
             for (String ch : SvcChannelNames.SERVERBOUND) {
                 channels.put(ch, NetworkRegistry.newEventChannel(McIds.parse(ch), () -> "1", v -> true, v -> true));
             }
+            //#endif
         }
 
         @Override
@@ -132,7 +182,11 @@ public final class McVoiceForge {
                 return false;
             }
             try {
+                //#if MC >= 1.20.2
+                channels.get(channel).send(new FriendlyByteBuf(Unpooled.wrappedBuffer(payload)), PacketDistributor.SERVER.noArg());
+                //#else
                 l.send(new ServerboundCustomPayloadPacket(McIds.parse(channel), new FriendlyByteBuf(Unpooled.wrappedBuffer(payload))));
+                //#endif
                 return true;
             } catch (RuntimeException e) {
                 return false;

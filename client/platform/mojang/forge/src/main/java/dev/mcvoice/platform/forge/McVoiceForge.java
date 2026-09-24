@@ -19,7 +19,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
+//#if MC >= 1.21.9
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
+//#else
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+//#endif
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.GameShuttingDownEvent;
@@ -33,7 +37,7 @@ import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.EventNetworkChannel;
 import net.minecraftforge.network.PacketDistributor;
 
-/** Forge entry point (Mojang-named Minecraft, 1.21.9+; client-only mod). */
+/** Forge entry point for Forge with EventBus 7 (Minecraft 1.21.6+; client-only mod). */
 @Mod("mcvoice")
 public final class McVoiceForge {
     private static VoiceClient client;
@@ -50,7 +54,11 @@ public final class McVoiceForge {
         } else {
             adapter.setSimpleVoiceChat(new ForgeSvcChannels());
         }
+        //#if MC >= 1.21.9
         RegisterKeyMappingsEvent.BUS.addListener(e -> {
+        //#else
+        RegisterKeyMappingsEvent.getBus(context.getModBusGroup()).addListener(e -> {
+        //#endif
             for (KeyMapping k : adapter.keyMappings()) {
                 e.register(k);
             }
@@ -61,12 +69,21 @@ public final class McVoiceForge {
                 client.clientTick();
             }
         });
+        //#if MC >= 1.21.9
         AddGuiOverlayLayersEvent.BUS.addListener(e -> e.getLayeredDraw().add(McIds.id("mcvoice", "hud"),
             (graphics, delta) -> {
                 if (client != null) {
                     client.renderHud(new McCanvas(graphics));
                 }
             }));
+        //#else
+        // no HUD layer registration on these Forge versions; the chat overlay event fires every frame the HUD is visible
+        CustomizeGuiOverlayEvent.Chat.BUS.addListener(e -> {
+            if (client != null) {
+                client.renderHud(new McCanvas(e.getGuiGraphics()));
+            }
+        });
+        //#endif
         ClientPlayerNetworkEvent.LoggingOut.BUS.addListener(e -> {
             if (client != null) {
                 client.invalidateWorld("disconnect");

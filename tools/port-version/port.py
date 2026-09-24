@@ -137,7 +137,11 @@ def generate(mc: str, out: str):
         parts = cfg.get("parts") or (["common"] + variants + [loader_src])
         generate_sources(fam["id"], parts, mc, label, os.path.join(ldir, "src-gen"))
         tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"], "LOADER": label,
-                  "MAPPINGS": cfg.get("mappings", "")}
+                  "MAPPINGS": cfg.get("mappings", ""),
+                  # ForgeGradle 6: Forge < 1.20.6 runs with SRG names (reobfuscate the jar); newer Forge runs with official names
+                  "REOBF_CONFIG": "" if cfg.get("reobf", True) else "    reobf = false\n",
+                  "REOBF_FINALIZE": ("    finalizedBy 'reobfJar'   // the published jar uses the game's runtime (SRG) names\n"
+                                     if cfg.get("reobf", True) else "")}
         props.update(cfg.get("gradle_properties", {}))
         write(os.path.join(ldir, "build.gradle"), render(os.path.join(tdir, f"{label}.gradle"), tokens))
         settings = os.path.join(tdir, "settings.gradle")
