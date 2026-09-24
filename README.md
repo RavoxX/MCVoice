@@ -23,7 +23,7 @@ can still be heard on servers that run the Simple Voice Chat plugin.
   back to SVC when the cloud is unreachable. See [SVC interop](docs/svc-interop.md).
 * Two interchangeable backends, in **Rust** (Tokio/axum) and **Go**, that
   pass the same black-box conformance suite.
-* Minecraft **1.8.9 → 26.3** on Forge, Fabric and Legacy Fabric. Every
+* Minecraft **1.8 → 26.3** on Forge, Fabric and Legacy Fabric (gaps listed with reasons). Every
   supported jar is built and validated by CI (see below).
 
 ## Supported Minecraft versions
@@ -80,7 +80,7 @@ real `.env`.
 | `protocol/` | Normative protocol v1, dedup state machine, byte-exact test vectors |
 | `backend/rust`, `backend/go` | The two backends (Dockerfiles, `.env.example`) |
 | `client/` | Version-independent Java 8 client core (network, audio, SVC compat, UI, proximity) |
-| `client/platform/` | Minecraft adapters per API family (`mojang` for 1.20.1+, `legacy` for 1.8–1.12.2) |
+| `client/platform/` | Minecraft adapters per API family (`mojang` for 1.16.1+, `legacy` for 1.8–1.12.2) |
 | `tools/port-version/` | Generates the per-version Gradle builds, validates jars, creates `mc/<version>` branches |
 | `tools/versions/` | Version matrix from official metadata; CI build status |
 | `tools/load-test/`, `tools/protocol-tests/`, `tools/svc-interop/` | Load generator, cross-implementation tests, real SVC server probe |

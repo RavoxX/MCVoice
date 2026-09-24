@@ -46,13 +46,26 @@ The version-independent core (`client/common`, `network`, `audio`,
 | buildgen | Used for | Tooling |
 |---|---|---|
 | `unobf` | 26.1+ (Minecraft ships unobfuscated) | Fabric Loom `net.fabricmc.fabric-loom` 1.18 (no remapping); ForgeGradle 7 |
-| `remap` | 1.20.1–1.21.11, Fabric and FG7-era Forge | Loom `net.fabricmc.fabric-loom-remap` 1.18 with `loom.officialMojangMappings()`; ForgeGradle 7 with `mappings channel: 'official'` |
-| `fg6` | Forge 1.20.1 | ForgeGradle 6 on Gradle 8.8, official mappings, `reobfJar` |
+| `remap` | Fabric 1.16.5–1.21.11, Forge 1.21.9–1.21.11 | Loom `net.fabricmc.fabric-loom-remap` 1.18 with `loom.officialMojangMappings()` (Gradle 9.8 on JDK 25); ForgeGradle 7 with `mappings channel: 'official'` |
+| `fg6` | Forge 1.16.1–1.21.8 | ForgeGradle 6 (FG 5.1 on Gradle 7.3.3 for 1.16.x), official mappings; `reobfJar` only where Forge still runs on SRG names (< 1.20.6) |
+| `legacyforge` | Forge 1.8.9–1.12.1 | Essential's architectury-loom fork (`gg.essential.loom`), MCP stable mappings, Java 8 |
+| `unimined` | Forge 1.8, 1.8.8 | Unimined 1.4.1 (Essential's loom cannot read their Forge metadata), MCP stable mappings |
+| `rfg` | Forge 1.12.2 | RetroFuturaGradle 2.0.4 (Forge never published a 1.12.2 `userdev` jar) |
+| `legacyfabric` | Legacy Fabric 1.8–1.12.2 | `fabric-loom-remap` + `legacy-looming` 1.16.1, Legacy Yarn, Legacy Fabric API |
 
-A loader entry in `families.json` names its `buildgen`, Gradle version,
-plugin version, optionally `gradle_jdk` (Loom 1.18 needs a Java 25 Gradle
-JVM even when the game targets Java 17/21), and optionally its own `sources`
-directory (for example `forge-eb6` for Forge's EventBus 6 API).
+A loader entry in `families.json` names:
+
+* its `buildgen`, Gradle version and plugin version;
+* optionally `gradle_jdk`, when Gradle itself needs a newer JVM than the game
+  (Loom 1.18 and RFG 2 need Java 25);
+* `mappings`, when the generation needs a mappings artifact;
+* `sources` (its own loader source directory, for example `forge-eb6` for
+  Forge's EventBus 6 API);
+* `parts`, which replaces the shared part as well: the legacy family has MCP
+  and Yarn variants;
+* `class_remap`, a table in `tools/port-version/remap/` applied to generated
+  sources. Forge before 1.17 keeps MCP *class* names even with official
+  mappings.
 
 ### The preprocessor
 
@@ -96,9 +109,15 @@ and that no sources, `.env` or key files are bundled.
 
 ## Current coverage
 
-See [`versions/supported.md`](../versions/supported.md). In short: the
-`mojang` family builds on Fabric and Forge for 1.20.1, 1.21.9–1.21.11 and
-26.1–26.3. The versions in between (1.20.2–1.21.8) are in the family range,
-but have no loader build setup yet. Pre-1.20 versions need a new family
-(MCP/Yarn names, LWJGL 2 input, `GuiScreen` rendering). They are listed
-as not implemented, with that reason.
+See [`versions/supported.md`](../versions/supported.md) (generated from CI results). Summary:
+
+| Family | Minecraft | Loaders |
+|---|---|---|
+| `legacy` (MCP / Legacy Yarn names, LWJGL 2) | 1.8–1.12.2 | Forge on every Forge release; Legacy Fabric where Legacy Fabric API exists (1.8, 1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2) |
+| `mojang` (official mappings) | 1.16.1–26.3 | Forge on every Forge release; Fabric where Fabric API exists for the exact version |
+
+Not implemented yet, each listed with its reason in `supported.md`:
+
+* 1.13.2 (Forge needs an MCP-era 1.13 adapter; Legacy Fabric has no API there);
+* 1.14.x–1.15.x (Fabric API v0 modules and ForgeGradle 3 era);
+* Legacy Fabric versions without Legacy Fabric API.

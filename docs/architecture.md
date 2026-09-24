@@ -73,7 +73,7 @@ Everything below `client/platform` is Minecraft-agnostic and compiled with
 
 Loader entry points (`McVoiceFabric`, `McVoiceForge`) register keys, the HUD
 layer, tick and disconnect hooks, and then call `VoiceClient.clientTick()`.
-Only one adapter family exists today (`mojang`, official mappings, 1.20.1+).
+Two adapter families exist: `mojang` (official mappings, 1.16.1–26.3) and `legacy` (MCP and Legacy Yarn names, 1.8–1.12.2).
 Differences between versions inside a family are `//#if MC >= x` blocks,
 resolved at generation time by `tools/port-version/preprocess.py`. See
 [version-porting.md](version-porting.md).
