@@ -2,7 +2,7 @@ To honour the JVM settings for this build a single-use Daemon process will be fo
 Daemon will be stopped at the end of the build 
 
 > Task :compileJava
-/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:59: warning: [removal] get() in FMLJavaModLoadingContext has been deprecated and marked for removal
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:72: warning: [removal] get() in FMLJavaModLoadingContext has been deprecated and marked for removal
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
                                                    ^
 /home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McIds.java:32: warning: [removal] ResourceLocation(String,String) in ResourceLocation has been deprecated and marked for removal
@@ -30,9 +30,9 @@ Daemon will be stopped at the end of the build
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790276949523.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790279794638.json
 
-BUILD SUCCESSFUL in 55s
+BUILD SUCCESSFUL in 54s
 8 actionable tasks: 8 executed
 valid: mcvoice-0.1.0-mc1.20.1-forge.jar (327 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
