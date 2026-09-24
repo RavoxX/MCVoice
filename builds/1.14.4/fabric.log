@@ -21,15 +21,10 @@ import net.minecraft.client.multiplayer.ClientLevel;
               ^
   symbol:   class ClientLevel
   location: class dev.mcvoice.platform.mc.McAdapter
-/home/runner/work/MCVoice/MCVoice/minecraft/fabric/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:280: error: cannot find symbol
-            return k == null ? "?" : k.getTranslatedKeyMessage().getString();
-                                                                ^
-  symbol:   method getString()
-  location: class java.lang.String
-3 errors
+2 errors
 
 > Task :compileJava FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790281509317.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790281665185.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/MCVoice/MCVoice/minecraft/fabric/build/reports/problems/problems-report.html
 
@@ -43,7 +38,7 @@ Execution failed for task ':compileJava' (registered by plugin class 'org.gradle
                                          ^
     symbol:   class ClientLevel
     location: package net.minecraft.client.multiplayer
-  3 errors
+  2 errors
 
 * Try:
 > Check your code and dependencies to fix the compilation error(s)
@@ -90,12 +85,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
               ^
   symbol:   class ClientLevel
   location: class dev.mcvoice.platform.mc.McAdapter
-/home/runner/work/MCVoice/MCVoice/minecraft/fabric/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:280: error: cannot find symbol
-            return k == null ? "?" : k.getTranslatedKeyMessage().getString();
-                                                                ^
-  symbol:   method getString()
-  location: class java.lang.String
-3 errors
+2 errors
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:88)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:49)
 	at org.gradle.api.internal.tasks.compile.daemon.CompilerWorkAction.execute(CompilerWorkAction.java:52)
@@ -122,5 +112,5 @@ import net.minecraft.client.multiplayer.ClientLevel;
 	... 2 more
 
 
-BUILD FAILED in 51s
+BUILD FAILED in 52s
 1 actionable task: 1 executed
