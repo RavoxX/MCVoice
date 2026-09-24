@@ -5,9 +5,12 @@ WORKDIR /src
 # Cache dependencies separately from sources.
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && echo 'fn main(){}' > src/main.rs && echo '' > src/lib.rs \
- && cargo build --release --locked && rm -rf src target/release/deps/mcvoice*
+ && cargo build --release --locked \
+ && rm -rf src target/release/deps/*mcvoice_backend* target/release/deps/mcvoice-backend* \
+           target/release/.fingerprint/mcvoice-backend-* target/release/mcvoice-backend*
 COPY src ./src
-RUN cargo build --release --locked && cp target/release/mcvoice-backend /mcvoice-backend
+# COPY keeps the checkout's mtimes, which can be older than the stub build: force a rebuild of our crate
+RUN find src -type f -exec touch {} + && cargo build --release --locked && cp target/release/mcvoice-backend /mcvoice-backend
 
 FROM gcr.io/distroless/cc-debian12:nonroot
 LABEL org.opencontainers.image.title="mcvoice-backend-rust" \
