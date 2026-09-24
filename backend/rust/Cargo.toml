@@ -1,0 +1,45 @@
+[package]
+name = "mcvoice-backend"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.80"
+description = "MCVoice proximity voice backend (Rust implementation)"
+license = "MIT"
+repository = "https://github.com/RavoxX/MCVoice"
+publish = false
+
+[lib]
+name = "mcvoice_backend"
+path = "src/lib.rs"
+
+[[bin]]
+name = "mcvoice-backend"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "time", "sync", "signal"] }
+axum = { version = "0.8", default-features = false, features = ["http1", "tokio", "ws", "query"] }
+futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json", "fmt"] }
+aes-gcm = "0.10"
+hmac = "0.12"
+sha2 = "0.10"
+base64 = "0.22"
+hex = "0.4"
+rand = "0.8"
+subtle = "2"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
+tokio-rustls = { version = "0.26", default-features = false, features = ["ring", "tls12", "logging"] }
+rustls-pemfile = "2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true

@@ -49,6 +49,7 @@ type Session struct {
 	presence  map[string]struct{}
 	selfMuted bool
 	adminMute bool
+	hasScope  bool
 
 	// UDP state, guarded by umu.
 	umu         sync.Mutex

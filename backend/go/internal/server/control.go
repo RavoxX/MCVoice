@@ -336,12 +336,13 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 		sess.send(errorFrame(protocol.CodeBadMessage, "already authenticated", false))
 	case *protocol.Scope:
 		s.mu.Lock()
-		if *m.Epoch <= sess.peer.Epoch && (sess.peer.Epoch != 0 || sess.peer.InWorld) {
+		if sess.hasScope && *m.Epoch <= sess.peer.Epoch {
 			s.mu.Unlock()
 			sess.send(errorFrame(protocol.CodeStaleEpoch, "epoch must increase", false))
 			return false
 		}
 		s.leaveBucketLocked(sess)
+		sess.hasScope = true
 		sess.lastPos = time.Time{} // the first position of a new epoch is always accepted
 		sess.peer.Epoch = *m.Epoch
 		sess.peer.InWorld = *m.InWorld

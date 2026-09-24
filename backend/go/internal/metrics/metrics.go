@@ -100,9 +100,23 @@ type Registry struct {
 	VoiceJitter         FloatGauge
 }
 
+// Label sets are fixed and identical in the Rust backend so both expose the same series.
+var (
+	DropReasons    = []string{"no_hello", "not_routable", "rate_limited", "replay", "stale_epoch"}
+	InvalidReasons = []string{"auth_failed", "bad_counter", "bad_flags", "bad_magic", "bad_payload", "bad_version",
+		"too_large", "too_short", "unknown_key", "unknown_session", "unknown_type", "uuid_mismatch"}
+)
+
 func New(impl, version string) *Registry {
-	return &Registry{Implementation: impl, Version: version,
+	r := &Registry{Implementation: impl, Version: version,
 		RelayLatency: NewHistogram([]float64{0.0001, 0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05})}
+	for _, l := range DropReasons {
+		r.PacketsDropped.With(l)
+	}
+	for _, l := range InvalidReasons {
+		r.InvalidPackets.With(l)
+	}
+	return r
 }
 
 func (r *Registry) Write(w io.Writer) {
