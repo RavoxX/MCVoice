@@ -123,6 +123,23 @@ class AudioPipelineTest {
         assertEquals(0.0, mixEnergy(true, 60), 1e-9, "speaker out of range is silent");
     }
 
+    /** Regression: a new stream must survive its silent prebuffer polls (was reaped as "idle"). */
+    @Test
+    void newStreamSurvivesPrebuffering() {
+        SpatialMixer mixer = new SpatialMixer();
+        OpusCodec.Encoder enc = new OpusCodec.Encoder(32000);
+        byte[] pkt = new byte[1000];
+        long now = System.currentTimeMillis();
+        double energy = 0;
+        for (int f = 0; f < 20; f++) {
+            int n = enc.encode(sine(300, 12000, f * 960), pkt);
+            // mix before and after each enqueue, like the real playback thread racing the network thread
+            energy += rms(mixer.mixFrame(snapWith(true, 5), VALIDATOR, SETTINGS, now + f * 20L), 1, 0);
+            mixer.enqueueExtended(SPEAKER, f, 0, 0, pkt, 0, n, now + f * 20L);
+        }
+        assertTrue(energy > 1000, "stream must play after prebuffering");
+    }
+
     @Test
     void stereoPositioningInMixer() {
         SpatialMixer mixer = new SpatialMixer();

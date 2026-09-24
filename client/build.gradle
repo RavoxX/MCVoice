@@ -57,6 +57,13 @@ project(':svc-compat') {
 }
 project(':ui') { dependencies { api project(':common') } }
 project(':core') {
+    tasks.withType(Test).configureEach {
+        def bin = System.getenv('MCVOICE_BACKEND_BIN') ?: rootProject.findProperty('mcvoiceBackendBin')
+        if (bin) {
+            systemProperty 'mcvoice.backendBin', bin
+        }
+        testLogging { events 'failed', 'skipped', 'passed' }
+    }
     dependencies {
         api project(':network')
         api project(':audio')

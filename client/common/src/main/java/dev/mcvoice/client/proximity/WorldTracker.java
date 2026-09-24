@@ -29,6 +29,19 @@ public final class WorldTracker {
         void onNewEpoch(WorldSnapshot snapshot, String reason);
     }
 
+    public static final String REASON_JOIN = "join_world";
+    public static final String REASON_LEFT = "left_world";
+    public static final String REASON_SERVER_CHANGE = "server_change";
+    public static final String REASON_PLAYER_ENTITY = "player_entity_changed";
+    public static final String REASON_DIMENSION = "dimension_change";
+    public static final String REASON_WORLD_REPLACED = "world_replaced";
+
+    /** Whether a reason means a new Minecraft server session (vs. a dimension change on the same server). */
+    public static boolean isNewServerSession(String reason) {
+        return REASON_JOIN.equals(reason) || REASON_LEFT.equals(reason) || REASON_SERVER_CHANGE.equals(reason)
+            || REASON_PLAYER_ENTITY.equals(reason) || "disconnect".equals(reason) || "server_transfer".equals(reason);
+    }
+
     private final MinecraftAdapter mc;
     private final Listener listener;
     private final LocalPlayerState local = new LocalPlayerState();
@@ -80,23 +93,25 @@ public final class WorldTracker {
                 worldRef = new WeakReference<Object>(null);
                 snapshot = WorldSnapshot.EMPTY;
                 VoiceLog.info(Category.WORLD, "left world (" + (reason != null ? reason : "no world") + "), epoch " + epoch);
-                listener.onNewEpoch(snapshot, reason != null ? reason : "left_world");
+                listener.onNewEpoch(snapshot, reason != null ? reason : REASON_LEFT);
             }
             return;
         }
         String dim = NetworkIds.worldId(world.dimensionId());
         Object identity = world.identity();
         if (reason == null) {
+            // Order matters: a JoinGame (login / proxy sub-server switch) changes the
+            // entity id; dimension changes keep it but may replace the world object.
             if (!inWorld) {
-                reason = "join_world";
-            } else if (worldRef.get() != identity) {
-                reason = "world_replaced";
-            } else if (!dim.equals(dimension)) {
-                reason = "dimension_change";
+                reason = REASON_JOIN;
             } else if (addr == null ? address != null : !addr.equals(address)) {
-                reason = "server_change";
+                reason = REASON_SERVER_CHANGE;
             } else if (local.entityId != entityId) {
-                reason = "player_entity_changed";
+                reason = REASON_PLAYER_ENTITY;
+            } else if (!dim.equals(dimension)) {
+                reason = REASON_DIMENSION;
+            } else if (worldRef.get() != identity) {
+                reason = REASON_WORLD_REPLACED;
             }
         }
 

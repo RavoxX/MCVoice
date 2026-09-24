@@ -19,6 +19,8 @@ final class SpeakerStream {
 
     SpeakerStream(UUID speaker) {
         this.speaker = speaker;
+        // counts as "just active" so a new stream is not reaped while it prebuffers
+        this.lastFrameMs = System.currentTimeMillis();
     }
 
     void flush() {

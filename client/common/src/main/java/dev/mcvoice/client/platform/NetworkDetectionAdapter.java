@@ -13,4 +13,7 @@ public interface NetworkDetectionAdapter {
 
     /** Server brand reported by the server (F3 screen), for diagnostics only; may be null. */
     String serverBrand();
+
+    /** Actual remote socket address of the Minecraft connection (after SRV resolution), or null. */
+    java.net.InetSocketAddress remoteAddress();
 }
