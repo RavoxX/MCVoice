@@ -84,7 +84,7 @@ jobs:
           npm ci --no-audit --no-fund
           cp=$(tail -1 ../../probe-classpath.txt)
           node bot.js 127.0.0.1 25565 "$MC" -- java -cp "$cp" dev.mcvoice.client.svc.tools.SvcProbe 127.0.0.1 90 \
-            | tee ../../svc-interop-result.json
+            2> >(tee ../../probe.log >&2) | tee ../../svc-interop-result.json
       - name: Report
         if: always()
         run: |
@@ -100,13 +100,16 @@ jobs:
           name: svc-interop-${{ env.MC }}
           path: |
             svc-interop-result.json
+            probe.log
             server/server.log
       - name: Publish result (developer diagnostics)
         if: always()
         run: |
           set -eu
           [ -f svc-interop-result.json ] || echo '{"ok":false,"error":"no result"}' > svc-interop-result.json
-          mkdir -p pub && cp svc-interop-result.json pub/result.json && tail -c 200000 server/server.log > pub/server.log || true
+          mkdir -p pub && cp svc-interop-result.json pub/result.json
+          tail -c 200000 server/server.log > pub/server.log || true
+          tail -c 200000 probe.log > pub/probe.log || true
           git init -q out && cd out
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
