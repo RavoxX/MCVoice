@@ -21,9 +21,9 @@ Legacy Looming: 1.16.1
 > Task :validateAccessWidener NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790278141438.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790278249561.json
 
-BUILD SUCCESSFUL in 23s
+BUILD SUCCESSFUL in 15s
 7 actionable tasks: 4 executed, 3 from cache
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.4.0/userguide/configuration_cache_enabling.html
 valid: mcvoice-0.1.0-mc1.10.2-legacyfabric.jar (327 classes, 13 platform classes, metadata ['fabric.mod.json'])
