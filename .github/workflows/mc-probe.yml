@@ -95,7 +95,7 @@ jobs:
             echo "::group::$c"
             if [ -f client.txt ]; then
               awk -v cls="$c" '
-                /^[^ ]/ { inside = ($1 == cls) }
+                /^[^ #]/ { inside = ($1 == cls) }
                 inside { print }
               ' client.txt | sed 's/ -> [^ ]*$//; s/^\( *\)[0-9]*:[0-9]*:/\1/' | head -3000
               awk -v cls="$c" '/^[^ ]/ && $1 == cls {found=1} END {if (!found) print "NOT FOUND in mappings: " cls}' client.txt
