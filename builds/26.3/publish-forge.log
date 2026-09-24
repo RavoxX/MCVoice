@@ -1,0 +1,62 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+Minecraft Mavenizer 0.5.21 by Forge Development LLC
+  Output:             /home/runner/work/MCVoice/MCVoice/minecraft/forge/.gradle/mavenizer/repo
+  Output JSON:        /home/runner/work/MCVoice/MCVoice/minecraft/forge/.gradle/mavenizer/dependencies/default.json
+  Dependencies Only:  false
+  Cache:              /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
+  JDK Cache:          /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
+  Offline:            false
+  Cache Only:         false
+  Ignore Cache:       false
+  Mappings:           auto
+  Foreign Repos:      [https://repo.maven.apache.org/maven2/, https://maven.minecraftforge.net/, https://libraries.minecraft.net/]
+  GradleVariantHack:  true
+  Disable Gradle:     false
+  Stub Jars:          false
+
+Processing Minecraft dependency: net.minecraftforge:forge:26.3-66.0.3
+Using Mappings: official-26.3
+Processing Minecraft Forge (userdev): 26.3-66.0.3
+Exception in thread "main" java.lang.RuntimeException: Invalid MCPConfig dependency: de.oceanlabs.mcp:mcp_config:26.3-20260918.230105@zip
+	at net.minecraftforge.mcmaven.impl.repo.mcpconfig.MCP.loadConfig(MCP.java:71)
+	at net.minecraftforge.mcmaven.impl.repo.mcpconfig.MCP.<init>(MCP.java:44)
+	at net.minecraftforge.mcmaven.impl.repo.mcpconfig.MCPConfigRepo.download(MCPConfigRepo.java:98)
+	at java.base/java.util.HashMap.computeIfAbsent(HashMap.java:1229)
+	at net.minecraftforge.mcmaven.impl.repo.mcpconfig.MCPConfigRepo.get(MCPConfigRepo.java:94)
+	at net.minecraftforge.mcmaven.impl.repo.forge.Patcher.<init>(Patcher.java:123)
+	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.processV3(ForgeRepo.java:257)
+	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.process(ForgeRepo.java:144)
+	at net.minecraftforge.mcmaven.impl.MinecraftMaven.createForge(MinecraftMaven.java:240)
+	at net.minecraftforge.mcmaven.impl.MinecraftMaven.run(MinecraftMaven.java:119)
+	at net.minecraftforge.mcmaven.cli.MavenTask.run(MavenTask.java:218)
+	at net.minecraftforge.mcmaven.cli.Main.run(Main.java:70)
+	at net.minecraftforge.mcmaven.cli.Main.main(Main.java:23)
+Caused by: java.util.zip.ZipException: zip END header not found
+	at java.base/java.util.zip.ZipFile$Source.findEND(ZipFile.java:1693)
+	at java.base/java.util.zip.ZipFile$Source.initCEN(ZipFile.java:1701)
+	at java.base/java.util.zip.ZipFile$Source.<init>(ZipFile.java:1542)
+	at java.base/java.util.zip.ZipFile$Source.get(ZipFile.java:1506)
+	at java.base/java.util.zip.ZipFile$CleanableResource.<init>(ZipFile.java:704)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:204)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:150)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:164)
+	at net.minecraftforge.mcmaven.impl.repo.mcpconfig.MCP.loadConfig(MCP.java:56)
+	... 12 more
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790283542334.json
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+A problem occurred configuring root project 'mcvoice-mc26.3-forge'.
+> Process 'command '/usr/lib/jvm/temurin-25-jdk-amd64/bin/java'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 6s
