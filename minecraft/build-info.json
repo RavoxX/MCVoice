@@ -1,0 +1,24 @@
+{
+  "minecraft": "1.16.4",
+  "family": "mojang",
+  "java": 8,
+  "build_jdk": 17,
+  "jdks": [
+    8,
+    17
+  ],
+  "loaders": [
+    "forge"
+  ],
+  "builds": {
+    "forge": {
+      "buildgen": "fg6",
+      "gradle": "7.3.3",
+      "gradle_jdk": 17,
+      "plugin_version": "5.1.+"
+    }
+  },
+  "not_built": {
+    "fabric": "not built: no Fabric API release is published for this exact Minecraft version, and the MCVoice Fabric adapter needs Fabric API"
+  }
+}
