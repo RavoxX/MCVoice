@@ -67,12 +67,18 @@ check first.
 |---|---|
 | Unit tests vs in-process fake SVC server (both cipher modes, fail-safe paths) | automated, passing |
 | Headless 3-player hybrid test (A, B MCVoice + C SVC-only through a fake SVC relay; no duplicates) | automated, passing |
-| Real SVC server plugin handshake + UDP auth (`.github/workflows/svc-interop.yml`) | see the latest run; the compatibility versions confirmed there are recorded in `SvcProtocols.VERIFIED` and in the release report |
+| Real SVC server (`.github/workflows/svc-interop.yml`): plugin-channel handshake, UDP authentication, connection check, 5 s of keep-alives and microphone packets | **passing** against Simple Voice Chat 2.6.24 (Bukkit) on Paper 1.21.4: compatibility version 20, cipher `GCM_IV12`, 0 rejected packets. Recorded in `SvcProtocols.VERIFIED`; re-run weekly |
+| Older compatibility versions 19-16 | implemented with the same v1 wire format and tried as fallbacks, **not verified** against a real server |
 | Two real Minecraft clients (one with the SVC mod) | manual test plan below |
 
 The fake-server tests only prove that our side is self-consistent. The real
-compatibility claim comes from the CI probe against the unmodified SVC server,
-and from the manual test.
+compatibility claim comes from the CI probe against the unmodified SVC server
+(the server plugin is downloaded from Modrinth at run time, and nothing of it
+is stored in this repository). A protocol-level bot (`tools/svc-interop/bot.js`)
+provides the Minecraft connection, and every SVC byte is produced and checked
+by MCVoice's own code (`SvcProbe` → `SvcHandshake` + `SvcUdpClient`). Receiving
+another player's voice from the real server and two full Minecraft clients
+are still covered by the manual test below.
 
 ## Manual integration test (full Minecraft instances)
 

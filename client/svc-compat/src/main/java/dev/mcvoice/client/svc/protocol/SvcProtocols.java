@@ -9,10 +9,15 @@ import dev.mcvoice.client.svc.protocol.v1.SvcProtocolV1;
 /**
  * Registry of supported Simple Voice Chat compatibility versions.
  *
- * <p>{@link #CANDIDATES} is ordered newest first. Entries are only added after
- * the behaviour was observed against a real server (see
- * tools/svc-probe and docs/svc-interop.md); {@link #VERIFIED} records which
- * ones CI has confirmed end to end.
+ * <p>{@link #CANDIDATES} is ordered newest first; the older entries share the
+ * v1 wire format and are tried as a fallback for older servers. {@link #VERIFIED}
+ * lists only the versions that .github/workflows/svc-interop.yml confirmed end to
+ * end against an unmodified Simple Voice Chat server (secret handshake, UDP
+ * authentication, connection check, keep-alive and microphone packets):
+ *
+ * <ul>
+ *   <li>20: Simple Voice Chat 2.6.24 (Bukkit) on Paper 1.21.4, AES-GCM with 12-byte IV.</li>
+ * </ul>
  */
 public final class SvcProtocols {
     public static final SvcProtocol V1 = new SvcProtocolV1();
@@ -20,10 +25,10 @@ public final class SvcProtocols {
     /** Compatibility versions to request, newest first. */
     public static final int[] CANDIDATES = {20, 19, 18, 17, 16};
 
-    /** Maximum request_secret attempts per connection (each unanswered attempt waits 2 s). */
+    /** Maximum request_secret attempts per connection (each unanswered attempt waits 2.5 s). */
     public static final int MAX_ATTEMPTS = 3;
 
-    private static final List<Integer> VERIFIED = new ArrayList<Integer>();
+    private static final List<Integer> VERIFIED = new ArrayList<Integer>(Collections.singletonList(20));
 
     private SvcProtocols() {
     }
