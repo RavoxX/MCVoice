@@ -23,19 +23,6 @@ Minecraft Mavenizer 0.5.21 by Forge Development LLC
 Processing Minecraft dependency: net.minecraftforge:forge:26.1-62.0.9
 Using Mappings: official-26.1
 Processing Minecraft Forge (userdev): 26.1-62.0.9
-  Cache miss!
-  java.lang.Exception: Cache miss! Stacktrace for Information Only
-  	at net.minecraftforge.mcmaven.impl.Mavenizer.assertNotCacheOnly(Mavenizer.java:60)
-  	at net.minecraftforge.mcmaven.impl.cache.MavenCache.download(MavenCache.java:271)
-  	at net.minecraftforge.mcmaven.impl.cache.MavenCache.download(MavenCache.java:101)
-  	at net.minecraftforge.mcmaven.impl.repo.forge.Patcher.<init>(Patcher.java:94)
-  	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.processV3(ForgeRepo.java:257)
-  	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.process(ForgeRepo.java:144)
-  	at net.minecraftforge.mcmaven.impl.MinecraftMaven.createForge(MinecraftMaven.java:240)
-  	at net.minecraftforge.mcmaven.impl.MinecraftMaven.run(MinecraftMaven.java:119)
-  	at net.minecraftforge.mcmaven.cli.MavenTask.run(MavenTask.java:218)
-  	at net.minecraftforge.mcmaven.cli.Main.run(Main.java:70)
-  	at net.minecraftforge.mcmaven.cli.Main.main(Main.java:23)
 Mappings Zip
   srg2names[official-26.1][Empty]
 Mappings POM
@@ -48,14 +35,14 @@ Client Extra
 Client Maven POM
   pom[client-extra]
 Sources
-  stripClient
+  listLibraries
   download[26.1][server]
   extractServer
   stripServer
+  stripClient
   merge
   modifyAccess
   stripSides
-  listLibraries
   decompile
   patch
   patch[forge]
@@ -71,26 +58,37 @@ Maven POM
   pom[forge]
 Metadata
   metadata[forge]
+    Cache miss!
+    java.lang.Exception: Cache miss! Stacktrace for Information Only
+    	at net.minecraftforge.mcmaven.impl.Mavenizer.assertNotCacheOnly(Mavenizer.java:60)
+    	at net.minecraftforge.mcmaven.impl.Mavenizer.checkCache(Mavenizer.java:94)
+    	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.lambda$metadata$0(ForgeRepo.java:365)
+    	at net.minecraftforge.mcmaven.impl.util.Task$Simple.execute(Task.java:145)
+    	at net.minecraftforge.mcmaven.impl.repo.Repo$PendingArtifact.get(Repo.java:243)
+    	at net.minecraftforge.mcmaven.impl.MinecraftMaven.finalize(MinecraftMaven.java:408)
+    	at net.minecraftforge.mcmaven.impl.MinecraftMaven.createForge(MinecraftMaven.java:241)
+    	at net.minecraftforge.mcmaven.impl.MinecraftMaven.run(MinecraftMaven.java:119)
+    	at net.minecraftforge.mcmaven.cli.MavenTask.run(MavenTask.java:218)
+    	at net.minecraftforge.mcmaven.cli.Main.run(Main.java:70)
+    	at net.minecraftforge.mcmaven.cli.Main.main(Main.java:23)
   metadata[forge][variants]
-Minecraft Maven has finished, took 2:08.206
+Minecraft Maven has finished, took 0:00.501
 
-> Task :fabric:compileJava
-> Task :fabric:processResources
-> Task :fabric:classes
-> Task :fabric:processIncludeJars
-> Task :fabric:jar
-> Task :fabric:sourcesJar
-> Task :fabric:assemble
-> Task :fabric:compileTestJava NO-SOURCE
-> Task :fabric:processTestResources NO-SOURCE
-> Task :fabric:testClasses UP-TO-DATE
-> Task :fabric:test NO-SOURCE
-> Task :fabric:validateAccessWidener NO-SOURCE
-> Task :fabric:check UP-TO-DATE
-> Task :fabric:build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790274363226.json
+> Task :forge:compileJava
+> Task :forge:processResources
+> Task :forge:classes
+> Task :forge:jar
+> Task :forge:sourcesJar
+> Task :forge:assemble
+> Task :forge:compileTestJava NO-SOURCE
+> Task :forge:processTestResources NO-SOURCE
+> Task :forge:testClasses UP-TO-DATE
+> Task :forge:test NO-SOURCE
+> Task :forge:check UP-TO-DATE
+> Task :forge:build
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790274534971.json
 
-BUILD SUCCESSFUL in 2m 57s
-5 actionable tasks: 5 executed
+BUILD SUCCESSFUL in 18s
+4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.0-mc26.1-fabric.jar (326 classes, metadata ['fabric.mod.json'])
+valid: mcvoice-0.1.0-mc26.1-forge.jar (326 classes, metadata ['META-INF/mods.toml'])
