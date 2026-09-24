@@ -6,6 +6,7 @@
 #
 #   tools/port-version/make-branch.sh 1.20.1 [--push]
 #   tools/port-version/make-branch.sh --all-supported [--push]   # every version with all loaders PASS
+#   MCVOICE_SKIP_CI=1 tools/port-version/make-branch.sh ...       # commit with [skip ci]
 #
 # Run from a clean checkout of main. Uses a temporary worktree, so the
 # current checkout is left untouched.
@@ -52,7 +53,8 @@ for mc in "${versions[@]}"; do
     if git diff --cached --quiet; then
       echo "$branch: up to date"
     else
-      git commit -q -m "build: generate minecraft/ for $mc from $(git rev-parse --short "$base")"
+      # MCVOICE_SKIP_CI=1: refresh without a push build (e.g. right before release.yml, which rebuilds every branch)
+      git commit -q -m "build: generate minecraft/ for $mc from $(git rev-parse --short "$base")${MCVOICE_SKIP_CI:+ [skip ci]}"
       echo "$branch: updated"
     fi
     if [ "$push" = 1 ]; then git push -q -u origin "$branch"; fi
