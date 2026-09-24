@@ -1,15 +1,3 @@
-Downloading https://services.gradle.org/distributions/gradle-7.3.3-bin.zip
-...........10%...........20%...........30%...........40%...........50%...........60%...........70%...........80%...........90%...........100%
-
-Welcome to Gradle 7.3.3!
-
-Here are the highlights of this release:
- - Easily declare new test suites in Java projects
- - Support for Java 17
- - Support for Scala 3
-
-For more details see https://docs.gradle.org/7.3.3/release-notes.html
-
 To honour the JVM settings for this build a single-use Daemon process will be forked. See https://docs.gradle.org/7.3.3/userguide/gradle_daemon.html#sec:disabling_the_daemon.
 Daemon will be stopped at the end of the build 
 
@@ -18,27 +6,6 @@ WARNING: This project is configured to use the official obfuscation mappings pro
 WARNING: (c) 2020 Microsoft Corporation. These mappings are provided "as-is" and you bear the risk of using them. You may copy and use the mappings for development purposes, but you may not redistribute the mappings complete and unmodified. Microsoft makes no warranties, express or implied, with respect to the mappings provided here.  Use and modification of this document or the source code (in any form) of Minecraft: Java Edition is governed by the Minecraft End User License Agreement available at https://account.mojang.com/documents/minecraft_eula.
 
 > Task :compileJava
-Setting up MCP environment
-Initializing steps
-Executing steps
- > Running 'downloadManifest'
- > Running 'downloadJson'
- > Running 'downloadClient'
- > Running 'downloadServer'
- > Running 'stripClient'
- > Running 'stripServer'
- > Running 'merge'
- > Running 'rename'
-Stopping at requested step: /home/runner/.gradle/caches/forge_gradle/mcp_repo/de/oceanlabs/mcp/mcp_config/1.16.5-20210115.111550/joined/rename/output.jar
-[20:11:45] [main/INFO]: Writing debug log file accesstransform.log
-[20:11:45] [main/INFO]: Access Transformer processor running version 8.0.7+8.0.7+master.43473d43
-[20:11:45] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.5-36.2.34/forge-1.16.5-36.2.34-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.5-36.2.34_mapped_official_1.16.5/forge-1.16.5-36.2.34_mapped_official_1.16.5.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_5/parent_at.cfg]
-[20:11:45] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.5-36.2.34/forge-1.16.5-36.2.34-injected.jar
-[20:11:45] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.5-36.2.34_mapped_official_1.16.5/forge-1.16.5-36.2.34_mapped_official_1.16.5.jar
-[20:11:45] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_5/parent_at.cfg
-[20:11:45] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.5-36.2.34_mapped_official_1.16.5/forge-1.16.5-36.2.34_mapped_official_1.16.5.jar, overwriting
-[20:11:47] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.5-36.2.34_mapped_official_1.16.5/forge-1.16.5-36.2.34_mapped_official_1.16.5.jar
-Creating SRG -> MCP TSRG
 Note: /home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 
@@ -59,9 +26,9 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790280645917.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790281578563.json
 
-BUILD SUCCESSFUL in 1m 33s
+BUILD SUCCESSFUL in 17s
 8 actionable tasks: 8 executed
 valid: mcvoice-0.1.0-mc1.16.5-forge.jar (329 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
