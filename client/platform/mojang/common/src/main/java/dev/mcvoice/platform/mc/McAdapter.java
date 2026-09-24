@@ -34,7 +34,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 
 /**
- * MinecraftAdapter for Mojang-named Minecraft (official mappings, 1.16.5+), shared by
+ * MinecraftAdapter for Mojang-named Minecraft (official mappings, 1.14.4+), shared by
  * the Fabric and Forge entry points of this family. Only this package touches
  * Minecraft classes; everything else lives in the version-independent core.
  */
@@ -113,9 +113,15 @@ public final class McAdapter implements MinecraftAdapter {
         out.name = p.getName().getString();
         out.entityId = p.getId();
         out.playerIdentity = p;
+        //#if MC >= 1.15
         out.x = p.getX();
         out.y = p.getEyeY();
         out.z = p.getZ();
+        //#else
+        out.x = p.x;
+        out.y = p.y + p.getEyeHeight();
+        out.z = p.z;
+        //#endif
         //#if MC >= 1.17
         out.yaw = p.getYRot();
         out.pitch = p.getXRot();
@@ -137,8 +143,10 @@ public final class McAdapter implements MinecraftAdapter {
             public String dimensionId() {
                 //#if MC >= 1.21.11
                 return level.dimension().identifier().toString();
-                //#else
+                //#elif MC >= 1.16
                 return level.dimension().location().toString();
+                //#else
+                return String.valueOf(net.minecraft.world.level.dimension.DimensionType.getName(level.getDimension().getType()));
                 //#endif
             }
 
@@ -158,7 +166,11 @@ public final class McAdapter implements MinecraftAdapter {
                     boolean gone = p.removed;
                     //#endif
                     if (!gone) {
+                        //#if MC >= 1.15
                         v.visit(p.getUUID(), p.getName().getString(), p.getX(), p.getEyeY(), p.getZ());
+                        //#else
+                        v.visit(p.getUUID(), p.getName().getString(), p.x, p.y + p.getEyeHeight(), p.z);
+                        //#endif
                     }
                 }
             }

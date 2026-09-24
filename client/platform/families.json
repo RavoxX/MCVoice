@@ -4,7 +4,7 @@
     {
       "id": "mojang",
       "minecraft": {
-        "min": "1.16.1",
+        "min": "1.14.4",
         "max": "26.3"
       },
       "loaders": {
@@ -30,7 +30,7 @@
           },
           {
             "minecraft": {
-              "min": "1.16.1",
+              "min": "1.14.4",
               "max": "1.21.8"
             },
             "buildgen": "remap",
@@ -40,6 +40,17 @@
           }
         ],
         "forge": [
+          {
+            "minecraft": {
+              "min": "1.14.4",
+              "max": "1.15.2"
+            },
+            "buildgen": "fg6",
+            "gradle": "7.3.3",
+            "plugin_version": "5.1.+",
+            "sources": "forge-fml",
+            "class_remap": "forge-mcp-classes-1.16.txt"
+          },
           {
             "minecraft": {
               "min": "1.16.1",
