@@ -1,0 +1,398 @@
+Downloading https://services.gradle.org/distributions/gradle-7.3.3-bin.zip
+...........10%...........20%...........30%...........40%...........50%...........60%...........70%...........80%...........90%...........100%
+
+Welcome to Gradle 7.3.3!
+
+Here are the highlights of this release:
+ - Easily declare new test suites in Java projects
+ - Support for Java 17
+ - Support for Scala 3
+
+For more details see https://docs.gradle.org/7.3.3/release-notes.html
+
+To honour the JVM settings for this build a single-use Daemon process will be forked. See https://docs.gradle.org/7.3.3/userguide/gradle_daemon.html#sec:disabling_the_daemon.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+WARNING: This project is configured to use the official obfuscation mappings provided by Mojang. These mapping fall under their associated license, you should be fully aware of this license. For the latest license text, refer below, or the reference copy here: https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md, You can hide this warning by running the `hideOfficialWarningUntilChanged` task
+WARNING: (c) 2020 Microsoft Corporation. These mappings are provided "as-is" and you bear the risk of using them. You may copy and use the mappings for development purposes, but you may not redistribute the mappings complete and unmodified. Microsoft makes no warranties, express or implied, with respect to the mappings provided here.  Use and modification of this document or the source code (in any form) of Minecraft: Java Edition is governed by the Minecraft End User License Agreement available at https://account.mojang.com/documents/minecraft_eula.
+
+> Task :compileJava
+Setting up MCP environment
+Initializing steps
+Executing steps
+ > Running 'downloadManifest'
+ > Running 'downloadJson'
+ > Running 'downloadClient'
+ > Running 'downloadServer'
+ > Running 'stripClient'
+ > Running 'stripServer'
+ > Running 'merge'
+ > Running 'rename'
+Stopping at requested step: /home/runner/.gradle/caches/forge_gradle/mcp_repo/de/oceanlabs/mcp/mcp_config/1.16.1-20200625.160719/joined/rename/output.jar
+[19:39:18] [main/INFO]: Writing debug log file accesstransform.log
+[19:39:18] [main/INFO]: Access Transformer processor running version 8.0.7+8.0.7+master.43473d43
+[19:39:18] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.1-32.0.108/forge-1.16.1-32.0.108-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.1-32.0.108_mapped_official_1.16.1/forge-1.16.1-32.0.108_mapped_official_1.16.1.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_5/parent_at.cfg]
+[19:39:18] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.1-32.0.108/forge-1.16.1-32.0.108-injected.jar
+[19:39:18] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.1-32.0.108_mapped_official_1.16.1/forge-1.16.1-32.0.108_mapped_official_1.16.1.jar
+[19:39:18] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_5/parent_at.cfg
+[19:39:18] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.1-32.0.108_mapped_official_1.16.1/forge-1.16.1-32.0.108_mapped_official_1.16.1.jar, overwriting
+[19:39:21] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.16.1-32.0.108_mapped_official_1.16.1/forge-1.16.1-32.0.108_mapped_official_1.16.1.jar
+Creating SRG -> MCP TSRG
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:17: error: cannot find symbol
+import net.minecraft.client.KeyMapping;
+                           ^
+  symbol:   class KeyMapping
+  location: package net.minecraft.client
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:19: error: cannot find symbol
+import net.minecraft.client.multiplayer.ClientPacketListener;
+                                       ^
+  symbol:   class ClientPacketListener
+  location: package net.minecraft.client.multiplayer
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:20: error: cannot find symbol
+import net.minecraft.network.FriendlyByteBuf;
+                            ^
+  symbol:   class FriendlyByteBuf
+  location: package net.minecraft.network
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:21: error: package net.minecraft.network.protocol.game does not exist
+import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
+                                          ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McIds.java:6: error: cannot find symbol
+import net.minecraft.resources.ResourceLocation;
+                              ^
+  symbol:   class ResourceLocation
+  location: package net.minecraft.resources
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McIds.java:31: error: cannot find symbol
+    public static ResourceLocation id(String namespace, String path) {
+                  ^
+  symbol:   class ResourceLocation
+  location: class dev.mcvoice.platform.mc.McIds
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McIds.java:35: error: cannot find symbol
+    public static ResourceLocation parse(String id) {
+                  ^
+  symbol:   class ResourceLocation
+  location: class dev.mcvoice.platform.mc.McIds
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:23: error: cannot find symbol
+import net.minecraft.client.KeyMapping;
+                           ^
+  symbol:   class KeyMapping
+  location: package net.minecraft.client
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:25: error: cannot find symbol
+import net.minecraft.client.User;
+                           ^
+  symbol:   class User
+  location: package net.minecraft.client
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:26: error: cannot find symbol
+import net.minecraft.client.multiplayer.ClientLevel;
+                                       ^
+  symbol:   class ClientLevel
+  location: package net.minecraft.client.multiplayer
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:27: error: cannot find symbol
+import net.minecraft.client.multiplayer.ClientPacketListener;
+                                       ^
+  symbol:   class ClientPacketListener
+  location: package net.minecraft.client.multiplayer
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:29: error: package net.minecraft.client.player does not exist
+import net.minecraft.client.player.AbstractClientPlayer;
+                                  ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:30: error: package net.minecraft.client.player does not exist
+import net.minecraft.client.player.LocalPlayer;
+                                  ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:48: error: cannot find symbol
+    private final Map<InputAdapter.Action, KeyMapping> keys = new EnumMap<InputAdapter.Action, KeyMapping>(InputAdapter.Action.class);
+                                           ^
+  symbol:   class KeyMapping
+  location: class dev.mcvoice.platform.mc.McAdapter
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:63: error: cannot find symbol
+    private static KeyMapping key(String name, int code) {
+                   ^
+  symbol:   class KeyMapping
+  location: class dev.mcvoice.platform.mc.McAdapter
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:68: error: cannot find symbol
+    public Iterable<KeyMapping> keyMappings() {
+                    ^
+  symbol:   class KeyMapping
+  location: class dev.mcvoice.platform.mc.McAdapter
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McCanvas.java:5: error: cannot find symbol
+import net.minecraft.client.gui.Font;
+                               ^
+  symbol:   class Font
+  location: package net.minecraft.client.gui
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McCanvas.java:11: error: cannot find symbol
+import com.mojang.blaze3d.vertex.PoseStack;
+                                ^
+  symbol:   class PoseStack
+  location: package com.mojang.blaze3d.vertex
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McCanvas.java:12: error: cannot find symbol
+import net.minecraft.client.gui.GuiComponent;
+                               ^
+  symbol:   class GuiComponent
+  location: package net.minecraft.client.gui
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McCanvas.java:25: error: cannot find symbol
+    private final PoseStack g;
+                  ^
+  symbol:   class PoseStack
+  location: class dev.mcvoice.platform.mc.McCanvas
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McCanvas.java:27: error: cannot find symbol
+    private final Font font;
+                  ^
+  symbol:   class Font
+  location: class dev.mcvoice.platform.mc.McCanvas
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McCanvas.java:34: error: cannot find symbol
+    public McCanvas(PoseStack g) {
+                    ^
+  symbol:   class PoseStack
+  location: class dev.mcvoice.platform.mc.McCanvas
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:9: error: cannot find symbol
+import com.mojang.blaze3d.vertex.PoseStack;
+                                ^
+  symbol:   class PoseStack
+  location: package com.mojang.blaze3d.vertex
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:11: error: package net.minecraft.client.gui.screens does not exist
+import net.minecraft.client.gui.screens.Screen;
+                                       ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:20: error: package net.minecraft.network.chat does not exist
+import net.minecraft.network.chat.TextComponent;
+                                 ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:24: error: cannot find symbol
+public final class McScreen extends Screen {
+                                    ^
+  symbol: class Screen
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:42: error: cannot find symbol
+    public void render(PoseStack g, int mouseX, int mouseY, float partialTicks) {
+                       ^
+  symbol:   class PoseStack
+  location: class dev.mcvoice.platform.mc.McScreen
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/ScreenHost.java:4: error: package net.minecraft.client.gui.screens does not exist
+import net.minecraft.client.gui.screens.Screen;
+                                       ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/ScreenHost.java:11: error: cannot find symbol
+    static Screen current() {
+           ^
+  symbol:   class Screen
+  location: class dev.mcvoice.platform.mc.ScreenHost
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/ScreenHost.java:19: error: cannot find symbol
+    static void open(Screen s) {
+                     ^
+  symbol:   class Screen
+  location: class dev.mcvoice.platform.mc.ScreenHost
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:72: error: cannot find symbol
+            for (KeyMapping k : adapter.keyMappings()) {
+                 ^
+  symbol:   class KeyMapping
+  location: class dev.mcvoice.platform.forge.McVoiceForge
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:111: error: cannot find symbol
+                    FriendlyByteBuf buf = e.getPayload();
+                    ^
+  symbol:   class FriendlyByteBuf
+  location: class dev.mcvoice.platform.forge.McVoiceForge.ForgeSvcChannels
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:135: error: cannot find symbol
+            ClientPacketListener l = Minecraft.getInstance().getConnection();
+            ^
+  symbol:   class ClientPacketListener
+  location: class dev.mcvoice.platform.forge.McVoiceForge.ForgeSvcChannels
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:141: error: cannot find symbol
+            ClientPacketListener l = Minecraft.getInstance().getConnection();
+            ^
+  symbol:   class ClientPacketListener
+  location: class dev.mcvoice.platform.forge.McVoiceForge.ForgeSvcChannels
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:146: error: cannot find symbol
+                l.send(new ServerboundCustomPayloadPacket(McIds.parse(channel), new FriendlyByteBuf(Unpooled.wrappedBuffer(payload))));
+                           ^
+  symbol:   class ServerboundCustomPayloadPacket
+  location: class dev.mcvoice.platform.forge.McVoiceForge.ForgeSvcChannels
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:146: error: cannot find symbol
+                l.send(new ServerboundCustomPayloadPacket(McIds.parse(channel), new FriendlyByteBuf(Unpooled.wrappedBuffer(payload))));
+                                                                                    ^
+  symbol:   class FriendlyByteBuf
+  location: class dev.mcvoice.platform.forge.McVoiceForge.ForgeSvcChannels
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McIds.java:32: error: cannot find symbol
+        return new ResourceLocation(namespace, path);
+                   ^
+  symbol:   class ResourceLocation
+  location: class dev.mcvoice.platform.mc.McIds
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McIds.java:36: error: cannot find symbol
+        return new ResourceLocation(id);
+                   ^
+  symbol:   class ResourceLocation
+  location: class dev.mcvoice.platform.mc.McIds
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:48: error: cannot find symbol
+    private final Map<InputAdapter.Action, KeyMapping> keys = new EnumMap<InputAdapter.Action, KeyMapping>(InputAdapter.Action.class);
+                                                                                               ^
+  symbol:   class KeyMapping
+  location: class dev.mcvoice.platform.mc.McAdapter
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:64: error: cannot find symbol
+        return new KeyMapping("key.mcvoice." + name, code, CATEGORY);
+                   ^
+  symbol:   class KeyMapping
+  location: class dev.mcvoice.platform.mc.McAdapter
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:97: error: cannot find symbol
+        LocalPlayer p = mc().player;
+        ^
+  symbol:   class LocalPlayer
+  location: class dev.mcvoice.platform.mc.McAdapter
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:120: error: cannot find symbol
+        final ClientLevel level = mc().level;
+              ^
+  symbol:   class ClientLevel
+  location: class dev.mcvoice.platform.mc.McAdapter
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:141: error: cannot find symbol
+                List<AbstractClientPlayer> players = level.players();
+                     ^
+  symbol: class AbstractClientPlayer
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:143: error: cannot find symbol
+                    AbstractClientPlayer p = players.get(i);
+                    ^
+  symbol: class AbstractClientPlayer
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:175: error: cannot find symbol
+            LocalPlayer p = mc().player;
+            ^
+  symbol: class LocalPlayer
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:182: error: cannot find symbol
+            ClientPacketListener c = mc().getConnection();
+            ^
+  symbol: class ClientPacketListener
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:224: error: cannot find symbol
+            User u = mc().getUser();
+            ^
+  symbol: class User
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:244: error: cannot find symbol
+            KeyMapping k = keys.get(a);
+            ^
+  symbol: class KeyMapping
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:250: error: cannot find symbol
+            KeyMapping k = keys.get(a);
+            ^
+  symbol: class KeyMapping
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:256: error: cannot find symbol
+            KeyMapping k = keys.get(a);
+            ^
+  symbol: class KeyMapping
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McCanvas.java:63: error: cannot find symbol
+        GuiComponent.fill(g, x1, y1, x2, y2, argb);
+        ^
+  symbol:   variable GuiComponent
+  location: class dev.mcvoice.platform.mc.McCanvas
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:31: error: cannot find symbol
+        super(new TextComponent(ui.title()));
+                  ^
+  symbol:   class TextComponent
+  location: class dev.mcvoice.platform.mc.McScreen
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:36: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:82: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:88: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:94: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:100: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:105: error: cannot find symbol
+        return super.keyPressed(key, scanCode, modifiers); // ESC closes
+               ^
+  symbol:   variable super
+  location: class dev.mcvoice.platform.mc.McScreen
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:108: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:122: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:129: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:132: error: cannot find symbol
+        super.removed();
+        ^
+  symbol:   variable super
+  location: class dev.mcvoice.platform.mc.McScreen
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McScreen.java:135: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+63 errors
+
+> Task :compileJava FAILED
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790278689293.json
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileJava'.
+> Compilation failed; see the compiler error output for details.
+
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compileJava'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:145)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:282)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:143)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:131)
+	at org.gradle.api.internal.tasks.execution.CleanupStaleOutputsExecuter.execute(CleanupStaleOutputsExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:56)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:199)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:74)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:402)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:389)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:382)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:368)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.lambda$run$0(DefaultPlanExecutor.java:127)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:191)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.executeNextNode(DefaultPlanExecutor.java:182)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:124)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:48)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:61)
+Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler error output for details.
+	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:56)
+	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:39)
+	at org.gradle.api.internal.tasks.compile.daemon.AbstractDaemonCompiler$CompilerWorkAction.execute(AbstractDaemonCompiler.java:135)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+	at org.gradle.workers.internal.AbstractClassLoaderWorker$1.create(AbstractClassLoaderWorker.java:49)
+	at org.gradle.workers.internal.AbstractClassLoaderWorker$1.create(AbstractClassLoaderWorker.java:43)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:97)
+	at org.gradle.workers.internal.AbstractClassLoaderWorker.executeInClassLoader(AbstractClassLoaderWorker.java:43)
+	at org.gradle.workers.internal.FlatClassLoaderWorker.run(FlatClassLoaderWorker.java:32)
+	at org.gradle.workers.internal.FlatClassLoaderWorker.run(FlatClassLoaderWorker.java:22)
+	at org.gradle.workers.internal.WorkerDaemonServer.run(WorkerDaemonServer.java:85)
+	at org.gradle.workers.internal.WorkerDaemonServer.run(WorkerDaemonServer.java:55)
+	at org.gradle.process.internal.worker.request.WorkerAction$1.call(WorkerAction.java:138)
+	at org.gradle.process.internal.worker.child.WorkerLogEventListener.withWorkerLoggingProtocol(WorkerLogEventListener.java:41)
+	at org.gradle.process.internal.worker.request.WorkerAction.run(WorkerAction.java:135)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:36)
+	at org.gradle.internal.dispatch.ReflectionDispatch.dispatch(ReflectionDispatch.java:24)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:182)
+	at org.gradle.internal.remote.internal.hub.MessageHubBackedObjectConnection$DispatchWrapper.dispatch(MessageHubBackedObjectConnection.java:164)
+	at org.gradle.internal.remote.internal.hub.MessageHub$Handler.run(MessageHub.java:414)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.ManagedExecutorImpl$1.run(ManagedExecutorImpl.java:48)
+	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:61)
+
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 1m 35s
+1 actionable task: 1 executed
