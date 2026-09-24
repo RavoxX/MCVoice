@@ -1,3 +1,19 @@
-Error: Unable to initialize main class dev.mcvoice.client.svc.tools.SvcProbe
-Caused by: java.lang.NoClassDefFoundError: dev/mcvoice/client/platform/SimpleVoiceChatAdapter
-bot: probe exited with 1
+bot: joined (play state)
+handshake: WAITING
+bot: server registered voicechat:leave_group,voicechat:request_secret,voicechat:create_group,voicechat:set_group,voicechat:update_state
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: <- voicechat:secret (56 bytes)
+[INFO][SVC] received SVC secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000, groups=true, host=''} (compatibility 20)
+handshake: SECRET_RECEIVED (compatibility 20)
+secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000, groups=true, host=''} voiceHost=''
+bot: -> voicechat:update_state (1 bytes)
+[INFO][SVC] SVC voice server authenticated us (GCM_IV12)
+udp: AUTHENTICATED (GCM_IV12)
+bot: <- voicechat:state (33 bytes)
+[INFO][SVC] SVC voice connection established with 127.0.0.1:24454
+udp: CONNECTED
+bot: <- voicechat:state (33 bytes)
+bot: probe exited with 0
