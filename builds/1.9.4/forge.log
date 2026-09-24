@@ -1,10 +1,48 @@
+Downloading https://services.gradle.org/distributions/gradle-8.8-bin.zip
+.............10%.............20%.............30%.............40%.............50%.............60%..............70%.............80%.............90%.............100%
+
+Welcome to Gradle 8.8!
+
+Here are the highlights of this release:
+ - Running Gradle on Java 22
+ - Configurable Gradle daemon JVM
+ - Improved IDE performance for large projects
+
+For more details see https://docs.gradle.org/8.8/release-notes.html
+
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 
 > Configure project :
 Architectury Loom: 0.10.0.5
+:generating dummy intermediary
+:generated dummy intermediary in 438.0 ms
+:patching forge
+:patched forge in 16.77 s
+:patching jars
+:patched jars in 5.246 s
+:access transforming minecraft
+[20:54:07] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
+[20:54:07] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.9.4/forge/1.9.4-12.17.0.2317-1.9.4/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.9.4/forge/1.9.4-12.17.0.2317-1.9.4/merged-at-patched.jar, --atFile, /tmp/at-conf2109867440513485104.cfg]
+[20:54:07] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.9.4/forge/1.9.4-12.17.0.2317-1.9.4/merged-patched.jar
+[20:54:07] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.9.4/forge/1.9.4-12.17.0.2317-1.9.4/merged-at-patched.jar
+[20:54:07] [main/INFO]: Transformer file /tmp/at-conf2109867440513485104.cfg
+[20:54:07] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.9.4/forge/1.9.4-12.17.0.2317-1.9.4/merged-at-patched.jar, overwriting
+[20:54:09] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.9.4/forge/1.9.4-12.17.0.2317-1.9.4/merged-at-patched.jar
+:access transformed minecraft in 7.617 s
+:remapping minecraft (TinyRemapper, official -> intermediary)
+:remapped minecraft (TinyRemapper, official -> intermediary) in 1.133 s
+:remapping minecraft (TinyRemapper, official -> srg)
+:remapped minecraft (TinyRemapper, official -> srg) in 947.2 ms
+:remapping minecraft (TinyRemapper, official -> named)
+:remapped minecraft (TinyRemapper, official -> named) in 860.9 ms
 
-> Task :compileJava FROM-CACHE
+> Task :compileJava
+Note: SpongePowered MIXIN Annotation Processor Version=0.8.5
+Note: Supported obfuscation types: ObfuscationServiceFabric supports [official:intermediary,official:named,intermediary:official,intermediary:named,named:official,named:intermediary] ObfuscationServiceMCP supports [searge,notch]
+Note: /home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
 > Task :processResources
 > Task :classes
 > Task :jar
@@ -22,7 +60,7 @@ Architectury Loom: 0.10.0.5
 :remapping sources
 
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790281385845.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790283186455.json
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -30,8 +68,8 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 18s
-6 actionable tasks: 5 executed, 1 from cache
+BUILD SUCCESSFUL in 1m 30s
+6 actionable tasks: 6 executed
 valid: mcvoice-0.1.0-mc1.9.4-forge.jar (327 classes, 13 platform classes, metadata ['mcmod.info'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$Events
