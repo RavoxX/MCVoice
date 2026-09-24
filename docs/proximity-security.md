@@ -1,0 +1,84 @@
+# Proximity security: why coordinates are never enough
+
+MCVoice decides who can hear whom **without any Minecraft server plugin**.
+The hard part is proxy networks (Velocity, BungeeCord, Waterfall): many
+sub-servers share one public address, each with its own worlds that use the
+same dimension names and overlapping coordinates.
+
+```
+Player A: play.example.org -> survival-1, minecraft:overworld, (100, 64, 100)
+Player B: play.example.org -> survival-2, minecraft:overworld, (100, 64, 100)
+```
+
+A and B must never hear each other. Nothing that A and B *report* can reliably
+distinguish their sub-servers: the address, dimension name and coordinates are
+identical, and the client cannot learn the real sub-server name behind a proxy.
+
+## The rule
+
+> **If the speaker does not currently exist as a tracked player entity in my
+> current local Minecraft world, positional audio from that speaker is not
+> played.**
+
+The Minecraft server only sends a client the entities that are actually near
+it in *its* world. Survival-2's players are never sent to a client on
+survival-1. So the local entity tracker is ground truth that nobody on the
+voice path can forge on the listener's behalf.
+
+## Defence in depth
+
+| Layer | Where | What it prevents |
+|---|---|---|
+| 1. Scope key | backend | Routing between different networks (`network_id`) or dimension names (`world_id`). |
+| 2. World-session epoch | client + backend | Audio from before a server switch, dimension change, respawn or reconnect. Every such event creates a new epoch; the backend clears position + visibility atomically; relayed frames carry the **recipient's** epoch and the client drops mismatches. |
+| 3. Recipient visibility | backend | A frame is only routed to R if **R reported the sender's UUID** as a locally tracked player (and, by default, the sender reported R). A player on another sub-server is never in R's report. |
+| 4. Backend distance | backend | Bandwidth: no routing beyond range + slack (4 blocks for latency). |
+| 5. **Local entity check** | receiving client | Final authority, runs for every frame of every transport (cloud *and* Simple Voice Chat): tracked entity exists, same world, locally computed distance ≤ range, not muted, not deafened. |
+
+Layers 1-4 are *hints* from possibly-lying clients: a modified client can
+report fake visibility or positions. They reduce accidental routing and
+bandwidth. They are **not** an anti-cheat boundary. Layer 5 is what protects
+an honest listener, and it cannot be influenced by the backend or by other
+players.
+
+## Implementation map
+
+* `client/common/.../proximity/WorldTracker.java`: builds an immutable
+  `WorldSnapshot` every client tick from the adapters, and detects
+  world-session changes. The checks, in order: server address changed, local
+  player entity id changed (JoinGame, which is also a proxy switch), dimension
+  changed, world object replaced. Platform hooks (`VoiceClient.invalidateWorld`)
+  publish an empty snapshot *immediately* on respawn/disconnect/transfer,
+  without waiting for the next tick.
+* `client/common/.../proximity/PlaybackValidator.java`: the rule above.
+* `client/audio/.../SpatialMixer.java`: re-runs the check **every 20 ms frame**
+  against the newest snapshot, so a disappearing entity silences its stream
+  within one frame (with a ≤ 20 ms fade instead of a pop). Panning and
+  attenuation use only local entity positions.
+* `backend/*/routing`: checks 1-4 as a pure function, verified by shared vectors
+  (`protocol/test-vectors/routing.json`).
+
+## Tests that pin this down
+
+| Requirement | Test |
+|---|---|
+| 10 blocks, range 48 → accepted | `playback.json: distance_10_range_48`, `ProximityScenarioTest.distance10Accepted`, conformance `distance_10_blocks_delivered_both_ways` |
+| 60 blocks → rejected | `distance_60_range_48`, conformance `distance_60_blocks_not_delivered` |
+| same coordinates, other dimension → rejected | `same_coords_other_dimension`, conformance `different_dimension_same_coordinates_not_delivered` |
+| same coordinates, same dimension, not tracked → rejected | `not_tracked_same_coords`, `ProximityScenarioTest.sameCoordinatesSameDimensionButNotTrackedRejected` |
+| same proxy address + coordinates + dimension name, other population → rejected | `ProximityScenarioTest.proxySubserverDifferentPopulationRejected`, conformance `proxy_subserver_same_coordinates_not_visible_not_delivered`, `attested_subservers_are_isolated`, `EndToEndTest` (sub-server switch) |
+| frame from old epoch after switch → rejected | `old_epoch_after_switch`, conformance `stale_epoch_packet_dropped`, `recipient_epoch_is_current` |
+| entity removed → next packet rejected | `ProximityScenarioTest.senderEntityRemovedNextPacketRejected`, conformance `disconnect_removes_peer` |
+
+## Known limits (stated honestly)
+
+* Tracking range limits voice range: if a server tracks players only within
+  32 blocks (`entity-tracking-range`), voice stops at 32 blocks even when the
+  voice range is 48. This is the price of the local-entity rule.
+* Invisible/vanished players who are not sent to the client are not audible,
+  which is intended.
+* LAN worlds: the host and guests see different server addresses, so their
+  `network_id`s differ, and LAN voice is not supported through the cloud path.
+* A malicious *speaker* can still be heard by nearby honest listeners, as in
+  any voice chat. Moderation (bans, mutes) is backend-side, with an optional
+  companion plugin for server-verified identity.
