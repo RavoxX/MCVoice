@@ -126,14 +126,23 @@ public final class McVoiceForge {
 
         @Override
         public boolean supported() {
+            //#if MC >= 1.16.2
             return true;
+            //#else
+            // no way to see the server's channel registrations on this Forge version; never probe blindly
+            return false;
+            //#endif
         }
 
         @Override
         public boolean serverAcceptsChannel(String channel) {
+            //#if MC >= 1.16.2
             EventNetworkChannel c = channels.get(channel);
             ClientPacketListener l = Minecraft.getInstance().getConnection();
             return c != null && l != null && c.isRemotePresent(l.getConnection());
+            //#else
+            return false;
+            //#endif
         }
 
         @Override
