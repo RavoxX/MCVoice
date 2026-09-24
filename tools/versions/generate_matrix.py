@@ -153,7 +153,19 @@ def main() -> int:
 
     def api_for(api_versions: list[str], mc: str) -> str | None:
         suffix = "+" + mc
-        return pick_latest([a for a in api_versions if a.endswith(suffix)])
+        exact = pick_latest([a for a in api_versions if a.endswith(suffix)])
+        if exact:
+            return exact
+        # Older Fabric API builds name only the minor line ("0.42.0+1.16", "0.28.5+1.15"); use the
+        # newest build of that line for its latest patch release only (earlier patch releases of a line
+        # cannot be assumed compatible with the newest build).
+        parts = mc.split(".")
+        if len(parts) >= 2:
+            line = ".".join(parts[:2])
+            same_line = [x["id"] for x in releases if x["id"] == line or x["id"].startswith(line + ".")]
+            if same_line and mc == max(same_line, key=version_key):
+                return pick_latest([a for a in api_versions if a.endswith("+" + line)])
+        return None
 
     entries = []
     for v in selected:
