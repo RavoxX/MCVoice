@@ -8,7 +8,7 @@ on:
   schedule:
     - cron: "17 4 * * 1"
   push:
-    branches: [main, "claude/**"]
+    branches: [main]
     paths:
       - "tools/versions/**"
       - ".github/workflows/version-matrix.yml"
@@ -58,7 +58,7 @@ jobs:
           name: version-matrix
           path: versions/
       - name: Commit updated matrix
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

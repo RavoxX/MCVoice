@@ -3,9 +3,21 @@
   "families": [
     {
       "id": "mc26",
-      "minecraft": {"min": "26.1", "max": "26.3"},
+      "minecraft": {
+        "min": "26.1",
+        "max": "26.3"
+      },
       "loaders": {
-        "fabric": {"buildgen": "loom-noremap", "gradle": "9.8.0", "plugin_version": "1.18.2"}
+        "fabric": {
+          "buildgen": "unobf",
+          "gradle": "9.8.0",
+          "plugin_version": "1.18.2"
+        },
+        "forge": {
+          "buildgen": "unobf",
+          "gradle": "9.8.0",
+          "plugin_version": "[7.0.17,8)"
+        }
       }
     }
   ]
