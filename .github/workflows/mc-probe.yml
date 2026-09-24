@@ -71,7 +71,8 @@ jobs:
           ls libs
           ls -la
       - name: Search classes
-        if: inputs.search != ''
+        if: always() && inputs.search != ''
+        continue-on-error: true
         env:
           SEARCH: ${{ inputs.search }}
         run: |
@@ -82,6 +83,7 @@ jobs:
           else for j in client.jar libs/*.jar; do unzip -Z1 "$j"; done | grep '\.class$' | sed 's|\.class$||; s|/|.|g' | grep -E "$SEARCH" | head -300 || true; fi
           if [ -d extra ]; then :; fi
       - name: Print classes
+        continue-on-error: true
         env:
           CLASSES: ${{ inputs.classes }}
           ACCESS: ${{ inputs.access }}
@@ -103,7 +105,8 @@ jobs:
             echo "::endgroup::"
           done
       - name: Inspect extra jars
-        if: inputs.jars != ''
+        if: always() && inputs.jars != ''
+        continue-on-error: true
         env:
           JARS: ${{ inputs.jars }}
           FILTER: ${{ inputs.jar_filter }}
@@ -126,7 +129,8 @@ jobs:
             echo "::group::$c"; javap -cp "$root:../client.jar" -public "$c" 2>&1 | head -120; echo "::endgroup::"
           done < classes.txt
       - name: Forge MDK
-        if: inputs.mdk != ''
+        if: always() && inputs.mdk != ''
+        continue-on-error: true
         env:
           MDK: ${{ inputs.mdk }}
         run: |
