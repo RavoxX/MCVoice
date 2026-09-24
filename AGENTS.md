@@ -188,6 +188,10 @@ git show FETCH_HEAD:<path>`).
 * Its API classes live in the `-common` module artifacts.
 * It has no HUD callback, so the HUD is a mixin on `InGameHud#render`.
 
+**Mojang family input**
+* Keys use `InputConstants.KEY_*` from 1.20 on (26.3 no longer has LWJGL's
+  GLFW on the compile classpath) and `GLFW.GLFW_KEY_*` below.
+
 **Validation**
 * `validate_jar.py` prints the platform classes of each jar. Every total is
   about 327 classes, because Java 8 targets add synthetic classes where newer
