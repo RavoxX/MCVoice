@@ -22,6 +22,9 @@ import shutil
 import stat
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from preprocess import process  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -109,8 +112,9 @@ def generate(mc: str, out: str):
     for label, cfg, up in targets:
         variants = [src for v in fam.get("variants", [])
                     if vkey(v["minecraft"]["min"]) <= vkey(mc) <= vkey(v["minecraft"]["max"]) for src in v["sources"]]
-        tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"],
-                  "VARIANT_DIRS": ", ".join("'" + v + "'" for v in variants)}
+        loader_dir = "fabric" if label == "legacyfabric" else label
+        generate_sources(fam["id"], ["common"] + variants + [loader_dir], mc, label, os.path.join(out, label, "src-gen"))
+        tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"]}
         write(os.path.join(out, label, "build.gradle"), render(os.path.join(tdir, f"{label}.gradle"), tokens))
         includes.append(f"include '{label}'")
         if label in ("fabric", "legacyfabric"):
@@ -152,6 +156,34 @@ def generate(mc: str, out: str):
           + "\nBuild: `cd minecraft && ./gradlew build`; jars land in `minecraft/<loader>/build/libs/`.\n")
     print(json.dumps(meta))
     return meta
+
+
+TEXT_EXT = (".java", ".json", ".toml", ".properties", ".mcmeta", ".info", ".cfg", ".txt", ".md")
+
+
+def generate_sources(family, parts, mc, loader, dest):
+    """Preprocess the family's source parts for (mc, loader) into dest/{java,resources}."""
+    base = os.path.join(ROOT, "client", "platform", family)
+    for part in parts:
+        for kind in ("java", "resources"):
+            src = os.path.join(base, part, "src", "main", kind)
+            if not os.path.isdir(src):
+                continue
+            for d, _, files in os.walk(src):
+                for f in files:
+                    sp = os.path.join(d, f)
+                    rel = os.path.relpath(sp, src)
+                    dp = os.path.join(dest, kind, rel)
+                    if os.path.exists(dp):
+                        raise SystemExit(f"{rel} is provided by more than one source part of {family}")
+                    os.makedirs(os.path.dirname(dp), exist_ok=True)
+                    if f.endswith(TEXT_EXT):
+                        with open(sp, encoding="utf-8") as fh:
+                            text = process(fh.read(), mc, loader, os.path.relpath(sp, ROOT))
+                        with open(dp, "w", encoding="utf-8") as fh:
+                            fh.write(text)
+                    else:
+                        shutil.copyfile(sp, dp)
 
 
 def load_version():

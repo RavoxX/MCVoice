@@ -23,12 +23,9 @@ java {
 sourceSets {
     main {
         java.srcDirs += core
-        java.srcDirs += new File(repoRoot, 'client/platform/@FAMILY@/common/src/main/java')
-        java.srcDirs += [@VARIANT_DIRS@].collect { new File(repoRoot, "client/platform/@FAMILY@/${it}/src/main/java") }
-        java.srcDirs += new File(repoRoot, 'client/platform/@FAMILY@/fabric/src/main/java')
-        resources.srcDirs += new File(repoRoot, 'client/platform/@FAMILY@/fabric/src/main/resources')
+        java.srcDirs += file('src-gen/java')
         resources.srcDirs += new File(repoRoot, 'client/common/src/main/resources')
-        resources.srcDirs += new File(repoRoot, 'client/platform/@FAMILY@/common/src/main/resources')
+        resources.srcDirs += file('src-gen/resources')
     }
 }
 
