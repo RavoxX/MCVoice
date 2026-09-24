@@ -40,6 +40,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # only used to publish build logs to the tooling/probe-output branch
     outputs:
       minecraft: ${{ steps.info.outputs.minecraft }}
     steps:
@@ -129,3 +131,18 @@ jobs:
         with:
           name: mc-${{ steps.info.outputs.minecraft }}-status
           path: status/
+      - name: Publish build logs (developer diagnostics)
+        if: always()
+        env:
+          MC: ${{ steps.info.outputs.minecraft }}
+        run: |
+          set -eu
+          [ -d status ] || exit 0
+          git init -q logs && cd logs
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          if git fetch -q origin tooling/probe-output 2>/dev/null; then git checkout -q -b tooling/probe-output FETCH_HEAD; else git checkout -q --orphan tooling/probe-output; fi
+          mkdir -p "builds/$MC"; rm -f "builds/$MC"/*
+          for f in ../status/*; do tail -c 400000 "$f" > "builds/$MC/$(basename "$f")"; done
+          git add -A && git commit -q -m "build logs $MC run ${{ github.run_id }}" || exit 0
+          for i in 1 2 3; do git push -q origin HEAD:tooling/probe-output && break; git fetch -q origin tooling/probe-output && git rebase -q FETCH_HEAD || true; done
