@@ -1,0 +1,155 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+Minecraft Mavenizer 0.5.21 by Forge Development LLC
+  Output:             /home/runner/work/MCVoice/MCVoice/minecraft/forge/.gradle/mavenizer/repo
+  Output JSON:        /home/runner/work/MCVoice/MCVoice/minecraft/forge/.gradle/mavenizer/dependencies/default.json
+  Dependencies Only:  false
+  Cache:              /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
+  JDK Cache:          /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
+  Offline:            false
+  Cache Only:         false
+  Ignore Cache:       false
+  Mappings:           auto
+  Foreign Repos:      [https://repo.maven.apache.org/maven2/, https://maven.minecraftforge.net/, https://libraries.minecraft.net/]
+  GradleVariantHack:  true
+  Disable Gradle:     false
+  Stub Jars:          false
+
+Processing Minecraft dependency: net.minecraftforge:forge:26.3-66.0.3
+Using Mappings: official-26.3
+Processing Minecraft Forge (userdev): 26.3-66.0.3
+  Cache miss!
+  java.lang.Exception: Cache miss! Stacktrace for Information Only
+  	at net.minecraftforge.mcmaven.impl.Mavenizer.assertNotCacheOnly(Mavenizer.java:60)
+  	at net.minecraftforge.mcmaven.impl.cache.MavenCache.download(MavenCache.java:271)
+  	at net.minecraftforge.mcmaven.impl.cache.MavenCache.download(MavenCache.java:101)
+  	at net.minecraftforge.mcmaven.impl.repo.forge.Patcher.<init>(Patcher.java:94)
+  	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.processV3(ForgeRepo.java:257)
+  	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.process(ForgeRepo.java:144)
+  	at net.minecraftforge.mcmaven.impl.MinecraftMaven.createForge(MinecraftMaven.java:240)
+  	at net.minecraftforge.mcmaven.impl.MinecraftMaven.run(MinecraftMaven.java:119)
+  	at net.minecraftforge.mcmaven.cli.MavenTask.run(MavenTask.java:218)
+  	at net.minecraftforge.mcmaven.cli.Main.run(Main.java:70)
+  	at net.minecraftforge.mcmaven.cli.Main.main(Main.java:23)
+Mappings Zip
+  srg2names[official-26.3][Empty]
+Mappings POM
+  pom[mappings_official]
+Client Extra
+  downloadLauncherManifest
+  downloadVersionJson[26.3]
+  download[26.3][client]
+  extra[client]
+Client Maven POM
+  pom[client-extra]
+Sources
+  listLibraries
+  stripClient
+  download[26.3][server]
+  extractServer
+  stripServer
+  merge
+  modifyAccess
+  stripSides
+  decompile
+  patch
+  patch[forge]
+  downloadSources
+  injectSources[forge]
+  remap[forge][official-26.3][javadoc]
+  remap[forge][official-26.3][javadoc][variants]
+Classes
+  recompile[forge][official-26.3]
+  injectData[forge][official-26.3]
+  injectData[forge][official-26.3][variants]
+Maven POM
+  pom[forge]
+Metadata
+  metadata[forge]
+  metadata[forge][variants]
+Minecraft Maven has finished, took 3:14.522
+
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :jar
+> Task :sourcesJar
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+You have 1 new message from ForgeGradle.
+
+---   Message 1/1   ---
+Welcome to ForgeGradle 7.0!
+
+Here are some release highlights:
+- Now requires Gradle 9.3.0.
+- A new message board that will display any new messages (only on the next
+  successful build) from ForgeGradle, including release highlights and
+  project-wide warnings.
+- Complete rewrite of the plugin and underlying code.
+- Complete overhaul of DSL objects and registrations.
+- Slimmed down the plugin, which now delegates many actions to separate tools.
+- Support for declaring defaults in settings.gradle (experimental).
+- Support for all Forge versions that are supported by ForgeGradle 6.
+  - Minecraft 1.20.6+ are natively supported with no additional setup.
+  - Minecraft 1.13.2 - 1.20.4 (along with certain versions of 1.12.2) are
+    supported alongside the usage of the Renamer plugin (experimental).
+
+A couple of important things to note:
+- Many plugins that worked with ForgeGradle 6, such as Parchments Librarian,
+  do not work with ForgeGradle 7. For most cases (such as parchment), we have
+  implemented native support.
+- Many things that ForgeGradle 6 and older used to do are now decentralized
+  away from the plugin. This means that your project will need to apply
+  net.minecraftforge.jarjar if you wish to use Forges Jar-in-Jar system.
+  If you are on an older version (1.20.4 and older), you will need the
+  net.minecraftforge.renamer plugin. Many of these come with our provided
+  MDK, so this should not be an issue for you.
+- If you come across any lingering bugs, please report them to our GitHub
+  issue tracker. Please do not use Discord as a means to report issues, as
+  they will get lost in the discussion very easily.
+- If you would like to see additional examples of ForgeGradle 7 usages,
+  please see our MDKExamples repo (https://github.com/MinecraftForge/MDKExamples).
+  If would like to request a specific usage for ForgeGradle 7, please file an
+  issue on the GitHub issue tracker for it.
+
+For our GitHub issue tracker, see https://github.com/MinecraftForge/ForgeGradle/issues
+
+Proper documentation for ForgeGradle 7 is coming soon. For now, feel free to
+ask any questions you may have on the following platforms:
+- Forums (https://forums.minecraftforge.net/)
+- Discord (https://discord.minecraftforge.net/)
+
+This message will not display again until ForgeGradle 7.1 or the below file is
+deleted:
+/home/runner/.gradle/caches/minecraftforge/forgegradle/messages/7_0_WELCOME_1
+--- End of Message ---
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790280604971.json
+
+BUILD SUCCESSFUL in 3m 40s
+4 actionable tasks: 4 executed
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
+valid: mcvoice-0.1.0-mc26.3-forge.jar (327 classes, 16 platform classes, metadata ['META-INF/mods.toml'])
+  platform: dev/mcvoice/platform/forge/McVoiceForge
+  platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
+  platform: dev/mcvoice/platform/mc/McAdapter
+  platform: dev/mcvoice/platform/mc/McAdapter$1
+  platform: dev/mcvoice/platform/mc/McAdapter$2
+  platform: dev/mcvoice/platform/mc/McAdapter$3
+  platform: dev/mcvoice/platform/mc/McAdapter$4
+  platform: dev/mcvoice/platform/mc/McAdapter$5
+  platform: dev/mcvoice/platform/mc/McCanvas
+  platform: dev/mcvoice/platform/mc/McIds
+  platform: dev/mcvoice/platform/mc/McLogging
+  platform: dev/mcvoice/platform/mc/McLogging$1
+  platform: dev/mcvoice/platform/mc/McScreen
+  platform: dev/mcvoice/platform/mc/PlatformInfo
+  platform: dev/mcvoice/platform/mc/RawPayload
+  platform: dev/mcvoice/platform/mc/ScreenHost
