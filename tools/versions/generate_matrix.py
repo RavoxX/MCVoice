@@ -158,13 +158,16 @@ def main() -> int:
         same_line = [x["id"] for x in releases if x["id"] == line or x["id"].startswith(line + ".")]
         latest_of_line = bool(same_line) and mc == max(same_line, key=version_key)
         exact = pick_latest([a for a in api_versions if a.endswith(suffix)])
-        # "+1.16" is ambiguous for release 1.16 itself: it is the suffix of the whole 1.16 line
-        if exact and not (len(parts) == 2 and not latest_of_line):
+        # Until 1.18 Fabric API named builds after the minor line only ("0.42.0+1.16" targets the
+        # line's latest patch release); from then on "+1.19" means exactly 1.19. A line with any
+        # patch-specific build ("+1.19.2") uses exact names.
+        line_generic = not any(re.search(r"\+" + re.escape(line) + r"\.\d+$", a) for a in api_versions)
+        if exact and not (len(parts) == 2 and line_generic and not latest_of_line):
             return exact
         # Older Fabric API builds name only the minor line ("0.42.0+1.16", "0.28.5+1.15"); use the
         # newest build of that line for its latest patch release only (earlier patch releases of a line
         # cannot be assumed compatible with the newest build).
-        if len(parts) >= 2 and latest_of_line:
+        if len(parts) >= 2 and latest_of_line and line_generic:
             return pick_latest([a for a in api_versions if a.endswith("+" + line)])
         return None
 
