@@ -68,6 +68,7 @@ jobs:
           print("minecraft=" + b["minecraft"])
           print("java=%d" % b["java"])
           print("build_jdk=%d" % b["build_jdk"])
+          print("gradle_jdk=%d" % b.get("gradle_jdk", b["build_jdk"]))
           print("loaders=" + " ".join(b["loaders"]))
           PY
           cat minecraft/build-info.json
@@ -77,6 +78,7 @@ jobs:
           java-version: |
             ${{ steps.info.outputs.java }}
             ${{ steps.info.outputs.build_jdk }}
+            ${{ steps.info.outputs.gradle_jdk }}
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: false

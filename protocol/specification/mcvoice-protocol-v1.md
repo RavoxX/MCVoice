@@ -118,6 +118,7 @@ the attacker-controlled size.
 | `session_expired` | yes | resume token or session no longer valid |
 | `stale_epoch` | no | message referenced an epoch older than the current one |
 | `server_full` | yes | `MAX_SESSIONS` reached |
+| `session_replaced` | yes | the same player authenticated on a newer connection; the older one is closed |
 | `internal` | yes | unexpected backend failure |
 
 After a fatal error the backend closes the WebSocket (close code 1008 policy,
@@ -232,7 +233,10 @@ Invalid attestations are ignored (logged at debug) — never fatal.
 {"type":"pos","epoch":7,"x":100.5,"y":64.0,"z":-20.25}
 ```
 
-At most `position_hz_max` per second (backends drop extra ones silently).
+At most `position_hz_max` per second (backends drop extra ones silently). The
+rate window restarts on every accepted `scope`, so the first `pos` of a new
+epoch is always accepted even when it follows the previous epoch's last `pos`
+closely.
 Ignored when `epoch` ≠ current epoch or the session is not in a world.
 Coordinates must be finite and |v| ≤ 3.0e7. Positions are **only** a routing
 hint for bandwidth reduction; receivers never use them for playback (§9).

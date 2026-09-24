@@ -109,6 +109,7 @@ def generate(mc: str, out: str):
     buildgen = buildgens.pop()
     tdir = os.path.join(HERE, "templates", buildgen)
     gradle_version = max((t[1]["gradle"] for t in targets), key=vkey)
+    gradle_jdk = max([entry["build_jdk"]] + [t[1].get("gradle_jdk", 0) for t in targets])
     if os.path.isdir(out):
         shutil.rmtree(out)
     os.makedirs(out)
@@ -120,6 +121,8 @@ def generate(mc: str, out: str):
         "java_version": java,
         "org.gradle.jvmargs": "-Xmx3g",
         "org.gradle.caching": "true",
+        # a loader whose build setup fails to configure must not take the other loaders down with it
+        "org.gradle.configureondemand": "true",
     }
     includes = []
     for label, cfg, up in targets:
@@ -157,6 +160,7 @@ def generate(mc: str, out: str):
         "gradle": gradle_version,
         "java": java,
         "build_jdk": entry["build_jdk"],
+        "gradle_jdk": gradle_jdk,
         "loaders": [t[0] for t in targets],
         "not_built": reasons,
     }
