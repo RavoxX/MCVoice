@@ -1,44 +1,19 @@
 {
-  "description": "Minecraft API families. Each family is one set of version-specific adapter sources (client/platform/<id>) valid for a range of Minecraft releases; loaders map to a build-system generation (tools/port-version/templates/<buildgen>). A version is only *supported* when CI builds it (versions/build-status.json).",
+  "description": "Minecraft API families. Each family is one set of version-specific adapter sources (client/platform/<id>) valid for a range of Minecraft releases; differences inside a family are //#if MC blocks (tools/port-version/preprocess.py). Each loader lists build setups by Minecraft range; buildgen names tools/port-version/templates/<buildgen>. A version is only *supported* when CI builds it (versions/build-status.json).",
   "families": [
     {
-      "id": "mc26",
-      "minecraft": {
-        "min": "26.1",
-        "max": "26.3"
-      },
+      "id": "mojang",
+      "minecraft": {"min": "1.21.9", "max": "26.3"},
       "loaders": {
-        "fabric": {
-          "buildgen": "unobf",
-          "gradle": "9.8.0",
-          "plugin_version": "1.18.2"
-        },
-        "forge": {
-          "buildgen": "unobf",
-          "gradle": "9.8.0",
-          "plugin_version": "[7.0.17,8)"
-        }
-      },
-      "variants": [
-        {
-          "minecraft": {
-            "min": "26.1",
-            "max": "26.1.2"
-          },
-          "sources": [
-            "variants/screen-on-minecraft"
-          ]
-        },
-        {
-          "minecraft": {
-            "min": "26.2",
-            "max": "26.3"
-          },
-          "sources": [
-            "variants/screen-on-gui"
-          ]
-        }
-      ]
+        "fabric": [
+          {"minecraft": {"min": "26.1", "max": "26.3"}, "buildgen": "unobf", "gradle": "9.8.0", "plugin_version": "1.18.2"},
+          {"minecraft": {"min": "1.21.9", "max": "1.21.11"}, "buildgen": "remap", "gradle": "9.8.0", "plugin_version": "1.18.2"}
+        ],
+        "forge": [
+          {"minecraft": {"min": "26.1", "max": "26.3"}, "buildgen": "unobf", "gradle": "9.8.0", "plugin_version": "[7.0.17,8)"},
+          {"minecraft": {"min": "1.21.9", "max": "1.21.11"}, "buildgen": "remap", "gradle": "9.8.0", "plugin_version": "[7.0.17,8)"}
+        ]
+      }
     }
   ]
 }

@@ -40,9 +40,21 @@ def load(p):
 
 def family_for(mc: str, families):
     for f in families["families"]:
-        if vkey(f["minecraft"]["min"]) <= vkey(mc) <= vkey(f["minecraft"]["max"]):
+        if in_range(mc, f["minecraft"]):
             return f
     return None
+
+
+def in_range(mc: str, r) -> bool:
+    return vkey(r["min"]) <= vkey(mc) <= vkey(r["max"])
+
+
+def loader_config(fam, label, mc):
+    """The family's build setup for this loader and Minecraft version (a dict, or a list of ranged dicts)."""
+    cfg = fam["loaders"].get(label)
+    if isinstance(cfg, list):
+        cfg = next((c for c in cfg if in_range(mc, c["minecraft"])), None)
+    return cfg
 
 
 def plan(mc: str):
@@ -60,10 +72,11 @@ def plan(mc: str):
         if not up.get("available"):
             reasons[label] = up.get("reason", "unavailable upstream")
             continue
-        if fam is None or label not in fam["loaders"]:
+        cfg = loader_config(fam, label, mc) if fam else None
+        if cfg is None:
             reasons[label] = "not implemented yet for this Minecraft version (no adapter family)"
             continue
-        targets.append((label, fam["loaders"][label], up))
+        targets.append((label, cfg, up))
     return entry, fam, targets, reasons
 
 
@@ -111,7 +124,7 @@ def generate(mc: str, out: str):
     includes = []
     for label, cfg, up in targets:
         variants = [src for v in fam.get("variants", [])
-                    if vkey(v["minecraft"]["min"]) <= vkey(mc) <= vkey(v["minecraft"]["max"]) for src in v["sources"]]
+                    if in_range(mc, v["minecraft"]) for src in v["sources"]]
         loader_dir = "fabric" if label == "legacyfabric" else label
         generate_sources(fam["id"], ["common"] + variants + [loader_dir], mc, label, os.path.join(out, label, "src-gen"))
         tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"]}
