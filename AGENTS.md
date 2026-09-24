@@ -230,7 +230,7 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **Passing:** 50 Minecraft versions, 87 jars.
+* **Passing:** 50 Minecraft versions, 87 jars (plus 1.14.4–1.15.2 built on main at the end of session 1, but not yet in `build-status.json`, and without `mc/` branches).
   * Every Forge release 1.8–1.12.2 and 1.16.1–26.3.
   * Fabric wherever Fabric API exists for 1.16.5–26.3.
   * Legacy Fabric wherever Legacy Fabric API exists.
@@ -239,11 +239,11 @@ git show FETCH_HEAD:<path>`).
   compatibility versions (19–16) are not verified.
 * **Not implemented** (reasons are in `versions/supported.md`):
   * 1.13.2 (Forge MCP-1.13 era);
-  * 1.14.x–1.15.x (Fabric API v0 modules, ForgeGradle 3 era);
   * Legacy Fabric versions without Legacy Fabric API.
 * **Ideas / next steps:**
   * client runtime smoke test (headless client launch / Fabric gametest);
   * group voice for SVC interop;
   * receiving SVC voice from a second real client in CI;
   * shared-state backend scaling (Redis);
-  * the 1.13–1.15 gap.
+  * the 1.13 gap;
+  * check release run https://github.com/RavoxX/MCVoice/actions/runs/36054904091 (v0.1.0).
