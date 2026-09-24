@@ -42,3 +42,6 @@ release-output/
 Thumbs.db
 *.swp
 client/**/build/
+
+# Node tooling (tools/svc-interop)
+node_modules/

@@ -1,0 +1,116 @@
+name: svc-interop
+
+# Real-server Simple Voice Chat interoperability check. Starts a Paper server
+# with the unmodified Simple Voice Chat plugin (downloaded from Modrinth at
+# run time; nothing of it is stored in this repository), joins it with a plain
+# protocol bot and lets MCVoice's own svc-compat code (SvcHandshake +
+# SvcUdpClient via the SvcProbe harness) request the secret, authenticate over
+# UDP, stay connected and send microphone packets. The result (accepted
+# compatibility version, cipher construction) is what SvcProtocols.VERIFIED
+# may claim.
+
+on:
+  workflow_dispatch:
+    inputs:
+      minecraft:
+        description: Paper / Minecraft version for the test server
+        default: "1.21.4"
+  push:
+    branches: [main]
+    paths: ["client/svc-compat/**", "tools/svc-interop/**", ".github/workflows/svc-interop.yml"]
+  schedule:
+    - cron: "17 4 * * 1"   # weekly: catches new SVC releases
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write   # only to publish the result to the tooling/probe-output branch
+    env:
+      MC: ${{ inputs.minecraft || '1.21.4' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Download Paper and the Simple Voice Chat plugin
+        run: |
+          set -euo pipefail
+          mkdir -p server/plugins && cd server
+          # Paper downloads API (v3 "fill"; v2 as fallback)
+          url=$(curl -sSf "https://fill.papermc.io/v3/projects/paper/versions/$MC/builds" \
+                | jq -r '[.[] | select(.channel=="STABLE" or .channel=="stable")][0].downloads["server:default"].url // empty' || true)
+          if [ -z "$url" ]; then
+            b=$(curl -sSf "https://api.papermc.io/v2/projects/paper/versions/$MC/builds" | jq -r '.builds[-1].build')
+            url="https://api.papermc.io/v2/projects/paper/versions/$MC/builds/$b/downloads/paper-$MC-$b.jar"
+          fi
+          echo "paper: $url"; curl -sSfL "$url" -o paper.jar
+          q=$(jq -rn --arg v "$MC" '"loaders=" + (["bukkit","paper"]|@json|@uri) + "&game_versions=" + ([$v]|@json|@uri)')
+          meta=$(curl -sSf -A "RavoxX/MCVoice svc-interop CI" "https://api.modrinth.com/v2/project/simple-voice-chat/version?$q")
+          svc_url=$(echo "$meta" | jq -r '.[0].files[] | select(.primary) | .url' | head -1)
+          svc_ver=$(echo "$meta" | jq -r '.[0].version_number')
+          echo "simple voice chat: $svc_ver $svc_url"
+          echo "SVC_VERSION=$svc_ver" >> "$GITHUB_ENV"
+          curl -sSfL "$svc_url" -o plugins/voicechat-bukkit.jar
+          echo "eula=true" > eula.txt
+          printf 'online-mode=false\nserver-port=25565\nenforce-secure-profile=false\nspawn-protection=0\nlevel-type=minecraft\\:flat\ngenerate-structures=false\nview-distance=4\n' > server.properties
+      - name: Start server
+        working-directory: server
+        run: |
+          nohup java -Xmx2G -jar paper.jar --nogui > server.log 2>&1 &
+          for i in $(seq 180); do
+            grep -q 'Done (' server.log && break
+            sleep 1
+          done
+          grep -q 'Done (' server.log || { tail -80 server.log; echo "::error::server did not start"; exit 1; }
+          grep -i voice server.log | tail -20 || true
+      - name: Build probe
+        working-directory: client
+        run: ./gradlew -q :svc-compat:printTestClasspath --no-daemon > ../probe-classpath.txt
+      - name: Run the probe
+        id: probe
+        working-directory: tools/svc-interop
+        run: |
+          set -o pipefail
+          npm ci --no-audit --no-fund
+          cp=$(tail -1 ../../probe-classpath.txt)
+          node bot.js 127.0.0.1 25565 "$MC" -- java -cp "$cp" dev.mcvoice.client.svc.tools.SvcProbe 127.0.0.1 90 \
+            | tee ../../svc-interop-result.json
+      - name: Report
+        if: always()
+        run: |
+          {
+            echo "## Simple Voice Chat interoperability"
+            echo "Server: Paper $MC with Simple Voice Chat ${SVC_VERSION:-?}"
+            echo '```json'; cat svc-interop-result.json 2>/dev/null || echo '{"ok":false,"error":"no result"}'; echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          tail -40 server/server.log || true
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: svc-interop-${{ env.MC }}
+          path: |
+            svc-interop-result.json
+            server/server.log
+      - name: Publish result (developer diagnostics)
+        if: always()
+        run: |
+          set -eu
+          [ -f svc-interop-result.json ] || echo '{"ok":false,"error":"no result"}' > svc-interop-result.json
+          mkdir -p pub && cp svc-interop-result.json pub/result.json && tail -c 200000 server/server.log > pub/server.log || true
+          git init -q out && cd out
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          if git fetch -q origin tooling/probe-output 2>/dev/null; then git checkout -q -b tooling/probe-output FETCH_HEAD; else git checkout -q --orphan tooling/probe-output; fi
+          mkdir -p "svc-interop/$MC"; cp ../pub/* "svc-interop/$MC/"; echo "${SVC_VERSION:-?}" > "svc-interop/$MC/svc-version.txt"
+          git add -A && git commit -q -m "svc-interop $MC run ${{ github.run_id }}" || exit 0
+          for i in 1 2 3 4 5; do git push -q origin HEAD:tooling/probe-output && break; sleep $((i * 3)); git fetch -q origin tooling/probe-output && git rebase -q FETCH_HEAD || true; done

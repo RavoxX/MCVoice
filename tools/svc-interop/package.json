@@ -1,0 +1,9 @@
+{
+  "name": "mcvoice-svc-interop",
+  "private": true,
+  "description": "Minecraft connection for the Simple Voice Chat interoperability probe (CI only)",
+  "license": "MIT",
+  "dependencies": {
+    "minecraft-protocol": "^1.60.0"
+  }
+}

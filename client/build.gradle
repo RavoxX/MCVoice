@@ -54,6 +54,11 @@ project(':svc-compat') {
         api project(':network')
     }
     // tests use lambdas; main code stays Java 8 source compatible
+    // classpath for tools/svc-interop (runs the SvcProbe harness against a real SVC server)
+    tasks.register('printTestClasspath') {
+        dependsOn 'testClasses'
+        doLast { println sourceSets.test.runtimeClasspath.asPath }
+    }
 }
 project(':ui') { dependencies { api project(':common') } }
 project(':core') {
