@@ -1,0 +1,29 @@
+{
+  "minecraft": "1.18.2",
+  "family": "mojang",
+  "java": 17,
+  "build_jdk": 17,
+  "jdks": [
+    17,
+    25
+  ],
+  "loaders": [
+    "fabric",
+    "forge"
+  ],
+  "builds": {
+    "fabric": {
+      "buildgen": "remap",
+      "gradle": "9.8.0",
+      "gradle_jdk": 25,
+      "plugin_version": "1.18.2"
+    },
+    "forge": {
+      "buildgen": "fg6",
+      "gradle": "8.8",
+      "gradle_jdk": 17,
+      "plugin_version": "[6.0,6.2)"
+    }
+  },
+  "not_built": {}
+}
