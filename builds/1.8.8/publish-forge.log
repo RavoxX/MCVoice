@@ -1,0 +1,43 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+[Unimined] Plugin Version: 1.4.1
+[Unimined/MinecraftDownloader] retrieving version metadata
+[Unimined/Minecraft ::main] Applying minecraft config for source set 'main'
+[Unimined/ForgeTransformer] Selected FG2
+[Unimined/Forge] Using FG2 transformer
+Overwriting dependency searge
+[Unimined/Minecraft ::main] Applying FG2MinecraftTransformer
+[Unimined/Minecraft ::main] Applying run configs
+[Unimined/Forge] transforming minecraft jar for FG2
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class ady$FlowerEntry, {official=ady$FlowerEntry, searge=net/minecraft/world/biome/BiomeGenBase$FlowerEntry, mcp=net/minecraft/world/biome/BiomeGenBase$FlowerEntry}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class aee$1, {official=aee$1, searge=net/minecraft/world/biome/BiomeGenHills$1, mcp=net/minecraft/world/biome/BiomeGenHills$1}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class aee$EmeraldGenerator, {official=aee$EmeraldGenerator, searge=net/minecraft/world/biome/BiomeGenHills$EmeraldGenerator, mcp=net/minecraft/world/biome/BiomeGenHills$EmeraldGenerator}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class afh$5, {official=afh$5, searge=net/minecraft/block/Block$5, mcp=net/minecraft/block/Block$5}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class afh$6, {official=afh$6, searge=net/minecraft/block/Block$6, mcp=net/minecraft/block/Block$6}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class afh$7, {official=afh$7, searge=net/minecraft/block/Block$7, mcp=net/minecraft/block/Block$7}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class c$4, {official=c$4, searge=net/minecraft/crash/CrashReportCategory$4, mcp=net/minecraft/crash/CrashReportCategory$4}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class c$5, {official=c$5, searge=net/minecraft/crash/CrashReportCategory$5, mcp=net/minecraft/crash/CrashReportCategory$5}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class kb$5$1, {official=kb$5$1, searge=net/minecraft/init/Bootstrap$5$1, mcp=net/minecraft/init/Bootstrap$5$1}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class lc$a$1, {official=lc$a$1, searge=net/minecraft/server/management/PlayerManager$PlayerInstance$1, mcp=net/minecraft/server/management/PlayerManager$PlayerInstance$1}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class lc$a$2, {official=lc$a$2, searge=net/minecraft/server/management/PlayerManager$PlayerInstance$2, mcp=net/minecraft/server/management/PlayerManager$PlayerInstance$2}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class yj$2, {official=yj$2, searge=net/minecraft/item/ItemArmor$2, mcp=net/minecraft/item/ItemArmor$2}
+[Unimined/JarMod ::source set 'main'] Adding mappings for added inner class zw$18, {official=zw$18, searge=net/minecraft/item/Item$18, mcp=net/minecraft/item/Item$18}
+[Unimined/ForgeTransformer] Applying ATs [forge_at.cfg]
+[Unimined/ModRemapper] Remapping mods from searge to mcp
+[Unimined/ModRemapper] No mods found for remapping
+
+> Task :generatePomFileForModPublication
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :remapJar UP-TO-DATE
+> Task :sourcesJar UP-TO-DATE
+> Task :publishModPublicationToGitHubPackagesRepository
+> Task :publish
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790283067521.json
+
+BUILD SUCCESSFUL in 27s
+7 actionable tasks: 2 executed, 5 up-to-date

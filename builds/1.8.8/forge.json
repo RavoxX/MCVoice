@@ -1,1 +1,1 @@
-{"minecraft": "1.8.8", "loader": "forge", "status": "pass", "run": "https://github.com/RavoxX/MCVoice/actions/runs/36054345376", "commit": "2082052cae798cd6e26e1f51d51ea01c9fdb75e2", "jar": "mcvoice-0.1.0-mc1.8.8-forge.jar"}
+{"minecraft": "1.8.8", "loader": "forge", "status": "pass", "run": "https://github.com/RavoxX/MCVoice/actions/runs/36054904091", "commit": "175cbf63868bb1d01c10f71358fc553713e0396d", "jar": "mcvoice-0.1.0-mc1.8.8-forge.jar", "maven": "published"}
