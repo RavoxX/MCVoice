@@ -35,6 +35,7 @@ public final class WorldTracker {
     public static final String REASON_PLAYER_ENTITY = "player_entity_changed";
     public static final String REASON_DIMENSION = "dimension_change";
     public static final String REASON_WORLD_REPLACED = "world_replaced";
+    public static final String REASON_RESPAWN = "respawn";
 
     /** Whether a reason means a new Minecraft server session (vs. a dimension change on the same server). */
     public static boolean isNewServerSession(String reason) {
@@ -49,6 +50,7 @@ public final class WorldTracker {
 
     private long epoch;
     private WeakReference<Object> worldRef = new WeakReference<Object>(null);
+    private WeakReference<Object> playerRef = new WeakReference<Object>(null);
     private String dimension;
     private String address;
     private int entityId = Integer.MIN_VALUE;
@@ -112,6 +114,8 @@ public final class WorldTracker {
                 reason = REASON_DIMENSION;
             } else if (worldRef.get() != identity) {
                 reason = REASON_WORLD_REPLACED;
+            } else if (local.playerIdentity != null && playerRef.get() != local.playerIdentity) {
+                reason = REASON_RESPAWN;
             }
         }
 
@@ -131,6 +135,7 @@ public final class WorldTracker {
             epoch++;
             inWorld = true;
             worldRef = new WeakReference<Object>(identity);
+            playerRef = new WeakReference<Object>(local.playerIdentity);
             dimension = dim;
             address = addr;
             entityId = local.entityId;

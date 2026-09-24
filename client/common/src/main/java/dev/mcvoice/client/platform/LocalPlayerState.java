@@ -8,6 +8,8 @@ public final class LocalPlayerState {
     public String name;
     /** Entity id of the local player; changes on (re)join, proxy server switch and respawn on most versions. */
     public int entityId;
+    /** The local player object itself (compared by identity): Minecraft replaces it on respawn. */
+    public Object playerIdentity;
     /** Eye position. */
     public double x, y, z;
     /** Minecraft yaw/pitch in degrees (yaw 0 = facing +Z / south). */

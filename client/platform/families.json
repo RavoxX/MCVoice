@@ -1,0 +1,12 @@
+{
+  "description": "Minecraft API families. Each family is one set of version-specific adapter sources (client/platform/<id>) valid for a range of Minecraft releases; loaders map to a build-system generation (tools/port-version/templates/<buildgen>). A version is only *supported* when CI builds it (versions/build-status.json).",
+  "families": [
+    {
+      "id": "mc26",
+      "minecraft": {"min": "26.1", "max": "26.3"},
+      "loaders": {
+        "fabric": {"buildgen": "loom-noremap", "gradle": "9.6.1", "plugin_version": "1.18.2"}
+      }
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+name: mc-build
+
+# Builds every implemented loader of one Minecraft version and validates the
+# production jars. Runs on mc/<version> branches (which carry a generated
+# minecraft/ directory) and on demand for any version from main (generating
+# the build with tools/port-version/port.py first). The per-loader results are
+# the only source of "supported" status (versions/build-status.json).
+
+on:
+  push:
+    branches: ["mc/**"]
+  workflow_dispatch:
+    inputs:
+      minecraft:
+        description: Minecraft version (generate build with port.py)
+        required: false
+        default: ""
+  workflow_call:
+    inputs:
+      minecraft:
+        required: true
+        type: string
+      ref:
+        required: false
+        type: string
+        default: ""
+      version:
+        description: release version override (e.g. 0.1.0)
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mc-build-${{ github.ref }}-${{ inputs.minecraft }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      minecraft: ${{ steps.info.outputs.minecraft }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Resolve target
+        id: info
+        env:
+          MC: ${{ inputs.minecraft }}
+        run: |
+          set -euo pipefail
+          if [ -n "$MC" ] || [ ! -f minecraft/build-info.json ]; then
+            if [ -z "$MC" ]; then MC="${GITHUB_REF_NAME#mc/}"; fi
+            python3 tools/port-version/port.py "$MC"
+          fi
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          b = json.load(open("minecraft/build-info.json"))
+          print("minecraft=" + b["minecraft"])
+          print("java=%d" % b["java"])
+          print("build_jdk=%d" % b["build_jdk"])
+          print("loaders=" + " ".join(b["loaders"]))
+          PY
+          cat minecraft/build-info.json
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: |
+            ${{ steps.info.outputs.java }}
+            ${{ steps.info.outputs.build_jdk }}
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+      - name: Build loaders
+        id: build
+        working-directory: minecraft
+        env:
+          MOD_VERSION_OVERRIDE: ${{ inputs.version }}
+        run: |
+          set -uo pipefail
+          mkdir -p ../dist ../status
+          extra=""
+          if [ -n "$MOD_VERSION_OVERRIDE" ]; then extra="-Pmod_version=$MOD_VERSION_OVERRIDE"; fi
+          fail=0
+          for loader in ${{ steps.info.outputs.loaders }}; do
+            echo "::group::build $loader"
+            if ./gradlew ":$loader:build" --stacktrace --no-daemon $extra 2>&1 | tee "../status/$loader.log"; then
+              jar=$(ls "$loader"/build/libs/mcvoice-*-mc*-"$loader".jar 2>/dev/null | grep -v -- '-sources' | head -1)
+              if [ -n "$jar" ] && python3 ../tools/port-version/validate_jar.py "$jar" --loader "$loader" \
+                   --minecraft "${{ steps.info.outputs.minecraft }}" --java "${{ steps.info.outputs.java }}" | tee -a "../status/$loader.log"; then
+                cp "$jar" ../dist/
+                status=pass; reason=""; jarname=$(basename "$jar")
+              else
+                status=fail; reason="jar validation failed"; jarname=""; fail=1
+              fi
+            else
+              status=fail; jarname=""; fail=1
+              reason=$(grep -E "error:|FAILURE|What went wrong" -A2 "../status/$loader.log" | head -c 400 | tr '\n' ' ')
+            fi
+            echo "::endgroup::"
+            python3 - "$loader" "$status" "$jarname" "$reason" <<'PY'
+          import json, os, sys
+          loader, status, jar, reason = sys.argv[1:5]
+          r = {"minecraft": "${{ steps.info.outputs.minecraft }}", "loader": loader, "status": status,
+               "run": f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+               "commit": os.environ["GITHUB_SHA"]}
+          if jar: r["jar"] = jar
+          if reason: r["reason"] = reason
+          json.dump(r, open(f"../status/{loader}.json", "w"))
+          print(r)
+          PY
+          done
+          (cd ../dist && sha256sum *.jar > checksums-sha256.txt || true)
+          exit $fail
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: mc-${{ steps.info.outputs.minecraft }}-jars
+          path: dist/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: mc-${{ steps.info.outputs.minecraft }}-status
+          path: status/
