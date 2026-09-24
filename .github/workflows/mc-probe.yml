@@ -126,10 +126,12 @@ jobs:
           set -uo pipefail
           cd work && mkdir -p extra && cd extra
           exec > >(tee -a ../../probe-output.txt) 2>&1
+          set +e
           i=0
           for u in $JARS; do
             i=$((i+1)); curl -sSfL "$u" -o "j$i.jar" || { echo "download failed: $u"; continue; }
-            mkdir -p "x$i" && (cd "x$i" && unzip -q -o "../j$i.jar")
+            echo "downloaded $u: $(file -b "j$i.jar") $(stat -c %s "j$i.jar") bytes"
+            mkdir -p "x$i" && (cd "x$i" && unzip -q -o "../j$i.jar") || echo "unzip failed: $u"
             # unpack nested (jar-in-jar) modules
             find "x$i" -name '*.jar' | while read -r n; do d="${n%.jar}_x"; mkdir -p "$d"; (cd "$d" && unzip -q -o "$OLDPWD/$n"); done
           done
