@@ -141,7 +141,16 @@ jobs:
             find "x$i" -name '*.jar' | while read -r n; do d="${n%.jar}_x"; mkdir -p "$d"; (cd "$d" && unzip -q -o "$OLDPWD/$n"); done
           done
           if [ -n "$MAPPINGS" ]; then
-            for m in $(find . -name '*.tiny' -o -name '*.csv' -o -name '*.srg' -o -name '*.tsrg'); do
+            for m in $(find . -name '*.tiny'); do
+              # tiny v2: print whole class blocks (fields/methods with named descriptors) for matching classes
+              echo "::group::mappings $m"
+              awk -v re="$MAPPINGS" -F'\t' '
+                /^c\t/ { inside = ($NF ~ re); if (inside) print "CLASS " $2 " -> " $NF; next }
+                inside && /^\t[mf]\t/ { print "  " $2 " " $3 " " $4 " -> " $NF }
+              ' "$m" | head -3000
+              echo "::endgroup::"
+            done
+            for m in $(find . -name '*.csv' -o -name '*.srg' -o -name '*.tsrg'); do
               echo "::group::mappings $m"; grep -E "$MAPPINGS" "$m" | head -400; echo "::endgroup::"
             done
           fi
