@@ -1,0 +1,24 @@
+{
+  "minecraft": "1.12.1",
+  "family": "legacy",
+  "java": 8,
+  "build_jdk": 17,
+  "jdks": [
+    8,
+    17
+  ],
+  "loaders": [
+    "forge"
+  ],
+  "builds": {
+    "forge": {
+      "buildgen": "legacyforge",
+      "gradle": "8.8",
+      "gradle_jdk": 17,
+      "plugin_version": "0.10.0.+"
+    }
+  },
+  "not_built": {
+    "fabric": "No compatible official Fabric or Legacy Fabric loader exists for this version"
+  }
+}
