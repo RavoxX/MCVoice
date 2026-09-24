@@ -1,0 +1,2294 @@
+### search (Graphics|ResourceLocation|Identifier$|client\.input\.|KeyMapping|gui\.Gui$|DeltaTracker|client\.User$|Services$|ServerAddress|screens\.Screen$|gui\.Font$|GuiEventListener)
+com.mojang.blaze3d.resource.GraphicsResourceAllocator$1
+com.mojang.blaze3d.resource.GraphicsResourceAllocator
+net.minecraft.client.DeltaTracker$DefaultValue
+net.minecraft.client.DeltaTracker$Timer
+net.minecraft.client.DeltaTracker
+net.minecraft.client.GraphicsPreset
+net.minecraft.client.KeyMapping$Category
+net.minecraft.client.KeyMapping
+net.minecraft.client.PreferredGraphicsApi
+net.minecraft.client.ToggleKeyMapping
+net.minecraft.client.User
+net.minecraft.client.gui.Font
+net.minecraft.client.gui.Gui
+net.minecraft.client.gui.GuiGraphicsExtractor$HoveredTextEffects
+net.minecraft.client.gui.GuiGraphicsExtractor$RenderingTextCollector
+net.minecraft.client.gui.GuiGraphicsExtractor$ScissorStack
+net.minecraft.client.gui.GuiGraphicsExtractor
+net.minecraft.client.gui.components.ChatComponent$ChatGraphicsAccess
+net.minecraft.client.gui.components.ChatComponent$ClickableTextOnlyGraphicsAccess
+net.minecraft.client.gui.components.ChatComponent$DrawingBackgroundGraphicsAccess
+net.minecraft.client.gui.components.ChatComponent$DrawingFocusedGraphicsAccess
+net.minecraft.client.gui.components.events.GuiEventListener
+net.minecraft.client.gui.screens.Screen
+net.minecraft.client.gui.screens.options.UnsupportedGraphicsWarningScreen$ButtonOption
+net.minecraft.client.gui.screens.options.UnsupportedGraphicsWarningScreen
+net.minecraft.client.input.CharacterEvent
+net.minecraft.client.input.InputQuirks$1
+net.minecraft.client.input.InputQuirks
+net.minecraft.client.input.InputWithModifiers$Modifiers
+net.minecraft.client.input.InputWithModifiers
+net.minecraft.client.input.KeyEvent$Action
+net.minecraft.client.input.KeyEvent
+net.minecraft.client.input.MouseButtonEvent
+net.minecraft.client.input.MouseButtonInfo$Action
+net.minecraft.client.input.MouseButtonInfo$MouseButton
+net.minecraft.client.input.MouseButtonInfo
+net.minecraft.client.input.PreeditEvent
+net.minecraft.client.input.package-info
+net.minecraft.client.multiplayer.chat.report.AbuseReportSender$Services
+net.minecraft.client.multiplayer.resolver.ResolvedServerAddress$1
+net.minecraft.client.multiplayer.resolver.ResolvedServerAddress
+net.minecraft.client.multiplayer.resolver.ServerAddress
+net.minecraft.client.multiplayer.resolver.ServerAddressResolver
+net.minecraft.resources.Identifier
+net.minecraft.server.Services
+net.minecraft.util.datafix.fixes.OptionsFancyGraphicsToGraphicsModeFix
+net.minecraft.util.datafix.fixes.OptionsForceDefaultGraphicsApiFix
+net.minecraft.util.datafix.fixes.OptionsGraphicsModeSplitFix
+net.minecraft.util.datafix.fixes.OptionsSetGraphicsPresetToCustomFix
+::group::net.minecraft.client.Minecraft
+Compiled from "Minecraft.java"
+public class net.minecraft.client.Minecraft extends net.minecraft.util.thread.ReentrantBlockableEventLoop<java.lang.Runnable> implements com.mojang.blaze3d.platform.WindowEventHandler {
+  public static final net.minecraft.resources.Identifier DEFAULT_FONT;
+  public static final java.lang.String UPDATE_DRIVERS_ADVICE;
+  public final net.minecraft.client.renderer.extract.LevelExtractor levelExtractor;
+  public final net.minecraft.client.renderer.LevelRenderer levelRenderer;
+  public final net.minecraft.client.particle.ParticleEngine particleEngine;
+  public final net.minecraft.client.gui.Font font;
+  public final net.minecraft.client.gui.Font fontFilterFishy;
+  public final net.minecraft.client.renderer.GameRenderer gameRenderer;
+  public final net.minecraft.client.gui.Gui gui;
+  public final net.minecraft.client.Options options;
+  public final net.minecraft.client.gui.components.debug.DebugScreenEntryList debugEntries;
+  public final net.minecraft.client.MouseHandler mouseHandler;
+  public final net.minecraft.client.KeyboardHandler keyboardHandler;
+  public final java.io.File gameDirectory;
+  public net.minecraft.client.multiplayer.MultiPlayerGameMode gameMode;
+  public net.minecraft.client.multiplayer.ClientLevel level;
+  public net.minecraft.client.player.LocalPlayer player;
+  public net.minecraft.world.entity.Entity crosshairPickEntity;
+  public net.minecraft.world.phys.HitResult hitResult;
+  public boolean multiDrawIndirect;
+  public boolean wireframe;
+  public boolean smartCull;
+  public net.minecraft.client.Minecraft(net.minecraft.client.main.GameConfig);
+  public boolean hasShiftDown();
+  public boolean hasControlDown();
+  public boolean hasAltDown();
+  public boolean isGameLoadFinished();
+  public void updateTitle();
+  public boolean isOfflineDeveloperMode();
+  public static net.minecraft.util.ModCheck checkModStatus();
+  public void clearResourcePacksOnError(java.lang.Throwable, net.minecraft.network.chat.Component, net.minecraft.client.GameLoadCookie);
+  public void triggerResourcePackRecovery(java.lang.Exception);
+  public void run();
+  public java.lang.String getLaunchedVersion();
+  public void delayCrash(net.minecraft.CrashReport);
+  public void emergencySaveAndCrash(net.minecraft.CrashReport);
+  public static void saveReport(java.io.File, net.minecraft.CrashReport);
+  public static int saveReport(java.io.File, net.minecraft.CrashReport, int);
+  public static void crash(net.minecraft.client.Minecraft, java.io.File, net.minecraft.CrashReport, int);
+  public static int saveReportAndShutdownSoundManager(net.minecraft.client.Minecraft, java.io.File, net.minecraft.CrashReport, int);
+  public boolean isEnforceUnicode();
+  public java.util.concurrent.CompletableFuture<java.lang.Void> reloadResourcePacks();
+  public net.minecraft.world.level.storage.LevelStorageSource getLevelSource();
+  public void exitWorldAndClose();
+  public void close();
+  public void renderFrame(boolean);
+  public void framebufferSizeChanged();
+  public void resizeGui();
+  public void cursorEntered();
+  public void fullscreenStateChanged(boolean);
+  public int getFps();
+  public long getFrameTimeNs();
+  public void sendLowDiskSpaceWarning();
+  public boolean debugClientMetricsStart(java.util.function.Consumer<net.minecraft.network.chat.Component>);
+  public void stop();
+  public boolean isRunning();
+  public void pauseGame(boolean);
+  public net.minecraft.client.sounds.MusicManager getMusicManager();
+  public void tick();
+  public boolean isMultiplayerServer();
+  public net.minecraft.client.telemetry.ClientTelemetryManager getTelemetryManager();
+  public net.minecraft.util.profiling.metrics.profiling.MetricsRecorder getMetricsRecorder();
+  public double getGpuUtilization();
+  public net.minecraft.client.multiplayer.ProfileKeyPairManager getProfileKeyPairManager();
+  public net.minecraft.client.gui.screens.worldselection.WorldOpenFlows createWorldOpenFlows();
+  public void doWorldLoad(net.minecraft.world.level.storage.LevelStorageSource$LevelStorageAccess, net.minecraft.server.packs.repository.PackRepository, net.minecraft.server.WorldStem, java.util.Optional<net.minecraft.world.level.gamerules.GameRules>, boolean);
+  public void setLevel(net.minecraft.client.multiplayer.ClientLevel);
+  public void disconnectFromWorld(net.minecraft.network.chat.Component);
+  public void disconnectWithSavingScreen();
+  public void disconnectWithProgressScreen();
+  public void disconnectWithProgressScreen(boolean);
+  public void disconnect(net.minecraft.client.gui.screens.Screen, boolean);
+  public void disconnect(net.minecraft.client.gui.screens.Screen, boolean, boolean);
+  public void clearDownloadedResourcePacks();
+  public void clearClientLevel(net.minecraft.client.gui.screens.Screen);
+  public void setScreenAndShow(net.minecraft.client.gui.screens.Screen);
+  public boolean telemetryOptInExtra();
+  public boolean extraTelemetryAvailable();
+  public boolean allowsTelemetry();
+  public boolean allowsMultiplayer();
+  public boolean allowsRealms();
+  public boolean friendsEnabled();
+  public boolean handleGlobalKeyPress(com.mojang.blaze3d.platform.InputConstants$Key, boolean);
+  public boolean allowFriendRequests();
+  public boolean allowChatOnlyWithFriend();
+  public com.mojang.authlib.minecraft.BanDetails multiplayerBan();
+  public boolean isNameBanned();
+  public boolean isBlocked(java.util.UUID);
+  public boolean isFriendOnlyRestricted(java.util.UUID);
+  public net.minecraft.client.multiplayer.chat.ChatAbilities computeChatAbilities();
+  public final boolean isDemo();
+  public final boolean canSwitchGameMode();
+  public net.minecraft.client.multiplayer.ClientPacketListener getConnection();
+  public net.minecraft.CrashReport fillReport(net.minecraft.CrashReport);
+  public static void fillReport(net.minecraft.client.Minecraft, net.minecraft.client.resources.language.LanguageManager, java.lang.String, net.minecraft.client.Options, net.minecraft.CrashReport);
+  public static net.minecraft.client.Minecraft getInstance();
+  public java.util.concurrent.CompletableFuture<java.lang.Void> delayTextureReload();
+  public void updateReportEnvironment(net.minecraft.client.multiplayer.chat.report.ReportEnvironment);
+  public net.minecraft.client.multiplayer.ServerData getCurrentServer();
+  public boolean isLocalServer();
+  public boolean hasSingleplayerServer();
+  public net.minecraft.client.server.IntegratedServer getSingleplayerServer();
+  public boolean isLocalPlayer(java.util.UUID);
+  public net.minecraft.client.User getUser();
+  public com.mojang.authlib.services.ProfileResult getProfileResult();
+  public com.mojang.authlib.GameProfile getGameProfile();
+  public java.net.Proxy getProxy();
+  public net.minecraft.client.renderer.texture.TextureManager getTextureManager();
+  public net.minecraft.client.renderer.ShaderManager getShaderManager();
+  public net.minecraft.server.packs.resources.ResourceManager getResourceManager();
+  public net.minecraft.server.packs.repository.PackRepository getResourcePackRepository();
+  public net.minecraft.server.packs.VanillaPackResources getVanillaPackResources();
+  public net.minecraft.client.resources.server.DownloadedPackSource getDownloadedPackSource();
+  public java.nio.file.Path getResourcePackDirectory();
+  public net.minecraft.client.resources.language.LanguageManager getLanguageManager();
+  public boolean isPaused();
+  public net.minecraft.client.renderer.GpuWarnlistManager getGpuWarnlistManager();
+  public net.minecraft.client.sounds.SoundManager getSoundManager();
+  public net.minecraft.sounds.Music getSituationalMusic();
+  public float getMusicVolume();
+  public net.minecraft.server.Services services();
+  public net.minecraft.client.resources.SkinManager getSkinManager();
+  public net.minecraft.world.entity.Entity getCameraEntity();
+  public void setCameraEntity(net.minecraft.world.entity.Entity);
+  public boolean shouldEntityAppearGlowing(net.minecraft.world.entity.Entity);
+  public java.lang.Thread getRunningThread();
+  public java.lang.Runnable wrapRunnable(java.lang.Runnable);
+  public net.minecraft.client.renderer.entity.EntityRenderDispatcher getEntityRenderDispatcher();
+  public net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher getBlockEntityRenderDispatcher();
+  public net.minecraft.client.renderer.MapRenderer getMapRenderer();
+  public com.mojang.datafixers.DataFixer getFixerUpper();
+  public net.minecraft.client.DeltaTracker getDeltaTracker();
+  public net.minecraft.client.color.block.BlockColors getBlockColors();
+  public boolean showOnlyReducedInfo();
+  public net.minecraft.client.tutorial.Tutorial getTutorial();
+  public boolean isWindowActive();
+  public net.minecraft.client.HotbarManager getHotbarManager();
+  public net.minecraft.client.resources.model.ModelManager getModelManager();
+  public net.minecraft.client.resources.model.sprite.AtlasManager getAtlasManager();
+  public net.minecraft.client.resources.palette.PalettedTextureManager getPalettedTextureManager();
+  public net.minecraft.client.resources.MapTextureManager getMapTextureManager();
+  public net.minecraft.network.chat.Component grabPanoramixScreenshot(java.io.File);
+  public net.minecraft.client.gui.screens.social.PlayerSocialManager getPlayerSocialManager();
+  public com.mojang.blaze3d.platform.Window getWindow();
+  public com.mojang.blaze3d.platform.TextInputManager textInputManager();
+  public void onTextInputFocusChange(net.minecraft.client.gui.components.events.GuiEventListener, boolean);
+  public com.mojang.renderpearl.api.device.GpuSurface windowSurface();
+  public com.mojang.blaze3d.platform.FramerateLimitTracker getFramerateLimitTracker();
+  public net.minecraft.client.gui.components.DebugScreenOverlay getDebugOverlay();
+  public void updateMaxMipLevel(int);
+  public net.minecraft.client.model.geom.EntityModelSet getEntityModels();
+  public boolean isTextFilteringEnabled();
+  public void prepareForMultiplayer();
+  public net.minecraft.client.InputType getLastInputType();
+  public void setLastInputType(net.minecraft.client.InputType);
+  public net.minecraft.client.GameNarrator getNarrator();
+  public net.minecraft.client.multiplayer.chat.report.ReportingContext getReportingContext();
+  public com.mojang.realmsclient.gui.RealmsDataFetcher realmsDataFetcher();
+  public net.minecraft.client.quickplay.QuickPlayLog quickPlayLog();
+  public net.minecraft.world.level.validation.DirectoryValidator directoryValidator();
+  public net.minecraft.client.renderer.PlayerSkinRenderCache playerSkinRenderCache();
+  public net.minecraft.client.renderer.item.ItemModelResolver getItemModelResolver();
+  public boolean canInterruptScreen();
+  public void invalidateSurfaceConfiguration();
+  public static java.lang.String getLauncherBrand();
+  public net.minecraft.network.PacketProcessor packetProcessor();
+  public net.minecraft.gizmos.Gizmos$TemporaryCollection collectPerTickGizmos();
+  public java.util.Collection<net.minecraft.gizmos.SimpleGizmoCollector$GizmoInstance> getPerTickGizmos();
+  public void showDebugChat(net.minecraft.network.chat.Component);
+}
+::endgroup::
+::group::net.minecraft.client.multiplayer.ClientLevel
+Compiled from "ClientLevel.java"
+public class net.minecraft.client.multiplayer.ClientLevel extends net.minecraft.world.level.Level implements net.minecraft.client.renderer.block.BlockAndTintGetter, net.minecraft.client.multiplayer.CacheSlot$Cleaner<net.minecraft.client.multiplayer.ClientLevel> {
+  public static final net.minecraft.network.chat.Component DEFAULT_QUIT_MESSAGE;
+  public void handleBlockChangedAck(int);
+  public void onBlockEntityAdded(net.minecraft.world.level.block.entity.BlockEntity);
+  public java.util.Set<net.minecraft.world.level.block.entity.BlockEntity> getGloballyRenderedBlockEntities();
+  public void setServerVerifiedBlockState(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, int);
+  public void syncBlockState(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.phys.Vec3);
+  public boolean setBlock(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, int, int);
+  public net.minecraft.client.multiplayer.ClientLevel(net.minecraft.client.multiplayer.ClientPacketListener, net.minecraft.client.multiplayer.ClientLevel$ClientLevelData, net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level>, net.minecraft.core.Holder<net.minecraft.world.level.dimension.DimensionType>, int, int, net.minecraft.client.renderer.extract.LevelExtractor, boolean, long, int);
+  public void queueLightUpdate(java.lang.Runnable);
+  public void pollLightUpdates();
+  public net.minecraft.client.renderer.EndFlashState endFlashState();
+  public void tick(java.util.function.BooleanSupplier);
+  public void tickWeatherEffects();
+  public net.minecraft.world.level.biome.Biome$Precipitation getPrecipitationAt(net.minecraft.core.BlockPos);
+  public it.unimi.dsi.fastutil.longs.Long2ObjectMap<java.util.SortedSet<net.minecraft.server.level.BlockDestructionProgress>> destructionProgress();
+  public void setTimeFromServer(long);
+  public java.lang.Iterable<net.minecraft.world.entity.Entity> entitiesForRendering();
+  public void tickEntities();
+  public boolean isTickingEntity(net.minecraft.world.entity.Entity);
+  public boolean shouldTickDeath(net.minecraft.world.entity.Entity);
+  public void tickNonPassenger(net.minecraft.world.entity.Entity);
+  public void update();
+  public void unload(net.minecraft.world.level.chunk.LevelChunk);
+  public void onChunkLoaded(net.minecraft.world.level.ChunkPos);
+  public void clearTintCaches();
+  public boolean hasChunk(int, int);
+  public int getEntityCount();
+  public void addEntity(net.minecraft.world.entity.Entity);
+  public void removeEntity(int, net.minecraft.world.entity.Entity$RemovalReason);
+  public java.util.List<net.minecraft.world.entity.Entity> getPushableEntities(net.minecraft.world.entity.Entity, net.minecraft.world.phys.AABB);
+  public net.minecraft.world.entity.Entity getEntity(int);
+  public void disconnect(net.minecraft.network.chat.Component);
+  public void animateTick(int, int, int);
+  public void doAnimateTick(int, int, int, int, net.minecraft.util.RandomSource, net.minecraft.world.level.block.Block, net.minecraft.core.BlockPos$MutableBlockPos);
+  public net.minecraft.CrashReportCategory fillReportDetails(net.minecraft.CrashReport);
+  public void playSeededSound(net.minecraft.world.entity.Entity, double, double, double, net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>, net.minecraft.sounds.SoundSource, float, float, long);
+  public void playSeededSound(net.minecraft.world.entity.Entity, net.minecraft.world.entity.Entity, net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>, net.minecraft.sounds.SoundSource, float, float, long);
+  public void playLocalSound(net.minecraft.world.entity.Entity, net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float);
+  public void playPlayerSound(net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float);
+  public void playLocalSound(double, double, double, net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float, boolean);
+  public void createFireworks(double, double, double, double, double, double, java.util.List<net.minecraft.world.item.component.FireworkExplosion>, boolean);
+  public void sendPacketToServer(net.minecraft.network.protocol.Packet<?>);
+  public net.minecraft.world.level.border.WorldBorder getWorldBorder();
+  public net.minecraft.world.item.crafting.RecipeAccess recipeAccess();
+  public net.minecraft.world.TickRateManager tickRateManager();
+  public float getRelativeTickSpeed();
+  public net.minecraft.client.ClientClockManager clockManager();
+  public net.minecraft.world.attribute.EnvironmentAttributeSystem environmentAttributes();
+  public net.minecraft.world.ticks.LevelTickAccess<net.minecraft.world.level.block.Block> getBlockTicks();
+  public net.minecraft.world.ticks.LevelTickAccess<net.minecraft.world.level.material.Fluid> getFluidTicks();
+  public net.minecraft.client.multiplayer.ClientChunkCache getChunkSource();
+  public net.minecraft.world.level.saveddata.maps.MapItemSavedData getMapData(net.minecraft.world.level.saveddata.maps.MapId);
+  public void overrideMapData(net.minecraft.world.level.saveddata.maps.MapId, net.minecraft.world.level.saveddata.maps.MapItemSavedData);
+  public net.minecraft.world.scores.Scoreboard getScoreboard();
+  public void sendBlockUpdated(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.state.BlockState, int);
+  public void setBlocksDirty(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.state.BlockState);
+  public void setSectionDirtyWithNeighbors(int, int, int);
+  public void setSectionRangeDirty(int, int, int, int, int, int);
+  public void destroyBlockProgress(int, net.minecraft.core.BlockPos, int);
+  public void globalLevelEvent(int, net.minecraft.core.BlockPos, int);
+  public void levelEvent(net.minecraft.world.entity.Entity, int, net.minecraft.core.BlockPos, int);
+  public void addParticle(net.minecraft.core.particles.ParticleOptions, double, double, double, double, double, double);
+  public void addParticle(net.minecraft.core.particles.ParticleOptions, boolean, boolean, double, double, double, double, double, double);
+  public void addAlwaysVisibleParticle(net.minecraft.core.particles.ParticleOptions, double, double, double, double, double, double);
+  public void addAlwaysVisibleParticle(net.minecraft.core.particles.ParticleOptions, boolean, double, double, double, double, double, double);
+  public java.util.List<net.minecraft.client.player.AbstractClientPlayer> players();
+  public java.util.List<net.minecraft.world.entity.boss.enderdragon.EnderDragonPart> dragonParts();
+  public net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome> getUncachedNoiseBiome(int, int, int);
+  public void setSkyFlashTime(int);
+  public net.minecraft.world.level.CardinalLighting cardinalLighting();
+  public int getBlockTint(net.minecraft.core.BlockPos, net.minecraft.world.level.ColorResolver);
+  public int calculateBlockTint(net.minecraft.core.BlockPos, net.minecraft.world.level.ColorResolver);
+  public void setRespawnData(net.minecraft.world.level.storage.LevelData$RespawnData);
+  public net.minecraft.world.level.storage.LevelData$RespawnData getRespawnData();
+  public java.lang.String toString();
+  public net.minecraft.client.multiplayer.ClientLevel$ClientLevelData getLevelData();
+  public void gameEvent(net.minecraft.core.Holder<net.minecraft.world.level.gameevent.GameEvent>, net.minecraft.world.phys.Vec3, net.minecraft.world.level.gameevent.GameEvent$Context);
+  public java.lang.String gatherChunkSourceStats();
+  public void addDestroyBlockEffect(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState);
+  public void addBreakingBlockEffects(net.minecraft.core.BlockPos, net.minecraft.core.Direction, boolean);
+  public void setServerSimulationDistance(int);
+  public int getServerSimulationDistance();
+  public net.minecraft.world.flag.FeatureFlagSet enabledFeatures();
+  public void explode(net.minecraft.world.entity.Entity, net.minecraft.world.damagesource.DamageSource, net.minecraft.world.level.ExplosionDamageCalculator, double, double, double, float, boolean, net.minecraft.world.level.Level$ExplosionInteraction, net.minecraft.core.particles.ParticleOptions, net.minecraft.core.particles.ParticleOptions, net.minecraft.util.random.WeightedList<net.minecraft.core.particles.ExplosionParticleInfo>, net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>);
+  public int getSeaLevel();
+  public int getClientLeafTintColor(net.minecraft.core.BlockPos);
+  public void registerForCleaning(net.minecraft.client.multiplayer.CacheSlot<net.minecraft.client.multiplayer.ClientLevel, ?>);
+  public void trackExplosionEffects(net.minecraft.world.phys.Vec3, float, int, net.minecraft.util.random.WeightedList<net.minecraft.core.particles.ExplosionParticleInfo>);
+  public net.minecraft.world.clock.ClockManager clockManager();
+  public net.minecraft.world.level.storage.LevelData getLevelData();
+  public java.util.Collection dragonParts();
+  public net.minecraft.world.level.chunk.ChunkSource getChunkSource();
+  public net.minecraft.world.attribute.EnvironmentAttributeReader environmentAttributes();
+}
+::endgroup::
+::group::net.minecraft.client.player.LocalPlayer
+Compiled from "LocalPlayer.java"
+public class net.minecraft.client.player.LocalPlayer extends net.minecraft.client.player.AbstractClientPlayer {
+  public static final org.slf4j.Logger LOGGER;
+  public final net.minecraft.client.multiplayer.ClientPacketListener connection;
+  public net.minecraft.client.player.ClientInput input;
+  public int experienceDisplayStartTick;
+  public float yBob;
+  public float xBob;
+  public float yBobO;
+  public float xBobO;
+  public float portalEffectIntensity;
+  public float oPortalEffectIntensity;
+  public net.minecraft.client.player.LocalPlayer(net.minecraft.client.Minecraft, net.minecraft.client.multiplayer.ClientLevel, net.minecraft.client.multiplayer.ClientPacketListener, net.minecraft.stats.StatsCounter, net.minecraft.client.ClientRecipeBook, net.minecraft.world.entity.player.Input, boolean, net.minecraft.client.multiplayer.chat.ChatAbilities, net.minecraft.client.player.ItemActivation);
+  public void heal(float);
+  public boolean startRiding(net.minecraft.world.entity.Entity, boolean, boolean);
+  public void removeVehicle();
+  public float getViewYRot(float);
+  public void tick();
+  public void displayItemActivation(net.minecraft.world.item.ItemStack);
+  public void resetItemActivation();
+  public net.minecraft.client.player.ItemActivation itemActivation();
+  public void itemUsed(net.minecraft.world.InteractionHand);
+  public net.minecraft.client.player.FirstPersonHandsAndItems firstPersonHandsAndItems();
+  public void sendChanges();
+  public float getCurrentMood();
+  public void respawn();
+  public void closeContainer();
+  public void clientSideCloseContainer();
+  public void hurtTo(float);
+  public void onUpdateAbilities();
+  public void setReducedDebugInfo(boolean);
+  public boolean isLocalPlayer();
+  public boolean isSuppressingSlidingDownLadder();
+  public boolean canSpawnSprintParticle();
+  public void sendOpenInventory();
+  public net.minecraft.stats.StatsCounter getStats();
+  public net.minecraft.client.ClientRecipeBook getRecipeBook();
+  public void removeRecipeHighlight(net.minecraft.world.item.crafting.display.RecipeDisplayId);
+  public net.minecraft.server.permissions.PermissionSet permissions();
+  public void setPermissions(net.minecraft.server.permissions.PermissionSet);
+  public net.minecraft.client.multiplayer.chat.ChatAbilities chatAbilities();
+  public void refreshChatAbilities();
+  public void sendSystemMessage(net.minecraft.network.chat.Component);
+  public void sendOverlayMessage(net.minecraft.network.chat.Component);
+  public void setExperienceValues(float, int, int);
+  public void handleEntityEvent(byte);
+  public void setShowDeathScreen(boolean);
+  public boolean shouldShowDeathScreen();
+  public void setDoLimitedCrafting(boolean);
+  public boolean getDoLimitedCrafting();
+  public void playSound(net.minecraft.sounds.SoundEvent, float, float);
+  public void startUsingItem(net.minecraft.world.InteractionHand);
+  public boolean isUsingItem();
+  public void stopUsingItem();
+  public net.minecraft.world.InteractionHand getUsedItemHand();
+  public void onSyncedDataUpdated(net.minecraft.network.syncher.EntityDataAccessor<?>);
+  public net.minecraft.world.entity.PlayerRideableJumping jumpableVehicle();
+  public float getJumpRidingScale();
+  public boolean isTextFilteringEnabled();
+  public void openTextEdit(net.minecraft.world.level.block.entity.SignBlockEntity, net.minecraft.world.level.block.entity.SignTextSlot);
+  public void openMinecartCommandBlock(net.minecraft.world.entity.vehicle.minecart.MinecartCommandBlock);
+  public void openCommandBlock(net.minecraft.world.level.block.entity.CommandBlockEntity);
+  public void openStructureBlock(net.minecraft.world.level.block.entity.StructureBlockEntity);
+  public void openTestBlock(net.minecraft.world.level.block.entity.TestBlockEntity);
+  public void openTestInstanceBlock(net.minecraft.world.level.block.entity.TestInstanceBlockEntity);
+  public void openJigsawBlock(net.minecraft.world.level.block.entity.JigsawBlockEntity);
+  public void openDialog(net.minecraft.core.Holder<net.minecraft.server.dialog.Dialog>);
+  public void openItemGui(net.minecraft.world.item.ItemStack, net.minecraft.world.InteractionHand);
+  public void crit(net.minecraft.world.entity.Entity);
+  public void magicCrit(net.minecraft.world.entity.Entity);
+  public boolean isShiftKeyDown();
+  public boolean isCrouching();
+  public boolean isMovingSlowly();
+  public void applyInput();
+  public void resetPos();
+  public void aiStep();
+  public net.minecraft.world.level.block.Portal$Transition getActivePortalLocalTransition();
+  public float getSpinningEffectAngle(float);
+  public void rideTick();
+  public boolean isHandsBusy();
+  public void move(net.minecraft.world.entity.MoverType, net.minecraft.world.phys.Vec3);
+  public boolean isAutoJumpEnabled();
+  public boolean shouldRotateWithMinecart();
+  public float getWaterVision();
+  public void onGameModeChanged(net.minecraft.world.level.GameType);
+  public boolean isUnderWater();
+  public net.minecraft.world.phys.Vec3 getRopeHoldPosition(float);
+  public void updateTutorialInventoryAction(net.minecraft.world.item.ItemStack, net.minecraft.world.item.ItemStack, net.minecraft.world.inventory.ClickAction);
+  public float getVisualRotationYInDegrees();
+  public void handleCreativeModeItemDrop(net.minecraft.world.item.ItemStack);
+  public boolean canDropItems();
+  public net.minecraft.util.TickThrottler getDropSpamThrottler();
+  public net.minecraft.world.entity.player.Input getLastSentInput();
+  public net.minecraft.world.phys.HitResult raycastHitResult(float, net.minecraft.world.entity.Entity);
+  public void setActivePostEffects(java.util.List<net.minecraft.resources.Identifier>);
+  public java.util.List<net.minecraft.resources.Identifier> getActivePostEffects();
+}
+::endgroup::
+::group::net.minecraft.client.player.AbstractClientPlayer
+Compiled from "AbstractClientPlayer.java"
+public abstract class net.minecraft.client.player.AbstractClientPlayer extends net.minecraft.world.entity.player.Player implements net.minecraft.client.entity.ClientAvatarEntity {
+  public net.minecraft.client.player.AbstractClientPlayer(net.minecraft.client.multiplayer.ClientLevel, com.mojang.authlib.GameProfile);
+  public net.minecraft.world.level.GameType gameMode();
+  public void tick();
+  public net.minecraft.client.entity.ClientAvatarState avatarState();
+  public net.minecraft.world.entity.player.PlayerSkin getSkin();
+  public net.minecraft.world.entity.animal.parrot.Parrot$Variant getParrotVariantOnShoulder(boolean);
+  public void rideTick();
+  public void aiStep();
+  public float getFieldOfViewModifier(boolean, float);
+  public boolean showExtraEars();
+}
+::endgroup::
+::group::net.minecraft.world.entity.Entity
+Compiled from "Entity.java"
+public abstract class net.minecraft.world.entity.Entity implements net.minecraft.world.Nameable, net.minecraft.world.level.entity.EntityAccess, net.minecraft.world.scores.ScoreHolder, net.minecraft.network.syncher.SyncedDataHolder, net.minecraft.core.component.DataComponentGetter, net.minecraft.world.entity.ItemOwner, net.minecraft.world.entity.SlotProvider, net.minecraft.util.debug.DebugValueSource, net.minecraft.core.TypedInstance<net.minecraft.world.entity.EntityType<?>> {
+  public static final java.lang.String TAG_ID;
+  public static final java.lang.String TAG_UUID;
+  public static final java.lang.String TAG_PASSENGERS;
+  public static final java.lang.String TAG_DATA;
+  public static final java.lang.String TAG_POS;
+  public static final java.lang.String TAG_MOTION;
+  public static final java.lang.String TAG_ROTATION;
+  public static final java.lang.String TAG_PORTAL_COOLDOWN;
+  public static final java.lang.String TAG_NO_GRAVITY;
+  public static final java.lang.String TAG_AIR;
+  public static final java.lang.String TAG_ON_GROUND;
+  public static final java.lang.String TAG_FALL_DISTANCE;
+  public static final java.lang.String TAG_FIRE;
+  public static final java.lang.String TAG_SILENT;
+  public static final java.lang.String TAG_GLOWING;
+  public static final java.lang.String TAG_INVULNERABLE;
+  public static final java.lang.String TAG_INVULNERABLE_TIME;
+  public static final java.lang.String TAG_CUSTOM_NAME;
+  public static final int INVALID_ENTITY_ID;
+  public static final int CONTENTS_SLOT_INDEX;
+  public static final int BOARDING_COOLDOWN;
+  public static final int TOTAL_AIR_SUPPLY;
+  public static final int MAX_ENTITY_TAG_COUNT;
+  public static final double DEFAULT_NAME_TAG_DISTANCE;
+  public static final double DEFAULT_BELOW_NAME_DISTANCE;
+  public static final double MAX_NAME_TAG_DISTANCE;
+  public static final float DELTA_AFFECTED_BY_BLOCKS_BELOW_0_2;
+  public static final double DELTA_AFFECTED_BY_BLOCKS_BELOW_0_5;
+  public static final double DELTA_AFFECTED_BY_BLOCKS_BELOW_1_0;
+  public static final int BASE_TICKS_REQUIRED_TO_FREEZE;
+  public static final int FREEZE_HURT_FREQUENCY;
+  public static final int BASE_SAFE_FALL_DISTANCE;
+  public boolean blocksBuilding;
+  public double xo;
+  public double yo;
+  public double zo;
+  public float yRotO;
+  public float xRotO;
+  public boolean horizontalCollision;
+  public boolean verticalCollision;
+  public boolean verticalCollisionBelow;
+  public boolean minorHorizontalCollision;
+  public static final float DEFAULT_BB_WIDTH;
+  public static final float DEFAULT_BB_HEIGHT;
+  public float moveDist;
+  public float flyDist;
+  public double fallDistance;
+  public double xOld;
+  public double yOld;
+  public double zOld;
+  public boolean noPhysics;
+  public int tickCount;
+  public boolean needsSync;
+  public boolean syncPosition;
+  public boolean syncVelocity;
+  public net.minecraft.world.entity.PortalProcessor portalProcess;
+  public boolean isInPowderSnow;
+  public boolean wasInPowderSnow;
+  public java.util.Optional<net.minecraft.core.BlockPos> mainSupportingBlockPos;
+  public static final int MAX_MOVEMENTS_HANDELED_PER_TICK;
+  public net.minecraft.world.entity.Entity(net.minecraft.world.entity.EntityType<?>, net.minecraft.world.level.Level);
+  public boolean isColliding(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState);
+  public int getTeamColor();
+  public boolean isSpectator();
+  public boolean canInteractWithLevel();
+  public final void unRide();
+  public void syncPacketPositionCodec(double, double, double);
+  public net.minecraft.network.protocol.game.VecDeltaCodec getPositionCodec();
+  public net.minecraft.world.entity.EntityType<?> getType();
+  public net.minecraft.core.Holder<net.minecraft.world.entity.EntityType<?>> typeHolder();
+  public boolean getRequiresPrecisePosition();
+  public void setRequiresPrecisePosition(boolean);
+  public int getId();
+  public void setId(int);
+  public java.util.Set<java.lang.String> entityTags();
+  public boolean addTag(java.lang.String);
+  public boolean removeTag(java.lang.String);
+  public void kill(net.minecraft.server.level.ServerLevel);
+  public final void discard();
+  public net.minecraft.network.syncher.SynchedEntityData getEntityData();
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public void remove(net.minecraft.world.entity.Entity$RemovalReason);
+  public void onClientRemoval();
+  public void onRemoval(net.minecraft.world.entity.Entity$RemovalReason);
+  public void setPose(net.minecraft.world.entity.Pose);
+  public net.minecraft.world.entity.Pose getPose();
+  public boolean hasPose(net.minecraft.world.entity.Pose);
+  public boolean closerThan(net.minecraft.world.entity.Entity, double);
+  public boolean closerThan(net.minecraft.world.entity.Entity, double, double);
+  public final void setPos(net.minecraft.world.phys.Vec3);
+  public void setPos(double, double, double);
+  public void turn(double, double);
+  public void updateDataBeforeSync();
+  public void tick();
+  public final void commonTick();
+  public void baseTick();
+  public void setSharedFlagOnFire(boolean);
+  public void checkBelowWorld();
+  public void setPortalCooldown();
+  public void setPortalCooldown(int);
+  public int getPortalCooldown();
+  public boolean isOnPortalCooldown();
+  public void lavaIgnite();
+  public void lavaHurt();
+  public final void igniteForSeconds(float);
+  public void igniteForTicks(int);
+  public void setRemainingFireTicks(int);
+  public int getRemainingFireTicks();
+  public void clearFire();
+  public boolean isFree(double, double, double);
+  public void setOnGround(boolean);
+  public void setOnGroundWithMovement(boolean, net.minecraft.world.phys.Vec3);
+  public void setOnGroundWithMovement(boolean, boolean, net.minecraft.world.phys.Vec3);
+  public boolean isSupportedBy(net.minecraft.core.BlockPos);
+  public boolean onGround();
+  public void move(net.minecraft.world.entity.MoverType, net.minecraft.world.phys.Vec3);
+  public void recordMovement(net.minecraft.world.entity.MoverType, net.minecraft.world.phys.Vec3);
+  public void removeLatestMovementRecording();
+  public boolean hasMovedHorizontallyRecently();
+  public void applyEffectsFromBlocks(net.minecraft.world.phys.Vec3, net.minecraft.world.phys.Vec3);
+  public void extinguishFire();
+  public net.minecraft.core.BlockPos getOnPosLegacy();
+  public net.minecraft.core.BlockPos getBlockPosBelowThatAffectsMyMovement();
+  public net.minecraft.core.BlockPos getOnPos();
+  public double getAvailableSpaceBelow(double);
+  public static net.minecraft.world.phys.Vec3 collideBoundingBox(net.minecraft.world.entity.Entity, net.minecraft.world.phys.Vec3, net.minecraft.world.phys.AABB, net.minecraft.world.level.Level, java.util.List<net.minecraft.world.phys.shapes.VoxelShape>);
+  public static net.minecraft.world.phys.Vec3 collideBoundingBox(net.minecraft.world.phys.shapes.CollisionContext, net.minecraft.world.phys.Vec3, net.minecraft.world.phys.AABB, net.minecraft.world.level.Level, java.util.List<net.minecraft.world.phys.shapes.VoxelShape>);
+  public static java.util.List<net.minecraft.world.phys.shapes.VoxelShape> collectAllColliders(net.minecraft.world.entity.Entity, net.minecraft.world.level.Level, net.minecraft.world.phys.AABB);
+  public boolean collidedWithFluid(net.minecraft.world.level.material.FluidState, net.minecraft.core.BlockPos, net.minecraft.world.phys.Vec3, net.minecraft.world.phys.Vec3);
+  public boolean collidedWithShapeMovingFrom(net.minecraft.world.phys.Vec3, net.minecraft.world.phys.Vec3, java.util.List<net.minecraft.world.phys.AABB>);
+  public net.minecraft.core.BlockPos adjustSpawnLocation(net.minecraft.server.level.ServerLevel, net.minecraft.core.BlockPos);
+  public void gameEvent(net.minecraft.core.Holder<net.minecraft.world.level.gameevent.GameEvent>, net.minecraft.world.entity.Entity);
+  public void gameEvent(net.minecraft.core.Holder<net.minecraft.world.level.gameevent.GameEvent>);
+  public void playSound(net.minecraft.sounds.SoundEvent, float, float);
+  public void playSound(net.minecraft.sounds.SoundEvent);
+  public boolean isSilent();
+  public void setSilent(boolean);
+  public boolean isNoGravity();
+  public void setNoGravity(boolean);
+  public final double getGravity();
+  public boolean dampensVibrations();
+  public final void doCheckFallDamage(double, double, double, boolean);
+  public boolean fireImmune();
+  public boolean causeFallDamage(double, float, net.minecraft.world.damagesource.DamageSource);
+  public boolean isInWater();
+  public boolean isInWaterOrRain();
+  public boolean isInLiquid();
+  public boolean isInFloatableFluid();
+  public boolean isUnderWater();
+  public boolean isInShallowWater();
+  public boolean isInClouds();
+  public void updateSwimming();
+  public net.minecraft.world.level.block.state.BlockState getBlockStateOn();
+  public boolean canSpawnSprintParticle();
+  public boolean isEyeInFluid(net.minecraft.tags.TagKey<net.minecraft.world.level.material.Fluid>);
+  public boolean isInLava();
+  public void moveRelative(float, net.minecraft.world.phys.Vec3);
+  public float getLightLevelDependentMagicValue();
+  public void absSnapTo(double, double, double, float, float);
+  public void absSnapRotationTo(float, float);
+  public void absSnapTo(double, double, double);
+  public void snapTo(net.minecraft.world.phys.Vec3);
+  public void snapTo(double, double, double);
+  public void snapTo(net.minecraft.core.BlockPos, float, float);
+  public void snapTo(net.minecraft.world.phys.Vec3, float, float);
+  public void snapTo(double, double, double, float, float);
+  public final void setOldPosAndRot();
+  public final void setOldPosAndRot(net.minecraft.world.phys.Vec3, float, float);
+  public void setOldRot();
+  public final net.minecraft.world.phys.Vec3 oldPosition();
+  public float distanceTo(net.minecraft.world.entity.Entity);
+  public double distanceToSqr(double, double, double);
+  public double distanceToSqr(net.minecraft.world.entity.Entity);
+  public double distanceToSqr(net.minecraft.world.phys.Vec3);
+  public void playerTouch(net.minecraft.world.entity.player.Player);
+  public void push(net.minecraft.world.entity.Entity);
+  public void push(net.minecraft.world.phys.Vec3);
+  public void pushFromExplosion(net.minecraft.world.phys.Vec3);
+  public void push(double, double, double);
+  public final void hurt(net.minecraft.world.damagesource.DamageSource, float);
+  public final boolean hurtOrSimulate(net.minecraft.world.damagesource.DamageSource, float);
+  public abstract boolean hurtServer(net.minecraft.server.level.ServerLevel, net.minecraft.world.damagesource.DamageSource, float);
+  public boolean hurtClient(net.minecraft.world.damagesource.DamageSource);
+  public final net.minecraft.world.phys.Vec3 getViewVector(float);
+  public net.minecraft.core.Direction getNearestViewDirection();
+  public float getViewXRot(float);
+  public float getViewYRot(float);
+  public float getXRot(float);
+  public float getYRot(float);
+  public static net.minecraft.world.phys.Vec3 calculateViewVector(float, float);
+  public static org.joml.Quaternionf calculateViewQuaternion(float, float);
+  public final net.minecraft.world.phys.Vec3 getUpVector(float);
+  public final net.minecraft.world.phys.Vec3 getEyePosition();
+  public final net.minecraft.world.phys.Vec3 getEyePosition(float);
+  public net.minecraft.world.phys.Vec3 getLightProbePosition(float);
+  public final net.minecraft.world.phys.Vec3 getPosition(float);
+  public net.minecraft.world.phys.HitResult pick(double, float, boolean);
+  public boolean canBeHitByProjectile();
+  public boolean isPickable();
+  public boolean canBePickedFromInside();
+  public boolean isPushable();
+  public void awardKillScore(net.minecraft.world.entity.Entity, net.minecraft.world.damagesource.DamageSource);
+  public boolean shouldRender(double, double, double);
+  public boolean shouldRenderAtSqrDistance(double);
+  public boolean saveAsPassenger(net.minecraft.world.level.storage.ValueOutput);
+  public boolean save(net.minecraft.world.level.storage.ValueOutput);
+  public void saveWithoutId(net.minecraft.world.level.storage.ValueOutput);
+  public void load(net.minecraft.world.level.storage.ValueInput);
+  public void postDataManipulated();
+  public net.minecraft.world.entity.item.ItemEntity spawnAtLocation(net.minecraft.server.level.ServerLevel, net.minecraft.world.level.ItemLike);
+  public net.minecraft.world.entity.item.ItemEntity spawnAtLocation(net.minecraft.server.level.ServerLevel, net.minecraft.world.item.ItemStack);
+  public net.minecraft.world.entity.item.ItemEntity spawnAtLocation(net.minecraft.server.level.ServerLevel, net.minecraft.world.item.ItemStack, net.minecraft.world.phys.Vec3);
+  public net.minecraft.world.entity.item.ItemEntity spawnAtLocation(net.minecraft.server.level.ServerLevel, net.minecraft.world.item.ItemStack, float);
+  public boolean isAlive();
+  public boolean isInWall();
+  public net.minecraft.world.InteractionResult interact(net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand, net.minecraft.world.phys.Vec3);
+  public boolean shearOffAllLeashConnections(net.minecraft.world.entity.player.Player);
+  public boolean dropAllLeashConnections(net.minecraft.world.entity.player.Player);
+  public boolean canCollideWith(net.minecraft.world.entity.Entity);
+  public boolean canBeCollidedWith(net.minecraft.world.entity.Entity);
+  public void rideTick();
+  public final void positionRider(net.minecraft.world.entity.Entity);
+  public void onPassengerTurned(net.minecraft.world.entity.Entity);
+  public net.minecraft.world.phys.Vec3 getVehicleAttachmentPoint(net.minecraft.world.entity.Entity);
+  public net.minecraft.world.phys.Vec3 getPassengerRidingPosition(net.minecraft.world.entity.Entity);
+  public final boolean startRiding(net.minecraft.world.entity.Entity);
+  public boolean showVehicleHealth();
+  public boolean startRiding(net.minecraft.world.entity.Entity, boolean, boolean);
+  public void ejectPassengers();
+  public final boolean doTeamsAllowDamage(net.minecraft.world.entity.Entity);
+  public void removeVehicle();
+  public void stopRiding();
+  public final boolean isInterpolating();
+  public final void moveOrInterpolateTo(net.minecraft.world.entity.PositionPath, float, float);
+  public final void moveOrInterpolateTo(net.minecraft.world.phys.Vec3, float, float);
+  public final void moveOrInterpolateTo(float, float);
+  public final void moveOrInterpolateTo(net.minecraft.world.entity.PositionPath);
+  public final void moveOrInterpolateTo(net.minecraft.world.entity.PositionPath, float, float, boolean);
+  public void onInterpolationStart(net.minecraft.world.entity.InterpolationHandler);
+  public final net.minecraft.world.entity.InterpolationHandler getInterpolation();
+  public void lerpHeadTo(float, int);
+  public float getPickRadius();
+  public net.minecraft.world.phys.Vec3 getLookAngle();
+  public org.joml.Quaternionf getLookQuaternion();
+  public net.minecraft.world.phys.Vec3 getHeadLookAngle();
+  public net.minecraft.world.phys.Vec3 getHandHoldingItemAngle(net.minecraft.world.item.Item);
+  public net.minecraft.world.phys.Vec2 getRotationVector();
+  public net.minecraft.world.phys.Vec3 getForward();
+  public void setAsInsidePortal(net.minecraft.world.level.block.Portal, net.minecraft.core.BlockPos);
+  public void teleportToPortalDestination(net.minecraft.server.level.ServerLevel, net.minecraft.world.level.portal.TeleportTransition);
+  public int getDimensionChangingDelay();
+  public void lerpMotion(net.minecraft.world.phys.Vec3);
+  public void handleDamageEvent(net.minecraft.world.damagesource.DamageSource);
+  public void handleEntityEvent(byte);
+  public void animateHurt(float);
+  public boolean isOnFire();
+  public boolean isPassenger();
+  public boolean isVehicle();
+  public boolean dismountsUnderwater();
+  public boolean canControlVehicle();
+  public void setShiftKeyDown(boolean);
+  public boolean isShiftKeyDown();
+  public boolean isSteppingCarefully();
+  public boolean isSuppressingBounce();
+  public boolean isDiscrete();
+  public boolean isDescending();
+  public boolean isCrouching();
+  public boolean isSprinting();
+  public void setSprinting(boolean);
+  public boolean isSwimming();
+  public boolean isVisuallySwimming();
+  public boolean isVisuallyCrawling();
+  public void setSwimming(boolean);
+  public final boolean hasGlowingTag();
+  public final void setGlowingTag(boolean);
+  public boolean isCurrentlyGlowing();
+  public boolean isInvisible();
+  public boolean isInvisibleTo(net.minecraft.world.entity.player.Player);
+  public boolean isOnRails();
+  public void updateDynamicGameEventListener(java.util.function.BiConsumer<net.minecraft.world.level.gameevent.DynamicGameEventListener<?>, net.minecraft.server.level.ServerLevel>);
+  public net.minecraft.world.scores.PlayerTeam getTeam();
+  public final boolean isAlliedTo(net.minecraft.world.entity.Entity);
+  public boolean isAlliedTo(net.minecraft.world.scores.Team);
+  public void setInvisible(boolean);
+  public int getMaxAirSupply();
+  public int getAirSupply();
+  public void setAirSupply(int);
+  public void clearFreeze();
+  public int getTicksFrozen();
+  public void setTicksFrozen(int);
+  public float getPercentFrozen();
+  public boolean isFullyFrozen();
+  public int getTicksRequiredToFreeze();
+  public void thunderHit(net.minecraft.server.level.ServerLevel, net.minecraft.world.entity.LightningBolt);
+  public void onAboveBubbleColumn(boolean, net.minecraft.core.BlockPos);
+  public void onInsideBubbleColumn(boolean);
+  public boolean killedEntity(net.minecraft.server.level.ServerLevel, net.minecraft.world.entity.LivingEntity, net.minecraft.world.damagesource.DamageSource);
+  public boolean projectileReceivesSideEffectsOnHit(boolean);
+  public void checkFallDistanceAccumulation();
+  public void resetFallDistance();
+  public void makeStuckInBlock(net.minecraft.world.level.block.state.BlockState, net.minecraft.world.phys.Vec3);
+  public net.minecraft.network.chat.Component getName();
+  public boolean is(net.minecraft.world.entity.Entity);
+  public float getYHeadRot();
+  public void setYHeadRot(float);
+  public void setYBodyRot(float);
+  public boolean isAttackable();
+  public boolean skipAttackInteraction(net.minecraft.world.entity.Entity);
+  public java.lang.String toString();
+  public boolean isInvulnerable();
+  public boolean isPermanentlyInvulnerable();
+  public boolean isTemporarilyInvulnerable();
+  public boolean isInvulnerableToPiercingWeapon();
+  public void setPermanentlyInvulnerable(boolean);
+  public void copyPosition(net.minecraft.world.entity.Entity);
+  public void restoreFrom(net.minecraft.world.entity.Entity);
+  public net.minecraft.world.entity.Entity teleport(net.minecraft.world.level.portal.TeleportTransition);
+  public void teleportSetPosition(net.minecraft.world.entity.PositionMoveRotation, java.util.Set<net.minecraft.world.entity.Relative>);
+  public void teleportSetPosition(net.minecraft.world.entity.PositionMoveRotation, net.minecraft.world.entity.PositionMoveRotation, java.util.Set<net.minecraft.world.entity.Relative>);
+  public void forceSetRotation(float, boolean, float, boolean);
+  public void placePortalTicket(net.minecraft.core.BlockPos);
+  public net.minecraft.world.phys.Vec3 getRelativePortalPosition(net.minecraft.core.Direction$Axis, net.minecraft.util.BlockUtil$FoundRectangle);
+  public boolean canUsePortal(boolean);
+  public boolean canTeleport(net.minecraft.world.level.Level, net.minecraft.world.level.Level);
+  public float getBlockExplosionResistance(net.minecraft.world.level.Explosion, net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.material.FluidState, float);
+  public boolean shouldBlockExplode(net.minecraft.world.level.Explosion, net.minecraft.world.level.BlockGetter, net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, float);
+  public int getMaxFallDistance();
+  public boolean isIgnoringBlockTriggers();
+  public void fillCrashReportCategory(net.minecraft.CrashReportCategory);
+  public boolean displayFireAnimation();
+  public void setUUID(java.util.UUID);
+  public java.util.UUID getUUID();
+  public java.lang.String getStringUUID();
+  public java.lang.String getScoreboardName();
+  public boolean isPushedByFluid();
+  public static double getViewScale();
+  public static void setViewScale(double);
+  public net.minecraft.network.chat.Component getDisplayName();
+  public void setCustomName(net.minecraft.network.chat.Component);
+  public net.minecraft.network.chat.Component getCustomName();
+  public boolean hasCustomName();
+  public void setCustomNameVisible(boolean);
+  public boolean isCustomNameVisible();
+  public net.minecraft.network.chat.Component belowNameDisplay();
+  public boolean teleportTo(net.minecraft.server.level.ServerLevel, double, double, double, java.util.Set<net.minecraft.world.entity.Relative>, float, float, boolean);
+  public void dismountTo(double, double, double);
+  public void teleportTo(double, double, double);
+  public void teleportRelative(double, double, double);
+  public boolean shouldShowName();
+  public void onSyncedDataUpdated(java.util.List<net.minecraft.network.syncher.SynchedEntityData$DataValue<?>>);
+  public void onSyncedDataUpdated(net.minecraft.network.syncher.EntityDataAccessor<?>);
+  public void refreshDimensions();
+  public boolean fudgePositionAfterSizeChange(net.minecraft.world.entity.EntityDimensions);
+  public net.minecraft.core.Direction getDirection();
+  public net.minecraft.core.Direction getMotionDirection();
+  public boolean broadcastToPlayer(net.minecraft.server.level.ServerPlayer);
+  public final net.minecraft.world.phys.AABB getBoundingBox();
+  public net.minecraft.world.phys.AABB getInterpolatedBoundingBox(float);
+  public final void setBoundingBox(net.minecraft.world.phys.AABB);
+  public final float getEyeHeight(net.minecraft.world.entity.Pose);
+  public final float getEyeHeight();
+  public net.minecraft.world.entity.SlotAccess getSlot(int);
+  public boolean ignoreExplosion(net.minecraft.world.level.Explosion);
+  public void startSeenByPlayer(net.minecraft.server.level.ServerPlayer);
+  public void stopSeenByPlayer(net.minecraft.server.level.ServerPlayer);
+  public float rotate(net.minecraft.world.level.block.Rotation);
+  public float mirror(net.minecraft.world.level.block.Mirror);
+  public net.minecraft.world.entity.projectile.ProjectileDeflection deflection(net.minecraft.world.entity.projectile.Projectile);
+  public net.minecraft.world.entity.LivingEntity getControllingPassenger();
+  public final boolean hasControllingPassenger();
+  public final java.util.List<net.minecraft.world.entity.Entity> getPassengers();
+  public net.minecraft.world.entity.Entity getFirstPassenger();
+  public boolean hasPassenger(net.minecraft.world.entity.Entity);
+  public boolean hasPassenger(java.util.function.Predicate<net.minecraft.world.entity.Entity>);
+  public java.util.stream.Stream<net.minecraft.world.entity.Entity> getSelfAndPassengers();
+  public java.util.stream.Stream<net.minecraft.world.entity.Entity> getPassengersAndSelf();
+  public java.lang.Iterable<net.minecraft.world.entity.Entity> getIndirectPassengers();
+  public int countPlayerPassengers();
+  public boolean hasExactlyOnePlayerPassenger();
+  public net.minecraft.world.entity.Entity getRootVehicle();
+  public boolean isPassengerOfSameVehicle(net.minecraft.world.entity.Entity);
+  public boolean hasIndirectPassenger(net.minecraft.world.entity.Entity);
+  public final boolean isLocalInstanceAuthoritative();
+  public boolean isClientAuthoritative();
+  public net.minecraft.world.entity.MoveSimulationType getMoveSimulationType();
+  public final boolean canSimulateMovement();
+  public boolean isEffectiveAi();
+  public net.minecraft.world.phys.Vec3 getDismountLocationForPassenger(net.minecraft.world.entity.LivingEntity);
+  public net.minecraft.world.entity.Entity getVehicle();
+  public net.minecraft.world.entity.Entity getControlledVehicle();
+  public net.minecraft.world.level.material.PushReaction getPistonPushReaction();
+  public net.minecraft.sounds.SoundSource getSoundSource();
+  public net.minecraft.commands.CommandSourceStack createCommandSourceStackForNameResolution(net.minecraft.server.level.ServerLevel);
+  public void lookAt(net.minecraft.commands.arguments.EntityAnchorArgument$Anchor, net.minecraft.world.phys.Vec3);
+  public float getPreciseBodyRotation(float);
+  public boolean touchingUnloadedChunk();
+  public double getFluidHeight(net.minecraft.tags.TagKey<net.minecraft.world.level.material.Fluid>);
+::endgroup::
+::group::net.minecraft.client.KeyMapping
+Compiled from "KeyMapping.java"
+public class net.minecraft.client.KeyMapping implements java.lang.Comparable<net.minecraft.client.KeyMapping> {
+  public static void click(com.mojang.blaze3d.platform.InputConstants$Key);
+  public static void set(com.mojang.blaze3d.platform.InputConstants$Key, boolean);
+  public static void setAll();
+  public static void releaseAll();
+  public static void restoreToggleStatesOnScreenClosed();
+  public static void resetToggleKeys();
+  public static void resetMapping();
+  public net.minecraft.client.KeyMapping(java.lang.String, int, net.minecraft.client.KeyMapping$Category);
+  public net.minecraft.client.KeyMapping(java.lang.String, com.mojang.blaze3d.platform.InputConstants$Type, int, net.minecraft.client.KeyMapping$Category);
+  public net.minecraft.client.KeyMapping(java.lang.String, com.mojang.blaze3d.platform.InputConstants$Type, int, net.minecraft.client.KeyMapping$Category, int);
+  public boolean isDown();
+  public net.minecraft.client.KeyMapping$Category getCategory();
+  public boolean consumeClick();
+  public java.lang.String getName();
+  public com.mojang.blaze3d.platform.InputConstants$Key getDefaultKey();
+  public void setKey(com.mojang.blaze3d.platform.InputConstants$Key);
+  public int compareTo(net.minecraft.client.KeyMapping);
+  public static java.util.function.Supplier<net.minecraft.network.chat.Component> createNameSupplier(java.lang.String);
+  public boolean same(net.minecraft.client.KeyMapping);
+  public boolean isUnbound();
+  public boolean matches(net.minecraft.client.input.KeyEvent);
+  public boolean matchesMouse(net.minecraft.client.input.MouseButtonEvent);
+  public boolean matches(com.mojang.blaze3d.platform.InputConstants$Key);
+  public net.minecraft.network.chat.Component getTranslatedKeyMessage();
+  public boolean isDefault();
+  public java.lang.String saveString();
+  public void setDown(boolean);
+  public static net.minecraft.client.KeyMapping get(java.lang.String);
+  public int compareTo(java.lang.Object);
+}
+::endgroup::
+::group::net.minecraft.client.KeyMapping$Category
+Compiled from "KeyMapping.java"
+public final class net.minecraft.client.KeyMapping$Category extends java.lang.Record {
+  public static final net.minecraft.client.KeyMapping$Category MOVEMENT;
+  public static final net.minecraft.client.KeyMapping$Category MISC;
+  public static final net.minecraft.client.KeyMapping$Category MULTIPLAYER;
+  public static final net.minecraft.client.KeyMapping$Category GAMEPLAY;
+  public static final net.minecraft.client.KeyMapping$Category INVENTORY;
+  public static final net.minecraft.client.KeyMapping$Category CREATIVE;
+  public static final net.minecraft.client.KeyMapping$Category SPECTATOR;
+  public static final net.minecraft.client.KeyMapping$Category DEBUG;
+  public net.minecraft.client.KeyMapping$Category(net.minecraft.resources.Identifier);
+  public static net.minecraft.client.KeyMapping$Category register(net.minecraft.resources.Identifier);
+  public net.minecraft.network.chat.Component label();
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public net.minecraft.resources.Identifier id();
+}
+::endgroup::
+::group::net.minecraft.client.gui.screens.Screen
+Compiled from "Screen.java"
+public abstract class net.minecraft.client.gui.screens.Screen extends net.minecraft.client.gui.components.events.AbstractContainerEventHandler implements net.minecraft.client.gui.components.Renderable {
+  public static final net.minecraft.resources.Identifier MENU_BACKGROUND;
+  public static final net.minecraft.resources.Identifier HEADER_SEPARATOR;
+  public static final net.minecraft.resources.Identifier FOOTER_SEPARATOR;
+  public static final net.minecraft.resources.Identifier INWORLD_HEADER_SEPARATOR;
+  public static final net.minecraft.resources.Identifier INWORLD_FOOTER_SEPARATOR;
+  public int width;
+  public int height;
+  public net.minecraft.network.chat.Component getTitle();
+  public net.minecraft.network.chat.Component getNarrationMessage();
+  public final void extractRenderStateWithTooltipAndSubtitles(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, float);
+  public void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, float);
+  public boolean keyPressed(net.minecraft.client.input.KeyEvent);
+  public void clearFocus();
+  public boolean isInputCaptured();
+  public boolean shouldCloseOnEsc();
+  public void onClose();
+  public static java.util.List<net.minecraft.network.chat.Component> getTooltipFromItem(net.minecraft.client.Minecraft, net.minecraft.world.item.ItemStack);
+  public final void init(int, int);
+  public java.util.List<? extends net.minecraft.client.gui.components.events.GuiEventListener> children();
+  public void tick();
+  public void removed();
+  public void added();
+  public void extractBackground(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, float);
+  public static void extractMenuBackgroundTexture(net.minecraft.client.gui.GuiGraphicsExtractor, net.minecraft.resources.Identifier, int, int, float, float, int, int);
+  public void extractTransparentBackground(net.minecraft.client.gui.GuiGraphicsExtractor);
+  public boolean isPauseScreen();
+  public boolean isInGameUi();
+  public boolean isAllowedInPortal();
+  public void resize(int, int);
+  public boolean isMouseOver(double, double);
+  public void onFilesDrop(java.util.List<java.nio.file.Path>);
+  public void scheduleNarration();
+  public void afterMouseMove();
+  public void afterMouseAction();
+  public void afterKeyboardAction();
+  public void handleDelayedNarration();
+  public void triggerImmediateNarration(boolean);
+  public static net.minecraft.client.gui.screens.Screen$NarratableSearchResult findNarratableWidget(java.util.List<? extends net.minecraft.client.gui.narration.NarratableEntry>, net.minecraft.client.gui.narration.NarratableEntry);
+  public void updateNarratorStatus(boolean, net.minecraft.client.gui.narration.NarrationTrigger);
+  public net.minecraft.client.gui.Font getFont();
+  public boolean showsActiveEffects();
+  public boolean canInterruptWithAnotherScreen();
+  public net.minecraft.client.gui.navigation.ScreenRectangle getRectangle();
+  public net.minecraft.sounds.Music getBackgroundMusic();
+}
+::endgroup::
+::group::net.minecraft.client.gui.Font
+Compiled from "Font.java"
+public class net.minecraft.client.gui.Font {
+  public static final float SHADOW_DEPTH;
+  public final int lineHeight;
+  public net.minecraft.client.gui.Font(net.minecraft.client.gui.Font$Provider);
+  public java.lang.String bidirectionalShaping(java.lang.String);
+  public net.minecraft.client.gui.Font$PreparedText prepare8xTextOutline(net.minecraft.util.FormattedCharSequence, float, float, int);
+  public net.minecraft.client.gui.font.TextRenderable prepareBackground(float, float, float, float, int);
+  public net.minecraft.client.gui.Font$PreparedText prepareText(java.lang.String, float, float, int, boolean, int);
+  public net.minecraft.client.gui.Font$PreparedText prepareText(net.minecraft.util.FormattedCharSequence, float, float, int, boolean, boolean, int);
+  public int width(java.lang.String);
+  public int width(net.minecraft.network.chat.FormattedText);
+  public int width(net.minecraft.util.FormattedCharSequence);
+  public java.lang.String plainSubstrByWidth(java.lang.String, int, boolean);
+  public java.lang.String plainSubstrByWidth(java.lang.String, int);
+  public net.minecraft.network.chat.FormattedText substrByWidth(net.minecraft.network.chat.FormattedText, int);
+  public int wordWrapHeight(net.minecraft.network.chat.FormattedText, int);
+  public java.util.List<net.minecraft.util.FormattedCharSequence> split(net.minecraft.network.chat.FormattedText, int);
+  public java.util.List<net.minecraft.network.chat.FormattedText> splitIgnoringLanguage(net.minecraft.network.chat.FormattedText, int);
+  public boolean isBidirectional();
+  public net.minecraft.client.StringSplitter getSplitter();
+}
+::endgroup::
+::group::net.minecraft.client.multiplayer.ServerData
+Compiled from "ServerData.java"
+public class net.minecraft.client.multiplayer.ServerData {
+  public java.lang.String name;
+  public java.lang.String ip;
+  public net.minecraft.network.chat.Component status;
+  public net.minecraft.network.chat.Component motd;
+  public net.minecraft.network.protocol.status.ServerStatus$Players players;
+  public long ping;
+  public int protocol;
+  public net.minecraft.network.chat.Component version;
+  public java.util.List<net.minecraft.network.chat.Component> playerList;
+  public net.minecraft.client.multiplayer.ServerData(java.lang.String, java.lang.String, net.minecraft.client.multiplayer.ServerData$Type);
+  public net.minecraft.nbt.CompoundTag write();
+  public net.minecraft.client.multiplayer.ServerData$ServerPackStatus getResourcePackStatus();
+  public void setResourcePackStatus(net.minecraft.client.multiplayer.ServerData$ServerPackStatus);
+  public static net.minecraft.client.multiplayer.ServerData read(net.minecraft.nbt.CompoundTag);
+  public byte[] getIconBytes();
+  public void setIconBytes(byte[]);
+  public boolean isLan();
+  public boolean isRealm();
+  public net.minecraft.client.multiplayer.ServerData$Type type();
+  public boolean hasAcceptedCodeOfConduct(java.lang.String);
+  public void acceptCodeOfConduct(java.lang.String);
+  public void clearCodeOfConduct();
+  public void copyNameIconFrom(net.minecraft.client.multiplayer.ServerData);
+  public void copyFrom(net.minecraft.client.multiplayer.ServerData);
+  public net.minecraft.client.multiplayer.ServerData$State state();
+  public void setState(net.minecraft.client.multiplayer.ServerData$State);
+  public static byte[] validateIcon(byte[]);
+}
+::endgroup::
+::group::net.minecraft.client.multiplayer.ClientPacketListener
+Compiled from "ClientPacketListener.java"
+public class net.minecraft.client.multiplayer.ClientPacketListener extends net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl implements net.minecraft.network.protocol.game.ClientGamePacketListener,net.minecraft.network.TickablePacketListener {
+  public static final int TELEPORT_INTERPOLATION_THRESHOLD;
+  public net.minecraft.client.multiplayer.ClientPacketListener(net.minecraft.client.Minecraft, net.minecraft.network.Connection, net.minecraft.client.multiplayer.CommonListenerCookie);
+  public net.minecraft.client.multiplayer.ClientSuggestionProvider getSuggestionsProvider();
+  public void close();
+  public void clearLevel();
+  public net.minecraft.world.item.crafting.RecipeAccess recipes();
+  public void handleLogin(net.minecraft.network.protocol.game.ClientboundLoginPacket);
+  public void handleAddEntity(net.minecraft.network.protocol.game.ClientboundAddEntityPacket);
+  public void handleSetEntityMotion(net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket);
+  public void handleSetEntityData(net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket);
+  public void handleEntityPositionSync(net.minecraft.network.protocol.game.ClientboundEntityPositionSyncPacket);
+  public void handleTeleportEntity(net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket);
+  public void handleTickingState(net.minecraft.network.protocol.game.ClientboundTickingStatePacket);
+  public void handleTickingStep(net.minecraft.network.protocol.game.ClientboundTickingStepPacket);
+  public void handleSetHeldSlot(net.minecraft.network.protocol.game.ClientboundSetHeldSlotPacket);
+  public void handleMoveEntity(net.minecraft.network.protocol.game.ClientboundMoveEntityPacket);
+  public void handleMinecartAlongTrack(net.minecraft.network.protocol.game.ClientboundMoveMinecartPacket);
+  public void handleRotateMob(net.minecraft.network.protocol.game.ClientboundRotateHeadPacket);
+  public void handleRemoveEntities(net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket);
+  public void handleMovePlayer(net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket);
+  public void handleRotatePlayer(net.minecraft.network.protocol.game.ClientboundPlayerRotationPacket);
+  public void handleChunkBlocksUpdate(net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket);
+  public void handleLevelChunkWithLight(net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket);
+  public void handleChunksBiomes(net.minecraft.network.protocol.game.ClientboundChunksBiomesPacket);
+  public void handleForgetLevelChunk(net.minecraft.network.protocol.game.ClientboundForgetLevelChunkPacket);
+  public void handleBlockUpdate(net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket);
+  public void handleConfigurationStart(net.minecraft.network.protocol.game.ClientboundStartConfigurationPacket);
+  public void handleTakeItemEntity(net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket);
+  public void handleSystemChat(net.minecraft.network.protocol.game.ClientboundSystemChatPacket);
+  public void handlePlayerChat(net.minecraft.network.protocol.game.ClientboundPlayerChatPacket);
+  public void handleDisguisedChat(net.minecraft.network.protocol.game.ClientboundDisguisedChatPacket);
+  public void handleDeleteChat(net.minecraft.network.protocol.game.ClientboundDeleteChatPacket);
+  public void handleAnimate(net.minecraft.network.protocol.game.ClientboundAnimatePacket);
+  public void handleHurtAnimation(net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket);
+  public void handleSwingAnimation(net.minecraft.network.protocol.game.ClientboundSwingAnimationPacket);
+  public void handleSetTime(net.minecraft.network.protocol.game.ClientboundSetTimePacket);
+  public void handleSetSpawn(net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket);
+  public void handleSetEntityPassengersPacket(net.minecraft.network.protocol.game.ClientboundSetPassengersPacket);
+  public void handleAddTransientBlockPacket(net.minecraft.network.protocol.game.ClientboundAddTransientBlockPacket);
+  public void handleEntityLinkPacket(net.minecraft.network.protocol.game.ClientboundSetEntityLinkPacket);
+  public void handleEntityEvent(net.minecraft.network.protocol.game.ClientboundEntityEventPacket);
+  public void handleDamageEvent(net.minecraft.network.protocol.game.ClientboundDamageEventPacket);
+  public void handleSetHealth(net.minecraft.network.protocol.game.ClientboundSetHealthPacket);
+  public void handleSetExperience(net.minecraft.network.protocol.game.ClientboundSetExperiencePacket);
+  public void handleRespawn(net.minecraft.network.protocol.game.ClientboundRespawnPacket);
+  public void handleExplosion(net.minecraft.network.protocol.game.ClientboundExplodePacket);
+  public void handleMountScreenOpen(net.minecraft.network.protocol.game.ClientboundMountScreenOpenPacket);
+  public void handleOpenScreen(net.minecraft.network.protocol.game.ClientboundOpenScreenPacket);
+  public void handleContainerSetSlot(net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket);
+  public void handleSetCursorItem(net.minecraft.network.protocol.game.ClientboundSetCursorItemPacket);
+  public void handleSetPlayerInventory(net.minecraft.network.protocol.game.ClientboundSetPlayerInventoryPacket);
+  public void handleContainerContent(net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket);
+  public void handleOpenSignEditor(net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket);
+  public void handleBlockEntityData(net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket);
+  public void handleContainerSetData(net.minecraft.network.protocol.game.ClientboundContainerSetDataPacket);
+  public void handleSetEquipment(net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket);
+  public void handleContainerClose(net.minecraft.network.protocol.game.ClientboundContainerClosePacket);
+  public void handleBlockEvent(net.minecraft.network.protocol.game.ClientboundBlockEventPacket);
+  public void handleBlockDestruction(net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket);
+  public void handleGameEvent(net.minecraft.network.protocol.game.ClientboundGameEventPacket);
+  public void handleMapItemData(net.minecraft.network.protocol.game.ClientboundMapItemDataPacket);
+  public void handleLevelEvent(net.minecraft.network.protocol.game.ClientboundLevelEventPacket);
+  public void handleUpdateAdvancementsPacket(net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket);
+  public void handleSelectAdvancementsTab(net.minecraft.network.protocol.game.ClientboundSelectAdvancementsTabPacket);
+  public void handleCommands(net.minecraft.network.protocol.game.ClientboundCommandsPacket);
+  public void handleStopSoundEvent(net.minecraft.network.protocol.game.ClientboundStopSoundPacket);
+  public void handleCommandSuggestions(net.minecraft.network.protocol.game.ClientboundCommandSuggestionsPacket);
+  public void handleUpdateRecipes(net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket);
+  public void handleLookAt(net.minecraft.network.protocol.game.ClientboundPlayerLookAtPacket);
+  public void handleTagQueryPacket(net.minecraft.network.protocol.game.ClientboundTagQueryPacket);
+  public void handleAwardStats(net.minecraft.network.protocol.game.ClientboundAwardStatsPacket);
+  public void handleRecipeBookAdd(net.minecraft.network.protocol.game.ClientboundRecipeBookAddPacket);
+  public void handleRecipeBookRemove(net.minecraft.network.protocol.game.ClientboundRecipeBookRemovePacket);
+  public void handleRecipeBookSettings(net.minecraft.network.protocol.game.ClientboundRecipeBookSettingsPacket);
+  public void handleUpdateMobEffect(net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket);
+  public void handleUpdateTags(net.minecraft.network.protocol.common.ClientboundUpdateTagsPacket);
+  public void handlePlayerCombatEnd(net.minecraft.network.protocol.game.ClientboundPlayerCombatEndPacket);
+  public void handlePlayerCombatEnter(net.minecraft.network.protocol.game.ClientboundPlayerCombatEnterPacket);
+  public void handlePlayerCombatKill(net.minecraft.network.protocol.game.ClientboundPlayerCombatKillPacket);
+  public void handleChangeDifficulty(net.minecraft.network.protocol.game.ClientboundChangeDifficultyPacket);
+  public void handleSetCamera(net.minecraft.network.protocol.game.ClientboundSetCameraPacket);
+  public void handleInitializeBorder(net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket);
+  public void handleSetBorderCenter(net.minecraft.network.protocol.game.ClientboundSetBorderCenterPacket);
+  public void handleSetBorderLerpSize(net.minecraft.network.protocol.game.ClientboundSetBorderLerpSizePacket);
+  public void handleSetBorderSize(net.minecraft.network.protocol.game.ClientboundSetBorderSizePacket);
+  public void handleSetBorderWarningDistance(net.minecraft.network.protocol.game.ClientboundSetBorderWarningDistancePacket);
+  public void handleSetBorderWarningDelay(net.minecraft.network.protocol.game.ClientboundSetBorderWarningDelayPacket);
+  public void handleTitlesClear(net.minecraft.network.protocol.game.ClientboundClearTitlesPacket);
+  public void handleServerData(net.minecraft.network.protocol.game.ClientboundServerDataPacket);
+  public void handleCustomChatCompletions(net.minecraft.network.protocol.game.ClientboundCustomChatCompletionsPacket);
+  public void setActionBarText(net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket);
+  public void setTitleText(net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket);
+  public void setSubtitleText(net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket);
+  public void setTitlesAnimation(net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket);
+  public void handleTabListCustomisation(net.minecraft.network.protocol.game.ClientboundTabListPacket);
+  public void handleRemoveMobEffect(net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket);
+  public void handlePlayerInfoRemove(net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket);
+  public void handlePlayerInfoUpdate(net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket);
+  public boolean onlineMode();
+  public void handlePlayerAbilities(net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket);
+  public void handleGameRuleValues(net.minecraft.network.protocol.game.ClientboundGameRuleValuesPacket);
+  public void handleSoundEvent(net.minecraft.network.protocol.game.ClientboundSoundPacket);
+  public void handleSoundEntityEvent(net.minecraft.network.protocol.game.ClientboundSoundEntityPacket);
+  public void handleBossUpdate(net.minecraft.network.protocol.game.ClientboundBossEventPacket);
+  public void handleItemCooldown(net.minecraft.network.protocol.game.ClientboundCooldownPacket);
+  public void handleMoveVehicle(net.minecraft.network.protocol.game.ClientboundMoveVehiclePacket);
+  public void handleOpenBook(net.minecraft.network.protocol.game.ClientboundOpenBookPacket);
+  public void handleCustomPayload(net.minecraft.network.protocol.common.custom.CustomPacketPayload);
+  public void handleAddObjective(net.minecraft.network.protocol.game.ClientboundSetObjectivePacket);
+  public void handleSetScore(net.minecraft.network.protocol.game.ClientboundSetScorePacket);
+  public void handleResetScore(net.minecraft.network.protocol.game.ClientboundResetScorePacket);
+  public void handleSetDisplayObjective(net.minecraft.network.protocol.game.ClientboundSetDisplayObjectivePacket);
+  public void handleSetPlayerTeamPacket(net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket);
+  public void handleParticleEvent(net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket);
+  public void handleUpdateAttributes(net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket);
+  public void handlePlaceRecipe(net.minecraft.network.protocol.game.ClientboundPlaceGhostRecipePacket);
+  public void handleLightUpdatePacket(net.minecraft.network.protocol.game.ClientboundLightUpdatePacket);
+  public void handleMerchantOffers(net.minecraft.network.protocol.game.ClientboundMerchantOffersPacket);
+  public void handleSetChunkCacheRadius(net.minecraft.network.protocol.game.ClientboundSetChunkCacheRadiusPacket);
+  public void handleSetSimulationDistance(net.minecraft.network.protocol.game.ClientboundSetSimulationDistancePacket);
+  public void handleSetChunkCacheCenter(net.minecraft.network.protocol.game.ClientboundSetChunkCacheCenterPacket);
+  public void handleBlockChangedAck(net.minecraft.network.protocol.game.ClientboundBlockChangedAckPacket);
+  public void handleBundlePacket(net.minecraft.network.protocol.game.ClientboundBundlePacket);
+  public void handleProjectilePowerPacket(net.minecraft.network.protocol.game.ClientboundProjectilePowerPacket);
+  public void handleChunkBatchStart(net.minecraft.network.protocol.game.ClientboundChunkBatchStartPacket);
+  public void handleChunkBatchFinished(net.minecraft.network.protocol.game.ClientboundChunkBatchFinishedPacket);
+  public void handleDebugSample(net.minecraft.network.protocol.game.ClientboundDebugSamplePacket);
+  public void handlePongResponse(net.minecraft.network.protocol.ping.ClientboundPongResponsePacket);
+  public void handleTestInstanceBlockStatus(net.minecraft.network.protocol.game.ClientboundTestInstanceBlockStatus);
+  public void handleWaypoint(net.minecraft.network.protocol.game.ClientboundTrackedWaypointPacket);
+  public void handleDebugChunkValue(net.minecraft.network.protocol.game.ClientboundDebugChunkValuePacket);
+  public void handleDebugBlockValue(net.minecraft.network.protocol.game.ClientboundDebugBlockValuePacket);
+  public void handleDebugEntityValue(net.minecraft.network.protocol.game.ClientboundDebugEntityValuePacket);
+  public void handleDebugEvent(net.minecraft.network.protocol.game.ClientboundDebugEventPacket);
+  public void handleGameTestHighlightPos(net.minecraft.network.protocol.game.ClientboundGameTestHighlightPosPacket);
+  public void handleLowDiskSpaceWarning(net.minecraft.network.protocol.game.ClientboundLowDiskSpaceWarningPacket);
+  public net.minecraft.network.Connection getConnection();
+  public boolean isAcceptingMessages();
+  public java.util.Collection<net.minecraft.client.multiplayer.PlayerInfo> getListedOnlinePlayers();
+  public java.util.Collection<net.minecraft.client.multiplayer.PlayerInfo> getOnlinePlayers();
+  public java.util.Collection<java.util.UUID> getOnlinePlayerIds();
+  public net.minecraft.client.multiplayer.PlayerInfo getPlayerInfo(java.util.UUID);
+  public net.minecraft.client.multiplayer.PlayerInfo getPlayerInfo(java.lang.String);
+  public java.util.Map<java.util.UUID, net.minecraft.client.multiplayer.PlayerInfo> getSeenPlayers();
+  public net.minecraft.client.multiplayer.PlayerInfo getPlayerInfoIgnoreCase(java.lang.String);
+  public com.mojang.authlib.GameProfile getLocalGameProfile();
+  public net.minecraft.client.multiplayer.ClientAdvancements getAdvancements();
+  public com.mojang.brigadier.CommandDispatcher<net.minecraft.client.multiplayer.ClientSuggestionProvider> getCommands();
+  public net.minecraft.client.multiplayer.ClientLevel getLevel();
+  public net.minecraft.client.DebugQueryHandler getDebugQueryHandler();
+  public java.util.Set<net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level>> levels();
+  public net.minecraft.core.RegistryAccess$Frozen registryAccess();
+  public void markMessageAsProcessed(net.minecraft.network.chat.MessageSignature, boolean);
+  public void sendChat(java.lang.String);
+  public void sendCommand(java.lang.String);
+  public void sendUnattendedCommand(java.lang.String, net.minecraft.client.gui.screens.Screen);
+  public void broadcastClientInformation(net.minecraft.server.level.ClientInformation);
+  public void tick();
+  public java.lang.Runnable getPlayerCompiledSectionCallback();
+  public void prepareKeyPair();
+  public net.minecraft.client.multiplayer.ServerData getServerData();
+  public net.minecraft.world.flag.FeatureFlagSet enabledFeatures();
+  public boolean isFeatureEnabled(net.minecraft.world.flag.FeatureFlagSet);
+  public net.minecraft.world.scores.Scoreboard scoreboard();
+  public void updateSearchTrees();
+  public net.minecraft.client.multiplayer.SessionSearchTrees searchTrees();
+  public void registerForCleaning(net.minecraft.client.multiplayer.CacheSlot<?, ?>);
+  public net.minecraft.network.HashedPatchMap$HashGenerator decoratedHashOpsGenenerator();
+  public net.minecraft.client.waypoints.ClientWaypointManager getWaypointManager();
+  public net.minecraft.util.debug.DebugValueAccess createDebugValueAccess();
+  public boolean hasClientLoaded();
+  public net.minecraft.client.ClientClockManager clockManager();
+}
+::endgroup::
+::group::net.minecraft.resources.Identifier
+Compiled from "Identifier.java"
+public final class net.minecraft.resources.Identifier implements java.lang.Comparable<net.minecraft.resources.Identifier> {
+  public static final com.mojang.serialization.Codec<net.minecraft.resources.Identifier> CODEC;
+  public static final net.minecraft.network.codec.StreamCodec<io.netty.buffer.ByteBuf, net.minecraft.resources.Identifier> STREAM_CODEC;
+  public static final com.mojang.brigadier.exceptions.SimpleCommandExceptionType ERROR_INVALID;
+  public static final char NAMESPACE_SEPARATOR;
+  public static final java.lang.String DEFAULT_NAMESPACE;
+  public static final java.lang.String REALMS_NAMESPACE;
+  public static final java.lang.String ALLOWED_NAMESPACE_CHARACTERS;
+  public static net.minecraft.resources.Identifier fromNamespaceAndPath(java.lang.String, java.lang.String);
+  public static net.minecraft.resources.Identifier parse(java.lang.String);
+  public static net.minecraft.resources.Identifier withDefaultNamespace(java.lang.String);
+  public static net.minecraft.resources.Identifier tryParse(java.lang.String);
+  public static net.minecraft.resources.Identifier tryBuild(java.lang.String, java.lang.String);
+  public static net.minecraft.resources.Identifier bySeparator(java.lang.String, char);
+  public static net.minecraft.resources.Identifier tryBySeparator(java.lang.String, char);
+  public static com.mojang.serialization.DataResult<net.minecraft.resources.Identifier> read(java.lang.String);
+  public java.lang.String getPath();
+  public java.lang.String getNamespace();
+  public net.minecraft.resources.Identifier withPath(java.lang.String);
+  public net.minecraft.resources.Identifier withPath(java.util.function.UnaryOperator<java.lang.String>);
+  public net.minecraft.resources.Identifier withPrefix(java.lang.String);
+  public net.minecraft.resources.Identifier withSuffix(java.lang.String);
+  public java.lang.String toString();
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public int compareTo(net.minecraft.resources.Identifier);
+  public java.nio.file.Path resolveAgainst(java.nio.file.Path);
+  public java.lang.String toDebugFileName();
+  public java.lang.String toLanguageKey();
+  public java.lang.String toShortLanguageKey();
+  public java.lang.String toShortString();
+  public java.lang.String toLanguageKey(java.lang.String);
+  public java.lang.String toLanguageKey(java.lang.String, java.lang.String);
+  public static net.minecraft.resources.Identifier read(com.mojang.brigadier.StringReader) throws com.mojang.brigadier.exceptions.CommandSyntaxException;
+  public static net.minecraft.resources.Identifier readNonEmpty(com.mojang.brigadier.StringReader) throws com.mojang.brigadier.exceptions.CommandSyntaxException;
+  public static boolean isAllowedInIdentifier(char);
+  public static boolean isValidPath(java.lang.String);
+  public static boolean isValidNamespace(java.lang.String);
+  public static boolean validPathChar(char);
+  public int compareTo(java.lang.Object);
+}
+::endgroup::
+::group::net.minecraft.resources.ResourceKey
+Compiled from "ResourceKey.java"
+public class net.minecraft.resources.ResourceKey<T> {
+  public static final net.minecraft.network.codec.StreamCodec<io.netty.buffer.ByteBuf, net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<?>>> REGISTRY_STREAM_CODEC;
+  public static <T> com.mojang.serialization.Codec<net.minecraft.resources.ResourceKey<T>> codec(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<T>>);
+  public static <T> net.minecraft.network.codec.StreamCodec<io.netty.buffer.ByteBuf, net.minecraft.resources.ResourceKey<T>> streamCodec(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<T>>);
+  public static <T> net.minecraft.resources.ResourceKey<T> create(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<T>>, net.minecraft.resources.Identifier);
+  public static <T> net.minecraft.resources.ResourceKey<net.minecraft.core.Registry<T>> createRegistryKey(net.minecraft.resources.Identifier);
+  public java.lang.String toString();
+  public boolean isFor(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<?>>);
+  public <E> java.util.Optional<net.minecraft.resources.ResourceKey<E>> cast(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<E>>);
+  public <E> net.minecraft.resources.ResourceKey<E> dependent(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<E>>, java.lang.String);
+  public <E> net.minecraft.resources.ResourceKey<E> dependent(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<E>>, java.util.function.UnaryOperator<java.lang.String>);
+  public net.minecraft.resources.Identifier identifier();
+  public net.minecraft.resources.Identifier registry();
+  public net.minecraft.resources.ResourceKey<net.minecraft.core.Registry<T>> registryKey();
+}
+::endgroup::
+::group::net.minecraft.network.protocol.common.custom.CustomPacketPayload
+Compiled from "CustomPacketPayload.java"
+public interface net.minecraft.network.protocol.common.custom.CustomPacketPayload {
+  public abstract net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type<? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> type();
+  public static <B extends io.netty.buffer.ByteBuf, T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> net.minecraft.network.codec.StreamCodec<B, T> codec(net.minecraft.network.codec.StreamMemberEncoder<B, T>, net.minecraft.network.codec.StreamDecoder<B, T>);
+  public static <T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type<T> createType(java.lang.String);
+  public static <B extends net.minecraft.network.FriendlyByteBuf> net.minecraft.network.codec.StreamCodec<B, net.minecraft.network.protocol.common.custom.CustomPacketPayload> codec(net.minecraft.network.protocol.common.custom.CustomPacketPayload$FallbackProvider<B>, java.util.List<net.minecraft.network.protocol.common.custom.CustomPacketPayload$TypeAndCodec<? super B, ?>>);
+}
+::endgroup::
+::group::net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type
+Compiled from "CustomPacketPayload.java"
+public final class net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type<T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> extends java.lang.Record {
+  public net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type(net.minecraft.resources.Identifier);
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public net.minecraft.resources.Identifier id();
+}
+::endgroup::
+::group::net.minecraft.network.codec.StreamCodec
+Compiled from "StreamCodec.java"
+public interface net.minecraft.network.codec.StreamCodec<B, V> extends net.minecraft.network.codec.StreamEncoder<B, V>, net.minecraft.network.codec.StreamDecoder<B, V> {
+  public static <B, V> net.minecraft.network.codec.StreamCodec<B, V> of(net.minecraft.network.codec.StreamEncoder<B, V>, net.minecraft.network.codec.StreamDecoder<B, V>);
+  public static <B, V> net.minecraft.network.codec.StreamCodec<B, V> ofMember(net.minecraft.network.codec.StreamMemberEncoder<B, V>, net.minecraft.network.codec.StreamDecoder<B, V>);
+  public static <B, V> net.minecraft.network.codec.StreamCodec<B, V> unit(V);
+  public default <O> net.minecraft.network.codec.StreamCodec<B, O> apply(net.minecraft.network.codec.StreamCodec$CodecOperation<B, V, O>);
+  public default <O> net.minecraft.network.codec.StreamCodec<B, O> map(java.util.function.Function<? super V, ? extends O>, java.util.function.Function<? super O, ? extends V>);
+  public default <O extends io.netty.buffer.ByteBuf> net.minecraft.network.codec.StreamCodec<O, V> mapStream(java.util.function.Function<O, ? extends B>);
+  public default <U> net.minecraft.network.codec.StreamCodec<B, U> dispatch(java.util.function.Function<? super U, ? extends V>, java.util.function.Function<? super V, ? extends net.minecraft.network.codec.StreamCodec<? super B, ? extends U>>);
+  public static <B, C, T1> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, java.util.function.Function<T1, C>);
+  public static <B, C, T1, T2> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, java.util.function.BiFunction<T1, T2, C>);
+  public static <B, C, T1, T2, T3> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, com.mojang.datafixers.util.Function3<T1, T2, T3, C>);
+  public static <B, C, T1, T2, T3, T4> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, com.mojang.datafixers.util.Function4<T1, T2, T3, T4, C>);
+  public static <B, C, T1, T2, T3, T4, T5> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, net.minecraft.network.codec.StreamCodec<? super B, T5>, java.util.function.Function<C, T5>, com.mojang.datafixers.util.Function5<T1, T2, T3, T4, T5, C>);
+  public static <B, C, T1, T2, T3, T4, T5, T6> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, net.minecraft.network.codec.StreamCodec<? super B, T5>, java.util.function.Function<C, T5>, net.minecraft.network.codec.StreamCodec<? super B, T6>, java.util.function.Function<C, T6>, com.mojang.datafixers.util.Function6<T1, T2, T3, T4, T5, T6, C>);
+  public static <B, C, T1, T2, T3, T4, T5, T6, T7> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, net.minecraft.network.codec.StreamCodec<? super B, T5>, java.util.function.Function<C, T5>, net.minecraft.network.codec.StreamCodec<? super B, T6>, java.util.function.Function<C, T6>, net.minecraft.network.codec.StreamCodec<? super B, T7>, java.util.function.Function<C, T7>, com.mojang.datafixers.util.Function7<T1, T2, T3, T4, T5, T6, T7, C>);
+  public static <B, C, T1, T2, T3, T4, T5, T6, T7, T8> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, net.minecraft.network.codec.StreamCodec<? super B, T5>, java.util.function.Function<C, T5>, net.minecraft.network.codec.StreamCodec<? super B, T6>, java.util.function.Function<C, T6>, net.minecraft.network.codec.StreamCodec<? super B, T7>, java.util.function.Function<C, T7>, net.minecraft.network.codec.StreamCodec<? super B, T8>, java.util.function.Function<C, T8>, com.mojang.datafixers.util.Function8<T1, T2, T3, T4, T5, T6, T7, T8, C>);
+  public static <B, C, T1, T2, T3, T4, T5, T6, T7, T8, T9> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, net.minecraft.network.codec.StreamCodec<? super B, T5>, java.util.function.Function<C, T5>, net.minecraft.network.codec.StreamCodec<? super B, T6>, java.util.function.Function<C, T6>, net.minecraft.network.codec.StreamCodec<? super B, T7>, java.util.function.Function<C, T7>, net.minecraft.network.codec.StreamCodec<? super B, T8>, java.util.function.Function<C, T8>, net.minecraft.network.codec.StreamCodec<? super B, T9>, java.util.function.Function<C, T9>, com.mojang.datafixers.util.Function9<T1, T2, T3, T4, T5, T6, T7, T8, T9, C>);
+  public static <B, C, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, net.minecraft.network.codec.StreamCodec<? super B, T5>, java.util.function.Function<C, T5>, net.minecraft.network.codec.StreamCodec<? super B, T6>, java.util.function.Function<C, T6>, net.minecraft.network.codec.StreamCodec<? super B, T7>, java.util.function.Function<C, T7>, net.minecraft.network.codec.StreamCodec<? super B, T8>, java.util.function.Function<C, T8>, net.minecraft.network.codec.StreamCodec<? super B, T9>, java.util.function.Function<C, T9>, net.minecraft.network.codec.StreamCodec<? super B, T10>, java.util.function.Function<C, T10>, com.mojang.datafixers.util.Function10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, C>);
+  public static <B, C, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, net.minecraft.network.codec.StreamCodec<? super B, T5>, java.util.function.Function<C, T5>, net.minecraft.network.codec.StreamCodec<? super B, T6>, java.util.function.Function<C, T6>, net.minecraft.network.codec.StreamCodec<? super B, T7>, java.util.function.Function<C, T7>, net.minecraft.network.codec.StreamCodec<? super B, T8>, java.util.function.Function<C, T8>, net.minecraft.network.codec.StreamCodec<? super B, T9>, java.util.function.Function<C, T9>, net.minecraft.network.codec.StreamCodec<? super B, T10>, java.util.function.Function<C, T10>, net.minecraft.network.codec.StreamCodec<? super B, T11>, java.util.function.Function<C, T11>, com.mojang.datafixers.util.Function11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, C>);
+  public static <B, C, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, net.minecraft.network.codec.StreamCodec<? super B, T5>, java.util.function.Function<C, T5>, net.minecraft.network.codec.StreamCodec<? super B, T6>, java.util.function.Function<C, T6>, net.minecraft.network.codec.StreamCodec<? super B, T7>, java.util.function.Function<C, T7>, net.minecraft.network.codec.StreamCodec<? super B, T8>, java.util.function.Function<C, T8>, net.minecraft.network.codec.StreamCodec<? super B, T9>, java.util.function.Function<C, T9>, net.minecraft.network.codec.StreamCodec<? super B, T10>, java.util.function.Function<C, T10>, net.minecraft.network.codec.StreamCodec<? super B, T11>, java.util.function.Function<C, T11>, net.minecraft.network.codec.StreamCodec<? super B, T12>, java.util.function.Function<C, T12>, com.mojang.datafixers.util.Function12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, C>);
+  public static <B, C, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, net.minecraft.network.codec.StreamCodec<? super B, T5>, java.util.function.Function<C, T5>, net.minecraft.network.codec.StreamCodec<? super B, T6>, java.util.function.Function<C, T6>, net.minecraft.network.codec.StreamCodec<? super B, T7>, java.util.function.Function<C, T7>, net.minecraft.network.codec.StreamCodec<? super B, T8>, java.util.function.Function<C, T8>, net.minecraft.network.codec.StreamCodec<? super B, T9>, java.util.function.Function<C, T9>, net.minecraft.network.codec.StreamCodec<? super B, T10>, java.util.function.Function<C, T10>, net.minecraft.network.codec.StreamCodec<? super B, T11>, java.util.function.Function<C, T11>, net.minecraft.network.codec.StreamCodec<? super B, T12>, java.util.function.Function<C, T12>, net.minecraft.network.codec.StreamCodec<? super B, T13>, java.util.function.Function<C, T13>, com.mojang.datafixers.util.Function13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, C>);
+  public static <B, C, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> net.minecraft.network.codec.StreamCodec<B, C> composite(net.minecraft.network.codec.StreamCodec<? super B, T1>, java.util.function.Function<C, T1>, net.minecraft.network.codec.StreamCodec<? super B, T2>, java.util.function.Function<C, T2>, net.minecraft.network.codec.StreamCodec<? super B, T3>, java.util.function.Function<C, T3>, net.minecraft.network.codec.StreamCodec<? super B, T4>, java.util.function.Function<C, T4>, net.minecraft.network.codec.StreamCodec<? super B, T5>, java.util.function.Function<C, T5>, net.minecraft.network.codec.StreamCodec<? super B, T6>, java.util.function.Function<C, T6>, net.minecraft.network.codec.StreamCodec<? super B, T7>, java.util.function.Function<C, T7>, net.minecraft.network.codec.StreamCodec<? super B, T8>, java.util.function.Function<C, T8>, net.minecraft.network.codec.StreamCodec<? super B, T9>, java.util.function.Function<C, T9>, net.minecraft.network.codec.StreamCodec<? super B, T10>, java.util.function.Function<C, T10>, net.minecraft.network.codec.StreamCodec<? super B, T11>, java.util.function.Function<C, T11>, net.minecraft.network.codec.StreamCodec<? super B, T12>, java.util.function.Function<C, T12>, net.minecraft.network.codec.StreamCodec<? super B, T13>, java.util.function.Function<C, T13>, net.minecraft.network.codec.StreamCodec<? super B, T14>, java.util.function.Function<C, T14>, com.mojang.datafixers.util.Function14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, C>);
+  public static <B, T> net.minecraft.network.codec.StreamCodec<B, T> recursive(java.util.function.UnaryOperator<net.minecraft.network.codec.StreamCodec<B, T>>);
+  public default <S extends B> net.minecraft.network.codec.StreamCodec<S, V> cast();
+}
+::endgroup::
+::group::net.minecraft.network.FriendlyByteBuf
+Compiled from "FriendlyByteBuf.java"
+public class net.minecraft.network.FriendlyByteBuf extends io.netty.buffer.ByteBuf {
+  public static final short MAX_STRING_LENGTH;
+  public static final int MAX_COMPONENT_STRING_LENGTH;
+  public net.minecraft.network.FriendlyByteBuf(io.netty.buffer.ByteBuf);
+  public <T> T readWithCodecTrusted(com.mojang.serialization.DynamicOps<net.minecraft.nbt.Tag>, com.mojang.serialization.Codec<T>);
+  public <T> T readWithCodec(com.mojang.serialization.DynamicOps<net.minecraft.nbt.Tag>, com.mojang.serialization.Codec<T>, net.minecraft.nbt.NbtAccounter);
+  public <T> net.minecraft.network.FriendlyByteBuf writeWithCodec(com.mojang.serialization.DynamicOps<net.minecraft.nbt.Tag>, com.mojang.serialization.Codec<T>, T);
+  public <T> T readLenientJsonWithCodec(com.mojang.serialization.Codec<T>);
+  public <T> void writeJsonWithCodec(com.mojang.serialization.Codec<T>, T);
+  public void readWithCount(java.util.function.Consumer<net.minecraft.network.FriendlyByteBuf>);
+  public <E extends java.lang.Enum<E>> void writeEnumSet(java.util.EnumSet<E>, java.lang.Class<E>);
+  public <E extends java.lang.Enum<E>> java.util.EnumSet<E> readEnumSet(java.lang.Class<E>);
+  public <T> void writeOptional(java.util.Optional<T>, net.minecraft.network.codec.StreamEncoder<? super net.minecraft.network.FriendlyByteBuf, T>);
+  public <T> java.util.Optional<T> readOptional(net.minecraft.network.codec.StreamDecoder<? super net.minecraft.network.FriendlyByteBuf, T>);
+  public <L, R> void writeEither(com.mojang.datafixers.util.Either<L, R>, net.minecraft.network.codec.StreamEncoder<? super net.minecraft.network.FriendlyByteBuf, L>, net.minecraft.network.codec.StreamEncoder<? super net.minecraft.network.FriendlyByteBuf, R>);
+  public <L, R> com.mojang.datafixers.util.Either<L, R> readEither(net.minecraft.network.codec.StreamDecoder<? super net.minecraft.network.FriendlyByteBuf, L>, net.minecraft.network.codec.StreamDecoder<? super net.minecraft.network.FriendlyByteBuf, R>);
+  public <T> T readNullable(net.minecraft.network.codec.StreamDecoder<? super net.minecraft.network.FriendlyByteBuf, T>);
+  public static <T, B extends io.netty.buffer.ByteBuf> T readNullable(B, net.minecraft.network.codec.StreamDecoder<? super B, T>);
+  public <T> void writeNullable(T, net.minecraft.network.codec.StreamEncoder<? super net.minecraft.network.FriendlyByteBuf, T>);
+  public static <T, B extends io.netty.buffer.ByteBuf> void writeNullable(B, T, net.minecraft.network.codec.StreamEncoder<? super B, T>);
+  public byte[] readByteArray();
+  public static byte[] readByteArray(io.netty.buffer.ByteBuf);
+  public net.minecraft.network.FriendlyByteBuf writeByteArray(byte[]);
+  public static void writeByteArray(io.netty.buffer.ByteBuf, byte[]);
+  public byte[] readByteArray(int);
+  public static byte[] readByteArray(io.netty.buffer.ByteBuf, int);
+  public net.minecraft.network.FriendlyByteBuf writeVarIntArray(int[]);
+  public int[] readVarIntArray();
+  public int[] readVarIntArray(int);
+  public net.minecraft.network.FriendlyByteBuf writeLongArray(long[]);
+  public static void writeLongArray(io.netty.buffer.ByteBuf, long[]);
+  public net.minecraft.network.FriendlyByteBuf writeFixedSizeLongArray(long[]);
+  public static void writeFixedSizeLongArray(io.netty.buffer.ByteBuf, long[]);
+  public long[] readLongArray();
+  public long[] readFixedSizeLongArray(long[]);
+  public static long[] readLongArray(io.netty.buffer.ByteBuf);
+  public static long[] readFixedSizeLongArray(io.netty.buffer.ByteBuf, long[]);
+  public net.minecraft.core.BlockPos readBlockPos();
+  public static net.minecraft.core.BlockPos readBlockPos(io.netty.buffer.ByteBuf);
+  public net.minecraft.network.FriendlyByteBuf writeBlockPos(net.minecraft.core.BlockPos);
+  public static void writeBlockPos(io.netty.buffer.ByteBuf, net.minecraft.core.BlockPos);
+  public net.minecraft.world.level.ChunkPos readChunkPos();
+  public net.minecraft.network.FriendlyByteBuf writeChunkPos(net.minecraft.world.level.ChunkPos);
+  public static net.minecraft.world.level.ChunkPos readChunkPos(io.netty.buffer.ByteBuf);
+  public static void writeChunkPos(io.netty.buffer.ByteBuf, net.minecraft.world.level.ChunkPos);
+  public net.minecraft.core.GlobalPos readGlobalPos();
+  public void writeGlobalPos(net.minecraft.core.GlobalPos);
+  public org.joml.Vector3f readVector3f();
+  public static org.joml.Vector3f readVector3f(io.netty.buffer.ByteBuf);
+  public void writeVector3f(org.joml.Vector3f);
+  public static void writeVector3f(io.netty.buffer.ByteBuf, org.joml.Vector3fc);
+  public org.joml.Quaternionf readQuaternion();
+  public static org.joml.Quaternionf readQuaternion(io.netty.buffer.ByteBuf);
+  public void writeQuaternion(org.joml.Quaternionf);
+  public static void writeQuaternion(io.netty.buffer.ByteBuf, org.joml.Quaternionfc);
+  public <T extends java.lang.Enum<T>> T readEnum(java.lang.Class<T>);
+  public net.minecraft.network.FriendlyByteBuf writeEnum(java.lang.Enum<?>);
+  public <T> T readById(java.util.function.IntFunction<T>);
+  public <T> net.minecraft.network.FriendlyByteBuf writeById(java.util.function.ToIntFunction<T>, T);
+  public int readVarInt();
+  public long readVarLong();
+  public net.minecraft.network.FriendlyByteBuf writeUUID(java.util.UUID);
+  public static void writeUUID(io.netty.buffer.ByteBuf, java.util.UUID);
+  public java.util.UUID readUUID();
+  public static java.util.UUID readUUID(io.netty.buffer.ByteBuf);
+  public net.minecraft.network.FriendlyByteBuf writeVarInt(int);
+  public net.minecraft.network.FriendlyByteBuf writeVarLong(long);
+  public net.minecraft.network.FriendlyByteBuf writeNbt(net.minecraft.nbt.Tag);
+  public static void writeNbt(io.netty.buffer.ByteBuf, net.minecraft.nbt.Tag);
+  public net.minecraft.nbt.CompoundTag readNbt();
+  public static net.minecraft.nbt.CompoundTag readNbt(io.netty.buffer.ByteBuf);
+  public static net.minecraft.nbt.Tag readNbt(io.netty.buffer.ByteBuf, net.minecraft.nbt.NbtAccounter);
+  public net.minecraft.nbt.Tag readNbt(net.minecraft.nbt.NbtAccounter);
+  public java.lang.String readUtf();
+  public java.lang.String readUtf(int);
+  public net.minecraft.network.FriendlyByteBuf writeUtf(java.lang.String);
+  public net.minecraft.network.FriendlyByteBuf writeUtf(java.lang.String, int);
+  public net.minecraft.resources.Identifier readIdentifier();
+  public net.minecraft.network.FriendlyByteBuf writeIdentifier(net.minecraft.resources.Identifier);
+  public <T> net.minecraft.resources.ResourceKey<T> readResourceKey(net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<T>>);
+  public void writeResourceKey(net.minecraft.resources.ResourceKey<?>);
+  public <T> net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<T>> readRegistryKey();
+  public java.util.BitSet readBitSet();
+  public void writeBitSet(java.util.BitSet);
+  public java.util.BitSet readFixedBitSet(int);
+  public void writeFixedBitSet(java.util.BitSet, int);
+  public static java.util.BitSet readFixedBitSet(io.netty.buffer.ByteBuf, int);
+  public static void writeFixedBitSet(io.netty.buffer.ByteBuf, java.util.BitSet, int);
+  public static int readContainerId(io.netty.buffer.ByteBuf);
+  public int readContainerId();
+  public static void writeContainerId(io.netty.buffer.ByteBuf, int);
+  public void writeContainerId(int);
+  public boolean isContiguous();
+  public int maxFastWritableBytes();
+  public int capacity();
+  public net.minecraft.network.FriendlyByteBuf capacity(int);
+  public int maxCapacity();
+  public io.netty.buffer.ByteBufAllocator alloc();
+  public java.nio.ByteOrder order();
+  public io.netty.buffer.ByteBuf order(java.nio.ByteOrder);
+  public io.netty.buffer.ByteBuf unwrap();
+  public boolean isDirect();
+  public boolean isReadOnly();
+  public io.netty.buffer.ByteBuf asReadOnly();
+  public int readerIndex();
+  public net.minecraft.network.FriendlyByteBuf readerIndex(int);
+  public int writerIndex();
+  public net.minecraft.network.FriendlyByteBuf writerIndex(int);
+  public net.minecraft.network.FriendlyByteBuf setIndex(int, int);
+  public int readableBytes();
+  public int writableBytes();
+  public int maxWritableBytes();
+  public boolean isReadable();
+  public boolean isReadable(int);
+  public boolean isWritable();
+  public boolean isWritable(int);
+  public net.minecraft.network.FriendlyByteBuf clear();
+  public net.minecraft.network.FriendlyByteBuf markReaderIndex();
+  public net.minecraft.network.FriendlyByteBuf resetReaderIndex();
+  public net.minecraft.network.FriendlyByteBuf markWriterIndex();
+  public net.minecraft.network.FriendlyByteBuf resetWriterIndex();
+  public net.minecraft.network.FriendlyByteBuf discardReadBytes();
+  public net.minecraft.network.FriendlyByteBuf discardSomeReadBytes();
+  public net.minecraft.network.FriendlyByteBuf ensureWritable(int);
+  public int ensureWritable(int, boolean);
+  public boolean getBoolean(int);
+  public byte getByte(int);
+  public short getUnsignedByte(int);
+  public short getShort(int);
+  public short getShortLE(int);
+  public int getUnsignedShort(int);
+  public int getUnsignedShortLE(int);
+  public int getMedium(int);
+  public int getMediumLE(int);
+  public int getUnsignedMedium(int);
+  public int getUnsignedMediumLE(int);
+  public int getInt(int);
+  public int getIntLE(int);
+  public long getUnsignedInt(int);
+  public long getUnsignedIntLE(int);
+  public long getLong(int);
+  public long getLongLE(int);
+  public char getChar(int);
+  public float getFloat(int);
+  public double getDouble(int);
+  public net.minecraft.network.FriendlyByteBuf getBytes(int, io.netty.buffer.ByteBuf);
+  public net.minecraft.network.FriendlyByteBuf getBytes(int, io.netty.buffer.ByteBuf, int);
+  public net.minecraft.network.FriendlyByteBuf getBytes(int, io.netty.buffer.ByteBuf, int, int);
+  public net.minecraft.network.FriendlyByteBuf getBytes(int, byte[]);
+  public net.minecraft.network.FriendlyByteBuf getBytes(int, byte[], int, int);
+  public net.minecraft.network.FriendlyByteBuf getBytes(int, java.nio.ByteBuffer);
+  public net.minecraft.network.FriendlyByteBuf getBytes(int, java.io.OutputStream, int) throws java.io.IOException;
+  public int getBytes(int, java.nio.channels.GatheringByteChannel, int) throws java.io.IOException;
+  public int getBytes(int, java.nio.channels.FileChannel, long, int) throws java.io.IOException;
+  public java.lang.CharSequence getCharSequence(int, int, java.nio.charset.Charset);
+  public net.minecraft.network.FriendlyByteBuf setBoolean(int, boolean);
+  public net.minecraft.network.FriendlyByteBuf setByte(int, int);
+  public net.minecraft.network.FriendlyByteBuf setShort(int, int);
+  public net.minecraft.network.FriendlyByteBuf setShortLE(int, int);
+  public net.minecraft.network.FriendlyByteBuf setMedium(int, int);
+  public net.minecraft.network.FriendlyByteBuf setMediumLE(int, int);
+  public net.minecraft.network.FriendlyByteBuf setInt(int, int);
+  public net.minecraft.network.FriendlyByteBuf setIntLE(int, int);
+  public net.minecraft.network.FriendlyByteBuf setLong(int, long);
+  public net.minecraft.network.FriendlyByteBuf setLongLE(int, long);
+  public net.minecraft.network.FriendlyByteBuf setChar(int, int);
+  public net.minecraft.network.FriendlyByteBuf setFloat(int, float);
+  public net.minecraft.network.FriendlyByteBuf setDouble(int, double);
+  public net.minecraft.network.FriendlyByteBuf setBytes(int, io.netty.buffer.ByteBuf);
+  public net.minecraft.network.FriendlyByteBuf setBytes(int, io.netty.buffer.ByteBuf, int);
+  public net.minecraft.network.FriendlyByteBuf setBytes(int, io.netty.buffer.ByteBuf, int, int);
+  public net.minecraft.network.FriendlyByteBuf setBytes(int, byte[]);
+  public net.minecraft.network.FriendlyByteBuf setBytes(int, byte[], int, int);
+  public net.minecraft.network.FriendlyByteBuf setBytes(int, java.nio.ByteBuffer);
+  public int setBytes(int, java.io.InputStream, int) throws java.io.IOException;
+  public int setBytes(int, java.nio.channels.ScatteringByteChannel, int) throws java.io.IOException;
+  public int setBytes(int, java.nio.channels.FileChannel, long, int) throws java.io.IOException;
+  public net.minecraft.network.FriendlyByteBuf setZero(int, int);
+  public int setCharSequence(int, java.lang.CharSequence, java.nio.charset.Charset);
+  public boolean readBoolean();
+  public byte readByte();
+  public short readUnsignedByte();
+  public short readShort();
+  public short readShortLE();
+  public int readUnsignedShort();
+  public int readUnsignedShortLE();
+  public int readMedium();
+  public int readMediumLE();
+  public int readUnsignedMedium();
+  public int readUnsignedMediumLE();
+  public int readInt();
+  public int readIntLE();
+  public long readUnsignedInt();
+  public long readUnsignedIntLE();
+  public long readLong();
+  public long readLongLE();
+  public char readChar();
+  public float readFloat();
+  public double readDouble();
+  public io.netty.buffer.ByteBuf readBytes(int);
+  public io.netty.buffer.ByteBuf readSlice(int);
+  public io.netty.buffer.ByteBuf readRetainedSlice(int);
+  public net.minecraft.network.FriendlyByteBuf readBytes(io.netty.buffer.ByteBuf);
+  public net.minecraft.network.FriendlyByteBuf readBytes(io.netty.buffer.ByteBuf, int);
+  public net.minecraft.network.FriendlyByteBuf readBytes(io.netty.buffer.ByteBuf, int, int);
+  public net.minecraft.network.FriendlyByteBuf readBytes(byte[]);
+  public net.minecraft.network.FriendlyByteBuf readBytes(byte[], int, int);
+  public net.minecraft.network.FriendlyByteBuf readBytes(java.nio.ByteBuffer);
+  public net.minecraft.network.FriendlyByteBuf readBytes(java.io.OutputStream, int) throws java.io.IOException;
+  public int readBytes(java.nio.channels.GatheringByteChannel, int) throws java.io.IOException;
+  public java.lang.CharSequence readCharSequence(int, java.nio.charset.Charset);
+  public java.lang.String readString(int, java.nio.charset.Charset);
+  public int readBytes(java.nio.channels.FileChannel, long, int) throws java.io.IOException;
+  public net.minecraft.network.FriendlyByteBuf skipBytes(int);
+  public net.minecraft.network.FriendlyByteBuf writeBoolean(boolean);
+  public net.minecraft.network.FriendlyByteBuf writeByte(int);
+  public net.minecraft.network.FriendlyByteBuf writeShort(int);
+  public net.minecraft.network.FriendlyByteBuf writeShortLE(int);
+  public net.minecraft.network.FriendlyByteBuf writeMedium(int);
+  public net.minecraft.network.FriendlyByteBuf writeMediumLE(int);
+  public net.minecraft.network.FriendlyByteBuf writeInt(int);
+  public net.minecraft.network.FriendlyByteBuf writeIntLE(int);
+  public net.minecraft.network.FriendlyByteBuf writeLong(long);
+  public net.minecraft.network.FriendlyByteBuf writeLongLE(long);
+  public net.minecraft.network.FriendlyByteBuf writeChar(int);
+  public net.minecraft.network.FriendlyByteBuf writeFloat(float);
+  public net.minecraft.network.FriendlyByteBuf writeDouble(double);
+  public net.minecraft.network.FriendlyByteBuf writeBytes(io.netty.buffer.ByteBuf);
+  public net.minecraft.network.FriendlyByteBuf writeBytes(io.netty.buffer.ByteBuf, int);
+  public net.minecraft.network.FriendlyByteBuf writeBytes(io.netty.buffer.ByteBuf, int, int);
+  public net.minecraft.network.FriendlyByteBuf writeBytes(byte[]);
+  public net.minecraft.network.FriendlyByteBuf writeBytes(byte[], int, int);
+  public net.minecraft.network.FriendlyByteBuf writeBytes(java.nio.ByteBuffer);
+  public int writeBytes(java.io.InputStream, int) throws java.io.IOException;
+  public int writeBytes(java.nio.channels.ScatteringByteChannel, int) throws java.io.IOException;
+  public int writeBytes(java.nio.channels.FileChannel, long, int) throws java.io.IOException;
+  public net.minecraft.network.FriendlyByteBuf writeZero(int);
+  public int writeCharSequence(java.lang.CharSequence, java.nio.charset.Charset);
+  public int indexOf(int, int, byte);
+  public int bytesBefore(byte);
+  public int bytesBefore(int, byte);
+  public int bytesBefore(int, int, byte);
+  public int forEachByte(io.netty.util.ByteProcessor);
+  public int forEachByte(int, int, io.netty.util.ByteProcessor);
+  public int forEachByteDesc(io.netty.util.ByteProcessor);
+  public int forEachByteDesc(int, int, io.netty.util.ByteProcessor);
+  public io.netty.buffer.ByteBuf copy();
+  public io.netty.buffer.ByteBuf copy(int, int);
+  public io.netty.buffer.ByteBuf slice();
+  public io.netty.buffer.ByteBuf retainedSlice();
+  public io.netty.buffer.ByteBuf slice(int, int);
+  public io.netty.buffer.ByteBuf retainedSlice(int, int);
+  public io.netty.buffer.ByteBuf duplicate();
+  public io.netty.buffer.ByteBuf retainedDuplicate();
+  public int nioBufferCount();
+  public java.nio.ByteBuffer nioBuffer();
+  public java.nio.ByteBuffer nioBuffer(int, int);
+  public java.nio.ByteBuffer internalNioBuffer(int, int);
+  public java.nio.ByteBuffer[] nioBuffers();
+  public java.nio.ByteBuffer[] nioBuffers(int, int);
+  public boolean hasArray();
+  public byte[] array();
+  public int arrayOffset();
+  public boolean hasMemoryAddress();
+  public long memoryAddress();
+  public java.lang.String toString(java.nio.charset.Charset);
+  public java.lang.String toString(int, int, java.nio.charset.Charset);
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public int compareTo(io.netty.buffer.ByteBuf);
+  public java.lang.String toString();
+  public net.minecraft.network.FriendlyByteBuf retain(int);
+  public net.minecraft.network.FriendlyByteBuf retain();
+  public net.minecraft.network.FriendlyByteBuf touch();
+  public net.minecraft.network.FriendlyByteBuf touch(java.lang.Object);
+  public int refCnt();
+  public boolean release();
+  public boolean release(int);
+  public io.netty.buffer.ByteBuf touch(java.lang.Object);
+  public io.netty.buffer.ByteBuf touch();
+  public io.netty.buffer.ByteBuf retain();
+  public io.netty.buffer.ByteBuf retain(int);
+  public io.netty.buffer.ByteBuf writeZero(int);
+  public io.netty.buffer.ByteBuf writeBytes(java.nio.ByteBuffer);
+  public io.netty.buffer.ByteBuf writeBytes(byte[], int, int);
+  public io.netty.buffer.ByteBuf writeBytes(byte[]);
+  public io.netty.buffer.ByteBuf writeBytes(io.netty.buffer.ByteBuf, int, int);
+  public io.netty.buffer.ByteBuf writeBytes(io.netty.buffer.ByteBuf, int);
+  public io.netty.buffer.ByteBuf writeBytes(io.netty.buffer.ByteBuf);
+  public io.netty.buffer.ByteBuf writeDouble(double);
+  public io.netty.buffer.ByteBuf writeFloat(float);
+  public io.netty.buffer.ByteBuf writeChar(int);
+  public io.netty.buffer.ByteBuf writeLongLE(long);
+  public io.netty.buffer.ByteBuf writeLong(long);
+  public io.netty.buffer.ByteBuf writeIntLE(int);
+  public io.netty.buffer.ByteBuf writeInt(int);
+  public io.netty.buffer.ByteBuf writeMediumLE(int);
+  public io.netty.buffer.ByteBuf writeMedium(int);
+  public io.netty.buffer.ByteBuf writeShortLE(int);
+  public io.netty.buffer.ByteBuf writeShort(int);
+  public io.netty.buffer.ByteBuf writeByte(int);
+  public io.netty.buffer.ByteBuf writeBoolean(boolean);
+  public io.netty.buffer.ByteBuf skipBytes(int);
+  public io.netty.buffer.ByteBuf readBytes(java.io.OutputStream, int) throws java.io.IOException;
+  public io.netty.buffer.ByteBuf readBytes(java.nio.ByteBuffer);
+  public io.netty.buffer.ByteBuf readBytes(byte[], int, int);
+  public io.netty.buffer.ByteBuf readBytes(byte[]);
+  public io.netty.buffer.ByteBuf readBytes(io.netty.buffer.ByteBuf, int, int);
+  public io.netty.buffer.ByteBuf readBytes(io.netty.buffer.ByteBuf, int);
+  public io.netty.buffer.ByteBuf readBytes(io.netty.buffer.ByteBuf);
+  public io.netty.buffer.ByteBuf setZero(int, int);
+  public io.netty.buffer.ByteBuf setBytes(int, java.nio.ByteBuffer);
+  public io.netty.buffer.ByteBuf setBytes(int, byte[], int, int);
+  public io.netty.buffer.ByteBuf setBytes(int, byte[]);
+  public io.netty.buffer.ByteBuf setBytes(int, io.netty.buffer.ByteBuf, int, int);
+  public io.netty.buffer.ByteBuf setBytes(int, io.netty.buffer.ByteBuf, int);
+  public io.netty.buffer.ByteBuf setBytes(int, io.netty.buffer.ByteBuf);
+  public io.netty.buffer.ByteBuf setDouble(int, double);
+  public io.netty.buffer.ByteBuf setFloat(int, float);
+  public io.netty.buffer.ByteBuf setChar(int, int);
+  public io.netty.buffer.ByteBuf setLongLE(int, long);
+  public io.netty.buffer.ByteBuf setLong(int, long);
+  public io.netty.buffer.ByteBuf setIntLE(int, int);
+  public io.netty.buffer.ByteBuf setInt(int, int);
+  public io.netty.buffer.ByteBuf setMediumLE(int, int);
+  public io.netty.buffer.ByteBuf setMedium(int, int);
+  public io.netty.buffer.ByteBuf setShortLE(int, int);
+  public io.netty.buffer.ByteBuf setShort(int, int);
+  public io.netty.buffer.ByteBuf setByte(int, int);
+  public io.netty.buffer.ByteBuf setBoolean(int, boolean);
+  public io.netty.buffer.ByteBuf getBytes(int, java.io.OutputStream, int) throws java.io.IOException;
+  public io.netty.buffer.ByteBuf getBytes(int, java.nio.ByteBuffer);
+  public io.netty.buffer.ByteBuf getBytes(int, byte[], int, int);
+  public io.netty.buffer.ByteBuf getBytes(int, byte[]);
+  public io.netty.buffer.ByteBuf getBytes(int, io.netty.buffer.ByteBuf, int, int);
+  public io.netty.buffer.ByteBuf getBytes(int, io.netty.buffer.ByteBuf, int);
+  public io.netty.buffer.ByteBuf getBytes(int, io.netty.buffer.ByteBuf);
+  public io.netty.buffer.ByteBuf ensureWritable(int);
+  public io.netty.buffer.ByteBuf discardSomeReadBytes();
+  public io.netty.buffer.ByteBuf discardReadBytes();
+  public io.netty.buffer.ByteBuf resetWriterIndex();
+  public io.netty.buffer.ByteBuf markWriterIndex();
+  public io.netty.buffer.ByteBuf resetReaderIndex();
+  public io.netty.buffer.ByteBuf markReaderIndex();
+  public io.netty.buffer.ByteBuf clear();
+  public io.netty.buffer.ByteBuf setIndex(int, int);
+  public io.netty.buffer.ByteBuf writerIndex(int);
+  public io.netty.buffer.ByteBuf readerIndex(int);
+  public io.netty.buffer.ByteBuf capacity(int);
+  public io.netty.util.ReferenceCounted touch(java.lang.Object);
+  public io.netty.util.ReferenceCounted touch();
+  public io.netty.util.ReferenceCounted retain(int);
+  public io.netty.util.ReferenceCounted retain();
+  public int compareTo(java.lang.Object);
+}
+::endgroup::
+::group::net.minecraft.client.User
+Compiled from "User.java"
+public class net.minecraft.client.User {
+  public net.minecraft.client.User(java.lang.String, java.util.UUID, java.lang.String, java.util.Optional<java.lang.String>, java.util.Optional<java.lang.String>);
+  public java.lang.String getSessionId();
+  public java.util.UUID getProfileId();
+  public java.lang.String getName();
+  public java.lang.String getAccessToken();
+  public java.util.Optional<java.lang.String> getClientId();
+  public java.util.Optional<java.lang.String> getXuid();
+}
+::endgroup::
+::group::com.mojang.blaze3d.platform.InputConstants
+Compiled from "InputConstants.java"
+public class com.mojang.blaze3d.platform.InputConstants {
+  public static final int KEY_0;
+  public static final int KEY_1;
+  public static final int KEY_2;
+  public static final int KEY_3;
+  public static final int KEY_4;
+  public static final int KEY_5;
+  public static final int KEY_6;
+  public static final int KEY_7;
+  public static final int KEY_8;
+  public static final int KEY_9;
+  public static final int KEY_A;
+  public static final int KEY_B;
+  public static final int KEY_C;
+  public static final int KEY_D;
+  public static final int KEY_E;
+  public static final int KEY_F;
+  public static final int KEY_G;
+  public static final int KEY_H;
+  public static final int KEY_I;
+  public static final int KEY_J;
+  public static final int KEY_K;
+  public static final int KEY_L;
+  public static final int KEY_M;
+  public static final int KEY_N;
+  public static final int KEY_O;
+  public static final int KEY_P;
+  public static final int KEY_Q;
+  public static final int KEY_R;
+  public static final int KEY_S;
+  public static final int KEY_T;
+  public static final int KEY_U;
+  public static final int KEY_V;
+  public static final int KEY_W;
+  public static final int KEY_X;
+  public static final int KEY_Y;
+  public static final int KEY_Z;
+  public static final int KEY_F1;
+  public static final int KEY_F2;
+  public static final int KEY_F3;
+  public static final int KEY_F4;
+  public static final int KEY_F5;
+  public static final int KEY_F6;
+  public static final int KEY_F7;
+  public static final int KEY_F8;
+  public static final int KEY_F9;
+  public static final int KEY_F10;
+  public static final int KEY_F11;
+  public static final int KEY_F12;
+  public static final int KEY_F13;
+  public static final int KEY_F14;
+  public static final int KEY_F15;
+  public static final int KEY_F16;
+  public static final int KEY_F17;
+  public static final int KEY_F18;
+  public static final int KEY_F19;
+  public static final int KEY_F20;
+  public static final int KEY_F21;
+  public static final int KEY_F22;
+  public static final int KEY_F23;
+  public static final int KEY_F24;
+  public static final int KEY_NUMLOCK;
+  public static final int KEY_NUMPAD0;
+  public static final int KEY_NUMPAD1;
+  public static final int KEY_NUMPAD2;
+  public static final int KEY_NUMPAD3;
+  public static final int KEY_NUMPAD4;
+  public static final int KEY_NUMPAD5;
+  public static final int KEY_NUMPAD6;
+  public static final int KEY_NUMPAD7;
+  public static final int KEY_NUMPAD8;
+  public static final int KEY_NUMPAD9;
+  public static final int KEY_NUMPADCOMMA;
+  public static final int KEY_NUMPADENTER;
+  public static final int KEY_NUMPADEQUALS;
+  public static final int KEY_DOWN;
+  public static final int KEY_LEFT;
+  public static final int KEY_RIGHT;
+  public static final int KEY_UP;
+  public static final int KEY_ADD;
+  public static final int KEY_APOSTROPHE;
+  public static final int KEY_BACKSLASH;
+  public static final int KEY_COMMA;
+  public static final int KEY_EQUALS;
+  public static final int KEY_GRAVE;
+  public static final int KEY_LBRACKET;
+  public static final int KEY_MINUS;
+  public static final int KEY_MULTIPLY;
+  public static final int KEY_PERIOD;
+  public static final int KEY_RBRACKET;
+  public static final int KEY_SEMICOLON;
+  public static final int KEY_SLASH;
+  public static final int KEY_SPACE;
+  public static final int KEY_TAB;
+  public static final int KEY_LALT;
+  public static final int KEY_LCONTROL;
+  public static final int KEY_LSHIFT;
+  public static final int KEY_LGUI;
+  public static final int KEY_RALT;
+  public static final int KEY_RCONTROL;
+  public static final int KEY_RSHIFT;
+  public static final int KEY_RGUI;
+  public static final int KEY_RETURN;
+  public static final int KEY_ESCAPE;
+  public static final int KEY_BACKSPACE;
+  public static final int KEY_DELETE;
+  public static final int KEY_END;
+  public static final int KEY_HOME;
+  public static final int KEY_INSERT;
+  public static final int KEY_PAGEDOWN;
+  public static final int KEY_PAGEUP;
+  public static final int KEY_CAPSLOCK;
+  public static final int KEY_PAUSE;
+  public static final int KEY_SCROLLLOCK;
+  public static final int KEY_PRINTSCREEN;
+  public static final int PRESS;
+  public static final int RELEASE;
+  public static final int REPEAT;
+  public static final int MOUSE_BUTTON_LEFT;
+  public static final int MOUSE_BUTTON_MIDDLE;
+  public static final int MOUSE_BUTTON_RIGHT;
+  public static final int MOUSE_BUTTON_4;
+  public static final int MOUSE_BUTTON_5;
+  public static final int MOUSE_BUTTON_6;
+  public static final int MOUSE_BUTTON_7;
+  public static final int MOUSE_BUTTON_8;
+  public static final int MOD_SHIFT;
+  public static final int MOD_CONTROL;
+  public static final int MOD_ALT;
+  public static final int MOD_SUPER;
+  public static final int MOD_CAPS_LOCK;
+  public static final int MOD_NUM_LOCK;
+  public static final int KEYCODE_A;
+  public static final int KEYCODE_B;
+  public static final int KEYCODE_C;
+  public static final int KEYCODE_E;
+  public static final int KEYCODE_F;
+  public static final int KEYCODE_L;
+  public static final int KEYCODE_M;
+  public static final int KEYCODE_O;
+  public static final int KEYCODE_R;
+  public static final int KEYCODE_U;
+  public static final int KEYCODE_V;
+  public static final int KEYCODE_W;
+  public static final int KEYCODE_X;
+  public static final int KEYCODE_Y;
+  public static final int KEYCODE_Z;
+  public static final int KEYCODE_RETURN;
+  public static final int KEYCODE_NUMPADENTER;
+  public static final int KEYCODE_PAGEUP;
+  public static final int KEYCODE_PAGEDOWN;
+  public static final int KEYCODE_BACKSPACE;
+  public static final int KEYCODE_UP;
+  public static final int KEYCODE_DOWN;
+  public static final int KEYCODE_FORWARD;
+  public static final int KEYCODE_BACKWARD;
+  public static final int KEYCODE_LEFT;
+  public static final int KEYCODE_RIGHT;
+  public static final int KEYCODE_NUMPAD9;
+  public static final int KEYCODE_NUMPAD3;
+  public static final int KEYCODE_DELETE;
+  public static final int KEYCODE_HOME;
+  public static final int KEYCODE_END;
+  public static final int KEYCODE_F5;
+  public static final int KEYCODE_TAB;
+  public static final int KEYCODE_LCONTROL;
+  public static final int KEYCODE_RCONTROL;
+  public static final int KEYCODE_SPACE;
+  public static final com.mojang.blaze3d.platform.InputConstants$Key UNKNOWN;
+  public com.mojang.blaze3d.platform.InputConstants();
+  public static com.mojang.blaze3d.platform.InputConstants$Key getKey(net.minecraft.client.input.KeyEvent);
+  public static com.mojang.blaze3d.platform.InputConstants$Key getKey(java.lang.String);
+  public static boolean isKeyDown(int);
+  public static void grabMouse(com.mojang.blaze3d.platform.Window, double, double);
+  public static void releaseMouse(com.mojang.blaze3d.platform.Window, double, double);
+}
+::endgroup::
+::group::com.mojang.blaze3d.platform.InputConstants$Key
+Compiled from "InputConstants.java"
+public final class com.mojang.blaze3d.platform.InputConstants$Key {
+  public com.mojang.blaze3d.platform.InputConstants$Type getType();
+  public int getValue();
+  public java.lang.String getName();
+  public net.minecraft.network.chat.Component getDisplayName();
+  public java.util.OptionalInt getNumericKeyValue();
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public java.lang.String toString();
+}
+::endgroup::
+::group::net.minecraft.client.input.KeyEvent
+Compiled from "KeyEvent.java"
+public final class net.minecraft.client.input.KeyEvent extends java.lang.Record implements net.minecraft.client.input.InputWithModifiers {
+  public net.minecraft.client.input.KeyEvent(int, int, int);
+  public int input();
+  public int shortcutKey();
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public int key();
+  public int keycode();
+  public int modifiers();
+}
+::endgroup::
+::group::net.minecraft.client.input.MouseButtonEvent
+Compiled from "MouseButtonEvent.java"
+public final class net.minecraft.client.input.MouseButtonEvent extends java.lang.Record implements net.minecraft.client.input.InputWithModifiers {
+  public net.minecraft.client.input.MouseButtonEvent(double, double, net.minecraft.client.input.MouseButtonInfo);
+  public int input();
+  public int button();
+  public int modifiers();
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public double x();
+  public double y();
+  public net.minecraft.client.input.MouseButtonInfo buttonInfo();
+}
+::endgroup::
+::group::net.minecraft.client.input.CharacterEvent
+Compiled from "CharacterEvent.java"
+public final class net.minecraft.client.input.CharacterEvent extends java.lang.Record {
+  public net.minecraft.client.input.CharacterEvent(int);
+  public java.lang.String codepointAsString();
+  public boolean isAllowedChatCharacter();
+  public final java.lang.String toString();
+  public final int hashCode();
+  public final boolean equals(java.lang.Object);
+  public int codepoint();
+}
+::endgroup::
+::group::net.minecraft.client.gui.components.events.GuiEventListener
+Compiled from "GuiEventListener.java"
+public interface net.minecraft.client.gui.components.events.GuiEventListener extends net.minecraft.client.gui.components.TabOrderedElement {
+  public default void mouseMoved(double, double);
+  public default boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent, boolean);
+  public default boolean mouseReleased(net.minecraft.client.input.MouseButtonEvent);
+  public default boolean mouseDragged(net.minecraft.client.input.MouseButtonEvent, double, double);
+  public default boolean mouseScrolled(double, double, double, double);
+  public default boolean keyPressed(net.minecraft.client.input.KeyEvent);
+  public default boolean keyReleased(net.minecraft.client.input.KeyEvent);
+  public default boolean charTyped(net.minecraft.client.input.CharacterEvent);
+  public default boolean preeditUpdated(net.minecraft.client.input.PreeditEvent);
+  public default net.minecraft.client.gui.ComponentPath nextFocusPath(net.minecraft.client.gui.navigation.FocusNavigationEvent);
+  public default boolean isMouseOver(double, double);
+  public abstract void setFocused(boolean);
+  public abstract boolean isFocused();
+  public default boolean shouldTakeFocusAfterInteraction();
+  public default boolean capturesInput();
+  public default net.minecraft.client.gui.ComponentPath getCurrentFocusPath();
+  public default net.minecraft.client.gui.navigation.ScreenRectangle getRectangle();
+  public default net.minecraft.client.gui.navigation.ScreenRectangle getBorderForArrowNavigation(net.minecraft.client.gui.navigation.ScreenDirection);
+}
+::endgroup::
+::group::net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl
+Compiled from "ClientCommonPacketListenerImpl.java"
+public abstract class net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl implements net.minecraft.network.protocol.common.ClientCommonPacketListener {
+  public net.minecraft.server.ServerLinks serverLinks();
+  public void onPacketError(net.minecraft.network.protocol.Packet, java.lang.Exception);
+  public net.minecraft.network.DisconnectionDetails createDisconnectionInfo(net.minecraft.network.chat.Component, java.lang.Throwable);
+  public boolean shouldHandleMessage(net.minecraft.network.protocol.Packet<?>);
+  public void handleKeepAlive(net.minecraft.network.protocol.common.ClientboundKeepAlivePacket);
+  public void handlePing(net.minecraft.network.protocol.common.ClientboundPingPacket);
+  public void handleCustomPayload(net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket);
+  public void handleResourcePackPush(net.minecraft.network.protocol.common.ClientboundResourcePackPushPacket);
+  public void handleResourcePackPop(net.minecraft.network.protocol.common.ClientboundResourcePackPopPacket);
+  public void handlePostEffects(net.minecraft.network.protocol.common.ClientboundPostEffectsPacket);
+  public void handleRequestCookie(net.minecraft.network.protocol.cookie.ClientboundCookieRequestPacket);
+  public void handleStoreCookie(net.minecraft.network.protocol.common.ClientboundStoreCookiePacket);
+  public void handleCustomReportDetails(net.minecraft.network.protocol.common.ClientboundCustomReportDetailsPacket);
+  public void handleServerLinks(net.minecraft.network.protocol.common.ClientboundServerLinksPacket);
+  public void handleShowDialog(net.minecraft.network.protocol.common.ClientboundShowDialogPacket);
+  public void showDialog(net.minecraft.core.Holder<net.minecraft.server.dialog.Dialog>, net.minecraft.client.gui.screens.Screen);
+  public void handleClearDialog(net.minecraft.network.protocol.common.ClientboundClearDialogPacket);
+  public void clearDialog();
+  public void handleTransfer(net.minecraft.network.protocol.common.ClientboundTransferPacket);
+  public void handleDisconnect(net.minecraft.network.protocol.common.ClientboundDisconnectPacket);
+  public void send(net.minecraft.network.protocol.Packet<?>);
+  public void onDisconnect(net.minecraft.network.DisconnectionDetails);
+  public void fillListenerSpecificCrashDetails(net.minecraft.CrashReport, net.minecraft.CrashReportCategory);
+  public java.lang.String serverBrand();
+}
+::endgroup::
+::group::net.minecraft.network.Connection
+Compiled from "Connection.java"
+public class net.minecraft.network.Connection extends io.netty.channel.SimpleChannelInboundHandler<net.minecraft.network.protocol.Packet<?>> {
+  public static final org.slf4j.Marker ROOT_MARKER;
+  public static final org.slf4j.Marker PACKET_MARKER;
+  public static final org.slf4j.Marker PACKET_RECEIVED_MARKER;
+  public static final org.slf4j.Marker PACKET_SENT_MARKER;
+  public net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow);
+  public void channelActive(io.netty.channel.ChannelHandlerContext) throws java.lang.Exception;
+  public void channelInactive(io.netty.channel.ChannelHandlerContext);
+  public void exceptionCaught(io.netty.channel.ChannelHandlerContext, java.lang.Throwable);
+  public <T extends net.minecraft.network.PacketListener> void setupInboundProtocol(net.minecraft.network.ProtocolInfo<T>, T);
+  public void setupOutboundProtocol(net.minecraft.network.ProtocolInfo<?>);
+  public void setListenerForServerboundHandshake(net.minecraft.network.PacketListener);
+  public void initiateServerboundStatusConnection(java.lang.String, int, net.minecraft.network.protocol.status.ClientStatusPacketListener);
+  public void initiateServerboundPlayConnection(java.lang.String, int, net.minecraft.network.protocol.login.ClientLoginPacketListener);
+  public <S extends net.minecraft.network.ServerboundPacketListener, C extends net.minecraft.network.ClientboundPacketListener> void initiateServerboundPlayConnection(java.lang.String, int, net.minecraft.network.ProtocolInfo<S>, net.minecraft.network.ProtocolInfo<C>, C, boolean);
+  public void send(net.minecraft.network.protocol.Packet<?>);
+  public void send(net.minecraft.network.protocol.Packet<?>, io.netty.channel.ChannelFutureListener);
+  public void send(net.minecraft.network.protocol.Packet<?>, io.netty.channel.ChannelFutureListener, boolean);
+  public void runOnceConnected(java.util.function.Consumer<net.minecraft.network.Connection>);
+  public void flushChannel();
+  public void tick();
+  public java.net.SocketAddress getRemoteAddress();
+  public java.lang.String getLoggableAddress(boolean);
+  public void disconnect(net.minecraft.network.chat.Component);
+  public void disconnect(net.minecraft.network.DisconnectionDetails);
+  public boolean isMemoryConnection();
+  public net.minecraft.network.protocol.PacketFlow getReceiving();
+  public net.minecraft.network.protocol.PacketFlow getSending();
+  public static net.minecraft.network.Connection connectToServer(java.net.InetSocketAddress, net.minecraft.server.network.EventLoopGroupHolder, net.minecraft.util.debugchart.LocalSampleLogger);
+  public static io.netty.channel.ChannelFuture connect(java.net.InetSocketAddress, net.minecraft.server.network.EventLoopGroupHolder, net.minecraft.network.Connection);
+  public void configurePacketHandler(io.netty.channel.ChannelPipeline);
+  public static void configureSerialization(io.netty.channel.ChannelPipeline, net.minecraft.network.protocol.PacketFlow, boolean, net.minecraft.network.BandwidthDebugMonitor);
+  public static void configureInMemoryPipeline(io.netty.channel.ChannelPipeline, net.minecraft.network.protocol.PacketFlow);
+  public static net.minecraft.network.Connection connectToLocalServer(java.net.SocketAddress);
+  public static net.minecraft.network.Connection fromChannel(io.netty.channel.Channel, net.minecraft.network.protocol.PacketFlow, net.minecraft.util.debugchart.LocalSampleLogger);
+  public void setEncryptionKey(javax.crypto.Cipher, javax.crypto.Cipher);
+  public boolean isConnected();
+  public boolean isConnecting();
+  public net.minecraft.network.PacketListener getPacketListener();
+  public net.minecraft.network.DisconnectionDetails getDisconnectionDetails();
+  public void setReadOnly();
+  public void setupCompression(int, boolean);
+  public void handleDisconnection();
+  public float getAverageReceivedPackets();
+  public float getAverageSentPackets();
+  public void setBandwidthLogger(net.minecraft.util.debugchart.LocalSampleLogger);
+}
+::endgroup::
+::group::net.minecraft.world.level.Level
+Compiled from "Level.java"
+public abstract class net.minecraft.world.level.Level implements net.minecraft.world.level.LevelAccessor,java.lang.AutoCloseable {
+  public static final com.mojang.serialization.Codec<net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level>> RESOURCE_KEY_CODEC;
+  public static final net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> OVERWORLD;
+  public static final net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> NETHER;
+  public static final net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> END;
+  public static final int MAX_LEVEL_SIZE;
+  public static final int ACROSS_THE_WHOLE_WORLD;
+  public static final int LONG_PARTICLE_CLIP_RANGE;
+  public static final int SHORT_PARTICLE_CLIP_RANGE;
+  public static final int MAX_BRIGHTNESS;
+  public static final int MAX_ENTITY_SPAWN_Y;
+  public static final int MIN_ENTITY_SPAWN_Y;
+  public int getNextEntityId();
+  public boolean isClientSide();
+  public net.minecraft.server.MinecraftServer getServer();
+  public boolean isInWorldBounds(net.minecraft.core.BlockPos);
+  public boolean isInValidBounds(net.minecraft.core.BlockPos);
+  public static boolean isInSpawnableBounds(net.minecraft.core.BlockPos);
+  public net.minecraft.world.level.chunk.LevelChunk getChunkAt(net.minecraft.core.BlockPos);
+  public net.minecraft.world.level.chunk.LevelChunk getChunk(int, int);
+  public net.minecraft.world.level.chunk.ChunkAccess getChunk(int, int, net.minecraft.world.level.chunk.status.ChunkStatus, boolean);
+  public boolean setBlock(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, int, int);
+  public void updatePOIOnBlockStateChange(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.state.BlockState);
+  public boolean removeBlock(net.minecraft.core.BlockPos, boolean);
+  public boolean destroyBlock(net.minecraft.core.BlockPos, boolean, net.minecraft.world.entity.Entity, int);
+  public void addDestroyBlockEffect(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState);
+  public abstract void sendBlockUpdated(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.state.BlockState, int);
+  public void setBlocksDirty(net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, net.minecraft.world.level.block.state.BlockState);
+  public void updateNeighborsAt(net.minecraft.core.BlockPos, net.minecraft.world.level.block.Block, net.minecraft.world.level.redstone.Orientation);
+  public void updateNeighborsAtExceptFromFacing(net.minecraft.core.BlockPos, net.minecraft.world.level.block.Block, net.minecraft.core.Direction, net.minecraft.world.level.redstone.Orientation);
+  public void neighborChanged(net.minecraft.core.BlockPos, net.minecraft.world.level.block.Block, net.minecraft.world.level.redstone.Orientation);
+  public void neighborChanged(net.minecraft.world.level.block.state.BlockState, net.minecraft.core.BlockPos, net.minecraft.world.level.block.Block, net.minecraft.world.level.redstone.Orientation, boolean);
+  public void neighborShapeChanged(net.minecraft.core.Direction, net.minecraft.core.BlockPos, net.minecraft.core.BlockPos, net.minecraft.world.level.block.state.BlockState, int, int);
+  public int getHeight(net.minecraft.world.level.levelgen.Heightmap$Types, int, int);
+  public net.minecraft.world.level.lighting.LevelLightEngine getLightEngine();
+  public net.minecraft.world.level.block.state.BlockState getBlockState(net.minecraft.core.BlockPos);
+  public net.minecraft.world.level.material.FluidState getFluidState(net.minecraft.core.BlockPos);
+  public boolean isBrightOutside();
+  public boolean isDarkOutside();
+  public void playSound(net.minecraft.world.entity.Entity, net.minecraft.core.BlockPos, net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float);
+  public abstract void playSeededSound(net.minecraft.world.entity.Entity, double, double, double, net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>, net.minecraft.sounds.SoundSource, float, float, long);
+  public void playSeededSound(net.minecraft.world.entity.Entity, double, double, double, net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float, long);
+  public abstract void playSeededSound(net.minecraft.world.entity.Entity, net.minecraft.world.entity.Entity, net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>, net.minecraft.sounds.SoundSource, float, float, long);
+  public void playSound(net.minecraft.world.entity.Entity, double, double, double, net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource);
+  public void playSound(net.minecraft.world.entity.Entity, double, double, double, net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float);
+  public void playSound(net.minecraft.world.entity.Entity, double, double, double, net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>, net.minecraft.sounds.SoundSource, float, float);
+  public void playSound(net.minecraft.world.entity.Entity, net.minecraft.world.entity.Entity, net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float);
+  public void playSound(net.minecraft.world.entity.Entity, net.minecraft.world.entity.Entity, net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>, net.minecraft.sounds.SoundSource, float, float);
+  public void playLocalSound(net.minecraft.core.BlockPos, net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float, boolean);
+  public void playLocalSound(net.minecraft.world.entity.Entity, net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float);
+  public void playLocalSound(double, double, double, net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float, boolean);
+  public void playPlayerSound(net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundSource, float, float);
+  public void addParticle(net.minecraft.core.particles.ParticleOptions, double, double, double, double, double, double);
+  public void addParticle(net.minecraft.core.particles.ParticleOptions, boolean, boolean, double, double, double, double, double, double);
+  public void addAlwaysVisibleParticle(net.minecraft.core.particles.ParticleOptions, double, double, double, double, double, double);
+  public void addAlwaysVisibleParticle(net.minecraft.core.particles.ParticleOptions, boolean, double, double, double, double, double, double);
+  public void addBlockEntityTicker(net.minecraft.world.level.block.entity.TickingBlockEntity);
+  public void tickBlockEntities();
+  public <T extends net.minecraft.world.entity.Entity> void guardEntityTick(java.util.function.Consumer<T>, T);
+  public boolean shouldTickDeath(net.minecraft.world.entity.Entity);
+  public boolean shouldTickBlocksAt(long);
+  public boolean shouldTickBlocksAt(net.minecraft.core.BlockPos);
+  public void explode(net.minecraft.world.entity.Entity, double, double, double, float, net.minecraft.world.level.Level$ExplosionInteraction);
+  public void explode(net.minecraft.world.entity.Entity, double, double, double, float, boolean, net.minecraft.world.level.Level$ExplosionInteraction);
+  public void explode(net.minecraft.world.entity.Entity, net.minecraft.world.damagesource.DamageSource, net.minecraft.world.level.ExplosionDamageCalculator, net.minecraft.world.phys.Vec3, float, boolean, net.minecraft.world.level.Level$ExplosionInteraction);
+  public void explode(net.minecraft.world.entity.Entity, net.minecraft.world.damagesource.DamageSource, net.minecraft.world.level.ExplosionDamageCalculator, double, double, double, float, boolean, net.minecraft.world.level.Level$ExplosionInteraction);
+  public abstract void explode(net.minecraft.world.entity.Entity, net.minecraft.world.damagesource.DamageSource, net.minecraft.world.level.ExplosionDamageCalculator, double, double, double, float, boolean, net.minecraft.world.level.Level$ExplosionInteraction, net.minecraft.core.particles.ParticleOptions, net.minecraft.core.particles.ParticleOptions, net.minecraft.util.random.WeightedList<net.minecraft.core.particles.ExplosionParticleInfo>, net.minecraft.core.Holder<net.minecraft.sounds.SoundEvent>);
+  public abstract java.lang.String gatherChunkSourceStats();
+  public net.minecraft.world.level.block.entity.BlockEntity getBlockEntity(net.minecraft.core.BlockPos);
+  public void setBlockEntity(net.minecraft.world.level.block.entity.BlockEntity);
+  public void removeBlockEntity(net.minecraft.core.BlockPos);
+  public boolean isLoaded(net.minecraft.core.BlockPos);
+  public boolean loadedAndEntityCanStandOnFace(net.minecraft.core.BlockPos, net.minecraft.world.entity.Entity, net.minecraft.core.Direction);
+  public boolean loadedAndEntityCanStandOn(net.minecraft.core.BlockPos, net.minecraft.world.entity.Entity);
+  public void updateSkyBrightness();
+  public void setSpawnSettings(boolean);
+  public abstract void setRespawnData(net.minecraft.world.level.storage.LevelData$RespawnData);
+  public abstract net.minecraft.world.level.storage.LevelData$RespawnData getRespawnData();
+  public net.minecraft.world.level.storage.LevelData$RespawnData getWorldBorderAdjustedRespawnData(net.minecraft.world.level.storage.LevelData$RespawnData);
+  public void close() throws java.io.IOException;
+  public net.minecraft.world.level.BlockGetter getChunkForCollisions(int, int);
+  public java.util.List<net.minecraft.world.entity.Entity> getEntities(net.minecraft.world.entity.Entity, net.minecraft.world.phys.AABB, java.util.function.Predicate<? super net.minecraft.world.entity.Entity>);
+  public <T extends net.minecraft.world.entity.Entity> java.util.List<T> getEntities(net.minecraft.world.level.entity.EntityTypeTest<net.minecraft.world.entity.Entity, T>, net.minecraft.world.phys.AABB, java.util.function.Predicate<? super T>);
+  public <T extends net.minecraft.world.entity.Entity> void getEntities(net.minecraft.world.level.entity.EntityTypeTest<net.minecraft.world.entity.Entity, T>, net.minecraft.world.phys.AABB, java.util.function.Predicate<? super T>, java.util.List<? super T>);
+  public <T extends net.minecraft.world.entity.Entity> void getEntities(net.minecraft.world.level.entity.EntityTypeTest<net.minecraft.world.entity.Entity, T>, net.minecraft.world.phys.AABB, java.util.function.Predicate<? super T>, java.util.List<? super T>, int);
+  public <T extends net.minecraft.world.entity.Entity> boolean hasEntities(net.minecraft.world.level.entity.EntityTypeTest<net.minecraft.world.entity.Entity, T>, net.minecraft.world.phys.AABB, java.util.function.Predicate<? super T>);
+  public java.util.List<net.minecraft.world.entity.Entity> getPushableEntities(net.minecraft.world.entity.Entity, net.minecraft.world.phys.AABB);
+  public abstract net.minecraft.world.entity.Entity getEntity(int);
+  public net.minecraft.world.entity.Entity getEntity(java.util.UUID);
+  public net.minecraft.world.entity.Entity getEntityInAnyDimension(java.util.UUID);
+  public net.minecraft.world.entity.player.Player getPlayerInAnyDimension(java.util.UUID);
+  public abstract java.util.Collection<net.minecraft.world.entity.boss.enderdragon.EnderDragonPart> dragonParts();
+  public void blockEntityChanged(net.minecraft.core.BlockPos);
+  public void onBlockEntityAdded(net.minecraft.world.level.block.entity.BlockEntity);
+  public long getOverworldClockTime();
+  public long getDefaultClockTime();
+  public boolean mayInteract(net.minecraft.world.entity.Entity, net.minecraft.core.BlockPos);
+  public void broadcastEntityEvent(net.minecraft.world.entity.Entity, byte);
+  public void broadcastDamageEvent(net.minecraft.world.entity.Entity, net.minecraft.world.damagesource.DamageSource);
+  public void blockEvent(net.minecraft.core.BlockPos, net.minecraft.world.level.block.Block, int, int);
+  public net.minecraft.world.level.storage.LevelData getLevelData();
+  public abstract net.minecraft.world.TickRateManager tickRateManager();
+  public float getRelativeTickSpeed();
+  public float getThunderLevel(float);
+  public void setThunderLevel(float);
+  public float getRainLevel(float);
+  public void setRainLevel(float);
+  public boolean canHaveWeather();
+  public boolean isThundering();
+  public boolean isRaining();
+  public boolean isRainingAt(net.minecraft.core.BlockPos);
+  public net.minecraft.world.level.biome.Biome$Precipitation precipitationAt(net.minecraft.core.BlockPos);
+  public abstract net.minecraft.world.level.saveddata.maps.MapItemSavedData getMapData(net.minecraft.world.level.saveddata.maps.MapId);
+  public void globalLevelEvent(int, net.minecraft.core.BlockPos, int);
+  public net.minecraft.CrashReportCategory fillReportDetails(net.minecraft.CrashReport);
+  public abstract void destroyBlockProgress(int, net.minecraft.core.BlockPos, int);
+  public void createFireworks(double, double, double, double, double, double, java.util.List<net.minecraft.world.item.component.FireworkExplosion>, boolean);
+  public abstract net.minecraft.world.scores.Scoreboard getScoreboard();
+  public void updateNeighbourForOutputSignal(net.minecraft.core.BlockPos, net.minecraft.world.level.block.Block);
+  public int getSkyDarken();
+  public void setSkyFlashTime(int);
+  public void sendPacketToServer(net.minecraft.network.protocol.Packet<?>);
+  public net.minecraft.world.level.dimension.DimensionType dimensionType();
+  public net.minecraft.core.Holder<net.minecraft.world.level.dimension.DimensionType> dimensionTypeRegistration();
+  public net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> dimension();
+  public net.minecraft.util.RandomSource getRandom();
+  public boolean isStateAtPosition(net.minecraft.core.BlockPos, java.util.function.Predicate<net.minecraft.world.level.block.state.BlockState>);
+  public boolean isFluidAtPosition(net.minecraft.core.BlockPos, java.util.function.Predicate<net.minecraft.world.level.material.FluidState>);
+  public abstract net.minecraft.world.item.crafting.RecipeAccess recipeAccess();
+  public net.minecraft.core.BlockPos getBlockRandomPos(int, int, int, int);
+  public boolean noSave();
+  public net.minecraft.world.level.biome.BiomeManager getBiomeManager();
+  public final boolean isDebug();
+  public long nextSubTickCount();
+  public net.minecraft.core.RegistryAccess registryAccess();
+  public net.minecraft.world.damagesource.DamageSources damageSources();
+  public abstract net.minecraft.world.clock.ClockManager clockManager();
+  public abstract net.minecraft.world.attribute.EnvironmentAttributeSystem environmentAttributes();
+  public int getClientLeafTintColor(net.minecraft.core.BlockPos);
+  public net.minecraft.world.level.chunk.PalettedContainerFactory palettedContainerFactory();
+  public net.minecraft.world.attribute.EnvironmentAttributeReader environmentAttributes();
+  public net.minecraft.world.level.chunk.ChunkAccess getChunk(int, int);
+}
+::endgroup::
+::group::net.minecraft.network.chat.Component
+Compiled from "Component.java"
+public interface net.minecraft.network.chat.Component extends com.mojang.brigadier.Message,net.minecraft.network.chat.FormattedText {
+  public abstract net.minecraft.network.chat.Style getStyle();
+  public abstract net.minecraft.network.chat.ComponentContents getContents();
+  public default java.lang.String getString();
+  public default java.lang.String getString(int);
+  public abstract java.util.List<net.minecraft.network.chat.Component> getSiblings();
+  public default java.lang.String tryCollapseToString();
+  public default net.minecraft.network.chat.MutableComponent plainCopy();
+  public default net.minecraft.network.chat.MutableComponent copy();
+  public abstract net.minecraft.util.FormattedCharSequence getVisualOrderText();
+  public default <T> java.util.Optional<T> visit(net.minecraft.network.chat.FormattedText$StyledContentConsumer<T>, net.minecraft.network.chat.Style);
+  public default <T> java.util.Optional<T> visit(net.minecraft.network.chat.FormattedText$ContentConsumer<T>);
+  public default java.util.List<net.minecraft.network.chat.Component> toFlatList();
+  public default java.util.List<net.minecraft.network.chat.Component> toFlatList(net.minecraft.network.chat.Style);
+  public default boolean contains(net.minecraft.network.chat.Component);
+  public static net.minecraft.network.chat.Component nullToEmpty(java.lang.String);
+  public static net.minecraft.network.chat.MutableComponent literal(java.lang.String);
+  public static net.minecraft.network.chat.MutableComponent translatable(java.lang.String);
+  public static net.minecraft.network.chat.MutableComponent translatable(java.lang.String, java.lang.Object...);
+  public static net.minecraft.network.chat.MutableComponent translatableEscape(java.lang.String, java.lang.Object...);
+  public static net.minecraft.network.chat.MutableComponent translatableWithFallback(java.lang.String, java.lang.String);
+  public static net.minecraft.network.chat.MutableComponent translatableWithFallback(java.lang.String, java.lang.String, java.lang.Object...);
+  public static net.minecraft.network.chat.MutableComponent empty();
+  public static net.minecraft.network.chat.MutableComponent keybind(java.lang.String);
+  public static net.minecraft.network.chat.MutableComponent nbt(net.minecraft.util.CompilableString<net.minecraft.commands.arguments.NbtPathArgument$NbtPath>, boolean, boolean, java.util.Optional<net.minecraft.network.chat.Component>, net.minecraft.network.chat.contents.data.DataSource);
+  public static net.minecraft.network.chat.MutableComponent score(net.minecraft.util.CompilableString<net.minecraft.commands.arguments.selector.EntitySelector>, java.lang.String);
+  public static net.minecraft.network.chat.MutableComponent score(java.lang.String, java.lang.String);
+  public static net.minecraft.network.chat.MutableComponent selector(net.minecraft.util.CompilableString<net.minecraft.commands.arguments.selector.EntitySelector>, java.util.Optional<net.minecraft.network.chat.Component>);
+  public static net.minecraft.network.chat.MutableComponent object(net.minecraft.network.chat.contents.objects.ObjectInfo);
+  public static net.minecraft.network.chat.MutableComponent object(net.minecraft.network.chat.contents.objects.ObjectInfo, net.minecraft.network.chat.Component);
+  public static net.minecraft.network.chat.Component translationArg(java.util.Date);
+  public static net.minecraft.network.chat.Component translationArg(com.mojang.brigadier.Message);
+  public static net.minecraft.network.chat.Component translationArg(java.util.UUID);
+  public static net.minecraft.network.chat.Component translationArg(net.minecraft.resources.Identifier);
+  public static net.minecraft.network.chat.Component translationArg(net.minecraft.world.level.ChunkPos);
+  public static net.minecraft.network.chat.Component translationArg(java.net.URI);
+}
+::endgroup::
+::group::net.minecraft.client.multiplayer.resolver.ServerAddress
+Compiled from "ServerAddress.java"
+public final class net.minecraft.client.multiplayer.resolver.ServerAddress {
+  public net.minecraft.client.multiplayer.resolver.ServerAddress(java.lang.String, int);
+  public java.lang.String getHost();
+  public int getPort();
+  public static net.minecraft.client.multiplayer.resolver.ServerAddress parseString(java.lang.String);
+  public static boolean isValidAddress(java.lang.String);
+  public static int parsePort(java.lang.String);
+  public java.lang.String toString();
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+}
+::endgroup::
+net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
+net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
+net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement
+net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
+net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
+net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
+::group::net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
+Compiled from "ClientLifecycleEvents.java"
+public final class net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents {
+  public static final net.fabricmc.fabric.api.event.Event<net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents$ClientStarted> CLIENT_STARTED;
+  public static final net.fabricmc.fabric.api.event.Event<net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents$ClientStopping> CLIENT_STOPPING;
+}
+::endgroup::
+::group::net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+Compiled from "ClientTickEvents.java"
+public final class net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents {
+  public static final net.fabricmc.fabric.api.event.Event<net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents$StartTick> START_CLIENT_TICK;
+  public static final net.fabricmc.fabric.api.event.Event<net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents$EndTick> END_CLIENT_TICK;
+  public static final net.fabricmc.fabric.api.event.Event<net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents$StartLevelTick> START_LEVEL_TICK;
+  public static final net.fabricmc.fabric.api.event.Event<net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents$EndLevelTick> END_LEVEL_TICK;
+}
+::endgroup::
+::group::net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
+Compiled from "ClientPlayConnectionEvents.java"
+public final class net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents {
+  public static final net.fabricmc.fabric.api.event.Event<net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents$Init> INIT;
+  public static final net.fabricmc.fabric.api.event.Event<net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents$Join> JOIN;
+  public static final net.fabricmc.fabric.api.event.Event<net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents$Disconnect> DISCONNECT;
+}
+::endgroup::
+::group::net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+Compiled from "ClientPlayNetworking.java"
+public final class net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking {
+  public static <T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> boolean registerGlobalReceiver(net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type<T>, net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking$PlayPayloadHandler<T>);
+  public static net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking$PlayPayloadHandler<?> unregisterGlobalReceiver(net.minecraft.resources.Identifier);
+  public static java.util.Set<net.minecraft.resources.Identifier> getGlobalReceivers();
+  public static <T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> boolean registerReceiver(net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type<T>, net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking$PlayPayloadHandler<T>);
+  public static net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking$PlayPayloadHandler<?> unregisterReceiver(net.minecraft.resources.Identifier);
+  public static java.util.Set<net.minecraft.resources.Identifier> getReceived() throws java.lang.IllegalStateException;
+  public static java.util.Set<net.minecraft.resources.Identifier> getSendable() throws java.lang.IllegalStateException;
+  public static boolean canSend(net.minecraft.resources.Identifier) throws java.lang.IllegalArgumentException;
+  public static boolean canSend(net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type<?>);
+  public static <T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.common.ServerCommonPacketListener> createServerboundPacket(T);
+  public static net.fabricmc.fabric.api.networking.v1.PacketSender getSender() throws java.lang.IllegalStateException;
+  public static void send(net.minecraft.network.protocol.common.custom.CustomPacketPayload);
+}
+::endgroup::
+::group::net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement
+Compiled from "HudElement.java"
+public interface net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement {
+  public abstract void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor, net.minecraft.client.DeltaTracker);
+}
+::endgroup::
+::group::net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry
+Compiled from "HudElementRegistry.java"
+public interface net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry {
+  public static void addFirst(net.minecraft.resources.Identifier, net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement);
+  public static void addLast(net.minecraft.resources.Identifier, net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement);
+  public static void attachElementBefore(net.minecraft.resources.Identifier, net.minecraft.resources.Identifier, net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement);
+  public static void attachElementAfter(net.minecraft.resources.Identifier, net.minecraft.resources.Identifier, net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement);
+  public static void removeElement(net.minecraft.resources.Identifier);
+  public static void replaceElement(net.minecraft.resources.Identifier, java.util.function.Function<net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement, net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement>);
+}
+::endgroup::
+::group::net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements
+Compiled from "VanillaHudElements.java"
+public final class net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements {
+  public static final net.minecraft.resources.Identifier MISC_OVERLAYS;
+  public static final net.minecraft.resources.Identifier CROSSHAIR;
+  public static final net.minecraft.resources.Identifier SPECTATOR_MENU;
+  public static final net.minecraft.resources.Identifier HOTBAR;
+  public static final net.minecraft.resources.Identifier ARMOR_BAR;
+  public static final net.minecraft.resources.Identifier HEALTH_BAR;
+  public static final net.minecraft.resources.Identifier FOOD_BAR;
+  public static final net.minecraft.resources.Identifier AIR_BAR;
+  public static final net.minecraft.resources.Identifier MOUNT_HEALTH;
+  public static final net.minecraft.resources.Identifier INFO_BAR;
+  public static final net.minecraft.resources.Identifier EXPERIENCE_LEVEL;
+  public static final net.minecraft.resources.Identifier HELD_ITEM_TOOLTIP;
+  public static final net.minecraft.resources.Identifier SPECTATOR_TOOLTIP;
+  public static final net.minecraft.resources.Identifier MOB_EFFECTS;
+  public static final net.minecraft.resources.Identifier BOSS_BAR;
+  public static final net.minecraft.resources.Identifier SLEEP;
+  public static final net.minecraft.resources.Identifier DEMO_TIMER;
+  public static final net.minecraft.resources.Identifier SCOREBOARD;
+  public static final net.minecraft.resources.Identifier OVERLAY_MESSAGE;
+  public static final net.minecraft.resources.Identifier TITLE_AND_SUBTITLE;
+  public static final net.minecraft.resources.Identifier CHAT;
+  public static final net.minecraft.resources.Identifier PLAYER_LIST;
+  public static final net.minecraft.resources.Identifier SUBTITLES;
+}
+::endgroup::
+::group::net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
+Compiled from "PayloadTypeRegistry.java"
+public interface net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry<B extends net.minecraft.network.FriendlyByteBuf> {
+  public abstract <T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> net.minecraft.network.protocol.common.custom.CustomPacketPayload$TypeAndCodec<? super B, T> register(net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type<T>, net.minecraft.network.codec.StreamCodec<? super B, T>);
+  public abstract <T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> net.minecraft.network.protocol.common.custom.CustomPacketPayload$TypeAndCodec<? super B, T> registerLarge(net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type<T>, net.minecraft.network.codec.StreamCodec<? super B, T>, int);
+  public abstract <T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload> net.minecraft.network.protocol.common.custom.CustomPacketPayload$TypeAndCodec<? super B, T> registerLarge(net.minecraft.network.protocol.common.custom.CustomPacketPayload$Type<T>, net.minecraft.network.codec.StreamCodec<? super B, T>, java.util.function.IntSupplier);
+  public static net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry<net.minecraft.network.FriendlyByteBuf> serverboundConfiguration();
+  public static net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry<net.minecraft.network.FriendlyByteBuf> clientboundConfiguration();
+  public static net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry<net.minecraft.network.RegistryFriendlyByteBuf> serverboundPlay();
+  public static net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry<net.minecraft.network.RegistryFriendlyByteBuf> clientboundPlay();
+}
+::endgroup::
