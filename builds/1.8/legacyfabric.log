@@ -1,3 +1,15 @@
+Downloading https://services.gradle.org/distributions/gradle-9.4.0-bin.zip
+.............10%.............20%.............30%.............40%.............50%.............60%..............70%.............80%.............90%.............100%
+
+Welcome to Gradle 9.4.0!
+
+Here are the highlights of this release:
+ - Java 26 support
+ - Non-class-based JVM tests
+ - Enhanced console progress bar
+
+For more details see https://docs.gradle.org/9.4.0/release-notes.html
+
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.4.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 
@@ -5,26 +17,31 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.16.1
 Legacy Looming: 1.16.1
 
-> Task :compileJava FROM-CACHE
+> Task :compileJava
+Note: /home/runner/work/MCVoice/MCVoice/minecraft/legacyfabric/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
 > Task :processResources
 > Task :classes
 > Task :jar
 > Task :processIncludeJars
-> Task :remapJar FROM-CACHE
 > Task :sourcesJar
-> Task :remapSourcesJar FROM-CACHE
-> Task :assemble
 > Task :compileTestJava NO-SOURCE
 > Task :processTestResources NO-SOURCE
 > Task :testClasses UP-TO-DATE
 > Task :test NO-SOURCE
 > Task :validateAccessWidener NO-SOURCE
 > Task :check UP-TO-DATE
+> Task :remapJar
+> Task :remapSourcesJar
+> Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790281532355.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790282957053.json
 
-BUILD SUCCESSFUL in 22s
-7 actionable tasks: 4 executed, 3 from cache
+[Incubating] Problems report is available at: file:///home/runner/work/MCVoice/MCVoice/minecraft/legacyfabric/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 56s
+7 actionable tasks: 7 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.4.0/userguide/configuration_cache_enabling.html
 valid: mcvoice-0.1.0-mc1.8-legacyfabric.jar (327 classes, 13 platform classes, metadata ['fabric.mod.json'])
   platform: dev/mcvoice/platform/fabric/McVoiceFabric
