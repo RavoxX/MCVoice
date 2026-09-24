@@ -1,3 +1,15 @@
+Downloading https://services.gradle.org/distributions/gradle-8.8-bin.zip
+.............10%.............20%.............30%.............40%.............50%.............60%..............70%.............80%.............90%.............100%
+
+Welcome to Gradle 8.8!
+
+Here are the highlights of this release:
+ - Running Gradle on Java 22
+ - Configurable Gradle daemon JVM
+ - Improved IDE performance for large projects
+
+For more details see https://docs.gradle.org/8.8/release-notes.html
+
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 
@@ -18,14 +30,14 @@ Executing steps
  > Running 'listLibraries'
  > Running 'rename'
 Stopping at requested step: /home/runner/.gradle/caches/forge_gradle/mcp_repo/de/oceanlabs/mcp/mcp_config/1.18.1-20211210.034407/joined/rename/output.jar
-[19:56:40] [main/INFO]: Writing debug log file accesstransform.log
-[19:56:40] [main/INFO]: Access Transformer processor running version 8.2.14
-[19:56:40] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0/forge-1.18.1-39.1.0-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0_mapped_official_1.18.1/forge-1.18.1-39.1.0_mapped_official_1.18.1.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg]
-[19:56:40] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0/forge-1.18.1-39.1.0-injected.jar
-[19:56:40] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0_mapped_official_1.18.1/forge-1.18.1-39.1.0_mapped_official_1.18.1.jar
-[19:56:40] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg
-[19:56:40] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0_mapped_official_1.18.1/forge-1.18.1-39.1.0_mapped_official_1.18.1.jar, overwriting
-[19:56:43] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0_mapped_official_1.18.1/forge-1.18.1-39.1.0_mapped_official_1.18.1.jar
+[20:36:13] [main/INFO]: Writing debug log file accesstransform.log
+[20:36:13] [main/INFO]: Access Transformer processor running version 8.2.14
+[20:36:13] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0/forge-1.18.1-39.1.0-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0_mapped_official_1.18.1/forge-1.18.1-39.1.0_mapped_official_1.18.1.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg]
+[20:36:13] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0/forge-1.18.1-39.1.0-injected.jar
+[20:36:13] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0_mapped_official_1.18.1/forge-1.18.1-39.1.0_mapped_official_1.18.1.jar
+[20:36:13] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg
+[20:36:13] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0_mapped_official_1.18.1/forge-1.18.1-39.1.0_mapped_official_1.18.1.jar, overwriting
+[20:36:16] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18.1-39.1.0_mapped_official_1.18.1/forge-1.18.1-39.1.0_mapped_official_1.18.1.jar
 Creating SRG -> MCP TSRG
 
 > Task :processResources
@@ -45,9 +57,9 @@ Creating SRG -> MCP TSRG
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790279723695.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790282093390.json
 
-BUILD SUCCESSFUL in 1m 52s
+BUILD SUCCESSFUL in 1m 54s
 8 actionable tasks: 8 executed
 valid: mcvoice-0.1.0-mc1.18.1-forge.jar (327 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
