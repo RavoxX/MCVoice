@@ -133,8 +133,12 @@ def generate(mc: str, out: str):
         variants = [src for v in fam.get("variants", [])
                     if in_range(mc, v["minecraft"]) for src in v["sources"]]
         loader_src = cfg.get("sources", "fabric" if label == "legacyfabric" else label)
-        generate_sources(fam["id"], ["common"] + variants + [loader_src], mc, label, os.path.join(ldir, "src-gen"))
-        tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"], "LOADER": label}
+        # "parts" replaces the shared part too, for families whose loaders use different mapping sets
+        parts = cfg.get("parts") or (["common"] + variants + [loader_src])
+        generate_sources(fam["id"], parts, mc, label, os.path.join(ldir, "src-gen"))
+        tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"], "LOADER": label,
+                  "MAPPINGS": cfg.get("mappings", "")}
+        props.update(cfg.get("gradle_properties", {}))
         write(os.path.join(ldir, "build.gradle"), render(os.path.join(tdir, f"{label}.gradle"), tokens))
         settings = os.path.join(tdir, "settings.gradle")
         if not os.path.exists(settings):

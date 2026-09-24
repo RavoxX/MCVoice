@@ -38,6 +38,10 @@ on:
         description: Regex; list client-jar classes whose name matches (find renamed classes)
         required: false
         default: ""
+      mappings:
+        description: Regex grepped in mapping files (*.tiny, *.csv, *.srg) found in the extra jars/zips
+        required: false
+        default: ""
       fetch:
         description: Space-separated URLs of text files to print (maven metadata, build files)
         required: false
@@ -122,6 +126,7 @@ jobs:
         env:
           JARS: ${{ inputs.jars }}
           FILTER: ${{ inputs.jar_filter }}
+          MAPPINGS: ${{ inputs.mappings }}
         run: |
           set -uo pipefail
           cd work && mkdir -p extra && cd extra
@@ -135,6 +140,11 @@ jobs:
             # unpack nested (jar-in-jar) modules
             find "x$i" -name '*.jar' | while read -r n; do d="${n%.jar}_x"; mkdir -p "$d"; (cd "$d" && unzip -q -o "$OLDPWD/$n"); done
           done
+          if [ -n "$MAPPINGS" ]; then
+            for m in $(find . -name '*.tiny' -o -name '*.csv' -o -name '*.srg' -o -name '*.tsrg'); do
+              echo "::group::mappings $m"; grep -E "$MAPPINGS" "$m" | head -400; echo "::endgroup::"
+            done
+          fi
           find . -name '*.class' | sed 's|^\./x[0-9]*/||; s|^.*_x/||; s|\.class$||; s|/|.|g' | grep -E "$FILTER" | sort -u | head -150 > classes.txt
           cat classes.txt
           while read -r c; do

@@ -70,6 +70,53 @@
           }
         ]
       }
+    },
+    {
+      "id": "legacy",
+      "minecraft": {
+        "min": "1.8.9",
+        "max": "1.12.2"
+      },
+      "loaders": {
+        "forge": [
+          {
+            "minecraft": {
+              "min": "1.8.9",
+              "max": "1.8.9"
+            },
+            "buildgen": "legacyforge",
+            "gradle": "8.8",
+            "gradle_jdk": 17,
+            "plugin_version": "0.10.0.+",
+            "mappings": "de.oceanlabs.mcp:mcp_stable:22-1.8.9",
+            "gradle_properties": {
+              "loom.platform": "forge"
+            },
+            "parts": [
+              "mcp",
+              "forge"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.12.2",
+              "max": "1.12.2"
+            },
+            "buildgen": "legacyforge",
+            "gradle": "8.8",
+            "gradle_jdk": 17,
+            "plugin_version": "0.10.0.+",
+            "mappings": "de.oceanlabs.mcp:mcp_stable:39-1.12",
+            "gradle_properties": {
+              "loom.platform": "forge"
+            },
+            "parts": [
+              "mcp",
+              "forge"
+            ]
+          }
+        ]
+      }
     }
   ]
 }
