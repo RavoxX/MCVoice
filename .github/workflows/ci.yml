@@ -1,0 +1,171 @@
+name: ci
+
+# Main-branch CI: protocol, both backends, client core, conformance and secrets.
+# Per-Minecraft-version builds run from the mc/<version> branches (mc-build.yml).
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  protocol:
+    name: protocol vectors + version matrix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install cryptography==44.0.2
+      - name: Test vectors are reproducible from the reference generator
+        run: python3 protocol/test-vectors/generate.py --check
+      - name: Validate version matrix
+        run: python3 tools/versions/matrix.py validate
+
+  secrets:
+    name: secret scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: No .env or key files are tracked
+        run: |
+          bad=$(git ls-files | grep -E '(^|/)\.env($|\.)|\.(pem|key|p12|pfx|jks|keystore)$' | grep -v '\.env\.example$' || true)
+          if [ -n "$bad" ]; then echo "::error::secret-like files are tracked:"; echo "$bad"; exit 1; fi
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  go:
+    name: backend (Go)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/go
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: backend/go/go.mod
+          cache-dependency-path: backend/go/go.sum
+      - run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
+      - run: go vet ./...
+      - run: go test -race -count=1 ./...
+      - name: Fuzz parsers (short)
+        run: |
+          go test -run xxx -fuzz FuzzParseDatagram -fuzztime 30s ./internal/protocol
+          go test -run xxx -fuzz FuzzParseControl -fuzztime 30s ./internal/protocol
+      - run: |
+          mkdir -p ../../dist
+          CGO_ENABLED=0 go build -trimpath -o ../../dist/mcvoice-backend-go ./cmd/mcvoice-backend
+          CGO_ENABLED=0 go build -trimpath -o ../../dist/mcvoice-conformance ./cmd/mcvoice-conformance
+      - name: Build load test tool
+        working-directory: tools/load-test
+        run: go build -o ../../dist/loadtest .
+      - uses: actions/upload-artifact@v5
+        with:
+          name: backend-go-bin
+          path: dist/
+
+  rust:
+    name: backend (Rust)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/rust
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: backend/rust
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets --release -- -D warnings
+      - run: cargo test --release
+      - run: |
+          cargo build --release --locked
+          mkdir -p ../../dist && cp target/release/mcvoice-backend ../../dist/mcvoice-backend-rust
+      - uses: actions/upload-artifact@v5
+        with:
+          name: backend-rust-bin
+          path: dist/
+
+  conformance:
+    name: cross-implementation conformance
+    needs: [go, rust]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          path: dist
+          merge-multiple: true
+      - run: chmod +x dist/*
+      - name: Behaviour suite vs Go backend
+        run: dist/mcvoice-conformance -name go -- dist/mcvoice-backend-go
+      - name: Behaviour suite vs Rust backend
+        run: dist/mcvoice-conformance -name rust -- dist/mcvoice-backend-rust
+      - name: Load test smoke (both backends)
+        run: |
+          for impl in go rust; do
+            AUTH_MODE=offline CONTROL_PORT=18080 VOICE_UDP_PORT=24455 PUBLIC_HOSTNAME=127.0.0.1 LOG_LEVEL=warn \
+              RATE_LIMIT_CONNECT_PER_MIN=0 dist/mcvoice-backend-$impl & PID=$!
+            for _ in $(seq 50); do curl -sf http://127.0.0.1:18080/ready >/dev/null && break; sleep 0.2; done
+            dist/loadtest -url ws://127.0.0.1:18080/v1/control -clients 60 -duration 10s -ramp 2s -json loadtest-$impl.json
+            python3 -c "import json,sys; d=json.load(open('loadtest-$impl.json')); assert d['connected']>=60 and d['delivery_ratio']>0.9, d"
+            kill $PID; wait $PID || true
+          done
+      - uses: actions/upload-artifact@v5
+        with:
+          name: loadtest-smoke
+          path: loadtest-*.json
+
+  client:
+    name: client core (Java 8 target)
+    needs: [go, rust]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v4
+      - uses: actions/download-artifact@v5
+        with:
+          path: dist
+          merge-multiple: true
+      - run: chmod +x $GITHUB_WORKSPACE/dist/*
+      - name: Build + unit tests + end-to-end vs Go backend
+        run: MCVOICE_BACKEND_BIN=$GITHUB_WORKSPACE/dist/mcvoice-backend-go ./gradlew build --no-daemon
+      - name: End-to-end vs Rust backend
+        run: MCVOICE_BACKEND_BIN=$GITHUB_WORKSPACE/dist/mcvoice-backend-rust ./gradlew :core:test --rerun --no-daemon
+      - name: Java 8 bytecode check
+        run: |
+          for jar in */build/libs/*.jar; do
+            case "$jar" in *sources*) continue;; esac
+            unzip -q -o "$jar" -d /tmp/check
+          done
+          bad=$(find /tmp/check -name '*.class' -exec sh -c 'v=$(od -An -j6 -N2 -tu1 "$1" | awk "{print \$1*256+\$2}"); [ "$v" -gt 52 ] && echo "$1 $v"' _ {} \; | head)
+          if [ -n "$bad" ]; then echo "::error::classes above Java 8 bytecode:"; echo "$bad"; exit 1; fi
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: client-core
+          path: |
+            client/*/build/libs/*.jar
+            client/*/build/reports/tests/

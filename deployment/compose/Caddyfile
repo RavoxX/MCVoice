@@ -1,0 +1,9 @@
+# TLS termination for the control channel (wss://). Voice UDP bypasses Caddy.
+{$PUBLIC_HOSTNAME} {
+	@control path /v1/control
+	reverse_proxy @control {$BACKEND}
+	# health endpoints for external monitoring; keep /metrics internal
+	reverse_proxy /health {$BACKEND}
+	reverse_proxy /ready {$BACKEND}
+	respond /metrics 404
+}

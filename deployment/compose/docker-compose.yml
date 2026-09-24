@@ -1,0 +1,71 @@
+# MCVoice backend with Docker Compose.
+#
+#   cp ../../backend/rust/.env.example .env   # edit secrets + PUBLIC_HOSTNAME
+#   docker compose up -d                     # Rust backend (default)
+#   docker compose --profile go up -d backend-go   # or the Go backend instead
+#
+# TLS: terminate wss:// in the Caddy service (automatic certificates) or set
+# TLS_CERT_PATH/TLS_KEY_PATH. UDP 24455 must be reachable from players.
+name: mcvoice
+
+services:
+  backend:
+    image: ghcr.io/ravoxx/mcvoice/voice-backend-rust:${MCVOICE_VERSION:-latest}
+    build:
+      context: ../../backend/rust
+    env_file: .env
+    environment:
+      CONTROL_BIND_ADDRESS: 0.0.0.0
+      CONTROL_PORT: 8080
+      VOICE_BIND_ADDRESS: 0.0.0.0
+      VOICE_UDP_PORT: 24455
+      TRUST_PROXY_HEADERS: "true"
+    ports:
+      - "24455:24455/udp"
+    expose:
+      - "8080"
+    restart: unless-stopped
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    volumes:
+      - ./bans.json:/data/bans.json:ro
+    healthcheck:
+      test: ["NONE"]  # distroless image has no shell; Caddy/K8s probe /ready instead
+
+  backend-go:
+    profiles: [go]
+    image: ghcr.io/ravoxx/mcvoice/voice-backend-go:${MCVOICE_VERSION:-latest}
+    build:
+      context: ../../backend/go
+    env_file: .env
+    environment:
+      CONTROL_BIND_ADDRESS: 0.0.0.0
+      CONTROL_PORT: 8080
+      VOICE_BIND_ADDRESS: 0.0.0.0
+      VOICE_UDP_PORT: 24455
+      TRUST_PROXY_HEADERS: "true"
+    ports:
+      - "24455:24455/udp"
+    expose:
+      - "8080"
+    restart: unless-stopped
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "443:443"
+      - "80:80"
+    environment:
+      PUBLIC_HOSTNAME: ${PUBLIC_HOSTNAME:-voice.example.org}
+      BACKEND: ${BACKEND_SERVICE:-backend}:8080
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+    restart: unless-stopped
+
+volumes:
+  caddy-data:
