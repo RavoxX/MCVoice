@@ -1,0 +1,43 @@
+# --- secrets -------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+secrets/
+*.secret
+credentials.json
+gradle.properties.local
+
+# --- build outputs -------------------------------------------------------
+build/
+out/
+target/
+bin/
+dist/
+*.class
+.gradle/
+run/
+logs/
+backend/go/mcvoice-backend
+tools/load-test/loadtest
+release-output/
+
+# --- IDE / OS -----------------------------------------------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+.DS_Store
+Thumbs.db
+*.swp

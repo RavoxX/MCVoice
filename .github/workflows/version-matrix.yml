@@ -1,0 +1,70 @@
+name: version-matrix
+
+# Regenerates versions/versions.json from official Mojang / Fabric / Legacy Fabric / Forge
+# metadata, validates it, re-renders versions/supported.md and commits the result back.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * 1"
+  push:
+    paths:
+      - "tools/versions/**"
+      - ".github/workflows/version-matrix.yml"
+  pull_request:
+    paths:
+      - "versions/**"
+      - "tools/versions/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: version-matrix-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Generate matrix from official metadata
+        if: github.event_name != 'pull_request'
+        run: python3 tools/versions/generate_matrix.py --min 1.8 --max 26.3
+      - name: Probe Gradle toolchains
+        if: github.event_name != 'pull_request'
+        run: python3 tools/versions/probe_toolchains.py
+      - name: Validate
+        run: python3 tools/versions/matrix.py validate
+      - name: Render supported.md
+        run: python3 tools/versions/matrix.py render
+      - name: Show matrix summary
+        run: |
+          python3 - <<'EOF'
+          import json
+          m = json.load(open("versions/versions.json"))
+          for e in m["versions"]:
+              f, fb = e["loaders"]["forge"], e["loaders"]["fabric"]
+              print(f'{e["minecraft"]:>8} java{e["java"]:<3} forge={f.get("version","-"):<32} fabric={fb.get("flavor","-")}:{fb.get("loader","-")} api={fb.get("fabric_api") or fb.get("legacy_fabric_api") or "-"}')
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: version-matrix
+          path: versions/
+      - name: Commit updated matrix
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add versions/versions.json versions/supported.md versions/toolchains.json
+          if git diff --cached --quiet; then
+            echo "matrix unchanged"
+          else
+            git commit -m "chore(versions): regenerate version matrix from official metadata"
+            git push
+          fi
