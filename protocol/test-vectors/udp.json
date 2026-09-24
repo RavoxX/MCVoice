@@ -299,10 +299,17 @@
    "error": "auth_failed"
   },
   {
-   "name": "wrong_direction",
+   "name": "type_not_valid_in_direction",
    "key": "000102030405060708090a0b0c0d0e0f",
    "direction": "s2c",
    "datagram": "4d56011000001a2b3c4d5e6f70810000000000000003678eb7fb7af021ca5c008187f4b58bf6080cc0eca67030fcfd35f89e88a1db8f37eb15e027eead617b7d18ab5bd28b0f2b5f0052a59a2faa9505e301dc5c4b41e2d0175729bda100c95641840ace727b9214b9419dbf06fa5a6786",
+   "error": "unknown_type"
+  },
+  {
+   "name": "s2c_nonce_on_c2s_datagram",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "c2s",
+   "datagram": "4d56011000001a2b3c4d5e6f70810000000000000003636ce91ed3c8bccf594287ef061a160097696b5aa9cfd8de9fa56404c2e8e671",
    "error": "auth_failed"
   },
   {

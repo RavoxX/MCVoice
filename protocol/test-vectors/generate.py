@@ -126,7 +126,9 @@ def udp_vectors():
     bad("tampered_ciphertext", good[:30] + bytes([good[30] ^ 1]) + good[31:], "auth_failed")
     bad("tampered_header_counter", good[:21] + bytes([good[21] ^ 1]) + good[22:], "auth_failed")
     bad("wrong_key", good, "auth_failed", key=KEY2)
-    bad("wrong_direction", good, "auth_failed", direction="s2c")
+    bad("type_not_valid_in_direction", good, "unknown_type", direction="s2c")
+    bad("s2c_nonce_on_c2s_datagram", seal(KEY, DIR_S2C, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 0, 0, b"\x01")),
+        "auth_failed")
     bad("oversize", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 0, 0, b"\x00" * 1200)), "too_large")
     bad("payload_length_mismatch", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3,
                                         voice_pt(1, 1, 1, 1, 0, 0, b"\x01\x02\x03")[:-1]), "bad_payload")
