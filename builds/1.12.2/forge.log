@@ -1,5 +1,5 @@
 Downloading https://services.gradle.org/distributions/gradle-9.7.0-bin.zip
-..............10%..............20%...............30%..............40%..............50%...............60%..............70%..............80%...............90%..............100%
+..............10%..............20%..............30%...............40%..............50%..............60%...............70%..............80%...............90%..............100%
 
 Welcome to Gradle 9.7.0!
 
@@ -39,11 +39,6 @@ Download https://piston-data.mojang.com/v1/objects/886945bfb2b978778c3a0288fd7fa
 > Task :processInjectedTagsResources NO-SOURCE
 > Task :injectedTagsClasses UP-TO-DATE
 > Task :processMcLauncherResources NO-SOURCE
-> Task :mcLauncherClasses
-> Task :processResources
-> Task :packageMcLauncher
-> Task :sourcesJar
-> Task :processTestResources NO-SOURCE
 > Task :mergeVanillaSidedJars
 
 > Task :deobfuscateMergedJarToSrg
@@ -56,18 +51,18 @@ Cleaning up generated debuginfo
 > Task :decompileSrgJar
 Didn't find cached decompiled jar, decompiling and saving to /home/runner/.gradle/caches/retro_futura_gradle/fernflower-cache/1.0.342-3bcc7ff2caa3c44ef8a4ae34bd7503f35aae66fe83874c4549de26a264180930.jar
 Decompiling the srg jar with fernflower
-  Decompiling took 71014 ms
+  Decompiling took 57365 ms
 
 > Task :cleanupDecompSrgJar
 Fixup stage 1 - applying FF patches
-  Stage 1 took 271 ms
+  Stage 1 took 232 ms
 Fixup stage 2 - applying MCP patches
-  Stage 2 took 110 ms
+  Stage 2 took 91 ms
 Fixup stage 3 - applying MCP cleanup
-  Stage 3 took 4331 ms
+  Stage 3 took 3926 ms
 Fixup stage 4 - injecting package-info
   Injected 119 package-infos
-  Stage 4 took 3 ms
+  Stage 4 took 2 ms
 Saving the fixed-up jar
 
 > Task :patchDecompiledJar
@@ -91,26 +86,31 @@ Note: Recompile with -Xlint:unchecked for details.
 > Task :patchedMcClasses
 > Task :compileApiJava NO-SOURCE
 > Task :apiClasses UP-TO-DATE
+> Task :mcLauncherClasses
 
 > Task :compileJava
 Note: /home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 
+> Task :processResources
 > Task :classes
 > Task :jar
+> Task :packageMcLauncher
 > Task :packagePatchedMc
 > Task :reobfJar
+> Task :sourcesJar
 > Task :assemble
 > Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
 > Task :testClasses UP-TO-DATE
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790281319506.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790281874567.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/MCVoice/MCVoice/minecraft/forge/build/reports/problems/problems-report.html
 
-BUILD SUCCESSFUL in 2m 36s
+BUILD SUCCESSFUL in 2m 12s
 23 actionable tasks: 23 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.0/userguide/configuration_cache_enabling.html
 valid: mcvoice-0.1.0-mc1.12.2-forge.jar (327 classes, 13 platform classes, metadata ['mcmod.info'])
