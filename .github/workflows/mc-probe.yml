@@ -33,6 +33,8 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/setup-java@v5
         with:
@@ -57,6 +59,8 @@ jobs:
           SEARCH: ${{ inputs.search }}
         run: |
           cd work
+          exec > >(tee -a ../probe-output.txt) 2>&1
+          echo "### search $SEARCH"
           if [ -f client.txt ]; then grep -E '^[^ ].* -> ' client.txt | cut -d' ' -f1 | grep -E "$SEARCH" | head -300 || true
           else unzip -Z1 client.jar | grep '\.class$' | sed 's|\.class$||; s|/|.|g' | grep -E "$SEARCH" | head -300 || true; fi
       - name: Print classes
@@ -65,6 +69,7 @@ jobs:
         run: |
           set -uo pipefail
           cd work
+          exec > >(tee -a ../probe-output.txt) 2>&1
           for c in $CLASSES; do
             echo "::group::$c"
             if [ -f client.txt ]; then
@@ -86,6 +91,7 @@ jobs:
         run: |
           set -uo pipefail
           cd work && mkdir -p extra && cd extra
+          exec > >(tee -a ../../probe-output.txt) 2>&1
           i=0
           for u in $JARS; do
             i=$((i+1)); curl -sSfL "$u" -o "j$i.jar" || { echo "download failed: $u"; continue; }
@@ -100,3 +106,16 @@ jobs:
             root=${f%/$(echo "$c" | tr . /).class}
             echo "::group::$c"; javap -cp "$root:../client.jar" -public "$c" 2>&1 | head -120; echo "::endgroup::"
           done < classes.txt
+      - name: Publish output to tooling/probe-output branch
+        if: always()
+        env:
+          MC: ${{ inputs.minecraft }}
+        run: |
+          set -eu
+          f=probe-output.txt; [ -f "$f" ] || exit 0
+          git init -q out && cd out
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          if git fetch -q origin tooling/probe-output 2>/dev/null; then git checkout -q -b tooling/probe-output FETCH_HEAD; else git checkout -q --orphan tooling/probe-output; fi
+          mkdir -p "$MC"; cp "../$f" "$MC/${{ github.run_id }}.txt"; cp "../$f" "$MC/latest.txt"
+          git add -A && git commit -q -m "probe $MC run ${{ github.run_id }}" && git push -q origin HEAD:tooling/probe-output
