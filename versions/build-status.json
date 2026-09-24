@@ -1,16 +1,212 @@
 {
   "results": {
-    "26.1": {
+    "1.12.2": {
+      "forge": {
+        "commit": "042a4d5744c6d75cbad58694b75874761623b764",
+        "jar": "mcvoice-0.1.0-mc1.12.2-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36045776900",
+        "status": "pass"
+      },
+      "legacyfabric": {
+        "commit": "042a4d5744c6d75cbad58694b75874761623b764",
+        "jar": "mcvoice-0.1.0-mc1.12.2-legacyfabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36045776900",
+        "status": "pass"
+      }
+    },
+    "1.20.1": {
       "fabric": {
-        "commit": "e884f01d1339570360005454917c8f74fb84faff",
-        "jar": "mcvoice-0.1.0-mc26.1-fabric.jar",
-        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36041127533",
+        "commit": "8de448b99bc733877705ed30973f766086615f0d",
+        "jar": "mcvoice-0.1.0-mc1.20.1-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046031226",
         "status": "pass"
       },
       "forge": {
-        "commit": "e884f01d1339570360005454917c8f74fb84faff",
+        "commit": "8de448b99bc733877705ed30973f766086615f0d",
+        "jar": "mcvoice-0.1.0-mc1.20.1-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046031226",
+        "status": "pass"
+      }
+    },
+    "1.20.2": {
+      "fabric": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.20.2-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046299297",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.20.2-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046299297",
+        "status": "pass"
+      }
+    },
+    "1.20.4": {
+      "fabric": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.20.4-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046301984",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.20.4-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046301984",
+        "status": "pass"
+      }
+    },
+    "1.20.6": {
+      "fabric": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.20.6-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046304786",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.20.6-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046304786",
+        "status": "pass"
+      }
+    },
+    "1.21.1": {
+      "fabric": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.21.1-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046307354",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.21.1-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046307354",
+        "status": "pass"
+      }
+    },
+    "1.21.10": {
+      "fabric": {
+        "commit": "33810ca652ff2d73f9cd3fc4c729ad919bbf24b5",
+        "jar": "mcvoice-0.1.0-mc1.21.10-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36043074978",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "33810ca652ff2d73f9cd3fc4c729ad919bbf24b5",
+        "jar": "mcvoice-0.1.0-mc1.21.10-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36043074978",
+        "status": "pass"
+      }
+    },
+    "1.21.11": {
+      "fabric": {
+        "commit": "33810ca652ff2d73f9cd3fc4c729ad919bbf24b5",
+        "jar": "mcvoice-0.1.0-mc1.21.11-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36043078213",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "33810ca652ff2d73f9cd3fc4c729ad919bbf24b5",
+        "jar": "mcvoice-0.1.0-mc1.21.11-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36043078213",
+        "status": "pass"
+      }
+    },
+    "1.21.4": {
+      "fabric": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.21.4-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046309975",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.21.4-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046309975",
+        "status": "pass"
+      }
+    },
+    "1.21.5": {
+      "fabric": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.21.5-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046312777",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.21.5-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046312777",
+        "status": "pass"
+      }
+    },
+    "1.21.6": {
+      "fabric": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.21.6-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046315380",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.21.6-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046315380",
+        "status": "pass"
+      }
+    },
+    "1.21.8": {
+      "fabric": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.21.8-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046318656",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "d40f8b8c0eae10a0cf98ec0fb74cbf31010bfef5",
+        "jar": "mcvoice-0.1.0-mc1.21.8-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046318656",
+        "status": "pass"
+      }
+    },
+    "1.21.9": {
+      "fabric": {
+        "commit": "33810ca652ff2d73f9cd3fc4c729ad919bbf24b5",
+        "jar": "mcvoice-0.1.0-mc1.21.9-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36043071594",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "33810ca652ff2d73f9cd3fc4c729ad919bbf24b5",
+        "jar": "mcvoice-0.1.0-mc1.21.9-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36043071594",
+        "status": "pass"
+      }
+    },
+    "1.8.9": {
+      "forge": {
+        "commit": "8de448b99bc733877705ed30973f766086615f0d",
+        "jar": "mcvoice-0.1.0-mc1.8.9-forge.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046028573",
+        "status": "pass"
+      },
+      "legacyfabric": {
+        "commit": "8de448b99bc733877705ed30973f766086615f0d",
+        "jar": "mcvoice-0.1.0-mc1.8.9-legacyfabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046028573",
+        "status": "pass"
+      }
+    },
+    "26.1": {
+      "fabric": {
+        "commit": "7efa7a8e7b5853cac5943d3d32f7f516b0b7485d",
+        "jar": "mcvoice-0.1.0-mc26.1-fabric.jar",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36042902953",
+        "status": "pass"
+      },
+      "forge": {
+        "commit": "7efa7a8e7b5853cac5943d3d32f7f516b0b7485d",
         "jar": "mcvoice-0.1.0-mc26.1-forge.jar",
-        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36041127533",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36042902953",
         "status": "pass"
       }
     },
@@ -58,15 +254,15 @@
     },
     "26.3": {
       "fabric": {
-        "commit": "abd7444674c8567bc3979ef461dcb08f1cd09d41",
+        "commit": "8de448b99bc733877705ed30973f766086615f0d",
         "jar": "mcvoice-0.1.0-mc26.3-fabric.jar",
-        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36041800906",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046034508",
         "status": "pass"
       },
       "forge": {
-        "commit": "abd7444674c8567bc3979ef461dcb08f1cd09d41",
+        "commit": "8de448b99bc733877705ed30973f766086615f0d",
         "jar": "mcvoice-0.1.0-mc26.3-forge.jar",
-        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36041800906",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/36046034508",
         "status": "pass"
       }
     }

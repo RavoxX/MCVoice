@@ -22,7 +22,7 @@ Matrix generated at 2026-09-24T18:33:17Z; latest release in Mojang manifest: `26
 | 1.8.6 | 8 | N/A | not built (Legacy Fabric) | - | 0.19.3 |
 | 1.8.7 | 8 | N/A | not built (Legacy Fabric) | - | 0.19.3 |
 | 1.8.8 | 8 | not built | not built (Legacy Fabric) | 1.8.8-11.15.0.1655 | 0.19.3 |
-| 1.8.9 | 8 | not built | not built (Legacy Fabric) | 1.8.9-11.15.1.2318-1.8.9 | 0.19.3 |
+| 1.8.9 | 8 | PASS | PASS (Legacy Fabric) | 1.8.9-11.15.1.2318-1.8.9 | 0.19.3 |
 | 1.9 | 8 | not built | N/A | 1.9-12.16.1.1887 | - |
 | 1.9.1 | 8 | N/A | N/A | - | - |
 | 1.9.2 | 8 | N/A | N/A | - | - |
@@ -36,7 +36,7 @@ Matrix generated at 2026-09-24T18:33:17Z; latest release in Mojang manifest: `26
 | 1.11.2 | 8 | not built | not built (Legacy Fabric) | 1.11.2-13.20.1.2588 | 0.19.3 |
 | 1.12 | 8 | not built | N/A | 1.12-14.21.1.2387 | - |
 | 1.12.1 | 8 | not built | N/A | 1.12.1-14.22.1.2478 | - |
-| 1.12.2 | 8 | not built | not built (Legacy Fabric) | 1.12.2-14.23.5.2859 | 0.19.3 |
+| 1.12.2 | 8 | PASS | PASS (Legacy Fabric) | 1.12.2-14.23.5.2859 | 0.19.3 |
 | 1.13 | 8 | N/A | N/A | - | - |
 | 1.13.1 | 8 | N/A | N/A | - | - |
 | 1.13.2 | 8 | not built | not built (Legacy Fabric) | 1.13.2-25.0.223 | 0.19.3 |
@@ -65,31 +65,31 @@ Matrix generated at 2026-09-24T18:33:17Z; latest release in Mojang manifest: `26
 | 1.19.3 | 17 | not built | not built | 1.19.3-44.1.0 | 0.19.5 |
 | 1.19.4 | 17 | not built | not built | 1.19.4-45.4.0 | 0.19.5 |
 | 1.20 | 17 | not built | not built | 1.20-46.0.14 | 0.19.5 |
-| 1.20.1 | 17 | not built | not built | 1.20.1-47.4.10 | 0.19.5 |
-| 1.20.2 | 17 | not built | not built | 1.20.2-48.1.0 | 0.19.5 |
+| 1.20.1 | 17 | PASS | PASS | 1.20.1-47.4.10 | 0.19.5 |
+| 1.20.2 | 17 | PASS | PASS | 1.20.2-48.1.0 | 0.19.5 |
 | 1.20.3 | 17 | not built | not built | 1.20.3-49.0.2 | 0.19.5 |
-| 1.20.4 | 17 | not built | not built | 1.20.4-49.2.0 | 0.19.5 |
+| 1.20.4 | 17 | PASS | PASS | 1.20.4-49.2.0 | 0.19.5 |
 | 1.20.5 | 21 | N/A | not built | - | 0.19.5 |
-| 1.20.6 | 21 | not built | not built | 1.20.6-50.2.0 | 0.19.5 |
+| 1.20.6 | 21 | PASS | PASS | 1.20.6-50.2.0 | 0.19.5 |
 | 1.21 | 21 | not built | not built | 1.21-51.0.33 | 0.19.5 |
-| 1.21.1 | 21 | not built | not built | 1.21.1-52.1.0 | 0.19.5 |
+| 1.21.1 | 21 | PASS | PASS | 1.21.1-52.1.0 | 0.19.5 |
 | 1.21.2 | 21 | N/A | not built | - | 0.19.5 |
 | 1.21.3 | 21 | not built | not built | 1.21.3-53.1.0 | 0.19.5 |
-| 1.21.4 | 21 | not built | not built | 1.21.4-54.1.14 | 0.19.5 |
-| 1.21.5 | 21 | not built | not built | 1.21.5-55.1.0 | 0.19.5 |
-| 1.21.6 | 21 | not built | not built | 1.21.6-56.0.9 | 0.19.5 |
+| 1.21.4 | 21 | PASS | PASS | 1.21.4-54.1.14 | 0.19.5 |
+| 1.21.5 | 21 | PASS | PASS | 1.21.5-55.1.0 | 0.19.5 |
+| 1.21.6 | 21 | PASS | PASS | 1.21.6-56.0.9 | 0.19.5 |
 | 1.21.7 | 21 | not built | not built | 1.21.7-57.0.3 | 0.19.5 |
-| 1.21.8 | 21 | not built | not built | 1.21.8-58.1.0 | 0.19.5 |
-| 1.21.9 | 21 | not built | not built | 1.21.9-59.0.5 | 0.19.5 |
-| 1.21.10 | 21 | not built | not built | 1.21.10-60.1.0 | 0.19.5 |
-| 1.21.11 | 21 | not built | not built | 1.21.11-61.2.0 | 0.19.5 |
+| 1.21.8 | 21 | PASS | PASS | 1.21.8-58.1.0 | 0.19.5 |
+| 1.21.9 | 21 | PASS | PASS | 1.21.9-59.0.5 | 0.19.5 |
+| 1.21.10 | 21 | PASS | PASS | 1.21.10-60.1.0 | 0.19.5 |
+| 1.21.11 | 21 | PASS | PASS | 1.21.11-61.2.0 | 0.19.5 |
 | 26.1 | 25 | PASS | PASS | 26.1-62.0.9 | 0.19.5 |
 | 26.1.1 | 25 | PASS | PASS | 26.1.1-63.0.2 | 0.19.5 |
 | 26.1.2 | 25 | PASS | PASS | 26.1.2-64.1.0 | 0.19.5 |
 | 26.2 | 25 | PASS | PASS | 26.2-65.1.0 | 0.19.5 |
 | 26.3 | 25 | PASS | PASS | 26.3-66.0.3 | 0.19.5 |
 
-**10** Minecraft/loader combinations currently pass CI.
+**38** Minecraft/loader combinations currently pass CI.
 
 ## Unavailable combinations
 
