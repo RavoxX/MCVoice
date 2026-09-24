@@ -22,6 +22,10 @@ on:
         description: Regex of classes to print from the extra jars
         required: false
         default: ""
+      search:
+        description: Regex; list client-jar classes whose name matches (find renamed classes)
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -47,6 +51,14 @@ jobs:
           mapurl=$(jq -r '.downloads.client_mappings.url // empty' version.json)
           if [ -n "$mapurl" ]; then curl -sSfL "$mapurl" -o client.txt; fi
           ls -la
+      - name: Search classes
+        if: inputs.search != ''
+        env:
+          SEARCH: ${{ inputs.search }}
+        run: |
+          cd work
+          if [ -f client.txt ]; then grep -E '^[^ ].* -> ' client.txt | cut -d' ' -f1 | grep -E "$SEARCH" | head -300 || true
+          else unzip -Z1 client.jar | grep '\.class$' | sed 's|\.class$||; s|/|.|g' | grep -E "$SEARCH" | head -300 || true; fi
       - name: Print classes
         env:
           CLASSES: ${{ inputs.classes }}
@@ -62,7 +74,7 @@ jobs:
               ' client.txt | sed 's/ -> [^ ]*$//' | grep -v '^\s*[0-9]*:[0-9]*:' | head -400
               awk -v cls="$c" '/^[^ ]/ && $1 == cls {found=1} END {if (!found) print "NOT FOUND in mappings: " cls}' client.txt
             else
-              javap -cp client.jar -public "$c" 2>&1 | head -400
+              javap -cp client.jar -public "$c" 2>&1 | head -400 || true
             fi
             echo "::endgroup::"
           done
