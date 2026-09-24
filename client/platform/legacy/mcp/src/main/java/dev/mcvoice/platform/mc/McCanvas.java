@@ -15,12 +15,13 @@ public final class McCanvas implements UiCanvas {
 
     public McCanvas() {
         Minecraft mc = Minecraft.getMinecraft();
-        //#if MC >= 1.10
-        font = mc.fontRenderer;
-        //#else
-        font = mc.fontRendererObj;
-        //#endif
+        // the Minecraft font field name varies across MCP releases; the HUD's accessor does not
+        font = mc.ingameGUI.getFontRenderer();
+        //#if MC >= 1.8.8
         ScaledResolution r = new ScaledResolution(mc);
+        //#else
+        ScaledResolution r = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        //#endif
         width = r.getScaledWidth();
         height = r.getScaledHeight();
     }

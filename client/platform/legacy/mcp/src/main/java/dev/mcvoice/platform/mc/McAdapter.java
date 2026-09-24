@@ -120,7 +120,7 @@ public final class McAdapter implements MinecraftAdapter {
             return false;
         }
         out.uuid = p.getUniqueID();
-        out.name = p.getName();
+        out.name = p.getGameProfile().getName();
         out.entityId = p.getEntityId();
         out.playerIdentity = p;
         out.x = p.posX;
@@ -172,7 +172,7 @@ public final class McAdapter implements MinecraftAdapter {
                 for (int i = 0; i < players.size(); i++) {
                     EntityPlayer p = players.get(i);
                     if (!p.isDead) {
-                        v.visit(p.getUniqueID(), p.getName(), p.posX, p.posY + p.getEyeHeight(), p.posZ);
+                        v.visit(p.getUniqueID(), p.getGameProfile().getName(), p.posX, p.posY + p.getEyeHeight(), p.posZ);
                     }
                 }
             }
