@@ -1,44 +1,7 @@
-Downloading https://services.gradle.org/distributions/gradle-8.12.1-bin.zip
-.............10%.............20%.............30%.............40%.............50%.............60%.............70%.............80%.............90%.............100%
-
-Welcome to Gradle 8.12.1!
-
-Here are the highlights of this release:
- - Enhanced error and warning reporting with the Problems API
- - File-system watching support on Alpine Linux
- - Build and test Swift 6 libraries and apps
-
-For more details see https://docs.gradle.org/8.12.1/release-notes.html
-
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.12.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 
 > Task :compileJava
-Setting up MCP environment
-Initializing steps
-Executing steps
- > Running 'downloadManifest'
- > Running 'downloadJson'
- > Running 'downloadClient'
- > Running 'downloadServer'
- > Running 'extractServer'
- > Running 'downloadClientMappings'
- > Running 'mergeMappings'
- > Running 'stripClient'
- > Running 'stripServer'
- > Running 'merge'
- > Running 'listLibraries'
- > Running 'rename'
-Stopping at requested step: /home/runner/.gradle/caches/forge_gradle/mcp_repo/de/oceanlabs/mcp/mcp_config/1.21.4-20241203.143248/joined/rename/output.jar
-[19:13:08] [main/INFO]: Writing debug log file accesstransform.log
-[19:13:08] [main/INFO]: Access Transformer processor running version 8.2.14
-[19:13:08] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.4-54.1.14/forge-1.21.4-54.1.14-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.4-54.1.14_mapped_official_1.21.4/forge-1.21.4-54.1.14_mapped_official_1.21.4.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg]
-[19:13:08] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.4-54.1.14/forge-1.21.4-54.1.14-injected.jar
-[19:13:08] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.4-54.1.14_mapped_official_1.21.4/forge-1.21.4-54.1.14_mapped_official_1.21.4.jar
-[19:13:08] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg
-[19:13:08] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.4-54.1.14_mapped_official_1.21.4/forge-1.21.4-54.1.14_mapped_official_1.21.4.jar, overwriting
-[19:13:12] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.4-54.1.14_mapped_official_1.21.4/forge-1.21.4-54.1.14_mapped_official_1.21.4.jar
-Creating SRG -> MCP TSRG
 /home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java:72: warning: [removal] get() in FMLJavaModLoadingContext has been deprecated and marked for removal
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
                                                    ^
@@ -55,17 +18,11 @@ Creating SRG -> MCP TSRG
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790277108083.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790279868796.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/MCVoice/MCVoice/minecraft/forge/build/reports/problems/problems-report.html
 
-Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
-
-You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
-
-For more on this, please refer to https://docs.gradle.org/8.12.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
-
-BUILD SUCCESSFUL in 1m 55s
+BUILD SUCCESSFUL in 31s
 4 actionable tasks: 4 executed
 valid: mcvoice-0.1.0-mc1.21.4-forge.jar (327 classes, 16 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
