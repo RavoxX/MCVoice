@@ -17,7 +17,7 @@ on:
         default: "1.21.4"
   push:
     branches: [main]
-    paths: ["client/svc-compat/**", "tools/svc-interop/**", ".github/workflows/svc-interop.yml"]
+    paths: ["client/svc-compat/**", "client/build.gradle", "tools/svc-interop/**", ".github/workflows/svc-interop.yml"]
   schedule:
     - cron: "17 4 * * 1"   # weekly: catches new SVC releases
 
