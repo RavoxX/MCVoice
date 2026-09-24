@@ -22,6 +22,10 @@ on:
         description: Regex of classes to print from the extra jars
         required: false
         default: ""
+      libs:
+        description: Regex of version.json library names to add to the classpath (e.g. authlib)
+        required: false
+        default: "authlib|brigadier|datafixerupper"
       search:
         description: Regex; list client-jar classes whose name matches (find renamed classes)
         required: false
@@ -43,6 +47,7 @@ jobs:
       - name: Fetch Minecraft
         env:
           MC: ${{ inputs.minecraft }}
+          LIBS: ${{ inputs.libs }}
         run: |
           set -euo pipefail
           mkdir -p work && cd work
@@ -52,6 +57,10 @@ jobs:
           curl -sSfL "$(jq -r .downloads.client.url version.json)" -o client.jar
           mapurl=$(jq -r '.downloads.client_mappings.url // empty' version.json)
           if [ -n "$mapurl" ]; then curl -sSfL "$mapurl" -o client.txt; fi
+          mkdir -p libs
+          jq -r --arg re "$LIBS" '.libraries[] | select(.name | test($re)) | .downloads.artifact.url' version.json | while read -r u; do
+            [ -n "$u" ] && curl -sSfL "$u" -o "libs/$(basename "$u")"; done
+          ls libs
           ls -la
       - name: Search classes
         if: inputs.search != ''
@@ -62,7 +71,8 @@ jobs:
           exec > >(tee -a ../probe-output.txt) 2>&1
           echo "### search $SEARCH"
           if [ -f client.txt ]; then grep -E '^[^ ].* -> ' client.txt | cut -d' ' -f1 | grep -E "$SEARCH" | head -300 || true
-          else unzip -Z1 client.jar | grep '\.class$' | sed 's|\.class$||; s|/|.|g' | grep -E "$SEARCH" | head -300 || true; fi
+          else for j in client.jar libs/*.jar; do unzip -Z1 "$j"; done | grep '\.class$' | sed 's|\.class$||; s|/|.|g' | grep -E "$SEARCH" | head -300 || true; fi
+          if [ -d extra ]; then :; fi
       - name: Print classes
         env:
           CLASSES: ${{ inputs.classes }}
@@ -76,10 +86,10 @@ jobs:
               awk -v cls="$c" '
                 /^[^ ]/ { inside = ($1 == cls) }
                 inside { print }
-              ' client.txt | sed 's/ -> [^ ]*$//' | grep -v '^\s*[0-9]*:[0-9]*:' | head -400
+              ' client.txt | sed 's/ -> [^ ]*$//' | grep -v '^\s*[0-9]*:[0-9]*:' | head -3000
               awk -v cls="$c" '/^[^ ]/ && $1 == cls {found=1} END {if (!found) print "NOT FOUND in mappings: " cls}' client.txt
             else
-              javap -cp client.jar -public "$c" 2>&1 | head -400 || true
+              javap -cp "client.jar:$(ls libs/*.jar 2>/dev/null | tr '\n' ':')" -public "$c" 2>&1 | head -3000 || true
             fi
             echo "::endgroup::"
           done
