@@ -39,7 +39,9 @@ dependencies {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.release = @JAVA@
+    if (@JAVA@ > 8) {
+        options.release = @JAVA@   // a Java 8 toolchain compiler has no --release; it targets 8 anyway
+    }
     options.encoding = 'UTF-8'
 }
 

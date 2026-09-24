@@ -37,13 +37,15 @@ dependencies {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.release = @JAVA@
+    if (@JAVA@ > 8) {
+        options.release = @JAVA@   // a Java 8 toolchain compiler has no --release; it targets 8 anyway
+    }
     options.encoding = 'UTF-8'
 }
 
 processResources {
     def props = [version: project.mod_version, minecraft_version: project.minecraft_version, minecraft_dep: project.minecraft_version, java: '@JAVA@',
-                 loader_min: project.fabric_loader, backendUrl: (project.findProperty('mcvoiceBackendUrl') ?: '')]
+                 loader_min: project.fabric_loader, fabric_api_id: '@FABRIC_API_ID@', backendUrl: (project.findProperty('mcvoiceBackendUrl') ?: '')]
     inputs.properties props
     filesMatching(['fabric.mod.json', 'mcvoice-defaults.properties', 'mcvoice-platform.properties']) { expand props }
 }

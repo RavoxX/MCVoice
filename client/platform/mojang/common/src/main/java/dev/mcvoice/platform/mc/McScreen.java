@@ -3,8 +3,10 @@ package dev.mcvoice.platform.mc;
 import dev.mcvoice.client.platform.ui.UiScreen;
 //#if MC >= 26.1
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-//#else
+//#elif MC >= 1.20
 import net.minecraft.client.gui.GuiGraphics;
+//#else
+import com.mojang.blaze3d.vertex.PoseStack;
 //#endif
 import net.minecraft.client.gui.screens.Screen;
 //#if MC >= 1.21.9
@@ -12,22 +14,32 @@ import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 //#endif
+//#if MC >= 1.19
 import net.minecraft.network.chat.Component;
+//#else
+import net.minecraft.network.chat.TextComponent;
+//#endif
 
 /** Hosts one of our self-drawn UiScreens inside a native Screen. */
 public final class McScreen extends Screen {
     private final UiScreen ui;
 
     public McScreen(UiScreen ui) {
+        //#if MC >= 1.19
         super(Component.literal(ui.title()));
+        //#else
+        super(new TextComponent(ui.title()));
+        //#endif
         this.ui = ui;
     }
 
     @Override
     //#if MC >= 26.1
     public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTicks) {
-    //#else
+    //#elif MC >= 1.20
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTicks) {
+    //#else
+    public void render(PoseStack g, int mouseX, int mouseY, float partialTicks) {
     //#endif
         ui.render(new McCanvas(g), mouseX, mouseY, partialTicks);
     }

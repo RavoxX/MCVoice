@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
 
 import dev.mcvoice.client.platform.AudioAdapter;
 import dev.mcvoice.client.platform.GuiAdapter;
@@ -30,7 +30,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 
 /**
- * MinecraftAdapter for Mojang-named Minecraft (official mappings, 1.20.1+), shared by
+ * MinecraftAdapter for Mojang-named Minecraft (official mappings, 1.16.5+), shared by
  * the Fabric and Forge entry points of this family. Only this package touches
  * Minecraft classes; everything else lives in the version-independent core.
  */
@@ -52,10 +52,10 @@ public final class McAdapter implements MinecraftAdapter {
         this.mcVersion = mcVersion;
         this.loader = loader;
         this.configDir = configDir;
-        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", InputConstants.KEY_V));
-        keys.put(InputAdapter.Action.WHISPER, key("whisper", InputConstants.KEY_B));
-        keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", InputConstants.KEY_M));
-        keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", InputConstants.KEY_N));
+        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", GLFW.GLFW_KEY_V));
+        keys.put(InputAdapter.Action.WHISPER, key("whisper", GLFW.GLFW_KEY_B));
+        keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", GLFW.GLFW_KEY_M));
+        keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", GLFW.GLFW_KEY_N));
         keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", -1));
         keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", -1));
     }
@@ -105,8 +105,13 @@ public final class McAdapter implements MinecraftAdapter {
         out.x = p.getX();
         out.y = p.getEyeY();
         out.z = p.getZ();
+        //#if MC >= 1.17
         out.yaw = p.getYRot();
         out.pitch = p.getXRot();
+        //#else
+        out.yaw = p.yRot;
+        out.pitch = p.xRot;
+        //#endif
         return true;
     }
 
@@ -136,7 +141,12 @@ public final class McAdapter implements MinecraftAdapter {
                 List<AbstractClientPlayer> players = level.players();
                 for (int i = 0; i < players.size(); i++) {
                     AbstractClientPlayer p = players.get(i);
-                    if (!p.isRemoved()) {
+                    //#if MC >= 1.17
+                    boolean gone = p.isRemoved();
+                    //#else
+                    boolean gone = p.removed;
+                    //#endif
+                    if (!gone) {
                         v.visit(p.getUUID(), p.getName().getString(), p.getX(), p.getEyeY(), p.getZ());
                     }
                 }
@@ -191,7 +201,11 @@ public final class McAdapter implements MinecraftAdapter {
     private final SessionAuthenticator session = new SessionAuthenticator() {
         @Override
         public UUID uuid() {
+            //#if MC >= 1.20.2
             return mc().getUser().getProfileId();
+            //#else
+            return mc().getUser().getGameProfile().getId();
+            //#endif
         }
 
         @Override

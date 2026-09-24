@@ -73,6 +73,10 @@ def plan(mc: str):
             reasons[label] = up.get("reason", "unavailable upstream")
             continue
         cfg = loader_config(fam, label, mc) if fam else None
+        if cfg is not None and label == "fabric" and not up.get("fabric_api"):
+            reasons[label] = ("not built: no Fabric API release is published for this exact Minecraft version, "
+                              "and the MCVoice Fabric adapter needs Fabric API")
+            continue
         if cfg is None and label == "legacyfabric" and not up.get("legacy_fabric_api"):
             reasons[label] = ("not implemented: the Legacy Fabric loader exists, but Legacy Fabric API is not published "
                               "for this version and the MCVoice Legacy Fabric adapter needs it (keys, ticks, lifecycle)")
@@ -142,6 +146,8 @@ def generate(mc: str, out: str):
         generate_sources(fam["id"], parts, mc, label, os.path.join(ldir, "src-gen"))
         tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"], "LOADER": label,
                   "MAPPINGS": cfg.get("mappings", ""),
+                  # Fabric API's mod id was "fabric" until the 1.19.2 era, "fabric-api" since (the old id stays provided)
+                  "FABRIC_API_ID": "fabric-api" if vkey(mc) >= vkey("1.19.2") else "fabric",
                   # ForgeGradle 6: Forge < 1.20.6 runs with SRG names (reobfuscate the jar); newer Forge runs with official names
                   "REOBF_CONFIG": "" if cfg.get("reobf", True) else "    reobf = false\n",
                   "REOBF_FINALIZE": ("    finalizedBy 'reobfJar'   // the published jar uses the game's runtime (SRG) names\n"

@@ -4,7 +4,7 @@
     {
       "id": "mojang",
       "minecraft": {
-        "min": "1.20.1",
+        "min": "1.16.5",
         "max": "26.3"
       },
       "loaders": {
@@ -30,7 +30,7 @@
           },
           {
             "minecraft": {
-              "min": "1.20.1",
+              "min": "1.16.5",
               "max": "1.21.8"
             },
             "buildgen": "remap",
@@ -40,6 +40,26 @@
           }
         ],
         "forge": [
+          {
+            "minecraft": {
+              "min": "1.16.5",
+              "max": "1.18.2"
+            },
+            "buildgen": "fg6",
+            "gradle": "8.8",
+            "plugin_version": "[6.0,6.2)",
+            "sources": "forge-fml"
+          },
+          {
+            "minecraft": {
+              "min": "1.19",
+              "max": "1.19.4"
+            },
+            "buildgen": "fg6",
+            "gradle": "8.8",
+            "plugin_version": "[6.0,6.2)",
+            "sources": "forge-eb6"
+          },
           {
             "minecraft": {
               "min": "26.1",
@@ -60,7 +80,7 @@
           },
           {
             "minecraft": {
-              "min": "1.20.1",
+              "min": "1.20",
               "max": "1.20.1"
             },
             "buildgen": "fg6",
