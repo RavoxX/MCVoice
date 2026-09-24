@@ -5,9 +5,9 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.18.2
 
 > Configure project :forge
-Minecraft Maven is up-to-date, took 0:00.757
+Minecraft Maven is up-to-date, took 0:00.774
 
-> Task :forge:compileJava FROM-CACHE
+> Task :forge:compileJava
 > Task :forge:processResources
 > Task :forge:classes
 > Task :forge:jar
@@ -19,9 +19,9 @@ Minecraft Maven is up-to-date, took 0:00.757
 > Task :forge:test NO-SOURCE
 > Task :forge:check UP-TO-DATE
 > Task :forge:build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790274718598.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790275296084.json
 
-BUILD SUCCESSFUL in 11s
-4 actionable tasks: 3 executed, 1 from cache
+BUILD SUCCESSFUL in 16s
+4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.0-mc26.3-forge.jar (326 classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.0-mc26.3-forge.jar (327 classes, metadata ['META-INF/mods.toml'])
