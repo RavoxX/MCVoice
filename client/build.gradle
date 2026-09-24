@@ -1,0 +1,70 @@
+// Shared conventions for all client core modules.
+subprojects {
+    apply plugin: 'java-library'
+
+    group = rootProject.findProperty('maven_group')
+    version = rootProject.findProperty('mod_version')
+
+    repositories {
+        mavenCentral()
+    }
+
+    java {
+        // Every module must run on the Java 8 runtimes shipped with Minecraft 1.8-1.16.
+        withSourcesJar()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 8
+        options.encoding = 'UTF-8'
+        options.compilerArgs += ['-Xlint:-options']
+    }
+
+    dependencies {
+        testImplementation platform('org.junit:junit-bom:5.11.4')
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+        systemProperty 'mcvoice.testVectors', rootProject.file('../protocol/test-vectors').absolutePath
+        testLogging {
+            events 'failed'
+            exceptionFormat 'full'
+        }
+    }
+}
+
+project(':network') {
+    dependencies {
+        api project(':common')
+        testImplementation project(':common').sourceSets.test.output
+    }
+}
+project(':audio') {
+    dependencies {
+        api project(':common')
+        testImplementation project(':common').sourceSets.test.output
+    }
+}
+project(':svc-compat') { dependencies { api project(':common'); api project(':network') } }
+project(':ui') { dependencies { api project(':common') } }
+project(':core') {
+    dependencies {
+        api project(':network')
+        api project(':audio')
+        api project(':svc-compat')
+        api project(':ui')
+    }
+}
+
+project(':common') {
+    processResources {
+        def url = rootProject.findProperty('mcvoiceBackendUrl') ?: ''
+        inputs.property 'backendUrl', url
+        filesMatching('mcvoice-defaults.properties') {
+            expand(backendUrl: url)
+        }
+    }
+}

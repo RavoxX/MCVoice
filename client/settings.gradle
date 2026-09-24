@@ -1,0 +1,7 @@
+// MCVoice client core: Minecraft-independent Java 8 code shared by every
+// Minecraft version branch (mc/<version>). Loader-specific code lives in the
+// platform projects of each branch and only talks to these modules through the
+// adapter interfaces in :common (dev.mcvoice.client.platform).
+rootProject.name = 'mcvoice-client'
+
+include 'common', 'network', 'audio', 'svc-compat', 'ui', 'core'

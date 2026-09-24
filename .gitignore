@@ -41,3 +41,4 @@ release-output/
 .DS_Store
 Thumbs.db
 *.swp
+client/**/build/
