@@ -30,6 +30,10 @@ on:
         description: Regex of version.json library names to add to the classpath (e.g. authlib)
         required: false
         default: "authlib|brigadier|datafixerupper"
+      mdk:
+        description: Forge version (e.g. 26.3-66.0.3) whose MDK build files to print
+        required: false
+        default: ""
       search:
         description: Regex; list client-jar classes whose name matches (find renamed classes)
         required: false
@@ -121,6 +125,21 @@ jobs:
             root=${f%/$(echo "$c" | tr . /).class}
             echo "::group::$c"; javap -cp "$root:../client.jar" -public "$c" 2>&1 | head -120; echo "::endgroup::"
           done < classes.txt
+      - name: Forge MDK
+        if: inputs.mdk != ''
+        env:
+          MDK: ${{ inputs.mdk }}
+        run: |
+          set -uo pipefail
+          exec > >(tee -a probe-output.txt) 2>&1
+          mkdir -p mdk && cd mdk
+          url="https://maven.minecraftforge.net/net/minecraftforge/forge/$MDK/forge-$MDK-mdk.zip"
+          echo "### MDK $url"
+          curl -sSfL "$url" -o mdk.zip || { echo "no MDK at $url"; exit 0; }
+          unzip -q -o mdk.zip
+          for f in $(find . -name '*.gradle' -o -name '*.gradle.kts' -o -name 'gradle.properties' -o -name 'gradle-wrapper.properties' -o -name 'mods.toml' -o -name '*.java' -o -name 'pack.mcmeta' -o -name 'mcmod.info' | grep -v '/build/' | sort); do
+            echo "::group::FILE $f"; cat "$f"; echo; echo "::endgroup::"
+          done
       - name: Publish output to tooling/probe-output branch
         if: always()
         env:
