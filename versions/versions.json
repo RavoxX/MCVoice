@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-24T19:25:52Z",
+  "generated_at": "2026-09-24T19:26:41Z",
   "range": {
     "min": "1.8",
     "max": "26.3",
@@ -31,7 +31,7 @@
           "available": true,
           "flavor": "legacyfabric",
           "loader": "0.19.3",
-          "legacy_fabric_api": "1.13.5+1.8",
+          "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
       }
@@ -574,8 +574,8 @@
           "available": true,
           "flavor": "fabric",
           "loader": "0.19.5",
-          "fabric_api": "0.28.5+1.14",
-          "note": null
+          "fabric_api": null,
+          "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
       }
     },
@@ -683,8 +683,8 @@
           "available": true,
           "flavor": "fabric",
           "loader": "0.19.5",
-          "fabric_api": "0.28.5+1.15",
-          "note": null
+          "fabric_api": null,
+          "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
       }
     },
@@ -748,8 +748,8 @@
           "available": true,
           "flavor": "fabric",
           "loader": "0.19.5",
-          "fabric_api": "0.42.0+1.16",
-          "note": null
+          "fabric_api": null,
+          "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
       }
     },
@@ -879,8 +879,8 @@
           "available": true,
           "flavor": "fabric",
           "loader": "0.19.5",
-          "fabric_api": "0.46.1+1.17",
-          "note": null
+          "fabric_api": null,
+          "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
       }
     },
@@ -923,8 +923,8 @@
           "available": true,
           "flavor": "fabric",
           "loader": "0.19.5",
-          "fabric_api": "0.46.6+1.18",
-          "note": null
+          "fabric_api": null,
+          "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
       }
     },
@@ -989,8 +989,8 @@
           "available": true,
           "flavor": "fabric",
           "loader": "0.19.5",
-          "fabric_api": "0.58.0+1.19",
-          "note": null
+          "fabric_api": null,
+          "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
       }
     },
@@ -1099,8 +1099,8 @@
           "available": true,
           "flavor": "fabric",
           "loader": "0.19.5",
-          "fabric_api": "0.83.0+1.20",
-          "note": null
+          "fabric_api": null,
+          "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
       }
     },
@@ -1252,8 +1252,8 @@
           "available": true,
           "flavor": "fabric",
           "loader": "0.19.5",
-          "fabric_api": "0.102.0+1.21",
-          "note": null
+          "fabric_api": null,
+          "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
       }
     },
@@ -1515,8 +1515,8 @@
           "available": true,
           "flavor": "fabric",
           "loader": "0.19.5",
-          "fabric_api": "0.145.1+26.1",
-          "note": null
+          "fabric_api": null,
+          "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
       }
     },
