@@ -4,26 +4,26 @@ Daemon will be stopped at the end of the build
 > Configure project :
 Architectury Loom: 0.10.0.5
 :generating dummy intermediary
-:generated dummy intermediary in 832.7 ms
+:generated dummy intermediary in 843.5 ms
 :patching forge
-:patched forge in 763.1 ms
+:patched forge in 12.00 s
 :patching jars
-:patched jars in 8.000 s
+:patched jars in 7.463 s
 :access transforming minecraft
-[19:30:56] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
-[19:30:56] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-at-patched.jar, --atFile, /tmp/at-conf1195096111616920896.cfg]
-[19:30:56] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-patched.jar
-[19:30:56] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-at-patched.jar
-[19:30:56] [main/INFO]: Transformer file /tmp/at-conf1195096111616920896.cfg
-[19:30:56] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-at-patched.jar, overwriting
-[19:30:58] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-at-patched.jar
-:access transformed minecraft in 2.880 s
+[19:59:19] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
+[19:59:19] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-at-patched.jar, --atFile, /tmp/at-conf15282048659253117947.cfg]
+[19:59:19] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-patched.jar
+[19:59:19] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-at-patched.jar
+[19:59:19] [main/INFO]: Transformer file /tmp/at-conf15282048659253117947.cfg
+[19:59:19] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-at-patched.jar, overwriting
+[19:59:21] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.9/forge/1.9-12.16.1.1887/merged-at-patched.jar
+:access transformed minecraft in 6.396 s
 :remapping minecraft (TinyRemapper, official -> intermediary)
-:remapped minecraft (TinyRemapper, official -> intermediary) in 1.861 s
+:remapped minecraft (TinyRemapper, official -> intermediary) in 1.979 s
 :remapping minecraft (TinyRemapper, official -> srg)
-:remapped minecraft (TinyRemapper, official -> srg) in 1.472 s
+:remapped minecraft (TinyRemapper, official -> srg) in 1.601 s
 :remapping minecraft (TinyRemapper, official -> named)
-:remapped minecraft (TinyRemapper, official -> named) in 1.498 s
+:remapped minecraft (TinyRemapper, official -> named) in 1.484 s
 
 > Task :compileJava
 Note: SpongePowered MIXIN Annotation Processor Version=0.8.5
@@ -48,7 +48,7 @@ Note: Recompile with -Xlint:deprecation for details.
 :remapping sources
 
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790278222484.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790279901486.json
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -56,7 +56,7 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 1m 39s
+BUILD SUCCESSFUL in 1m 42s
 6 actionable tasks: 6 executed
 valid: mcvoice-0.1.0-mc1.9-forge.jar (327 classes, 13 platform classes, metadata ['mcmod.info'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
