@@ -1,0 +1,1 @@
+{"minecraft": "1.21.10", "loader": "fabric", "status": "fail", "run": "https://github.com/RavoxX/MCVoice/actions/runs/36042897237", "commit": "7efa7a8e7b5853cac5943d3d32f7f516b0b7485d", "reason": "FAILURE: Build failed with an exception.  * What went wrong: A problem occurred configuring project ':fabric'. > Could not resolve all artifacts for configuration 'classpath'. "}
