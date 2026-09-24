@@ -1,0 +1,83 @@
+name: mc-probe
+
+# Developer tool for porting: prints the exact public API of Minecraft /
+# loader classes for a given version so platform adapters can be written
+# against real signatures. Uses the official client jar (unobfuscated 26.x) or
+# Mojang's published client mappings (obfuscated 1.14.4-1.21.x).
+
+on:
+  workflow_dispatch:
+    inputs:
+      minecraft:
+        description: Minecraft version
+        required: true
+      classes:
+        description: Space-separated class names (mojmap), e.g. net.minecraft.client.Minecraft
+        required: true
+      jars:
+        description: Space-separated maven URLs of extra jars to inspect (nested jars are unpacked)
+        required: false
+        default: ""
+      jar_filter:
+        description: Regex of classes to print from the extra jars
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+      - name: Fetch Minecraft
+        run: |
+          set -euo pipefail
+          mkdir -p work && cd work
+          curl -sSfL https://piston-meta.mojang.com/mc/game/version_manifest_v2.json -o manifest.json
+          url=$(jq -r --arg v "${{ inputs.minecraft }}" '.versions[] | select(.id==$v) | .url' manifest.json)
+          curl -sSfL "$url" -o version.json
+          curl -sSfL "$(jq -r .downloads.client.url version.json)" -o client.jar
+          mapurl=$(jq -r '.downloads.client_mappings.url // empty' version.json)
+          if [ -n "$mapurl" ]; then curl -sSfL "$mapurl" -o client.txt; fi
+          ls -la
+      - name: Print classes
+        run: |
+          set -uo pipefail
+          cd work
+          for c in ${{ inputs.classes }}; do
+            echo "::group::$c"
+            if [ -f client.txt ]; then
+              awk -v cls="$c" '
+                /^[^ ]/ { inside = ($1 == cls) }
+                inside { print }
+              ' client.txt | sed 's/ -> [^ ]*$//' | grep -v '^\s*[0-9]*:[0-9]*:' | head -400
+              awk -v cls="$c" '/^[^ ]/ && $1 == cls {found=1} END {if (!found) print "NOT FOUND in mappings: " cls}' client.txt
+            else
+              javap -cp client.jar -public "$c" 2>&1 | head -400
+            fi
+            echo "::endgroup::"
+          done
+      - name: Inspect extra jars
+        if: inputs.jars != ''
+        run: |
+          set -uo pipefail
+          cd work && mkdir -p extra && cd extra
+          i=0
+          for u in ${{ inputs.jars }}; do
+            i=$((i+1)); curl -sSfL "$u" -o "j$i.jar" || { echo "download failed: $u"; continue; }
+            mkdir -p "x$i" && (cd "x$i" && unzip -q -o "../j$i.jar")
+            # unpack nested (jar-in-jar) modules
+            find "x$i" -name '*.jar' | while read -r n; do d="${n%.jar}_x"; mkdir -p "$d"; (cd "$d" && unzip -q -o "$OLDPWD/$n"); done
+          done
+          find . -name '*.class' | sed 's|^\./x[0-9]*/||; s|^.*_x/||; s|\.class$||; s|/|.|g' | grep -E "${{ inputs.jar_filter }}" | sort -u | head -150 > classes.txt
+          cat classes.txt
+          while read -r c; do
+            f=$(find . -path "*/$(echo "$c" | tr . /).class" | head -1)
+            root=${f%/$(echo "$c" | tr . /).class}
+            echo "::group::$c"; javap -cp "$root:../client.jar" -public "$c" 2>&1 | head -120; echo "::endgroup::"
+          done < classes.txt
