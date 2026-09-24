@@ -189,4 +189,5 @@ jobs:
           git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
           if git fetch -q origin tooling/probe-output 2>/dev/null; then git checkout -q -b tooling/probe-output FETCH_HEAD; else git checkout -q --orphan tooling/probe-output; fi
           mkdir -p "$MC"; cp "../$f" "$MC/${{ github.run_id }}.txt"; cp "../$f" "$MC/latest.txt"
-          git add -A && git commit -q -m "probe $MC run ${{ github.run_id }}" && git push -q origin HEAD:tooling/probe-output
+          git add -A && git commit -q -m "probe $MC run ${{ github.run_id }}"
+          for i in 1 2 3 4 5; do git push -q origin HEAD:tooling/probe-output && break; sleep $((i * 3)); git fetch -q origin tooling/probe-output && git rebase -q FETCH_HEAD || true; done
