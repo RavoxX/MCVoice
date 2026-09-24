@@ -29,8 +29,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Generate matrix from official metadata
@@ -52,7 +52,7 @@ jobs:
               f, fb = e["loaders"]["forge"], e["loaders"]["fabric"]
               print(f'{e["minecraft"]:>8} java{e["java"]:<3} forge={f.get("version","-"):<32} fabric={fb.get("flavor","-")}:{fb.get("loader","-")} api={fb.get("fabric_api") or fb.get("legacy_fabric_api") or "-"}')
           EOF
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: version-matrix
           path: versions/

@@ -1,0 +1,390 @@
+{
+ "description": "Transport selection timelines (dedup-state-machine.md). STALL_MS=300, FALLBACK_MS=200.",
+ "stall_ms": 300,
+ "fallback_ms": 200,
+ "cases": [
+  {
+   "name": "both_transports_cloud_healthy_one_stream",
+   "events": [
+    {
+     "t": 0,
+     "ev": "cloud_link_up"
+    },
+    {
+     "t": 0,
+     "ev": "presence_add",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6"
+    },
+    {
+     "t": 1000,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1005,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    },
+    {
+     "t": 1020,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1025,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    },
+    {
+     "t": 1040,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1045,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    }
+   ]
+  },
+  {
+   "name": "svc_arrives_first_is_suppressed",
+   "events": [
+    {
+     "t": 0,
+     "ev": "cloud_link_up"
+    },
+    {
+     "t": 0,
+     "ev": "presence_add",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6"
+    },
+    {
+     "t": 1000,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    },
+    {
+     "t": 1010,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1020,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    }
+   ]
+  },
+  {
+   "name": "cloud_link_failure_falls_back_to_svc",
+   "events": [
+    {
+     "t": 0,
+     "ev": "cloud_link_up"
+    },
+    {
+     "t": 0,
+     "ev": "presence_add",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6"
+    },
+    {
+     "t": 1000,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1001,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    },
+    {
+     "t": 1010,
+     "ev": "cloud_link_down"
+    },
+    {
+     "t": 1021,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1041,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1045,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    }
+   ]
+  },
+  {
+   "name": "cloud_stall_for_one_speaker_falls_back_after_grace",
+   "events": [
+    {
+     "t": 0,
+     "ev": "cloud_link_up"
+    },
+    {
+     "t": 0,
+     "ev": "presence_add",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6"
+    },
+    {
+     "t": 1000,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    },
+    {
+     "t": 1100,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    },
+    {
+     "t": 1199,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    },
+    {
+     "t": 1200,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1220,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1230,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1240,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    }
+   ]
+  },
+  {
+   "name": "svc_only_user",
+   "events": [
+    {
+     "t": 0,
+     "ev": "cloud_link_up"
+    },
+    {
+     "t": 1000,
+     "ev": "svc_frame",
+     "sender": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "expect": "play"
+    },
+    {
+     "t": 1020,
+     "ev": "svc_frame",
+     "sender": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "expect": "play"
+    }
+   ]
+  },
+  {
+   "name": "our_mod_only_user",
+   "events": [
+    {
+     "t": 0,
+     "ev": "cloud_link_up"
+    },
+    {
+     "t": 0,
+     "ev": "presence_add",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6"
+    },
+    {
+     "t": 1000,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1020,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    }
+   ]
+  },
+  {
+   "name": "cloud_frames_without_presence_still_play",
+   "events": [
+    {
+     "t": 0,
+     "ev": "cloud_link_up"
+    },
+    {
+     "t": 1000,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    }
+   ]
+  },
+  {
+   "name": "independent_speakers",
+   "events": [
+    {
+     "t": 0,
+     "ev": "cloud_link_up"
+    },
+    {
+     "t": 0,
+     "ev": "presence_add",
+     "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5"
+    },
+    {
+     "t": 1000,
+     "ev": "cloud_frame",
+     "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "expect": "play"
+    },
+    {
+     "t": 1001,
+     "ev": "svc_frame",
+     "sender": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "expect": "play"
+    },
+    {
+     "t": 1002,
+     "ev": "svc_frame",
+     "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "expect": "drop"
+    },
+    {
+     "t": 1020,
+     "ev": "cloud_frame",
+     "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "expect": "play"
+    },
+    {
+     "t": 1021,
+     "ev": "svc_frame",
+     "sender": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "expect": "play"
+    }
+   ]
+  },
+  {
+   "name": "cloud_recovers_after_link_up",
+   "events": [
+    {
+     "t": 0,
+     "ev": "cloud_link_down"
+    },
+    {
+     "t": 0,
+     "ev": "presence_add",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6"
+    },
+    {
+     "t": 1000,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1020,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1030,
+     "ev": "cloud_link_up"
+    },
+    {
+     "t": 1040,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1041,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    },
+    {
+     "t": 1060,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    }
+   ]
+  },
+  {
+   "name": "presence_removed_mid_stream_prefers_svc_if_fresh",
+   "events": [
+    {
+     "t": 0,
+     "ev": "cloud_link_up"
+    },
+    {
+     "t": 0,
+     "ev": "presence_add",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6"
+    },
+    {
+     "t": 1000,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1001,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    },
+    {
+     "t": 1010,
+     "ev": "presence_remove",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6"
+    },
+    {
+     "t": 1021,
+     "ev": "svc_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "play"
+    },
+    {
+     "t": 1022,
+     "ev": "cloud_frame",
+     "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "expect": "drop"
+    }
+   ]
+  }
+ ]
+}

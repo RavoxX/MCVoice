@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import json
+import os
 import re
 import sys
 import time
@@ -229,6 +230,7 @@ def main() -> int:
         "latest_release_in_manifest": manifest["latest"]["release"],
         "versions": entries,
     }
+    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as fh:
         json.dump(out, fh, indent=2)
         fh.write("\n")

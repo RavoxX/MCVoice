@@ -1,0 +1,484 @@
+{
+ "description": "Client playback validation (spec section 9). expect = accept | reject:<reason>.",
+ "cases": [
+  {
+   "name": "distance_10_range_48",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      10,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "accept"
+  },
+  {
+   "name": "distance_60_range_48",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      60,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:out_of_range"
+  },
+  {
+   "name": "exactly_at_range",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      48,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "accept"
+  },
+  {
+   "name": "same_coords_other_dimension",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:the_nether",
+     "pos": [
+      0,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:other_world"
+  },
+  {
+   "name": "not_tracked_same_coords",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "world": "minecraft:overworld",
+     "pos": [
+      0,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:not_tracked"
+  },
+  {
+   "name": "proxy_subserver_population",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "world": "minecraft:overworld",
+     "pos": [
+      1,
+      64,
+      1
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:not_tracked"
+  },
+  {
+   "name": "old_epoch_after_switch",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      1,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 4,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:stale_epoch"
+  },
+  {
+   "name": "not_in_world",
+   "local": {
+    "in_world": false,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      1,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:not_in_world"
+  },
+  {
+   "name": "self_audio",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ],
+    "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5"
+   },
+   "tracked": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "world": "minecraft:overworld",
+     "pos": [
+      0,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:self"
+  },
+  {
+   "name": "muted_sender",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      1,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:muted"
+  },
+  {
+   "name": "deafened",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      1,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": true,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:deafened"
+  },
+  {
+   "name": "whisper_in_range",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      5,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 1
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "accept"
+  },
+  {
+   "name": "whisper_out_of_range",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      20,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 1
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:out_of_range"
+  },
+  {
+   "name": "svc_frame_no_epoch",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      5,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": null,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "accept"
+  }
+ ]
+}

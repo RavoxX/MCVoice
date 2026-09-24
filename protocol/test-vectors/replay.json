@@ -1,0 +1,152 @@
+{
+ "description": "Replay window (size 1024) accept/reject sequences, applied in order.",
+ "window": 1024,
+ "cases": [
+  {
+   "name": "in_order",
+   "counters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+   ],
+   "accept": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "duplicate",
+   "counters": [
+    1,
+    2,
+    3,
+    3,
+    2,
+    4
+   ],
+   "accept": [
+    true,
+    true,
+    true,
+    false,
+    false,
+    true
+   ]
+  },
+  {
+   "name": "reordered_within_window",
+   "counters": [
+    1,
+    5,
+    3,
+    2,
+    4,
+    5
+   ],
+   "accept": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    false
+   ]
+  },
+  {
+   "name": "zero_rejected",
+   "counters": [
+    0,
+    1,
+    0
+   ],
+   "accept": [
+    false,
+    true,
+    false
+   ]
+  },
+  {
+   "name": "jump_then_old",
+   "counters": [
+    1,
+    2000,
+    1000,
+    976,
+    977,
+    1999,
+    2000
+   ],
+   "accept": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    false
+   ]
+  },
+  {
+   "name": "window_edge",
+   "counters": [
+    1025,
+    1,
+    2,
+    1024
+   ],
+   "accept": [
+    true,
+    false,
+    true,
+    true
+   ]
+  },
+  {
+   "name": "big_jump",
+   "counters": [
+    1,
+    1099511627776,
+    1099511626753,
+    1099511626752,
+    1099511627777
+   ],
+   "accept": [
+    true,
+    true,
+    true,
+    false,
+    true
+   ]
+  },
+  {
+   "name": "exactly_window",
+   "counters": [
+    2048,
+    1025,
+    1024,
+    1026
+   ],
+   "accept": [
+    true,
+    true,
+    false,
+    true
+   ]
+  }
+ ]
+}
