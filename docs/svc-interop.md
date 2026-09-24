@@ -67,7 +67,7 @@ check first.
 |---|---|
 | Unit tests vs in-process fake SVC server (both cipher modes, fail-safe paths) | automated, passing |
 | Headless 3-player hybrid test (A, B MCVoice + C SVC-only through a fake SVC relay; no duplicates) | automated, passing |
-| Real SVC server (`.github/workflows/svc-interop.yml`): plugin-channel handshake, UDP authentication, connection check, 5 s of keep-alives and microphone packets | **passing** against Simple Voice Chat 2.6.24 (Bukkit) on Paper 1.21.4: compatibility version 20, cipher `GCM_IV12`, 0 rejected packets. Recorded in `SvcProtocols.VERIFIED`; re-run weekly |
+| Real SVC server (`.github/workflows/svc-interop.yml`): plugin-channel handshake, UDP authentication, connection check, 5 s of keep-alives and microphone packets | **passing** against Simple Voice Chat 2.6.24 (Bukkit) on Paper 1.18.2, 1.19.4, 1.20.1 and 1.21.4: compatibility version 20, cipher `GCM_IV12`, 0 rejected packets. Recorded in `SvcProtocols.VERIFIED`; re-run weekly |
 | Older compatibility versions 19-16 | implemented with the same v1 wire format and tried as fallbacks, **not verified** against a real server |
 | Two real Minecraft clients (one with the SVC mod) | manual test plan below |
 

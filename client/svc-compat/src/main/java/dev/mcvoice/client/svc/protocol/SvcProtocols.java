@@ -16,7 +16,7 @@ import dev.mcvoice.client.svc.protocol.v1.SvcProtocolV1;
  * authentication, connection check, keep-alive and microphone packets):
  *
  * <ul>
- *   <li>20: Simple Voice Chat 2.6.24 (Bukkit) on Paper 1.21.4, AES-GCM with 12-byte IV.</li>
+ *   <li>20: Simple Voice Chat 2.6.24 (Bukkit) on Paper 1.18.2, 1.19.4, 1.20.1 and 1.21.4; AES-GCM with 12-byte IV.</li>
  * </ul>
  */
 public final class SvcProtocols {
