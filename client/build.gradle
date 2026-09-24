@@ -48,7 +48,13 @@ project(':audio') {
         testImplementation project(':common').sourceSets.test.output
     }
 }
-project(':svc-compat') { dependencies { api project(':common'); api project(':network') } }
+project(':svc-compat') {
+    dependencies {
+        api project(':common')
+        api project(':network')
+    }
+    // tests use lambdas; main code stays Java 8 source compatible
+}
 project(':ui') { dependencies { api project(':common') } }
 project(':core') {
     dependencies {
