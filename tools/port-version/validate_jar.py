@@ -66,6 +66,14 @@ def main():
                 j = json.loads(text)
                 if j.get("id") != "mcvoice":
                     errors.append("fabric.mod.json id is not mcvoice")
+                for mx in j.get("mixins", []):
+                    mx = mx if isinstance(mx, str) else mx.get("config", "")
+                    if mx not in names:
+                        errors.append(f"mixin config {mx} missing")
+                    else:
+                        refmap = json.loads(z.read(mx)).get("refmap")
+                        if refmap and refmap not in names:
+                            errors.append(f"mixin refmap {refmap} missing")
             except ValueError as e:
                 errors.append(f"fabric.mod.json invalid: {e}")
     if any(n.startswith("io/github/jaredmdobson/") for n in names):
@@ -91,7 +99,10 @@ def main():
         for e in errors:
             print("INVALID:", e)
         return 1
-    print(f"valid: {name} ({classes} classes, metadata {metas})")
+    platform = sorted(n[:-6] for n in names if n.startswith("dev/mcvoice/platform/") and n.endswith(".class"))
+    print(f"valid: {name} ({classes} classes, {len(platform)} platform classes, metadata {metas})")
+    for n in platform:
+        print(f"  platform: {n}")
     return 0
 
 
