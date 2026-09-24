@@ -1,11 +1,10 @@
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
-Configuration on demand is an incubating feature.
 
-> Configure project :forge
+> Configure project :
 Minecraft Mavenizer 0.5.21 by Forge Development LLC
-  Output:             /home/runner/work/MCVoice/MCVoice/minecraft/.gradle/mavenizer/repo
-  Output JSON:        /home/runner/work/MCVoice/MCVoice/minecraft/.gradle/mavenizer/dependencies/default.json
+  Output:             /home/runner/work/MCVoice/MCVoice/minecraft/forge/.gradle/mavenizer/repo
+  Output JSON:        /home/runner/work/MCVoice/MCVoice/minecraft/forge/.gradle/mavenizer/dependencies/default.json
   Dependencies Only:  false
   Cache:              /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
   JDK Cache:          /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
@@ -82,23 +81,39 @@ Maven POM
 Metadata
   metadata[forge]
   metadata[forge][variants]
-Minecraft Maven has finished, took 2:26.736
+Minecraft Maven has finished, took 3:55.533
 
-> Task :forge:compileJava
-> Task :forge:processResources
-> Task :forge:classes
-> Task :forge:jar
-> Task :forge:sourcesJar
-> Task :forge:assemble
-> Task :forge:compileTestJava NO-SOURCE
-> Task :forge:processTestResources NO-SOURCE
-> Task :forge:testClasses UP-TO-DATE
-> Task :forge:test NO-SOURCE
-> Task :forge:check UP-TO-DATE
-> Task :forge:build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790275422416.json
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :jar
+> Task :sourcesJar
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790279854880.json
 
-BUILD SUCCESSFUL in 2m 44s
+BUILD SUCCESSFUL in 4m 22s
 4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.0-mc1.21.11-forge.jar (327 classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.0-mc1.21.11-forge.jar (327 classes, 16 platform classes, metadata ['META-INF/mods.toml'])
+  platform: dev/mcvoice/platform/forge/McVoiceForge
+  platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
+  platform: dev/mcvoice/platform/mc/McAdapter
+  platform: dev/mcvoice/platform/mc/McAdapter$1
+  platform: dev/mcvoice/platform/mc/McAdapter$2
+  platform: dev/mcvoice/platform/mc/McAdapter$3
+  platform: dev/mcvoice/platform/mc/McAdapter$4
+  platform: dev/mcvoice/platform/mc/McAdapter$5
+  platform: dev/mcvoice/platform/mc/McCanvas
+  platform: dev/mcvoice/platform/mc/McIds
+  platform: dev/mcvoice/platform/mc/McLogging
+  platform: dev/mcvoice/platform/mc/McLogging$1
+  platform: dev/mcvoice/platform/mc/McScreen
+  platform: dev/mcvoice/platform/mc/PlatformInfo
+  platform: dev/mcvoice/platform/mc/RawPayload
+  platform: dev/mcvoice/platform/mc/ScreenHost
