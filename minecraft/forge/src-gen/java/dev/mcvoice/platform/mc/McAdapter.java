@@ -8,7 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.lwjgl.glfw.GLFW;
+
+import com.mojang.blaze3d.platform.InputConstants;
+
+
+
 
 import dev.mcvoice.client.platform.AudioAdapter;
 import dev.mcvoice.client.platform.GuiAdapter;
@@ -52,10 +56,17 @@ public final class McAdapter implements MinecraftAdapter {
         this.mcVersion = mcVersion;
         this.loader = loader;
         this.configDir = configDir;
-        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", GLFW.GLFW_KEY_V));
-        keys.put(InputAdapter.Action.WHISPER, key("whisper", GLFW.GLFW_KEY_B));
-        keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", GLFW.GLFW_KEY_M));
-        keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", GLFW.GLFW_KEY_N));
+
+        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", InputConstants.KEY_V));
+        keys.put(InputAdapter.Action.WHISPER, key("whisper", InputConstants.KEY_B));
+        keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", InputConstants.KEY_M));
+        keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", InputConstants.KEY_N));
+
+
+
+
+
+
         keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", -1));
         keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", -1));
     }
