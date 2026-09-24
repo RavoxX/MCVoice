@@ -1,0 +1,25 @@
+{
+  "minecraft": "1.8.8",
+  "family": "legacy",
+  "java": 8,
+  "build_jdk": 17,
+  "jdks": [
+    8,
+    17,
+    21
+  ],
+  "loaders": [
+    "forge"
+  ],
+  "builds": {
+    "forge": {
+      "buildgen": "unimined",
+      "gradle": "8.14.3",
+      "gradle_jdk": 21,
+      "plugin_version": "1.4.1"
+    }
+  },
+  "not_built": {
+    "legacyfabric": "not implemented: the Legacy Fabric loader exists, but Legacy Fabric API is not published for this version and the MCVoice Legacy Fabric adapter needs it (keys, ticks, lifecycle)"
+  }
+}
