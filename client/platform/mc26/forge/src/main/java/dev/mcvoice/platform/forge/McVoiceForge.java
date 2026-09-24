@@ -11,6 +11,7 @@ import dev.mcvoice.client.platform.SvcChannelNames;
 import dev.mcvoice.platform.mc.Mc26Adapter;
 import dev.mcvoice.platform.mc.Mc26Canvas;
 import dev.mcvoice.platform.mc.Mc26Logging;
+import dev.mcvoice.platform.mc.PlatformInfo;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -23,7 +24,6 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -43,10 +43,9 @@ public final class McVoiceForge {
             return; // voice chat is client-side only
         }
         VoiceLog.setSink(new Mc26Logging());
-        String mcVersion = ModList.get().getModContainerById("minecraft").map(c -> c.getModInfo().getVersion().toString()).orElse("unknown");
-        String modVersion = ModList.get().getModContainerById("mcvoice").map(c -> c.getModInfo().getVersion().toString()).orElse("dev");
-        Mc26Adapter adapter = new Mc26Adapter(mcVersion, "forge", FMLPaths.CONFIGDIR.get().toFile());
-        if (ModList.get().isLoaded("voicechat")) {
+        String modVersion = PlatformInfo.modVersion();
+        Mc26Adapter adapter = new Mc26Adapter(PlatformInfo.minecraftVersion(), "forge", FMLPaths.CONFIGDIR.get().toFile());
+        if (PlatformInfo.simpleVoiceChatModPresent()) {
             VoiceLog.info(Category.SVC, "Simple Voice Chat mod is installed: MCVoice SVC interoperability disabled");
         } else {
             adapter.setSimpleVoiceChat(new ForgeSvcChannels());

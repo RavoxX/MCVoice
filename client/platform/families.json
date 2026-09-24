@@ -18,7 +18,27 @@
           "gradle": "9.8.0",
           "plugin_version": "[7.0.17,8)"
         }
-      }
+      },
+      "variants": [
+        {
+          "minecraft": {
+            "min": "26.1",
+            "max": "26.1.2"
+          },
+          "sources": [
+            "variants/screen-on-minecraft"
+          ]
+        },
+        {
+          "minecraft": {
+            "min": "26.2",
+            "max": "26.3"
+          },
+          "sources": [
+            "variants/screen-on-gui"
+          ]
+        }
+      ]
     }
   ]
 }

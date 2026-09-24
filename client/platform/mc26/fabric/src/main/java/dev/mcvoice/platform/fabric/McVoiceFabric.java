@@ -11,6 +11,7 @@ import dev.mcvoice.client.platform.SvcChannelNames;
 import dev.mcvoice.platform.mc.Mc26Adapter;
 import dev.mcvoice.platform.mc.Mc26Canvas;
 import dev.mcvoice.platform.mc.Mc26Logging;
+import dev.mcvoice.platform.mc.PlatformInfo;
 import dev.mcvoice.platform.mc.RawPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -39,7 +40,7 @@ public final class McVoiceFabric implements ClientModInitializer {
         for (KeyMapping k : adapter.keyMappings()) {
             KeyMappingHelper.registerKeyMapping(k);
         }
-        if (loader.isModLoaded("voicechat")) {
+        if (loader.isModLoaded("voicechat") || PlatformInfo.simpleVoiceChatModPresent()) {
             // The real Simple Voice Chat mod owns these channels; our interop layer stays off.
             VoiceLog.info(Category.SVC, "Simple Voice Chat mod is installed: MCVoice SVC interoperability disabled");
             adapter.setSimpleVoiceChat(null);

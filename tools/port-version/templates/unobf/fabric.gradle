@@ -24,6 +24,7 @@ sourceSets {
     main {
         java.srcDirs += core
         java.srcDirs += new File(repoRoot, 'client/platform/@FAMILY@/common/src/main/java')
+        java.srcDirs += [@VARIANT_DIRS@].collect { new File(repoRoot, "client/platform/@FAMILY@/${it}/src/main/java") }
         java.srcDirs += new File(repoRoot, 'client/platform/@FAMILY@/fabric/src/main/java')
         resources.srcDirs += new File(repoRoot, 'client/platform/@FAMILY@/fabric/src/main/resources')
         resources.srcDirs += new File(repoRoot, 'client/common/src/main/resources')
@@ -43,10 +44,10 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 processResources {
-    def props = [version: project.mod_version, minecraft_dep: project.minecraft_version, java: '@JAVA@',
+    def props = [version: project.mod_version, minecraft_version: project.minecraft_version, minecraft_dep: project.minecraft_version, java: '@JAVA@',
                  loader_min: project.fabric_loader, backendUrl: (project.findProperty('mcvoiceBackendUrl') ?: '')]
     inputs.properties props
-    filesMatching(['fabric.mod.json', 'mcvoice-defaults.properties']) { expand props }
+    filesMatching(['fabric.mod.json', 'mcvoice-defaults.properties', 'mcvoice-platform.properties']) { expand props }
 }
 
 jar {

@@ -234,24 +234,24 @@ public final class Mc26Adapter implements MinecraftAdapter {
     private final GuiAdapter gui = new GuiAdapter() {
         @Override
         public void open(UiScreen screen) {
-            mc().gui.setScreen(new Mc26Screen(screen));
+            ScreenHost.open(new Mc26Screen(screen));
         }
 
         @Override
         public void close() {
-            if (mc().gui.screen() instanceof Mc26Screen) {
-                mc().gui.setScreen(null);
+            if (ScreenHost.current() instanceof Mc26Screen) {
+                ScreenHost.open(null);
             }
         }
 
         @Override
         public boolean isOurScreenOpen() {
-            return mc().gui.screen() instanceof Mc26Screen;
+            return ScreenHost.current() instanceof Mc26Screen;
         }
 
         @Override
         public boolean isAnyScreenOpen() {
-            return mc().gui.screen() != null;
+            return ScreenHost.current() != null;
         }
     };
 

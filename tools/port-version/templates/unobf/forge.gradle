@@ -21,6 +21,7 @@ sourceSets {
     main {
         java.srcDirs += core
         java.srcDirs += new File(repoRoot, 'client/platform/@FAMILY@/common/src/main/java')
+        java.srcDirs += [@VARIANT_DIRS@].collect { new File(repoRoot, "client/platform/@FAMILY@/${it}/src/main/java") }
         java.srcDirs += new File(repoRoot, 'client/platform/@FAMILY@/forge/src/main/java')
         resources.srcDirs += new File(repoRoot, 'client/common/src/main/resources')
         resources.srcDirs += new File(repoRoot, 'client/platform/@FAMILY@/common/src/main/resources')
@@ -49,7 +50,7 @@ processResources {
                  forge_major: project.forge_version.split('-')[1].split('\\.')[0],
                  backendUrl: (project.findProperty('mcvoiceBackendUrl') ?: '')]
     inputs.properties props
-    filesMatching(['META-INF/mods.toml', 'mcvoice-defaults.properties']) { expand props }
+    filesMatching(['META-INF/mods.toml', 'mcvoice-defaults.properties', 'mcvoice-platform.properties']) { expand props }
 }
 
 jar {

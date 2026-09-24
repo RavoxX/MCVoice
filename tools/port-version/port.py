@@ -107,7 +107,10 @@ def generate(mc: str, out: str):
     }
     includes = []
     for label, cfg, up in targets:
-        tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"]}
+        variants = [src for v in fam.get("variants", [])
+                    if vkey(v["minecraft"]["min"]) <= vkey(mc) <= vkey(v["minecraft"]["max"]) for src in v["sources"]]
+        tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"],
+                  "VARIANT_DIRS": ", ".join("'" + v + "'" for v in variants)}
         write(os.path.join(out, label, "build.gradle"), render(os.path.join(tdir, f"{label}.gradle"), tokens))
         includes.append(f"include '{label}'")
         if label in ("fabric", "legacyfabric"):
