@@ -1,0 +1,86 @@
+### search (resources\.ResourceLocation$|resources\.Identifier$|client\.input\.KeyEvent$|KeyMapping\$Category$)
+net.minecraft.client.KeyMapping$Category
+net.minecraft.client.input.KeyEvent
+net.minecraft.resources.ResourceLocation
+::group::net.minecraft.client.KeyMapping$Category
+net.minecraft.client.KeyMapping$Category
+# {"fileName":"KeyMapping.java","id":"sourceFile"}
+    net.minecraft.resources.ResourceLocation id
+    java.util.List SORT_ORDER
+    net.minecraft.client.KeyMapping$Category MOVEMENT
+    net.minecraft.client.KeyMapping$Category MISC
+    net.minecraft.client.KeyMapping$Category MULTIPLAYER
+    net.minecraft.client.KeyMapping$Category GAMEPLAY
+    net.minecraft.client.KeyMapping$Category INVENTORY
+    net.minecraft.client.KeyMapping$Category CREATIVE
+    net.minecraft.client.KeyMapping$Category SPECTATOR
+    void <init>(net.minecraft.resources.ResourceLocation)
+    net.minecraft.client.KeyMapping$Category register(java.lang.String)
+    net.minecraft.client.KeyMapping$Category register(net.minecraft.resources.ResourceLocation)
+    net.minecraft.network.chat.Component label()
+    java.lang.String toString()
+    int hashCode()
+    boolean equals(java.lang.Object)
+    net.minecraft.resources.ResourceLocation id()
+    void <clinit>()
+::endgroup::
+::group::net.minecraft.resources.ResourceKey
+net.minecraft.resources.ResourceKey
+# {"fileName":"ResourceKey.java","id":"sourceFile"}
+    java.util.concurrent.ConcurrentMap VALUES
+    net.minecraft.resources.ResourceLocation registryName
+    net.minecraft.resources.ResourceLocation location
+    com.mojang.serialization.Codec codec(net.minecraft.resources.ResourceKey)
+    net.minecraft.network.codec.StreamCodec streamCodec(net.minecraft.resources.ResourceKey)
+    net.minecraft.resources.ResourceKey create(net.minecraft.resources.ResourceKey,net.minecraft.resources.ResourceLocation)
+    net.minecraft.resources.ResourceKey createRegistryKey(net.minecraft.resources.ResourceLocation)
+    net.minecraft.resources.ResourceKey create(net.minecraft.resources.ResourceLocation,net.minecraft.resources.ResourceLocation)
+    void <init>(net.minecraft.resources.ResourceLocation,net.minecraft.resources.ResourceLocation)
+    java.lang.String toString()
+    boolean isFor(net.minecraft.resources.ResourceKey)
+    java.util.Optional cast(net.minecraft.resources.ResourceKey)
+    net.minecraft.resources.ResourceLocation location()
+    net.minecraft.resources.ResourceLocation registry()
+    net.minecraft.resources.ResourceKey registryKey()
+    net.minecraft.resources.ResourceKey lambda$create$2(net.minecraft.resources.ResourceKey$InternKey)
+    net.minecraft.resources.ResourceKey lambda$streamCodec$1(net.minecraft.resources.ResourceKey,net.minecraft.resources.ResourceLocation)
+    net.minecraft.resources.ResourceKey lambda$codec$0(net.minecraft.resources.ResourceKey,net.minecraft.resources.ResourceLocation)
+    void <clinit>()
+::endgroup::
+::group::net.minecraft.server.Services
+net.minecraft.server.Services
+# {"fileName":"Services.java","id":"sourceFile"}
+    com.mojang.authlib.minecraft.MinecraftSessionService sessionService
+    com.mojang.authlib.yggdrasil.ServicesKeySet servicesKeySet
+    com.mojang.authlib.GameProfileRepository profileRepository
+    net.minecraft.server.players.UserNameToIdResolver nameToIdCache
+    net.minecraft.server.players.ProfileResolver profileResolver
+    java.lang.String USERID_CACHE_FILE
+    void <init>(com.mojang.authlib.minecraft.MinecraftSessionService,com.mojang.authlib.yggdrasil.ServicesKeySet,com.mojang.authlib.GameProfileRepository,net.minecraft.server.players.UserNameToIdResolver,net.minecraft.server.players.ProfileResolver)
+    net.minecraft.server.Services create(com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService,java.io.File)
+    net.minecraft.util.SignatureValidator profileKeySignatureValidator()
+    boolean canValidateProfileKeys()
+    java.lang.String toString()
+    int hashCode()
+    boolean equals(java.lang.Object)
+    com.mojang.authlib.minecraft.MinecraftSessionService sessionService()
+    com.mojang.authlib.yggdrasil.ServicesKeySet servicesKeySet()
+    com.mojang.authlib.GameProfileRepository profileRepository()
+    net.minecraft.server.players.UserNameToIdResolver nameToIdCache()
+    net.minecraft.server.players.ProfileResolver profileResolver()
+::endgroup::
+net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement
+::group::net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+Compiled from "KeyBindingHelper.java"
+public final class net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper {
+  public static net.minecraft.class_304 registerKeyBinding(net.minecraft.class_304);
+  public static net.minecraft.class_3675$class_306 getBoundKeyOf(net.minecraft.class_304);
+}
+::endgroup::
+::group::net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement
+Compiled from "HudElement.java"
+public interface net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement {
+  public abstract void render(net.minecraft.class_332, net.minecraft.class_9779);
+}
+::endgroup::
