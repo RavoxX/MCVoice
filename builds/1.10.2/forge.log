@@ -4,51 +4,41 @@ Daemon will be stopped at the end of the build
 > Configure project :
 Architectury Loom: 0.10.0.5
 :generating dummy intermediary
-:generated dummy intermediary in 916.0 ms
+:generated dummy intermediary in 514.5 ms
 :patching forge
-:patched forge in 31.68 s
+:patched forge in 10.24 s
 :patching jars
-:patched jars in 6.141 s
+:patched jars in 5.028 s
 :access transforming minecraft
-[19:20:39] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
-[19:20:39] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar, --atFile, /tmp/at-conf7334649772211886720.cfg]
-[19:20:39] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-patched.jar
-[19:20:39] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar
-[19:20:39] [main/INFO]: Transformer file /tmp/at-conf7334649772211886720.cfg
-[19:20:39] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar, overwriting
-[19:20:41] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar
-:access transformed minecraft in 11.66 s
+[19:26:20] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
+[19:26:20] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar, --atFile, /tmp/at-conf12067115236316864114.cfg]
+[19:26:20] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-patched.jar
+[19:26:20] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar
+[19:26:20] [main/INFO]: Transformer file /tmp/at-conf12067115236316864114.cfg
+[19:26:20] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar, overwriting
+[19:26:21] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar
+:access transformed minecraft in 8.006 s
 :remapping minecraft (TinyRemapper, official -> intermediary)
-:remapped minecraft (TinyRemapper, official -> intermediary) in 1.793 s
+:remapped minecraft (TinyRemapper, official -> intermediary) in 1.258 s
 :remapping minecraft (TinyRemapper, official -> srg)
-:remapped minecraft (TinyRemapper, official -> srg) in 1.536 s
+:remapped minecraft (TinyRemapper, official -> srg) in 1.087 s
 :remapping minecraft (TinyRemapper, official -> named)
-:remapped minecraft (TinyRemapper, official -> named) in 1.336 s
+:remapped minecraft (TinyRemapper, official -> named) in 1.018 s
 
 > Task :compileJava
 Note: SpongePowered MIXIN Annotation Processor Version=0.8.5
 Note: Supported obfuscation types: ObfuscationServiceFabric supports [official:intermediary,official:named,intermediary:official,intermediary:named,named:official,named:intermediary] ObfuscationServiceMCP supports [searge,notch]
-/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:81: error: cannot find symbol
-        return mc().thePlayer;
-                   ^
-  symbol:   variable thePlayer
-  location: class Minecraft
-/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:89: error: cannot find symbol
-        return mc().theWorld;
-                   ^
-  symbol:   variable theWorld
-  location: class Minecraft
-/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java:97: error: cannot find symbol
-        return mc().getNetHandler();
-                   ^
-  symbol:   method getNetHandler()
-  location: class Minecraft
+/home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McCanvas.java:19: error: cannot find symbol
+        font = mc.fontRenderer;
+                 ^
+  symbol:   variable fontRenderer
+  location: variable mc of type Minecraft
 Note: /home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
-3 errors
+1 error
 
 > Task :compileJava FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790277551785.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790277941925.json
 
 FAILURE: Build failed with an exception.
 
@@ -126,5 +116,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD FAILED in 2m
+BUILD FAILED in 55s
 1 actionable task: 1 executed
