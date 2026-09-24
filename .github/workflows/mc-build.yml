@@ -1,4 +1,5 @@
 name: mc-build
+run-name: "mc-build ${{ inputs.minecraft || github.ref_name }}"
 
 # Builds every implemented loader of one Minecraft version and validates the
 # production jars. Runs on mc/<version> branches (which carry a generated
