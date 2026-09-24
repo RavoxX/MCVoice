@@ -89,7 +89,8 @@ jobs:
 
   github-release:
     needs: [plan, build]
-    if: always() && needs.plan.result == 'success'
+    # per-version failures are handled inside; nothing to release when the builds never ran
+    if: always() && needs.plan.result == 'success' && needs.build.result != 'skipped' && needs.build.result != 'cancelled'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -190,6 +191,10 @@ jobs:
           VERSION: ${{ inputs.version }}
         run: |
           tag="v$VERSION"
+          if grep -q 'GitHub Releases: \*\*0/' release-report.md; then
+            echo "::warning::no Minecraft version was released; not creating or updating release $tag (report is in the run summary and artifacts)"
+            exit 0
+          fi
           flags=""; [ "${{ inputs.prerelease }}" = "true" ] && flags="--prerelease"
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" release-report.md --clobber
