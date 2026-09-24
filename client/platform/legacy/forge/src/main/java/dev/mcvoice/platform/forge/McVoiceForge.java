@@ -45,9 +45,9 @@ public final class McVoiceForge {
         client = new VoiceClient(adapter, PlatformInfo.modVersion());
         Events events = new Events();
         MinecraftForge.EVENT_BUS.register(events);
-        //#if MC < 1.12
-        FMLCommonHandler.instance().bus().register(events); // tick and network events use the FML bus before 1.12
-        //#endif
+        // older FML posts tick and network events on its own bus; where both are the same bus a second
+        // registration of the same object is ignored
+        FMLCommonHandler.instance().bus().register(events);
     }
 
     /** Game event hooks. */
@@ -61,7 +61,7 @@ public final class McVoiceForge {
 
         @SubscribeEvent
         public void onOverlay(RenderGameOverlayEvent.Post e) {
-            //#if MC >= 1.12
+            //#if MC >= 1.9
             boolean all = e.getType() == RenderGameOverlayEvent.ElementType.ALL;
             //#else
             boolean all = e.type == RenderGameOverlayEvent.ElementType.ALL;

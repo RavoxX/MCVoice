@@ -73,6 +73,10 @@ def plan(mc: str):
             reasons[label] = up.get("reason", "unavailable upstream")
             continue
         cfg = loader_config(fam, label, mc) if fam else None
+        if cfg is None and label == "legacyfabric" and not up.get("legacy_fabric_api"):
+            reasons[label] = ("not implemented: the Legacy Fabric loader exists, but Legacy Fabric API is not published "
+                              "for this version and the MCVoice Legacy Fabric adapter needs it (keys, ticks, lifecycle)")
+            continue
         if cfg is None:
             reasons[label] = ("not implemented yet for this Minecraft version (no adapter family)" if fam is None else
                               f"not implemented yet: adapter family '{fam['id']}' has no {label} build setup for this version")

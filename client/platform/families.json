@@ -105,11 +105,47 @@
     {
       "id": "legacy",
       "minecraft": {
-        "min": "1.8.9",
+        "min": "1.8",
         "max": "1.12.2"
       },
       "loaders": {
         "forge": [
+          {
+            "minecraft": {
+              "min": "1.8",
+              "max": "1.8"
+            },
+            "buildgen": "legacyforge",
+            "gradle": "8.8",
+            "gradle_jdk": 17,
+            "plugin_version": "0.10.0.+",
+            "mappings": "de.oceanlabs.mcp:mcp_stable:18-1.8",
+            "gradle_properties": {
+              "loom.platform": "forge"
+            },
+            "parts": [
+              "mcp",
+              "forge"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.8.8",
+              "max": "1.8.8"
+            },
+            "buildgen": "legacyforge",
+            "gradle": "8.8",
+            "gradle_jdk": 17,
+            "plugin_version": "0.10.0.+",
+            "mappings": "de.oceanlabs.mcp:mcp_stable:20-1.8.8",
+            "gradle_properties": {
+              "loom.platform": "forge"
+            },
+            "parts": [
+              "mcp",
+              "forge"
+            ]
+          },
           {
             "minecraft": {
               "min": "1.8.9",
@@ -120,6 +156,96 @@
             "gradle_jdk": 17,
             "plugin_version": "0.10.0.+",
             "mappings": "de.oceanlabs.mcp:mcp_stable:22-1.8.9",
+            "gradle_properties": {
+              "loom.platform": "forge"
+            },
+            "parts": [
+              "mcp",
+              "forge"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.9",
+              "max": "1.9"
+            },
+            "buildgen": "legacyforge",
+            "gradle": "8.8",
+            "gradle_jdk": 17,
+            "plugin_version": "0.10.0.+",
+            "mappings": "de.oceanlabs.mcp:mcp_stable:24-1.9",
+            "gradle_properties": {
+              "loom.platform": "forge"
+            },
+            "parts": [
+              "mcp",
+              "forge"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.9.4",
+              "max": "1.9.4"
+            },
+            "buildgen": "legacyforge",
+            "gradle": "8.8",
+            "gradle_jdk": 17,
+            "plugin_version": "0.10.0.+",
+            "mappings": "de.oceanlabs.mcp:mcp_stable:26-1.9.4",
+            "gradle_properties": {
+              "loom.platform": "forge"
+            },
+            "parts": [
+              "mcp",
+              "forge"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.10",
+              "max": "1.10.2"
+            },
+            "buildgen": "legacyforge",
+            "gradle": "8.8",
+            "gradle_jdk": 17,
+            "plugin_version": "0.10.0.+",
+            "mappings": "de.oceanlabs.mcp:mcp_stable:29-1.10.2",
+            "gradle_properties": {
+              "loom.platform": "forge"
+            },
+            "parts": [
+              "mcp",
+              "forge"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.11",
+              "max": "1.11.2"
+            },
+            "buildgen": "legacyforge",
+            "gradle": "8.8",
+            "gradle_jdk": 17,
+            "plugin_version": "0.10.0.+",
+            "mappings": "de.oceanlabs.mcp:mcp_stable:32-1.11",
+            "gradle_properties": {
+              "loom.platform": "forge"
+            },
+            "parts": [
+              "mcp",
+              "forge"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.12",
+              "max": "1.12.1"
+            },
+            "buildgen": "legacyforge",
+            "gradle": "8.8",
+            "gradle_jdk": 17,
+            "plugin_version": "0.10.0.+",
+            "mappings": "de.oceanlabs.mcp:mcp_stable:39-1.12",
             "gradle_properties": {
               "loom.platform": "forge"
             },
@@ -147,8 +273,68 @@
         "legacyfabric": [
           {
             "minecraft": {
+              "min": "1.8",
+              "max": "1.8"
+            },
+            "buildgen": "legacyfabric",
+            "gradle": "9.4.0",
+            "gradle_jdk": 21,
+            "plugin_version": "1.16.1",
+            "mappings": "604",
+            "parts": [
+              "yarn",
+              "fabric"
+            ]
+          },
+          {
+            "minecraft": {
               "min": "1.8.9",
               "max": "1.8.9"
+            },
+            "buildgen": "legacyfabric",
+            "gradle": "9.4.0",
+            "gradle_jdk": 21,
+            "plugin_version": "1.16.1",
+            "mappings": "604",
+            "parts": [
+              "yarn",
+              "fabric"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.9.4",
+              "max": "1.9.4"
+            },
+            "buildgen": "legacyfabric",
+            "gradle": "9.4.0",
+            "gradle_jdk": 21,
+            "plugin_version": "1.16.1",
+            "mappings": "604",
+            "parts": [
+              "yarn",
+              "fabric"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.10.2",
+              "max": "1.10.2"
+            },
+            "buildgen": "legacyfabric",
+            "gradle": "9.4.0",
+            "gradle_jdk": 21,
+            "plugin_version": "1.16.1",
+            "mappings": "604",
+            "parts": [
+              "yarn",
+              "fabric"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.11.2",
+              "max": "1.11.2"
             },
             "buildgen": "legacyfabric",
             "gradle": "9.4.0",

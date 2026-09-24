@@ -75,7 +75,7 @@ public final class McAdapter implements MinecraftAdapter {
     }
 
     private static EntityPlayerSP player() {
-        //#if MC >= 1.12
+        //#if MC >= 1.11
         return mc().player;
         //#else
         return mc().thePlayer;
@@ -83,7 +83,7 @@ public final class McAdapter implements MinecraftAdapter {
     }
 
     private static WorldClient level() {
-        //#if MC >= 1.12
+        //#if MC >= 1.11
         return mc().world;
         //#else
         return mc().theWorld;
@@ -91,7 +91,7 @@ public final class McAdapter implements MinecraftAdapter {
     }
 
     private static NetHandlerPlayClient connection() {
-        //#if MC >= 1.12
+        //#if MC >= 1.11
         return mc().getConnection();
         //#else
         return mc().getNetHandler();
@@ -154,7 +154,7 @@ public final class McAdapter implements MinecraftAdapter {
         return new WorldAdapter() {
             @Override
             public String dimensionId() {
-                //#if MC >= 1.12
+                //#if MC >= 1.9
                 return dimensionName(level.provider.getDimension());
                 //#else
                 return dimensionName(level.provider.getDimensionId());
