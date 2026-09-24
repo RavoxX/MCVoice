@@ -30,8 +30,23 @@ Daemon will be stopped at the end of the build
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790275991186.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790276949523.json
 
-BUILD SUCCESSFUL in 30s
+BUILD SUCCESSFUL in 55s
 8 actionable tasks: 8 executed
-valid: mcvoice-0.1.0-mc1.20.1-forge.jar (327 classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.0-mc1.20.1-forge.jar (327 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
+  platform: dev/mcvoice/platform/forge/McVoiceForge
+  platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
+  platform: dev/mcvoice/platform/mc/McAdapter
+  platform: dev/mcvoice/platform/mc/McAdapter$1
+  platform: dev/mcvoice/platform/mc/McAdapter$2
+  platform: dev/mcvoice/platform/mc/McAdapter$3
+  platform: dev/mcvoice/platform/mc/McAdapter$4
+  platform: dev/mcvoice/platform/mc/McAdapter$5
+  platform: dev/mcvoice/platform/mc/McCanvas
+  platform: dev/mcvoice/platform/mc/McIds
+  platform: dev/mcvoice/platform/mc/McLogging
+  platform: dev/mcvoice/platform/mc/McLogging$1
+  platform: dev/mcvoice/platform/mc/McScreen
+  platform: dev/mcvoice/platform/mc/PlatformInfo
+  platform: dev/mcvoice/platform/mc/ScreenHost

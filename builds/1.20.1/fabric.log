@@ -4,25 +4,40 @@ Daemon will be stopped at the end of the build
 > Configure project :
 Fabric Loom: 1.18.2
 
-> Task :compileJava FROM-CACHE
+> Task :compileJava
 > Task :processResources
 > Task :classes
 > Task :jar
 > Task :processIncludeJars
-> Task :remapJar FROM-CACHE
 > Task :sourcesJar
-> Task :remapSourcesJar FROM-CACHE
-> Task :assemble
 > Task :compileTestJava NO-SOURCE
 > Task :processTestResources NO-SOURCE
 > Task :testClasses UP-TO-DATE
 > Task :test NO-SOURCE
 > Task :validateAccessWidener NO-SOURCE
 > Task :check UP-TO-DATE
+> Task :remapJar
+> Task :remapSourcesJar
+> Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790275960444.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790276908592.json
 
-BUILD SUCCESSFUL in 30s
-7 actionable tasks: 4 executed, 3 from cache
+BUILD SUCCESSFUL in 39s
+7 actionable tasks: 7 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.0-mc1.20.1-fabric.jar (327 classes, metadata ['fabric.mod.json'])
+valid: mcvoice-0.1.0-mc1.20.1-fabric.jar (327 classes, 15 platform classes, metadata ['fabric.mod.json'])
+  platform: dev/mcvoice/platform/fabric/McVoiceFabric
+  platform: dev/mcvoice/platform/fabric/McVoiceFabric$FabricSvcChannels
+  platform: dev/mcvoice/platform/mc/McAdapter
+  platform: dev/mcvoice/platform/mc/McAdapter$1
+  platform: dev/mcvoice/platform/mc/McAdapter$2
+  platform: dev/mcvoice/platform/mc/McAdapter$3
+  platform: dev/mcvoice/platform/mc/McAdapter$4
+  platform: dev/mcvoice/platform/mc/McAdapter$5
+  platform: dev/mcvoice/platform/mc/McCanvas
+  platform: dev/mcvoice/platform/mc/McIds
+  platform: dev/mcvoice/platform/mc/McLogging
+  platform: dev/mcvoice/platform/mc/McLogging$1
+  platform: dev/mcvoice/platform/mc/McScreen
+  platform: dev/mcvoice/platform/mc/PlatformInfo
+  platform: dev/mcvoice/platform/mc/ScreenHost
