@@ -1,5 +1,5 @@
 {
-  "description": "Minecraft API families. Each family is one set of version-specific adapter sources (client/platform/<id>) valid for a range of Minecraft releases; differences inside a family are //#if MC blocks (tools/port-version/preprocess.py). Each loader lists build setups by Minecraft range; buildgen names tools/port-version/templates/<buildgen>; gradle_jdk is the JVM Gradle itself needs when it is newer than the game's Java (Loom 1.18 runs on Java 25+). A version is only *supported* when CI builds it (versions/build-status.json). A loader entry may name its own source directory (sources) when a loader API generation differs too much for //#if blocks.",
+  "description": "Minecraft API families. Each family is one set of version-specific adapter sources (client/platform/<id>) valid for a range of Minecraft releases; differences inside a family are //#if MC blocks (tools/port-version/preprocess.py). Each loader lists build setups by Minecraft range; buildgen names tools/port-version/templates/<buildgen>; gradle_jdk is the JVM Gradle itself needs when it is newer than the game's Java (Loom 1.18 runs on Java 25+). A version is only *supported* when CI builds it (versions/build-status.json). A loader entry may name its own source directory (sources) when a loader API generation differs too much for //#if blocks. class_remap names a tools/port-version/remap table applied to generated sources (Forge before 1.17 keeps MCP class names under official mappings).",
   "families": [
     {
       "id": "mojang",
@@ -48,7 +48,8 @@
             "buildgen": "fg6",
             "gradle": "7.3.3",
             "plugin_version": "5.1.+",
-            "sources": "forge-fml"
+            "sources": "forge-fml",
+            "class_remap": "forge-mcp-classes-1.16.txt"
           },
           {
             "minecraft": {

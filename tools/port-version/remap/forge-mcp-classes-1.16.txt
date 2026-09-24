@@ -1,0 +1,18 @@
+# Forge 1.14.4-1.16.5 with `mappings channel: 'official'` renames fields and methods to Mojang's names
+# but keeps MCP class names (MCPConfig adopted Mojang class names in 1.17). port.py applies this table
+# (Mojang name -> MCP name, fully qualified) to the generated sources of such builds; simple names are
+# replaced where they differ.
+net.minecraft.client.KeyMapping net.minecraft.client.settings.KeyBinding
+net.minecraft.client.User net.minecraft.util.Session
+net.minecraft.client.multiplayer.ClientLevel net.minecraft.client.world.ClientWorld
+net.minecraft.client.multiplayer.ClientPacketListener net.minecraft.client.network.play.ClientPlayNetHandler
+net.minecraft.client.player.AbstractClientPlayer net.minecraft.client.entity.player.AbstractClientPlayerEntity
+net.minecraft.client.player.LocalPlayer net.minecraft.client.entity.player.ClientPlayerEntity
+net.minecraft.client.gui.Font net.minecraft.client.gui.FontRenderer
+net.minecraft.client.gui.GuiComponent net.minecraft.client.gui.AbstractGui
+net.minecraft.client.gui.screens.Screen net.minecraft.client.gui.screen.Screen
+com.mojang.blaze3d.vertex.PoseStack com.mojang.blaze3d.matrix.MatrixStack
+net.minecraft.network.chat.TextComponent net.minecraft.util.text.StringTextComponent
+net.minecraft.resources.ResourceLocation net.minecraft.util.ResourceLocation
+net.minecraft.network.FriendlyByteBuf net.minecraft.network.PacketBuffer
+net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket net.minecraft.network.play.client.CCustomPayloadPacket

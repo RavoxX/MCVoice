@@ -144,6 +144,8 @@ def generate(mc: str, out: str):
         # "parts" replaces the shared part too, for families whose loaders use different mapping sets
         parts = cfg.get("parts") or (["common"] + variants + [loader_src])
         generate_sources(fam["id"], parts, mc, label, os.path.join(ldir, "src-gen"))
+        if cfg.get("class_remap"):
+            remap_classes(os.path.join(ldir, "src-gen", "java"), os.path.join(HERE, "remap", cfg["class_remap"]))
         tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"], "LOADER": label,
                   "MAPPINGS": cfg.get("mappings", ""),
                   # Fabric API's mod id was "fabric" until the 1.19.2 era, "fabric-api" since (the old id stays provided)
@@ -227,6 +229,33 @@ def generate_sources(family, parts, mc, loader, dest):
                             fh.write(text)
                     else:
                         shutil.copyfile(sp, dp)
+
+
+def remap_classes(java_dir, table_path):
+    """Rename Minecraft classes in generated sources (Mojang name -> another mapping's name)."""
+    pairs = []
+    with open(table_path, encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                old, new = line.split()
+                pairs.append((old, new))
+    for d, _, files in os.walk(java_dir):
+        for f in files:
+            if not f.endswith(".java"):
+                continue
+            p = os.path.join(d, f)
+            with open(p, encoding="utf-8") as fh:
+                text = fh.read()
+            orig = text
+            for old, new in pairs:
+                text = text.replace(old, new)
+                so, sn = old.rsplit(".", 1)[1], new.rsplit(".", 1)[1]
+                if so != sn:
+                    text = re.sub(r"(?<![\w.])" + re.escape(so) + r"\b", sn, text)
+            if text != orig:
+                with open(p, "w", encoding="utf-8") as fh:
+                    fh.write(text)
 
 
 def load_version():
