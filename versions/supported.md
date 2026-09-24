@@ -49,20 +49,20 @@ Matrix generated at 2026-09-24T19:27:16Z; latest release in Mojang manifest: `26
 | 1.15.1 | 8 | not built | not built | 1.15.1-30.0.51 | 0.19.5 |
 | 1.15.2 | 8 | not built | not built | 1.15.2-31.2.57 | 0.19.5 |
 | 1.16 | 8 | N/A | not built | - | 0.19.5 |
-| 1.16.1 | 8 | not built | not built | 1.16.1-32.0.108 | 0.19.5 |
-| 1.16.2 | 8 | not built | not built | 1.16.2-33.0.61 | 0.19.5 |
-| 1.16.3 | 8 | not built | not built | 1.16.3-34.1.0 | 0.19.5 |
-| 1.16.4 | 8 | not built | not built | 1.16.4-35.1.4 | 0.19.5 |
-| 1.16.5 | 8 | not built | PASS | 1.16.5-36.2.34 | 0.19.5 |
+| 1.16.1 | 8 | PASS | not built | 1.16.1-32.0.108 | 0.19.5 |
+| 1.16.2 | 8 | PASS | not built | 1.16.2-33.0.61 | 0.19.5 |
+| 1.16.3 | 8 | PASS | not built | 1.16.3-34.1.0 | 0.19.5 |
+| 1.16.4 | 8 | PASS | not built | 1.16.4-35.1.4 | 0.19.5 |
+| 1.16.5 | 8 | PASS | PASS | 1.16.5-36.2.34 | 0.19.5 |
 | 1.17 | 16 | N/A | not built | - | 0.19.5 |
 | 1.17.1 | 16 | PASS | PASS | 1.17.1-37.1.1 | 0.19.5 |
-| 1.18 | 17 | not built | not built | 1.18-38.0.17 | 0.19.5 |
-| 1.18.1 | 17 | not built | not built | 1.18.1-39.1.0 | 0.19.5 |
+| 1.18 | 17 | PASS | PASS | 1.18-38.0.17 | 0.19.5 |
+| 1.18.1 | 17 | PASS | not built | 1.18.1-39.1.0 | 0.19.5 |
 | 1.18.2 | 17 | PASS | PASS | 1.18.2-40.3.0 | 0.19.5 |
-| 1.19 | 17 | not built | not built | 1.19-41.1.0 | 0.19.5 |
-| 1.19.1 | 17 | not built | not built | 1.19.1-42.0.9 | 0.19.5 |
+| 1.19 | 17 | PASS | PASS | 1.19-41.1.0 | 0.19.5 |
+| 1.19.1 | 17 | PASS | PASS | 1.19.1-42.0.9 | 0.19.5 |
 | 1.19.2 | 17 | PASS | PASS | 1.19.2-43.5.0 | 0.19.5 |
-| 1.19.3 | 17 | not built | not built | 1.19.3-44.1.0 | 0.19.5 |
+| 1.19.3 | 17 | PASS | PASS | 1.19.3-44.1.0 | 0.19.5 |
 | 1.19.4 | 17 | PASS | PASS | 1.19.4-45.4.0 | 0.19.5 |
 | 1.20 | 17 | PASS | PASS | 1.20-46.0.14 | 0.19.5 |
 | 1.20.1 | 17 | PASS | PASS | 1.20.1-47.4.10 | 0.19.5 |
@@ -89,7 +89,7 @@ Matrix generated at 2026-09-24T19:27:16Z; latest release in Mojang manifest: `26
 | 26.2 | 25 | PASS | PASS | 26.2-65.1.0 | 0.19.5 |
 | 26.3 | 25 | PASS | PASS | 26.3-66.0.3 | 0.19.5 |
 
-**73** Minecraft/loader combinations currently pass CI.
+**87** Minecraft/loader combinations currently pass CI.
 
 ## Unavailable combinations
 
