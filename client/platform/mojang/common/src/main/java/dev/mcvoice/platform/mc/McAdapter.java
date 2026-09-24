@@ -277,7 +277,11 @@ public final class McAdapter implements MinecraftAdapter {
         @Override
         public String keyName(Action a) {
             KeyMapping k = keys.get(a);
+            //#if MC >= 1.16
             return k == null ? "?" : k.getTranslatedKeyMessage().getString();
+            //#else
+            return k == null ? "?" : k.getTranslatedKeyMessage();
+            //#endif
         }
     };
 
