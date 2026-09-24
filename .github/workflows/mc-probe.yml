@@ -22,6 +22,10 @@ on:
         description: Regex of classes to print from the extra jars
         required: false
         default: ""
+      access:
+        description: javap access filter (public or protected)
+        required: false
+        default: public
       libs:
         description: Regex of version.json library names to add to the classpath (e.g. authlib)
         required: false
@@ -76,6 +80,7 @@ jobs:
       - name: Print classes
         env:
           CLASSES: ${{ inputs.classes }}
+          ACCESS: ${{ inputs.access }}
         run: |
           set -uo pipefail
           cd work
@@ -89,7 +94,7 @@ jobs:
               ' client.txt | sed 's/ -> [^ ]*$//' | grep -v '^\s*[0-9]*:[0-9]*:' | head -3000
               awk -v cls="$c" '/^[^ ]/ && $1 == cls {found=1} END {if (!found) print "NOT FOUND in mappings: " cls}' client.txt
             else
-              javap -cp "client.jar:$(ls libs/*.jar 2>/dev/null | tr '\n' ':')" -public "$c" 2>&1 | head -3000 || true
+              javap -cp "client.jar:$(ls libs/*.jar 2>/dev/null | tr '\n' ':')" "-$ACCESS" "$c" 2>&1 | head -3000 || true
             fi
             echo "::endgroup::"
           done
