@@ -1,96 +1,42 @@
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 
-> Configure project :fabric
+> Configure project :
 Fabric Loom: 1.18.2
 
-> Configure project :forge
-Minecraft Mavenizer 0.5.21 by Forge Development LLC
-  Output:             /home/runner/work/MCVoice/MCVoice/minecraft/.gradle/mavenizer/repo
-  Output JSON:        /home/runner/work/MCVoice/MCVoice/minecraft/.gradle/mavenizer/dependencies/default.json
-  Dependencies Only:  false
-  Cache:              /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
-  JDK Cache:          /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
-  Offline:            false
-  Cache Only:         false
-  Ignore Cache:       false
-  Mappings:           auto
-  Foreign Repos:      [https://repo.maven.apache.org/maven2/, https://maven.minecraftforge.net/, https://libraries.minecraft.net/]
-  GradleVariantHack:  true
-  Disable Gradle:     false
-  Stub Jars:          false
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :processIncludeJars
+> Task :jar
+> Task :sourcesJar
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :validateAccessWidener NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790279927779.json
 
-Processing Minecraft dependency: net.minecraftforge:forge:26.2-65.1.0
-Using Mappings: official-26.2
-Processing Minecraft Forge (userdev): 26.2-65.1.0
-  Cache miss!
-  java.lang.Exception: Cache miss! Stacktrace for Information Only
-  	at net.minecraftforge.mcmaven.impl.Mavenizer.assertNotCacheOnly(Mavenizer.java:60)
-  	at net.minecraftforge.mcmaven.impl.cache.MavenCache.download(MavenCache.java:271)
-  	at net.minecraftforge.mcmaven.impl.cache.MavenCache.download(MavenCache.java:101)
-  	at net.minecraftforge.mcmaven.impl.repo.forge.Patcher.<init>(Patcher.java:94)
-  	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.processV3(ForgeRepo.java:257)
-  	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.process(ForgeRepo.java:144)
-  	at net.minecraftforge.mcmaven.impl.MinecraftMaven.createForge(MinecraftMaven.java:240)
-  	at net.minecraftforge.mcmaven.impl.MinecraftMaven.run(MinecraftMaven.java:119)
-  	at net.minecraftforge.mcmaven.cli.MavenTask.run(MavenTask.java:218)
-  	at net.minecraftforge.mcmaven.cli.Main.run(Main.java:70)
-  	at net.minecraftforge.mcmaven.cli.Main.main(Main.java:23)
-Mappings Zip
-  srg2names[official-26.2][Empty]
-Mappings POM
-  pom[mappings_official]
-Client Extra
-  downloadLauncherManifest
-  downloadVersionJson[26.2]
-  download[26.2][client]
-  extra[client]
-Client Maven POM
-  pom[client-extra]
-Sources
-  stripClient
-  download[26.2][server]
-  extractServer
-  stripServer
-  merge
-  modifyAccess
-  stripSides
-  listLibraries
-  decompile
-  patch
-  patch[forge]
-  downloadSources
-  injectSources[forge]
-  remap[forge][official-26.2][javadoc]
-  remap[forge][official-26.2][javadoc][variants]
-Classes
-  recompile[forge][official-26.2]
-  injectData[forge][official-26.2]
-  injectData[forge][official-26.2][variants]
-Maven POM
-  pom[forge]
-Metadata
-  metadata[forge]
-  metadata[forge][variants]
-Minecraft Maven has finished, took 3:12.779
-
-> Task :fabric:compileJava
-> Task :fabric:processResources
-> Task :fabric:classes
-> Task :fabric:processIncludeJars
-> Task :fabric:jar
-> Task :fabric:sourcesJar
-> Task :fabric:assemble
-> Task :fabric:compileTestJava NO-SOURCE
-> Task :fabric:processTestResources NO-SOURCE
-> Task :fabric:testClasses UP-TO-DATE
-> Task :fabric:test NO-SOURCE
-> Task :fabric:validateAccessWidener NO-SOURCE
-> Task :fabric:check UP-TO-DATE
-> Task :fabric:build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790274373703.json
-
-BUILD SUCCESSFUL in 3m 39s
+BUILD SUCCESSFUL in 28s
 5 actionable tasks: 5 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.0-mc26.2-fabric.jar (326 classes, metadata ['fabric.mod.json'])
+valid: mcvoice-0.1.0-mc26.2-fabric.jar (327 classes, 16 platform classes, metadata ['fabric.mod.json'])
+  platform: dev/mcvoice/platform/fabric/McVoiceFabric
+  platform: dev/mcvoice/platform/fabric/McVoiceFabric$FabricSvcChannels
+  platform: dev/mcvoice/platform/mc/McAdapter
+  platform: dev/mcvoice/platform/mc/McAdapter$1
+  platform: dev/mcvoice/platform/mc/McAdapter$2
+  platform: dev/mcvoice/platform/mc/McAdapter$3
+  platform: dev/mcvoice/platform/mc/McAdapter$4
+  platform: dev/mcvoice/platform/mc/McAdapter$5
+  platform: dev/mcvoice/platform/mc/McCanvas
+  platform: dev/mcvoice/platform/mc/McIds
+  platform: dev/mcvoice/platform/mc/McLogging
+  platform: dev/mcvoice/platform/mc/McLogging$1
+  platform: dev/mcvoice/platform/mc/McScreen
+  platform: dev/mcvoice/platform/mc/PlatformInfo
+  platform: dev/mcvoice/platform/mc/RawPayload
+  platform: dev/mcvoice/platform/mc/ScreenHost
