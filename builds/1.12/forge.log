@@ -1,25 +1,37 @@
+Downloading https://services.gradle.org/distributions/gradle-8.8-bin.zip
+.............10%.............20%.............30%.............40%.............50%.............60%..............70%.............80%.............90%.............100%
+
+Welcome to Gradle 8.8!
+
+Here are the highlights of this release:
+ - Running Gradle on Java 22
+ - Configurable Gradle daemon JVM
+ - Improved IDE performance for large projects
+
+For more details see https://docs.gradle.org/8.8/release-notes.html
+
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 
 > Configure project :
 Architectury Loom: 0.10.0.5
 :generating dummy intermediary
-:generated dummy intermediary in 1.064 s
+:generated dummy intermediary in 954.8 ms
 :patching forge
-:patched forge in 20.62 s
+:patched forge in 15.69 s
 :patching jars
-:patched jars in 12.18 s
+:patched jars in 12.00 s
 :access transforming minecraft
-[19:56:38] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
-[19:56:38] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-at-patched.jar, --atFile, /tmp/at-conf11737542975569187255.cfg]
-[19:56:38] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-patched.jar
-[19:56:38] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-at-patched.jar
-[19:56:38] [main/INFO]: Transformer file /tmp/at-conf11737542975569187255.cfg
-[19:56:38] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-at-patched.jar, overwriting
-[19:56:39] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-at-patched.jar
-:access transformed minecraft in 7.068 s
+[20:21:57] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
+[20:21:57] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-at-patched.jar, --atFile, /tmp/at-conf3904448662859013130.cfg]
+[20:21:57] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-patched.jar
+[20:21:57] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-at-patched.jar
+[20:21:57] [main/INFO]: Transformer file /tmp/at-conf3904448662859013130.cfg
+[20:21:57] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-at-patched.jar, overwriting
+[20:21:58] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.12/forge/1.12-14.21.1.2387/merged-at-patched.jar
+:access transformed minecraft in 6.818 s
 :remapping minecraft (TinyRemapper, official -> intermediary)
-:remapped minecraft (TinyRemapper, official -> intermediary) in 2.020 s
+:remapped minecraft (TinyRemapper, official -> intermediary) in 1.987 s
 :remapping minecraft (TinyRemapper, official -> srg)
 
 Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
@@ -28,7 +40,7 @@ Invalid access from method instruction in net/minecraft/client/network/NetHandle
 
 > Configure project :
 Fixing access for 1 classes and 0 members.
-:remapped minecraft (TinyRemapper, official -> srg) in 1.608 s
+:remapped minecraft (TinyRemapper, official -> srg) in 1.724 s
 :remapping minecraft (TinyRemapper, official -> named)
 
 Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
@@ -37,7 +49,7 @@ Invalid access from method instruction in net/minecraft/client/network/NetHandle
 
 > Configure project :
 Fixing access for 1 classes and 0 members.
-:remapped minecraft (TinyRemapper, official -> named) in 1.534 s
+:remapped minecraft (TinyRemapper, official -> named) in 1.629 s
 
 > Task :compileJava
 Note: SpongePowered MIXIN Annotation Processor Version=0.8.5
@@ -62,7 +74,7 @@ Note: Recompile with -Xlint:deprecation for details.
 :remapping sources
 
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790279716099.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790281247443.json
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -70,7 +82,7 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 2m 11s
+BUILD SUCCESSFUL in 2m 7s
 6 actionable tasks: 6 executed
 valid: mcvoice-0.1.0-mc1.12-forge.jar (327 classes, 13 platform classes, metadata ['mcmod.info'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
