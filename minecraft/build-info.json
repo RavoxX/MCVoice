@@ -1,0 +1,30 @@
+{
+  "minecraft": "1.8.9",
+  "family": "legacy",
+  "java": 8,
+  "build_jdk": 17,
+  "jdks": [
+    8,
+    17,
+    21
+  ],
+  "loaders": [
+    "legacyfabric",
+    "forge"
+  ],
+  "builds": {
+    "legacyfabric": {
+      "buildgen": "legacyfabric",
+      "gradle": "9.4.0",
+      "gradle_jdk": 21,
+      "plugin_version": "1.16.1"
+    },
+    "forge": {
+      "buildgen": "legacyforge",
+      "gradle": "8.8",
+      "gradle_jdk": 17,
+      "plugin_version": "0.10.0.+"
+    }
+  },
+  "not_built": {}
+}
