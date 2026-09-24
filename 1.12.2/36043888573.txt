@@ -1,0 +1,1972 @@
+::group::URL https://maven.legacyfabric.net/legacy-looming/legacy-looming.gradle.plugin/maven-metadata.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>legacy-looming</groupId>
+  <artifactId>legacy-looming.gradle.plugin</artifactId>
+  <versioning>
+    <latest>1.16-SNAPSHOT</latest>
+    <release>1.16.1</release>
+    <versions>
+      <version>1.0-SNAPSHOT</version>
+      <version>1.0.9</version>
+      <version>1.0.10</version>
+      <version>1.0.11</version>
+      <version>1.0.13</version>
+      <version>1.0.14</version>
+      <version>1.0.17</version>
+      <version>1.1-SNAPSHOT</version>
+      <version>1.1.12</version>
+      <version>1.1.15</version>
+      <version>1.1.16</version>
+      <version>1.1.18</version>
+      <version>1.1.19</version>
+      <version>1.1.20</version>
+      <version>1.1.21</version>
+      <version>1.1.23</version>
+      <version>1.1.24</version>
+      <version>1.1.25</version>
+      <version>1.1.26</version>
+      <version>1.1.27</version>
+      <version>1.1.28</version>
+      <version>1.1.29</version>
+      <version>1.1.31</version>
+      <version>1.1.36</version>
+      <version>1.1.37</version>
+      <version>1.2-SNAPSHOT</version>
+      <version>1.2.32</version>
+      <version>1.2.33</version>
+      <version>1.2.34</version>
+      <version>1.2.35</version>
+      <version>1.2.38</version>
+      <version>1.2.39</version>
+      <version>1.2.40</version>
+      <version>1.2.41</version>
+      <version>1.2.43</version>
+      <version>1.2.44</version>
+      <version>1.2.46</version>
+      <version>1.2.47</version>
+      <version>1.3-SNAPSHOT</version>
+      <version>1.3.45</version>
+      <version>1.3.48</version>
+      <version>1.3.49</version>
+      <version>1.3.50</version>
+      <version>1.3.51</version>
+      <version>1.3.52</version>
+      <version>1.3.53</version>
+      <version>1.3.54</version>
+      <version>1.3.55</version>
+      <version>1.3.56</version>
+      <version>1.3.57</version>
+      <version>1.3.58</version>
+      <version>1.3.59</version>
+      <version>1.3.60</version>
+      <version>1.3.62</version>
+      <version>1.3.63</version>
+      <version>1.3.66</version>
+      <version>1.3.67</version>
+      <version>1.3.68</version>
+      <version>1.3.69</version>
+      <version>1.3.70</version>
+      <version>1.3.71</version>
+      <version>1.3.73</version>
+      <version>1.3.74</version>
+      <version>1.3.75</version>
+      <version>1.4-SNAPSHOT</version>
+      <version>1.4.1</version>
+      <version>1.4.2</version>
+      <version>1.3.77</version>
+      <version>1.4.3</version>
+      <version>1.4.5</version>
+      <version>1.5.2</version>
+      <version>1.5-SNAPSHOT</version>
+      <version>1.3.78</version>
+      <version>1.4.6</version>
+      <version>1.5.3</version>
+      <version>1.6.3</version>
+      <version>1.6-SNAPSHOT</version>
+      <version>1.6.4</version>
+      <version>1.7.3</version>
+      <version>1.7-SNAPSHOT</version>
+      <version>1.7.7</version>
+      <version>1.8.2</version>
+      <version>1.8-SNAPSHOT</version>
+      <version>1.9.2</version>
+      <version>1.9-SNAPSHOT</version>
+      <version>1.10.1</version>
+      <version>1.10-SNAPSHOT</version>
+      <version>1.11.1</version>
+      <version>1.11-SNAPSHOT</version>
+      <version>1.11.2</version>
+      <version>1.11.3</version>
+      <version>1.11.5</version>
+      <version>1.11.6</version>
+      <version>1.11.7</version>
+      <version>1.11.8</version>
+      <version>1.12.1</version>
+      <version>1.12-SNAPSHOT</version>
+      <version>1.13.2</version>
+      <version>1.13-SNAPSHOT</version>
+      <version>1.14.1</version>
+      <version>1.14-SNAPSHOT</version>
+      <version>1.15.1</version>
+      <version>1.15-SNAPSHOT</version>
+      <version>1.15.2</version>
+      <version>1.15.3</version>
+      <version>1.16.1</version>
+      <version>1.16-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20260528153616</lastUpdated>
+  </versioning>
+</metadata>
+
+::endgroup::
+::group::URL https://maven.legacyfabric.net/net/legacyfabric/legacy-looming/maven-metadata.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>net.legacyfabric</groupId>
+  <artifactId>legacy-looming</artifactId>
+  <versioning>
+    <latest>1.16-SNAPSHOT</latest>
+    <release>1.16.1</release>
+    <versions>
+      <version>1.0-SNAPSHOT</version>
+      <version>1.0.9</version>
+      <version>1.0.10</version>
+      <version>1.0.11</version>
+      <version>1.0.13</version>
+      <version>1.0.14</version>
+      <version>1.0.17</version>
+      <version>1.1-SNAPSHOT</version>
+      <version>1.1.12</version>
+      <version>1.1.15</version>
+      <version>1.1.16</version>
+      <version>1.1.18</version>
+      <version>1.1.19</version>
+      <version>1.1.20</version>
+      <version>1.1.21</version>
+      <version>1.1.23</version>
+      <version>1.1.24</version>
+      <version>1.1.25</version>
+      <version>1.1.26</version>
+      <version>1.1.27</version>
+      <version>1.1.28</version>
+      <version>1.1.29</version>
+      <version>1.1.31</version>
+      <version>1.1.36</version>
+      <version>1.1.37</version>
+      <version>1.2-SNAPSHOT</version>
+      <version>1.2.32</version>
+      <version>1.2.33</version>
+      <version>1.2.34</version>
+      <version>1.2.35</version>
+      <version>1.2.38</version>
+      <version>1.2.39</version>
+      <version>1.2.40</version>
+      <version>1.2.41</version>
+      <version>1.2.43</version>
+      <version>1.2.44</version>
+      <version>1.2.46</version>
+      <version>1.2.47</version>
+      <version>1.3-SNAPSHOT</version>
+      <version>1.3.45</version>
+      <version>1.3.48</version>
+      <version>1.3.49</version>
+      <version>1.3.50</version>
+      <version>1.3.51</version>
+      <version>1.3.52</version>
+      <version>1.3.53</version>
+      <version>1.3.54</version>
+      <version>1.3.55</version>
+      <version>1.3.56</version>
+      <version>1.3.57</version>
+      <version>1.3.58</version>
+      <version>1.3.59</version>
+      <version>1.3.60</version>
+      <version>1.3.62</version>
+      <version>1.3.63</version>
+      <version>1.3.66</version>
+      <version>1.3.67</version>
+      <version>1.3.68</version>
+      <version>1.3.69</version>
+      <version>1.3.70</version>
+      <version>1.3.71</version>
+      <version>1.3.73</version>
+      <version>1.3.74</version>
+      <version>1.3.75</version>
+      <version>1.4-SNAPSHOT</version>
+      <version>1.4.1</version>
+      <version>1.4.2</version>
+      <version>1.3.77</version>
+      <version>1.4.3</version>
+      <version>1.4.5</version>
+      <version>1.5.2</version>
+      <version>1.5-SNAPSHOT</version>
+      <version>1.3.78</version>
+      <version>1.4.6</version>
+      <version>1.5.3</version>
+      <version>1.6.3</version>
+      <version>1.6-SNAPSHOT</version>
+      <version>1.6.4</version>
+      <version>1.7.3</version>
+      <version>1.7-SNAPSHOT</version>
+      <version>1.7.7</version>
+      <version>1.8.2</version>
+      <version>1.8-SNAPSHOT</version>
+      <version>1.9.2</version>
+      <version>1.9-SNAPSHOT</version>
+      <version>1.10.1</version>
+      <version>1.10-SNAPSHOT</version>
+      <version>1.11.1</version>
+      <version>1.11-SNAPSHOT</version>
+      <version>1.11.2</version>
+      <version>1.11.3</version>
+      <version>1.11.5</version>
+      <version>1.11.6</version>
+      <version>1.11.7</version>
+      <version>1.11.8</version>
+      <version>1.12.1</version>
+      <version>1.12-SNAPSHOT</version>
+      <version>1.13.2</version>
+      <version>1.13-SNAPSHOT</version>
+      <version>1.14.1</version>
+      <version>1.14-SNAPSHOT</version>
+      <version>1.15.1</version>
+      <version>1.15-SNAPSHOT</version>
+      <version>1.15.2</version>
+      <version>1.15.3</version>
+      <version>1.16.1</version>
+      <version>1.16-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20260528153618</lastUpdated>
+  </versioning>
+</metadata>
+
+::endgroup::
+::group::URL https://maven.legacyfabric.net/net/legacyfabric/yarn/maven-metadata.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>net.legacyfabric</groupId>
+  <artifactId>yarn</artifactId>
+  <versioning>
+    <latest>1.8.9+build.604</latest>
+    <release>1.8.9+build.604</release>
+    <versions>
+      <version>1.6.4+build.382</version>
+      <version>1.4.7+build.382</version>
+      <version>1.5.2+build.382</version>
+      <version>1.7.10+build.382</version>
+      <version>1.3.2+build.382</version>
+      <version>1.10.2+build.382</version>
+      <version>1.9.4+build.382</version>
+      <version>1.8.9+build.382</version>
+      <version>1.11.2+build.382</version>
+      <version>1.12.2+build.382</version>
+      <version>1.8+build.382</version>
+      <version>1.13.2+build.382</version>
+      <version>1.10.2+build.383</version>
+      <version>1.4.7+build.383</version>
+      <version>1.11.2+build.383</version>
+      <version>1.12.2+build.383</version>
+      <version>1.6.4+build.383</version>
+      <version>1.13.2+build.383</version>
+      <version>1.7.10+build.383</version>
+      <version>1.8.9+build.383</version>
+      <version>1.9.4+build.383</version>
+      <version>1.8+build.383</version>
+      <version>1.4.7+build.384</version>
+      <version>1.6.4+build.384</version>
+      <version>1.3.2+build.384</version>
+      <version>1.8+build.384</version>
+      <version>1.5.2+build.384</version>
+      <version>1.7.10+build.384</version>
+      <version>1.12.2+build.384</version>
+      <version>1.9.4+build.384</version>
+      <version>1.11.2+build.384</version>
+      <version>1.8.9+build.384</version>
+      <version>1.13.2+build.384</version>
+      <version>1.4.7+build.385</version>
+      <version>1.7.10+build.385</version>
+      <version>1.8.9+build.385</version>
+      <version>1.11.2+build.385</version>
+      <version>1.3.2+build.385</version>
+      <version>1.5.2+build.385</version>
+      <version>1.9.4+build.385</version>
+      <version>1.10.2+build.385</version>
+      <version>1.8+build.385</version>
+      <version>1.12.2+build.385</version>
+      <version>1.6.4+build.385</version>
+      <version>1.13.2+build.385</version>
+      <version>1.3.2+build.386</version>
+      <version>1.4.7+build.386</version>
+      <version>1.7.10+build.386</version>
+      <version>1.5.2+build.386</version>
+      <version>1.9.4+build.386</version>
+      <version>1.8.9+build.386</version>
+      <version>1.10.2+build.386</version>
+      <version>1.6.4+build.386</version>
+      <version>1.8+build.386</version>
+      <version>1.11.2+build.386</version>
+      <version>1.12.2+build.386</version>
+      <version>1.13.2+build.386</version>
+      <version>1.4.7+build.387</version>
+      <version>1.6.4+build.387</version>
+      <version>1.5.2+build.387</version>
+      <version>1.7.10+build.387</version>
+      <version>1.8+build.387</version>
+      <version>1.10.2+build.387</version>
+      <version>1.8.9+build.387</version>
+      <version>1.11.2+build.387</version>
+      <version>1.9.4+build.387</version>
+      <version>1.12.2+build.387</version>
+      <version>1.3.2+build.387</version>
+      <version>1.13.2+build.387</version>
+      <version>1.4.7+build.388</version>
+      <version>1.3.2+build.388</version>
+      <version>1.9.4+build.388</version>
+      <version>1.10.2+build.388</version>
+      <version>1.11.2+build.388</version>
+      <version>1.8+build.388</version>
+      <version>1.5.2+build.388</version>
+      <version>1.6.4+build.388</version>
+      <version>1.7.10+build.388</version>
+      <version>1.13.2+build.388</version>
+      <version>1.8.9+build.388</version>
+      <version>1.12.2+build.388</version>
+      <version>1.3.2+build.390</version>
+      <version>1.8.9+build.390</version>
+      <version>1.11.2+build.390</version>
+      <version>1.10.2+build.390</version>
+      <version>1.9.4+build.390</version>
+      <version>1.7.10+build.390</version>
+      <version>1.6.4+build.390</version>
+      <version>1.4.7+build.390</version>
+      <version>1.12.2+build.390</version>
+      <version>1.8+build.390</version>
+      <version>1.13.2+build.390</version>
+      <version>1.5.2+build.390</version>
+      <version>1.10.2+build.391</version>
+      <version>1.3.2+build.391</version>
+      <version>1.5.2+build.391</version>
+      <version>1.7.10+build.391</version>
+      <version>1.12.2+build.391</version>
+      <version>1.13.2+build.391</version>
+      <version>1.4.7+build.391</version>
+      <version>1.6.4+build.391</version>
+      <version>1.8+build.391</version>
+      <version>1.9.4+build.391</version>
+      <version>1.8.9+build.391</version>
+      <version>1.4.7+build.392</version>
+      <version>1.3.2+build.392</version>
+      <version>1.5.2+build.392</version>
+      <version>1.6.4+build.392</version>
+      <version>1.12.2+build.392</version>
+      <version>1.7.10+build.392</version>
+      <version>1.8.9+build.392</version>
+      <version>1.9.4+build.392</version>
+      <version>1.8+build.392</version>
+      <version>1.10.2+build.392</version>
+      <version>1.11.2+build.392</version>
+      <version>1.13.2+build.392</version>
+      <version>1.4.7+build.393</version>
+      <version>1.6.4+build.393</version>
+      <version>1.11.2+build.393</version>
+      <version>1.10.2+build.393</version>
+      <version>1.8.9+build.393</version>
+      <version>1.9.4+build.393</version>
+      <version>1.13.2+build.393</version>
+      <version>1.5.2+build.393</version>
+      <version>1.12.2+build.393</version>
+      <version>1.3.2+build.393</version>
+      <version>1.7.10+build.393</version>
+      <version>1.8+build.393</version>
+      <version>1.4.7+build.394</version>
+      <version>1.7.10+build.394</version>
+      <version>1.8.9+build.394</version>
+      <version>1.9.4+build.394</version>
+      <version>1.8+build.394</version>
+      <version>1.10.2+build.394</version>
+      <version>1.6.4+build.394</version>
+      <version>1.13.2+build.394</version>
+      <version>1.3.2+build.394</version>
+      <version>1.11.2+build.394</version>
+      <version>1.12.2+build.394</version>
+      <version>1.6.4+build.395</version>
+      <version>1.5.2+build.395</version>
+      <version>1.7.10+build.395</version>
+      <version>1.11.2+build.395</version>
+      <version>1.9.4+build.395</version>
+      <version>1.3.2+build.395</version>
+      <version>1.12.2+build.395</version>
+      <version>1.8+build.395</version>
+      <version>1.13.2+build.395</version>
+      <version>1.10.2+build.395</version>
+      <version>1.4.7+build.395</version>
+      <version>1.8.9+build.395</version>
+      <version>1.4.7+build.398</version>
+      <version>1.7.10+build.398</version>
+      <version>1.3.2+build.398</version>
+      <version>1.8.9+build.398</version>
+      <version>1.8+build.398</version>
+      <version>1.9.4+build.398</version>
+      <version>1.5.2+build.398</version>
+      <version>1.6.4+build.398</version>
+      <version>1.12.2+build.398</version>
+      <version>1.13.2+build.398</version>
+      <version>1.11.2+build.398</version>
+      <version>1.10.2+build.398</version>
+      <version>1.9.4+build.410</version>
+      <version>1.9.4+build.413</version>
+      <version>1.8+build.418</version>
+      <version>1.9.4+build.419</version>
+      <version>1.13.2+build.420</version>
+      <version>1.12.2+build.421</version>
+      <version>1.7.1+build.421</version>
+      <version>1.8.8+build.421</version>
+      <version>1.4.1+build.421</version>
+      <version>1.8.2-pre6+build.421</version>
+      <version>1.4.4+build.421</version>
+      <version>1.13.2+build.435</version>
+      <version>1.13.2+build.438</version>
+      <version>1.3+build.441</version>
+      <version>1.4.4+build.441</version>
+      <version>1.4.1+build.441</version>
+      <version>1.3.1+build.441</version>
+      <version>1.4.3+build.441</version>
+      <version>1.6+build.441</version>
+      <version>1.6.1+build.441</version>
+      <version>1.7.1+build.441</version>
+      <version>1.4.6+build.441</version>
+      <version>1.7.10-pre2+build.441</version>
+      <version>1.7.10-pre1+build.441</version>
+      <version>1.4.5+build.441</version>
+      <version>1.5.1+build.441</version>
+      <version>1.4.2+build.441</version>
+      <version>1.4+build.441</version>
+      <version>1.6.2+build.441</version>
+      <version>1.7.10-pre3+build.441</version>
+      <version>1.5+build.441</version>
+      <version>1.6.3+build.441</version>
+      <version>1.7+build.441</version>
+      <version>1.7.2+build.441</version>
+      <version>1.8.1-pre2+build.441</version>
+      <version>1.7.6-pre1+build.441</version>
+      <version>1.8.1+build.441</version>
+      <version>1.7.10-pre4+build.441</version>
+      <version>1.8.1-pre1+build.441</version>
+      <version>1.8.2+build.441</version>
+      <version>1.7.6-pre2+build.441</version>
+      <version>1.7.4+build.441</version>
+      <version>1.7.7+build.441</version>
+      <version>1.8.1-pre5+build.441</version>
+      <version>1.8.1-pre4+build.441</version>
+      <version>1.7.3+build.441</version>
+      <version>1.7.6+build.441</version>
+      <version>1.8.2-pre1+build.441</version>
+      <version>1.7.8+build.441</version>
+      <version>1.8.2-pre2+build.441</version>
+      <version>1.7.5+build.441</version>
+      <version>1.8.1-pre3+build.441</version>
+      <version>1.8.2-pre3+build.441</version>
+      <version>1.8.2-pre5+build.441</version>
+      <version>1.8.2-pre6+build.441</version>
+      <version>1.8.2-pre7+build.441</version>
+      <version>1.8.3+build.441</version>
+      <version>1.8.2-pre4+build.441</version>
+      <version>1.8.5+build.441</version>
+      <version>1.8.7+build.441</version>
+      <version>1.8.6+build.441</version>
+      <version>1.8.4+build.441</version>
+      <version>1.8.8+build.441</version>
+      <version>1.3.2+build.442</version>
+      <version>1.10.2+build.442</version>
+      <version>1.9.4+build.442</version>
+      <version>1.8.9+build.442</version>
+      <version>1.6.4+build.442</version>
+      <version>1.7.10+build.442</version>
+      <version>1.5.2+build.442</version>
+      <version>1.8+build.442</version>
+      <version>1.11.2+build.442</version>
+      <version>1.12.2+build.442</version>
+      <version>1.4.7+build.442</version>
+      <version>1.13.2+build.442</version>
+      <version>1.8.9+build.446</version>
+      <version>1.12.2+build.446</version>
+      <version>1.4.7+build.446</version>
+      <version>1.3.2+build.446</version>
+      <version>1.8+build.446</version>
+      <version>1.9.4+build.446</version>
+      <version>1.6.4+build.446</version>
+      <version>1.13.2+build.446</version>
+      <version>1.7.10+build.446</version>
+      <version>1.11.2+build.446</version>
+      <version>1.5.2+build.446</version>
+      <version>1.8.9+build.447</version>
+      <version>1.10.2+build.447</version>
+      <version>1.8+build.447</version>
+      <version>1.9.4+build.447</version>
+      <version>1.11.2+build.447</version>
+      <version>1.3.2+build.447</version>
+      <version>1.12.2+build.447</version>
+      <version>1.13.2+build.447</version>
+      <version>1.7.10+build.447</version>
+      <version>1.5.2+build.447</version>
+      <version>1.4.7+build.447</version>
+      <version>1.6.4+build.447</version>
+      <version>1.8.9+build.450</version>
+      <version>1.9.4+build.450</version>
+      <version>1.12.2+build.450</version>
+      <version>1.8+build.450</version>
+      <version>1.11.2+build.450</version>
+      <version>1.3.2+build.450</version>
+      <version>1.4.7+build.450</version>
+      <version>1.7.10+build.450</version>
+      <version>1.13.2+build.450</version>
+      <version>1.10.2+build.450</version>
+      <version>1.6.4+build.450</version>
+      <version>1.5.2+build.450</version>
+      <version>1.8+build.451</version>
+      <version>1.10.2+build.451</version>
+      <version>1.11.2+build.451</version>
+      <version>1.12.2+build.451</version>
+      <version>1.3.2+build.451</version>
+      <version>1.8.9+build.451</version>
+      <version>1.13.2+build.451</version>
+      <version>1.6.4+build.451</version>
+      <version>1.9.4+build.451</version>
+      <version>1.4.7+build.451</version>
+      <version>1.7.10+build.451</version>
+      <version>1.5.2+build.451</version>
+      <version>1.4.4+build.451</version>
+      <version>1.4+build.451</version>
+      <version>1.4.5+build.451</version>
+      <version>1.3+build.451</version>
+      <version>1.3.1+build.451</version>
+      <version>1.4.2+build.451</version>
+      <version>1.7.10-pre1+build.451</version>
+      <version>1.4.3+build.451</version>
+      <version>1.6.3+build.451</version>
+      <version>1.6.1+build.451</version>
+      <version>1.6.2+build.451</version>
+      <version>1.7.10-pre3+build.451</version>
+      <version>1.5+build.451</version>
+      <version>1.7.1+build.451</version>
+      <version>1.4.1+build.451</version>
+      <version>1.7.10-pre2+build.451</version>
+      <version>1.5.1+build.451</version>
+      <version>1.6+build.451</version>
+      <version>1.7+build.451</version>
+      <version>1.8.1+build.451</version>
+      <version>1.7.2+build.451</version>
+      <version>1.7.5+build.451</version>
+      <version>1.8.1-pre5+build.451</version>
+      <version>1.7.4+build.451</version>
+      <version>1.8.1-pre1+build.451</version>
+      <version>1.7.6+build.451</version>
+      <version>1.8.2+build.451</version>
+      <version>1.8.1-pre4+build.451</version>
+      <version>1.7.6-pre1+build.451</version>
+      <version>1.7.6-pre2+build.451</version>
+      <version>1.8.1-pre3+build.451</version>
+      <version>1.8.2-pre2+build.451</version>
+      <version>1.8.1-pre2+build.451</version>
+      <version>1.7.10-pre4+build.451</version>
+      <version>1.7.8+build.451</version>
+      <version>1.8.2-pre3+build.451</version>
+      <version>1.7.7+build.451</version>
+      <version>1.8.2-pre4+build.451</version>
+      <version>1.8.2-pre7+build.451</version>
+      <version>1.8.5+build.451</version>
+      <version>1.8.8+build.451</version>
+      <version>1.8.7+build.451</version>
+      <version>1.8.2-pre6+build.451</version>
+      <version>1.8.6+build.451</version>
+      <version>1.8.2-pre5+build.451</version>
+      <version>1.8.3+build.451</version>
+      <version>1.9.4+build.454</version>
+      <version>1.4.7+build.454</version>
+      <version>1.8+build.454</version>
+      <version>1.10.2+build.454</version>
+      <version>1.3.2+build.454</version>
+      <version>1.11.2+build.454</version>
+      <version>1.13.2+build.454</version>
+      <version>1.5.2+build.454</version>
+      <version>1.12.2+build.454</version>
+      <version>1.6.4+build.454</version>
+      <version>1.7.10+build.454</version>
+      <version>1.10.2+build.455</version>
+      <version>1.8.9+build.455</version>
+      <version>1.3.2+build.455</version>
+      <version>1.12.2+build.455</version>
+      <version>1.4.7+build.455</version>
+      <version>1.9.4+build.455</version>
+      <version>1.13.2+build.455</version>
+      <version>1.8+build.455</version>
+      <version>1.11.2+build.455</version>
+      <version>1.6.4+build.455</version>
+      <version>1.7.10+build.455</version>
+      <version>1.5.2+build.455</version>
+      <version>1.8.9+build.456</version>
+      <version>1.8+build.456</version>
+      <version>1.9.4+build.456</version>
+      <version>1.3.2+build.456</version>
+      <version>1.11.2+build.456</version>
+      <version>1.12.2+build.456</version>
+      <version>1.13.2+build.456</version>
+      <version>1.10.2+build.456</version>
+      <version>1.4.7+build.456</version>
+      <version>1.5.2+build.456</version>
+      <version>1.6.4+build.456</version>
+      <version>1.7.10+build.456</version>
+      <version>1.10.2+build.457</version>
+      <version>1.11.2+build.457</version>
+      <version>1.9.4+build.457</version>
+      <version>1.12.2+build.457</version>
+      <version>1.8.9+build.457</version>
+      <version>1.8+build.457</version>
+      <version>1.6.4+build.457</version>
+      <version>1.13.2+build.457</version>
+      <version>1.3.2+build.457</version>
+      <version>1.5.2+build.457</version>
+      <version>1.7.10+build.457</version>
+      <version>1.8.9+build.458</version>
+      <version>1.11.2+build.458</version>
+      <version>1.3.2+build.458</version>
+      <version>1.4.7+build.458</version>
+      <version>1.13.2+build.458</version>
+      <version>1.12.2+build.458</version>
+      <version>1.6.4+build.458</version>
+      <version>1.8+build.458</version>
+      <version>1.9.4+build.458</version>
+      <version>1.5.2+build.458</version>
+      <version>1.7.10+build.458</version>
+      <version>1.10.2+build.458</version>
+      <version>1.8.9+build.481</version>
+      <version>1.8+build.481</version>
+      <version>1.12.2+build.481</version>
+      <version>1.3.2+build.481</version>
+      <version>1.4.7+build.481</version>
+      <version>1.5.2+build.481</version>
+      <version>1.11.2+build.481</version>
+      <version>1.6.4+build.481</version>
+      <version>1.9.4+build.481</version>
+      <version>1.10.2+build.481</version>
+      <version>1.13.2+build.481</version>
+      <version>1.7.10+build.481</version>
+      <version>1.10.2+build.514</version>
+      <version>1.8.9+build.514</version>
+      <version>1.11.2+build.514</version>
+      <version>1.4.7+build.514</version>
+      <version>1.8+build.514</version>
+      <version>1.3.2+build.514</version>
+      <version>1.9.4+build.514</version>
+      <version>1.7.10+build.514</version>
+      <version>1.5.2+build.514</version>
+      <version>1.12.2+build.514</version>
+      <version>1.6.4+build.514</version>
+      <version>1.4+build.514</version>
+      <version>1.3+build.514</version>
+      <version>1.4.3+build.514</version>
+      <version>1.4.2+build.514</version>
+      <version>1.4.1+build.514</version>
+      <version>1.3.1+build.514</version>
+      <version>1.4.4+build.514</version>
+      <version>1.4.6+build.514</version>
+      <version>1.4.5+build.514</version>
+      <version>1.6+build.514</version>
+      <version>1.5+build.514</version>
+      <version>1.5.1+build.514</version>
+      <version>1.7+build.514</version>
+      <version>1.7.1+build.514</version>
+      <version>1.6.1+build.514</version>
+      <version>1.6.3+build.514</version>
+      <version>1.7.10-pre1+build.514</version>
+      <version>1.7.10-pre2+build.514</version>
+      <version>1.7.10-pre4+build.514</version>
+      <version>1.7.10-pre3+build.514</version>
+      <version>1.6.2+build.514</version>
+      <version>1.7.5+build.514</version>
+      <version>1.7.6+build.514</version>
+      <version>1.7.3+build.514</version>
+      <version>1.7.6-pre1+build.514</version>
+      <version>1.7.7+build.514</version>
+      <version>1.8.1+build.514</version>
+      <version>1.7.2+build.514</version>
+      <version>1.7.4+build.514</version>
+      <version>1.7.8+build.514</version>
+      <version>1.8.1-pre2+build.514</version>
+      <version>1.8.1-pre1+build.514</version>
+      <version>1.7.6-pre2+build.514</version>
+      <version>1.8.2+build.514</version>
+      <version>1.8.1-pre5+build.514</version>
+      <version>1.8.1-pre4+build.514</version>
+      <version>1.8.1-pre3+build.514</version>
+      <version>1.8.2-pre1+build.514</version>
+      <version>1.8.2-pre2+build.514</version>
+      <version>1.8.2-pre5+build.514</version>
+      <version>1.8.2-pre3+build.514</version>
+      <version>1.8.4+build.514</version>
+      <version>1.8.6+build.514</version>
+      <version>1.8.7+build.514</version>
+      <version>1.8.2-pre7+build.514</version>
+      <version>1.8.3+build.514</version>
+      <version>1.8.5+build.514</version>
+      <version>1.8.2-pre4+build.514</version>
+      <version>1.8.2-pre6+build.514</version>
+      <version>1.8.8+build.514</version>
+      <version>1.8+build.515</version>
+      <version>1.10.2+build.515</version>
+      <version>1.8.9+build.515</version>
+      <version>1.13.2+build.515</version>
+      <version>1.7.10+build.515</version>
+      <version>1.9.4+build.515</version>
+      <version>1.3.2+build.515</version>
+      <version>1.6.4+build.515</version>
+      <version>1.4.7+build.515</version>
+      <version>1.11.2+build.515</version>
+      <version>1.12.2+build.515</version>
+      <version>1.5.2+build.515</version>
+      <version>1.8+build.523</version>
+      <version>1.8.9+build.523</version>
+      <version>1.10.2+build.523</version>
+      <version>1.13.2+build.523</version>
+      <version>1.11.2+build.523</version>
+      <version>1.9.4+build.523</version>
+      <version>1.4.7+build.523</version>
+      <version>1.3.2+build.523</version>
+      <version>1.7.10+build.523</version>
+      <version>1.12.2+build.523</version>
+      <version>1.6.4+build.523</version>
+      <version>1.5.2+build.523</version>
+      <version>1.8+build.524</version>
+      <version>1.9.4+build.524</version>
+      <version>1.3.2+build.524</version>
+      <version>1.8.9+build.524</version>
+      <version>1.12.2+build.524</version>
+      <version>1.13.2+build.524</version>
+      <version>1.10.2+build.524</version>
+      <version>1.11.2+build.524</version>
+      <version>1.4.7+build.524</version>
+      <version>1.5.2+build.524</version>
+      <version>1.6.4+build.524</version>
+      <version>1.7.10+build.524</version>
+      <version>1.9.4+build.525</version>
+      <version>1.11.2+build.525</version>
+      <version>1.3.2+build.525</version>
+      <version>1.8.9+build.525</version>
+      <version>1.10.2+build.525</version>
+      <version>1.12.2+build.525</version>
+      <version>1.4.7+build.525</version>
+      <version>1.8+build.525</version>
+      <version>1.5.2+build.525</version>
+      <version>1.6.4+build.525</version>
+      <version>1.13.2+build.525</version>
+      <version>1.7.10+build.525</version>
+      <version>1.8+build.527</version>
+      <version>1.9.4+build.527</version>
+      <version>1.3.2+build.527</version>
+      <version>1.12.2+build.527</version>
+      <version>1.13.2+build.527</version>
+      <version>1.8.9+build.527</version>
+      <version>1.11.2+build.527</version>
+      <version>1.10.2+build.527</version>
+      <version>1.7.10+build.527</version>
+      <version>1.4.7+build.527</version>
+      <version>1.5.2+build.527</version>
+      <version>1.6.4+build.527</version>
+      <version>1.10.2+build.528</version>
+      <version>1.11.2+build.528</version>
+      <version>1.4.7+build.528</version>
+      <version>1.13.2+build.528</version>
+      <version>1.12.2+build.528</version>
+      <version>1.3.2+build.528</version>
+      <version>1.6.4+build.528</version>
+      <version>1.5.2+build.528</version>
+      <version>1.9.4+build.528</version>
+      <version>1.7.10+build.528</version>
+      <version>1.8.9+build.528</version>
+      <version>1.9.4+build.529</version>
+      <version>1.11.2+build.529</version>
+      <version>1.12.2+build.529</version>
+      <version>1.3.2+build.529</version>
+      <version>1.4.7+build.529</version>
+      <version>1.6.4+build.529</version>
+      <version>1.10.2+build.529</version>
+      <version>1.5.2+build.529</version>
+      <version>1.8.9+build.529</version>
+      <version>1.13.2+build.529</version>
+      <version>1.7.10+build.529</version>
+      <version>1.10.2+build.530</version>
+      <version>1.3.2+build.530</version>
+      <version>1.8.9+build.530</version>
+      <version>1.5.2+build.530</version>
+      <version>1.9.4+build.530</version>
+      <version>1.11.2+build.530</version>
+      <version>1.8+build.530</version>
+      <version>1.4.7+build.530</version>
+      <version>1.12.2+build.530</version>
+      <version>1.13.2+build.530</version>
+      <version>1.7.10+build.530</version>
+      <version>1.6.4+build.530</version>
+      <version>1.10.2+build.531</version>
+      <version>1.9.4+build.531</version>
+      <version>1.8.9+build.531</version>
+      <version>1.8+build.531</version>
+      <version>1.11.2+build.531</version>
+      <version>1.3.2+build.531</version>
+      <version>1.13.2+build.531</version>
+      <version>1.5.2+build.531</version>
+      <version>1.7.10+build.531</version>
+      <version>1.12.2+build.531</version>
+      <version>1.4.7+build.531</version>
+      <version>1.6.4+build.531</version>
+      <version>1.10.2+build.532</version>
+      <version>1.13.2+build.532</version>
+      <version>1.12.2+build.532</version>
+      <version>1.11.2+build.532</version>
+      <version>1.4.7+build.532</version>
+      <version>1.8.9+build.532</version>
+      <version>1.3.2+build.532</version>
+      <version>1.7.10+build.532</version>
+      <version>1.6.4+build.532</version>
+      <version>1.8+build.532</version>
+      <version>1.5.2+build.532</version>
+      <version>1.9.4+build.532</version>
+      <version>1.4.7+build.533</version>
+      <version>1.11.2+build.533</version>
+      <version>1.8.9+build.533</version>
+      <version>1.10.2+build.533</version>
+      <version>1.9.4+build.533</version>
+      <version>1.6.4+build.533</version>
+      <version>1.13.2+build.533</version>
+      <version>1.5.2+build.533</version>
+      <version>1.8+build.533</version>
+      <version>1.3.2+build.533</version>
+      <version>1.12.2+build.533</version>
+      <version>1.7.10+build.533</version>
+      <version>1.12.2+build.535</version>
+      <version>1.11.2+build.535</version>
+      <version>1.10.2+build.535</version>
+      <version>1.3.2+build.535</version>
+      <version>1.4.7+build.535</version>
+      <version>1.13.2+build.535</version>
+      <version>1.8.9+build.535</version>
+      <version>1.5.2+build.535</version>
+      <version>1.8+build.535</version>
+      <version>1.7.10+build.535</version>
+      <version>1.6.4+build.535</version>
+      <version>1.9.4+build.535</version>
+      <version>1.10.2+build.537</version>
+      <version>1.12.2+build.537</version>
+      <version>1.9.4+build.538</version>
+      <version>1.8+build.538</version>
+      <version>1.10.2+build.538</version>
+      <version>1.13.2+build.538</version>
+      <version>1.4.7+build.538</version>
+      <version>1.8.9+build.539</version>
+      <version>1.8+build.539</version>
+      <version>1.10.2+build.539</version>
+      <version>1.9.4+build.539</version>
+      <version>1.4.7+build.539</version>
+      <version>1.12.2+build.539</version>
+      <version>1.6.4+build.539</version>
+      <version>1.13.2+build.539</version>
+      <version>1.7.10+build.539</version>
+      <version>1.5.2+build.539</version>
+      <version>1.10.2+build.541</version>
+      <version>1.12.2+build.541</version>
+      <version>1.4.7+build.541</version>
+      <version>1.11.2+build.541</version>
+      <version>1.3.2+build.541</version>
+      <version>1.13.2+build.541</version>
+      <version>1.8.9+build.541</version>
+      <version>1.6.4+build.541</version>
+      <version>1.9.4+build.541</version>
+      <version>1.7.10+build.541</version>
+      <version>1.8+build.541</version>
+      <version>1.8.9+build.550</version>
+      <version>1.11.2+build.550</version>
+      <version>1.8.9+build.551</version>
+      <version>1.11.2+build.551</version>
+      <version>1.3.2+build.551</version>
+      <version>1.6.4+build.551</version>
+      <version>1.9.4+build.551</version>
+      <version>1.12.2+build.551</version>
+      <version>1.4.7+build.551</version>
+      <version>1.7.10+build.551</version>
+      <version>1.10.2+build.551</version>
+      <version>1.13.2+build.551</version>
+      <version>1.5.2+build.551</version>
+      <version>1.8+build.551</version>
+      <version>1.4+build.551</version>
+      <version>1.3+build.551</version>
+      <version>1.8.1+build.551</version>
+      <version>1.8.2-pre1+build.551</version>
+      <version>1.6+build.551</version>
+      <version>1.7+build.551</version>
+      <version>1.7.7+build.551</version>
+      <version>1.5+build.551</version>
+      <version>1.8.2-pre2+build.551</version>
+      <version>1.8.1-pre2+build.551</version>
+      <version>1.8.2+build.551</version>
+      <version>1.3.1+build.551</version>
+      <version>1.4.1+build.551</version>
+      <version>1.8.2-pre3+build.551</version>
+      <version>1.6.1+build.551</version>
+      <version>1.7.1+build.551</version>
+      <version>1.8.3+build.551</version>
+      <version>1.7.8+build.551</version>
+      <version>1.5.1+build.551</version>
+      <version>1.4.2+build.551</version>
+      <version>1.8.2-pre4+build.551</version>
+      <version>1.8.1-pre4+build.551</version>
+      <version>1.8.4+build.551</version>
+      <version>1.6.2+build.551</version>
+      <version>1.7.2+build.551</version>
+      <version>1.4.3+build.551</version>
+      <version>1.8.1-pre5+build.551</version>
+      <version>1.8.2-pre5+build.551</version>
+      <version>1.7.10-pre1+build.551</version>
+      <version>1.8.5+build.551</version>
+      <version>1.4.4+build.551</version>
+      <version>1.8.2-pre6+build.551</version>
+      <version>1.8.6+build.551</version>
+      <version>1.7.3+build.551</version>
+      <version>1.6.3+build.551</version>
+      <version>1.7.10-pre2+build.551</version>
+      <version>1.8.2-pre7+build.551</version>
+      <version>1.4.5+build.551</version>
+      <version>1.8.7+build.551</version>
+      <version>1.7.4+build.551</version>
+      <version>1.8.8+build.551</version>
+      <version>1.4.6+build.551</version>
+      <version>1.7.10-pre3+build.551</version>
+      <version>1.7.5+build.551</version>
+      <version>1.7.10-pre4+build.551</version>
+      <version>1.7.6-pre1+build.551</version>
+      <version>1.7.6-pre2+build.551</version>
+      <version>1.7.6+build.551</version>
+      <version>1.3.2+build.562</version>
+      <version>1.8.9+build.562</version>
+      <version>1.11.2+build.562</version>
+      <version>1.6.4+build.562</version>
+      <version>1.9.4+build.562</version>
+      <version>1.4.7+build.562</version>
+      <version>1.12.2+build.562</version>
+      <version>1.7.10+build.562</version>
+      <version>1.10.2+build.562</version>
+      <version>1.5.2+build.562</version>
+      <version>1.13.2+build.562</version>
+      <version>1.8+build.562</version>
+      <version>1.8.9+build.563</version>
+      <version>1.3.2+build.563</version>
+      <version>1.6.4+build.563</version>
+      <version>1.9.4+build.563</version>
+      <version>1.12.2+build.563</version>
+      <version>1.4.7+build.563</version>
+      <version>1.7.10+build.563</version>
+      <version>1.10.2+build.563</version>
+      <version>1.13.2+build.563</version>
+      <version>1.5.2+build.563</version>
+      <version>1.8+build.563</version>
+      <version>1.8.9+build.565</version>
+      <version>1.3.2+build.565</version>
+      <version>1.11.2+build.565</version>
+      <version>1.6.4+build.565</version>
+      <version>1.9.4+build.565</version>
+      <version>1.4.7+build.565</version>
+      <version>1.12.2+build.565</version>
+      <version>1.10.2+build.565</version>
+      <version>1.7.10+build.565</version>
+      <version>1.5.2+build.565</version>
+      <version>1.13.2+build.565</version>
+      <version>1.8+build.565</version>
+      <version>1.8.9+build.568</version>
+      <version>1.11.2+build.568</version>
+      <version>1.3.2+build.568</version>
+      <version>1.6.4+build.568</version>
+      <version>1.9.4+build.568</version>
+      <version>1.12.2+build.568</version>
+      <version>1.4.7+build.568</version>
+      <version>1.10.2+build.568</version>
+      <version>1.7.10+build.568</version>
+      <version>1.13.2+build.568</version>
+      <version>1.5.2+build.568</version>
+      <version>1.8+build.568</version>
+      <version>1.11.2+build.569</version>
+      <version>1.8.9+build.569</version>
+      <version>1.3.2+build.569</version>
+      <version>1.6.4+build.569</version>
+      <version>1.12.2+build.569</version>
+      <version>1.4.7+build.569</version>
+      <version>1.7.10+build.569</version>
+      <version>1.13.2+build.569</version>
+      <version>1.5.2+build.569</version>
+      <version>1.8+build.569</version>
+      <version>1.9.4+build.569</version>
+      <version>1.10.2+build.569</version>
+      <version>1.8.9+build.570</version>
+      <version>1.11.2+build.570</version>
+      <version>1.3.2+build.570</version>
+      <version>1.9.4+build.570</version>
+      <version>1.12.2+build.570</version>
+      <version>1.6.4+build.570</version>
+      <version>1.4.7+build.570</version>
+      <version>1.10.2+build.570</version>
+      <version>1.13.2+build.570</version>
+      <version>1.7.10+build.570</version>
+      <version>1.5.2+build.570</version>
+      <version>1.8+build.570</version>
+      <version>1.8.9+build.571</version>
+      <version>1.11.2+build.571</version>
+      <version>1.3.2+build.571</version>
+      <version>1.6.4+build.571</version>
+      <version>1.9.4+build.571</version>
+      <version>1.12.2+build.571</version>
+      <version>1.4.7+build.571</version>
+      <version>1.10.2+build.571</version>
+      <version>1.7.10+build.571</version>
+      <version>1.13.2+build.571</version>
+      <version>1.8+build.571</version>
+      <version>1.5.2+build.571</version>
+      <version>1.8.9+build.573</version>
+      <version>1.3.2+build.573</version>
+      <version>1.11.2+build.573</version>
+      <version>1.6.4+build.573</version>
+      <version>1.9.4+build.573</version>
+      <version>1.4.7+build.573</version>
+      <version>1.12.2+build.573</version>
+      <version>1.10.2+build.573</version>
+      <version>1.7.10+build.573</version>
+      <version>1.13.2+build.573</version>
+      <version>1.5.2+build.573</version>
+      <version>1.8+build.573</version>
+      <version>1.8.9+build.575</version>
+      <version>1.11.2+build.575</version>
+      <version>1.3.2+build.575</version>
+      <version>1.6.4+build.575</version>
+      <version>1.9.4+build.575</version>
+      <version>1.12.2+build.575</version>
+      <version>1.4.7+build.575</version>
+      <version>1.10.2+build.575</version>
+      <version>1.7.10+build.575</version>
+      <version>1.13.2+build.575</version>
+      <version>1.5.2+build.575</version>
+      <version>1.8+build.575</version>
+      <version>1.8.9+build.576</version>
+      <version>1.3.2+build.576</version>
+      <version>1.11.2+build.576</version>
+      <version>1.6.4+build.576</version>
+      <version>1.9.4+build.576</version>
+      <version>1.4.7+build.576</version>
+      <version>1.12.2+build.576</version>
+      <version>1.7.10+build.576</version>
+      <version>1.10.2+build.576</version>
+      <version>1.13.2+build.576</version>
+      <version>1.8+build.576</version>
+      <version>1.5.2+build.576</version>
+      <version>1.3+build.601</version>
+      <version>1.4+build.601</version>
+      <version>1.5+build.601</version>
+      <version>15w14a+build.601</version>
+      <version>1.7+build.601</version>
+      <version>1.8.2-pre1+build.601</version>
+      <version>1.6+build.601</version>
+      <version>1.8.1-pre1+build.601</version>
+      <version>1.8+build.601</version>
+      <version>1.9.4+build.601</version>
+      <version>1.3.1+build.601</version>
+      <version>1.4.1+build.601</version>
+      <version>1.5.1+build.601</version>
+      <version>1.7.8+build.601</version>
+      <version>1.7.1+build.601</version>
+      <version>1.6.1+build.601</version>
+      <version>1.8.2-pre2+build.601</version>
+      <version>1.3.2+build.601</version>
+      <version>1.8.1-pre2+build.601</version>
+      <version>1.8.1+build.601</version>
+      <version>1.4.2+build.601</version>
+      <version>1.10.2+build.601</version>
+      <version>1.5.2+build.601</version>
+      <version>1.7.2+build.601</version>
+      <version>1.8.2-pre3+build.601</version>
+      <version>1.4.3+build.601</version>
+      <version>1.8.1-pre3+build.601</version>
+      <version>1.8.2+build.601</version>
+      <version>1.6.2+build.601</version>
+      <version>1.7.10-pre1+build.601</version>
+      <version>1.11.2+build.601</version>
+      <version>1.7.3+build.601</version>
+      <version>1.4.4+build.601</version>
+      <version>1.8.2-pre4+build.601</version>
+      <version>1.6.3+build.601</version>
+      <version>1.8.1-pre4+build.601</version>
+      <version>1.7.10-pre2+build.601</version>
+      <version>1.8.3+build.601</version>
+      <version>1.7.4+build.601</version>
+      <version>1.4.5+build.601</version>
+      <version>1.6.4+build.601</version>
+      <version>1.12.2+build.601</version>
+      <version>1.8.2-pre5+build.601</version>
+      <version>1.7.10-pre3+build.601</version>
+      <version>1.8.1-pre5+build.601</version>
+      <version>1.4.6+build.601</version>
+      <version>1.7.5+build.601</version>
+      <version>1.8.2-pre6+build.601</version>
+      <version>1.7.10-pre4+build.601</version>
+      <version>1.4.7+build.601</version>
+      <version>1.13.2+build.601</version>
+      <version>1.7.6-pre1+build.601</version>
+      <version>1.8.2-pre7+build.601</version>
+      <version>1.7.10+build.601</version>
+      <version>1.7.6-pre2+build.601</version>
+      <version>1.7.6+build.601</version>
+      <version>1.8.4+build.601</version>
+      <version>1.8.5+build.601</version>
+      <version>1.8.6+build.601</version>
+      <version>1.8.7+build.601</version>
+      <version>1.8.8+build.601</version>
+      <version>1.8.9+build.601</version>
+      <version>1.4+build.602</version>
+      <version>1.3+build.602</version>
+      <version>1.5+build.602</version>
+      <version>1.7+build.602</version>
+      <version>1.8+build.602</version>
+      <version>15w14a+build.602</version>
+      <version>1.8.1-pre1+build.602</version>
+      <version>1.9.4+build.602</version>
+      <version>1.6+build.602</version>
+      <version>1.4.1+build.602</version>
+      <version>1.3.1+build.602</version>
+      <version>1.7.7+build.602</version>
+      <version>1.5.1+build.602</version>
+      <version>1.8.1+build.602</version>
+      <version>1.6.1+build.602</version>
+      <version>1.3.2+build.602</version>
+      <version>1.4.2+build.602</version>
+      <version>1.8.1-pre2+build.602</version>
+      <version>1.10.2+build.602</version>
+      <version>1.8.2-pre2+build.602</version>
+      <version>1.7.8+build.602</version>
+      <version>1.7.2+build.602</version>
+      <version>1.5.2+build.602</version>
+      <version>1.6.2+build.602</version>
+      <version>1.4.3+build.602</version>
+      <version>1.8.2+build.602</version>
+      <version>1.8.1-pre3+build.602</version>
+      <version>1.7.3+build.602</version>
+      <version>1.7.10-pre1+build.602</version>
+      <version>1.8.2-pre3+build.602</version>
+      <version>1.11.2+build.602</version>
+      <version>1.6.3+build.602</version>
+      <version>1.4.4+build.602</version>
+      <version>1.8.3+build.602</version>
+      <version>1.8.1-pre4+build.602</version>
+      <version>1.7.10-pre2+build.602</version>
+      <version>1.7.4+build.602</version>
+      <version>1.6.4+build.602</version>
+      <version>1.4.5+build.602</version>
+      <version>1.8.2-pre4+build.602</version>
+      <version>1.12.2+build.602</version>
+      <version>1.8.4+build.602</version>
+      <version>1.7.5+build.602</version>
+      <version>1.7.10-pre3+build.602</version>
+      <version>1.4.6+build.602</version>
+      <version>1.8.1-pre5+build.602</version>
+      <version>1.8.2-pre5+build.602</version>
+      <version>1.4.7+build.602</version>
+      <version>1.7.6-pre1+build.602</version>
+      <version>1.8.5+build.602</version>
+      <version>1.7.10-pre4+build.602</version>
+      <version>1.13.2+build.602</version>
+      <version>1.8.2-pre6+build.602</version>
+      <version>1.7.6-pre2+build.602</version>
+      <version>1.7.10+build.602</version>
+      <version>1.8.6+build.602</version>
+      <version>1.8.2-pre7+build.602</version>
+      <version>1.7.6+build.602</version>
+      <version>1.8.7+build.602</version>
+      <version>1.8.8+build.602</version>
+      <version>1.8.9+build.602</version>
+      <version>1.4+build.603</version>
+      <version>1.6+build.603</version>
+      <version>1.5+build.603</version>
+      <version>1.7+build.603</version>
+      <version>1.8.1-pre1+build.603</version>
+      <version>1.8+build.603</version>
+      <version>1.8.2-pre1+build.603</version>
+      <version>1.9.4+build.603</version>
+      <version>1.7.7+build.603</version>
+      <version>15w14a+build.603</version>
+      <version>1.3+build.603</version>
+      <version>1.4.1+build.603</version>
+      <version>1.6.1+build.603</version>
+      <version>1.5.1+build.603</version>
+      <version>1.7.1+build.603</version>
+      <version>1.8.1-pre2+build.603</version>
+      <version>1.8.1+build.603</version>
+      <version>1.7.8+build.603</version>
+      <version>1.3.1+build.603</version>
+      <version>1.8.2-pre2+build.603</version>
+      <version>1.10.2+build.603</version>
+      <version>1.4.2+build.603</version>
+      <version>1.6.2+build.603</version>
+      <version>1.5.2+build.603</version>
+      <version>1.7.2+build.603</version>
+      <version>1.3.2+build.603</version>
+      <version>1.8.1-pre3+build.603</version>
+      <version>1.4.3+build.603</version>
+      <version>1.6.3+build.603</version>
+      <version>1.7.10-pre1+build.603</version>
+      <version>1.8.2+build.603</version>
+      <version>1.8.2-pre3+build.603</version>
+      <version>1.11.2+build.603</version>
+      <version>1.7.3+build.603</version>
+      <version>1.4.4+build.603</version>
+      <version>1.6.4+build.603</version>
+      <version>1.8.1-pre4+build.603</version>
+      <version>1.7.10-pre2+build.603</version>
+      <version>1.8.3+build.603</version>
+      <version>1.8.2-pre4+build.603</version>
+      <version>1.7.4+build.603</version>
+      <version>1.4.5+build.603</version>
+      <version>1.12.2+build.603</version>
+      <version>1.8.1-pre5+build.603</version>
+      <version>1.7.10-pre3+build.603</version>
+      <version>1.7.5+build.603</version>
+      <version>1.8.4+build.603</version>
+      <version>1.8.2-pre5+build.603</version>
+      <version>1.7.10-pre4+build.603</version>
+      <version>1.4.7+build.603</version>
+      <version>1.13.2+build.603</version>
+      <version>1.7.6-pre1+build.603</version>
+      <version>1.8.5+build.603</version>
+      <version>1.8.2-pre6+build.603</version>
+      <version>1.7.10+build.603</version>
+      <version>1.7.6-pre2+build.603</version>
+      <version>1.8.6+build.603</version>
+      <version>1.8.2-pre7+build.603</version>
+      <version>1.7.6+build.603</version>
+      <version>1.8.7+build.603</version>
+      <version>1.8.8+build.603</version>
+      <version>1.8.9+build.603</version>
+      <version>13w47a+build.603</version>
+      <version>13w47b+build.603</version>
+      <version>1.3+build.604</version>
+      <version>1.5+build.604</version>
+      <version>13w47a+build.604</version>
+      <version>1.7+build.604</version>
+      <version>1.6+build.604</version>
+      <version>1.4+build.604</version>
+      <version>1.8.1-pre1+build.604</version>
+      <version>1.9.4+build.604</version>
+      <version>1.8.2-pre1+build.604</version>
+      <version>1.3.1+build.604</version>
+      <version>1.7.7+build.604</version>
+      <version>1.5.1+build.604</version>
+      <version>13w47b+build.604</version>
+      <version>1.6.1+build.604</version>
+      <version>1.7.1+build.604</version>
+      <version>1.4.1+build.604</version>
+      <version>1.8.1-pre2+build.604</version>
+      <version>1.3.2+build.604</version>
+      <version>1.8+build.604</version>
+      <version>1.10.2+build.604</version>
+      <version>1.7.8+build.604</version>
+      <version>1.8.2-pre2+build.604</version>
+      <version>1.5.2+build.604</version>
+      <version>1.6.2+build.604</version>
+      <version>1.4.2+build.604</version>
+      <version>13w47c+build.604</version>
+      <version>1.7.2+build.604</version>
+      <version>1.8.1-pre3+build.604</version>
+      <version>1.7.10-pre1+build.604</version>
+      <version>1.8.1+build.604</version>
+      <version>1.8.2-pre3+build.604</version>
+      <version>1.11.2+build.604</version>
+      <version>1.6.3+build.604</version>
+      <version>1.4.3+build.604</version>
+      <version>13w47d+build.604</version>
+      <version>1.7.3+build.604</version>
+      <version>1.7.10-pre2+build.604</version>
+      <version>1.8.1-pre4+build.604</version>
+      <version>1.4.4+build.604</version>
+      <version>1.8.2+build.604</version>
+      <version>1.8.2-pre4+build.604</version>
+      <version>1.6.4+build.604</version>
+      <version>13w47e+build.604</version>
+      <version>1.7.4+build.604</version>
+      <version>1.12.2+build.604</version>
+      <version>1.7.10-pre3+build.604</version>
+      <version>1.4.5+build.604</version>
+      <version>1.8.1-pre5+build.604</version>
+      <version>1.8.3+build.604</version>
+      <version>1.8.2-pre5+build.604</version>
+      <version>13w48a+build.604</version>
+      <version>1.7.5+build.604</version>
+      <version>1.7.10-pre4+build.604</version>
+      <version>1.4.6+build.604</version>
+      <version>1.13.2+build.604</version>
+      <version>13w48b+build.604</version>
+      <version>1.8.4+build.604</version>
+      <version>1.8.2-pre6+build.604</version>
+      <version>1.7.6-pre1+build.604</version>
+      <version>1.4.7+build.604</version>
+      <version>13w49a+build.604</version>
+      <version>1.8.5+build.604</version>
+      <version>1.7.6-pre2+build.604</version>
+      <version>1.8.2-pre7+build.604</version>
+      <version>1.7.6+build.604</version>
+      <version>15w14a+build.604</version>
+      <version>1.8.7+build.604</version>
+      <version>1.8.8+build.604</version>
+      <version>1.8.9+build.604</version>
+    </versions>
+    <lastUpdated>20260205191152</lastUpdated>
+  </versioning>
+</metadata>
+
+::endgroup::
+::group::URL https://repo.essential.gg/repository/maven-public/gg/essential/loom/gg.essential.loom.gradle.plugin/maven-metadata.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>gg.essential.loom</groupId>
+  <artifactId>gg.essential.loom.gradle.plugin</artifactId>
+  <versioning>
+    <latest>1.15.50</latest>
+    <release>1.15.50</release>
+    <versions>
+      <version>0.10.0.0</version>
+      <version>0.10.0.1</version>
+      <version>0.10.0.2</version>
+      <version>0.10.0.3</version>
+      <version>0.10.0.4</version>
+      <version>0.10.0.5</version>
+      <version>1.2.0</version>
+      <version>1.2.1</version>
+      <version>1.2.2</version>
+      <version>1.2.5</version>
+      <version>1.2.6</version>
+      <version>1.2.7</version>
+      <version>1.2.8</version>
+      <version>1.3.10</version>
+      <version>1.3.11</version>
+      <version>1.3.12</version>
+      <version>1.3.9</version>
+      <version>1.4.13</version>
+      <version>1.4.14</version>
+      <version>1.5.15</version>
+      <version>1.6.16</version>
+      <version>1.6.17</version>
+      <version>1.6.18</version>
+      <version>1.6.19</version>
+      <version>1.6.20</version>
+      <version>1.6.21</version>
+      <version>1.7.23</version>
+      <version>1.7.25</version>
+      <version>1.7.27</version>
+      <version>1.7.28</version>
+      <version>1.7.30</version>
+      <version>1.9.24</version>
+      <version>1.9.26</version>
+      <version>1.9.29</version>
+      <version>1.9.31</version>
+      <version>1.9.32</version>
+      <version>1.10.33</version>
+      <version>1.10.34</version>
+      <version>1.7.35</version>
+      <version>1.10.36</version>
+      <version>1.11.37</version>
+      <version>1.11.38</version>
+      <version>1.11.39</version>
+      <version>1.13.40</version>
+      <version>1.13.41</version>
+      <version>1.13.42</version>
+      <version>1.13.43</version>
+      <version>1.13.44</version>
+      <version>1.15.45</version>
+      <version>1.15.46</version>
+      <version>1.15.47</version>
+      <version>1.15.48</version>
+      <version>1.15.49</version>
+      <version>1.15.50</version>
+    </versions>
+    <lastUpdated>20260415085106</lastUpdated>
+  </versioning>
+</metadata>
+
+::endgroup::
+::group::URL https://raw.githubusercontent.com/romangraef/Forge1.8.9Template/master/build.gradle.kts
+import org.apache.commons.lang3.SystemUtils
+
+plugins {
+    idea
+    java
+    id("gg.essential.loom") version "0.10.0.+"
+    id("dev.architectury.architectury-pack200") version "0.1.3"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+}
+
+//Constants:
+
+val baseGroup: String by project
+val mcVersion: String by project
+val version: String by project
+val mixinGroup = "$baseGroup.mixin"
+val modid: String by project
+val transformerFile = file("src/main/resources/accesstransformer.cfg")
+
+// Toolchains:
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
+// Minecraft configuration:
+loom {
+    log4jConfigs.from(file("log4j2.xml"))
+    launchConfigs {
+        "client" {
+            // If you don't want mixins, remove these lines
+            property("mixin.debug", "true")
+            arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+        }
+    }
+    runConfigs {
+        "client" {
+            if (SystemUtils.IS_OS_MAC_OSX) {
+                // This argument causes a crash on macOS
+                vmArgs.remove("-XstartOnFirstThread")
+            }
+        }
+        remove(getByName("server"))
+    }
+    forge {
+        pack200Provider.set(dev.architectury.pack200.java.Pack200Adapter())
+        // If you don't want mixins, remove this lines
+        mixinConfig("mixins.$modid.json")
+	    if (transformerFile.exists()) {
+			println("Installing access transformer")
+		    accessTransformer(transformerFile)
+	    }
+    }
+    // If you don't want mixins, remove these lines
+    mixin {
+        defaultRefmapName.set("mixins.$modid.refmap.json")
+    }
+}
+
+sourceSets.main {
+    output.setResourcesDir(sourceSets.main.flatMap { it.java.classesDirectory })
+}
+
+// Dependencies:
+
+repositories {
+    mavenCentral()
+    maven("https://repo.spongepowered.org/maven/")
+    // If you don't want to log in with your real minecraft account, remove this line
+    maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+}
+
+val shadowImpl: Configuration by configurations.creating {
+    configurations.implementation.get().extendsFrom(this)
+}
+
+dependencies {
+    minecraft("com.mojang:minecraft:1.8.9")
+    mappings("de.oceanlabs.mcp:mcp_stable:22-1.8.9")
+    forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
+
+    // If you don't want mixins, remove these lines
+    shadowImpl("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
+        isTransitive = false
+    }
+    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT")
+
+    // If you don't want to log in with your real minecraft account, remove this line
+    runtimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.2.1")
+
+}
+
+// Tasks:
+
+tasks.withType(JavaCompile::class) {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType(org.gradle.jvm.tasks.Jar::class) {
+    archiveBaseName.set(modid)
+    manifest.attributes.run {
+        this["FMLCorePluginContainsFMLMod"] = "true"
+        this["ForceLoadAsMod"] = "true"
+
+        // If you don't want mixins, remove these lines
+        this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
+        this["MixinConfigs"] = "mixins.$modid.json"
+	    if (transformerFile.exists())
+			this["FMLAT"] = "${modid}_at.cfg"
+    }
+}
+
+tasks.processResources {
+    inputs.property("version", project.version)
+    inputs.property("mcversion", mcVersion)
+    inputs.property("modid", modid)
+    inputs.property("basePackage", baseGroup)
+
+    filesMatching(listOf("mcmod.info", "mixins.$modid.json")) {
+        expand(inputs.properties)
+    }
+
+    rename("accesstransformer.cfg", "META-INF/${modid}_at.cfg")
+}
+
+
+val remapJar by tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
+    archiveClassifier.set("")
+    from(tasks.shadowJar)
+    input.set(tasks.shadowJar.get().archiveFile)
+}
+
+tasks.jar {
+    archiveClassifier.set("without-deps")
+    destinationDirectory.set(layout.buildDirectory.dir("intermediates"))
+}
+
+tasks.shadowJar {
+    destinationDirectory.set(layout.buildDirectory.dir("intermediates"))
+    archiveClassifier.set("non-obfuscated-with-deps")
+    configurations = listOf(shadowImpl)
+    doLast {
+        configurations.forEach {
+            println("Copying dependencies into mod: ${it.files}")
+        }
+    }
+
+    // If you want to include other dependencies and shadow them, you can relocate them in here
+    fun relocate(name: String) = relocate(name, "$baseGroup.deps.$name")
+}
+
+tasks.assemble.get().dependsOn(tasks.remapJar)
+
+
+::endgroup::
+::group::URL https://raw.githubusercontent.com/romangraef/Forge1.8.9Template/master/settings.gradle.kts
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
+        maven("https://maven.architectury.dev/")
+        maven("https://maven.fabricmc.net")
+        maven("https://maven.minecraftforge.net/")
+        maven("https://repo.spongepowered.org/maven/")
+        maven("https://repo.essential.gg/repository/maven-releases/")
+    }
+    resolutionStrategy {
+        eachPlugin {
+            when (requested.id.id) {
+                "gg.essential.loom" -> useModule("gg.essential:architectury-loom:${requested.version}")
+            }
+        }
+    }
+}
+
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version("0.6.0")
+}
+
+
+rootProject.name = "examplemod"
+
+::endgroup::
+::group::URL https://raw.githubusercontent.com/romangraef/Forge1.8.9Template/master/gradle.properties
+loom.platform=forge
+org.gradle.jvmargs=-Xmx2g
+baseGroup = com.example
+mcVersion = 1.8.9
+modid = examplemod
+version = 1.0.0
+
+::endgroup::
+::group::URL https://raw.githubusercontent.com/romangraef/Forge1.8.9Template/master/gradle/wrapper/gradle-wrapper.properties
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.8-bin.zip
+networkTimeout=10000
+validateDistributionUrl=true
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+
+::endgroup::
+::group::URL https://raw.githubusercontent.com/nea89o/Forge1.8.9Template/master/build.gradle.kts
+import org.apache.commons.lang3.SystemUtils
+
+plugins {
+    idea
+    java
+    id("gg.essential.loom") version "0.10.0.+"
+    id("dev.architectury.architectury-pack200") version "0.1.3"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+}
+
+//Constants:
+
+val baseGroup: String by project
+val mcVersion: String by project
+val version: String by project
+val mixinGroup = "$baseGroup.mixin"
+val modid: String by project
+val transformerFile = file("src/main/resources/accesstransformer.cfg")
+
+// Toolchains:
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
+// Minecraft configuration:
+loom {
+    log4jConfigs.from(file("log4j2.xml"))
+    launchConfigs {
+        "client" {
+            // If you don't want mixins, remove these lines
+            property("mixin.debug", "true")
+            arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+        }
+    }
+    runConfigs {
+        "client" {
+            if (SystemUtils.IS_OS_MAC_OSX) {
+                // This argument causes a crash on macOS
+                vmArgs.remove("-XstartOnFirstThread")
+            }
+        }
+        remove(getByName("server"))
+    }
+    forge {
+        pack200Provider.set(dev.architectury.pack200.java.Pack200Adapter())
+        // If you don't want mixins, remove this lines
+        mixinConfig("mixins.$modid.json")
+	    if (transformerFile.exists()) {
+			println("Installing access transformer")
+		    accessTransformer(transformerFile)
+	    }
+    }
+    // If you don't want mixins, remove these lines
+    mixin {
+        defaultRefmapName.set("mixins.$modid.refmap.json")
+    }
+}
+
+sourceSets.main {
+    output.setResourcesDir(sourceSets.main.flatMap { it.java.classesDirectory })
+}
+
+// Dependencies:
+
+repositories {
+    mavenCentral()
+    maven("https://repo.spongepowered.org/maven/")
+    // If you don't want to log in with your real minecraft account, remove this line
+    maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+}
+
+val shadowImpl: Configuration by configurations.creating {
+    configurations.implementation.get().extendsFrom(this)
+}
+
+dependencies {
+    minecraft("com.mojang:minecraft:1.8.9")
+    mappings("de.oceanlabs.mcp:mcp_stable:22-1.8.9")
+    forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
+
+    // If you don't want mixins, remove these lines
+    shadowImpl("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
+        isTransitive = false
+    }
+    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT")
+
+    // If you don't want to log in with your real minecraft account, remove this line
+    runtimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.2.1")
+
+}
+
+// Tasks:
+
+tasks.withType(JavaCompile::class) {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType(org.gradle.jvm.tasks.Jar::class) {
+    archiveBaseName.set(modid)
+    manifest.attributes.run {
+        this["FMLCorePluginContainsFMLMod"] = "true"
+        this["ForceLoadAsMod"] = "true"
+
+        // If you don't want mixins, remove these lines
+        this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
+        this["MixinConfigs"] = "mixins.$modid.json"
+	    if (transformerFile.exists())
+			this["FMLAT"] = "${modid}_at.cfg"
+    }
+}
+
+tasks.processResources {
+    inputs.property("version", project.version)
+    inputs.property("mcversion", mcVersion)
+    inputs.property("modid", modid)
+    inputs.property("basePackage", baseGroup)
+
+    filesMatching(listOf("mcmod.info", "mixins.$modid.json")) {
+        expand(inputs.properties)
+    }
+
+    rename("accesstransformer.cfg", "META-INF/${modid}_at.cfg")
+}
+
+
+val remapJar by tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
+    archiveClassifier.set("")
+    from(tasks.shadowJar)
+    input.set(tasks.shadowJar.get().archiveFile)
+}
+
+tasks.jar {
+    archiveClassifier.set("without-deps")
+    destinationDirectory.set(layout.buildDirectory.dir("intermediates"))
+}
+
+tasks.shadowJar {
+    destinationDirectory.set(layout.buildDirectory.dir("intermediates"))
+    archiveClassifier.set("non-obfuscated-with-deps")
+    configurations = listOf(shadowImpl)
+    doLast {
+        configurations.forEach {
+            println("Copying dependencies into mod: ${it.files}")
+        }
+    }
+
+    // If you want to include other dependencies and shadow them, you can relocate them in here
+    fun relocate(name: String) = relocate(name, "$baseGroup.deps.$name")
+}
+
+tasks.assemble.get().dependsOn(tasks.remapJar)
+
+
+::endgroup::
+::group::URL https://raw.githubusercontent.com/unimined/unimined/main/Writerside/topics/starter-topic.md
+# About Unimined
+
+Welcome to Unimined, a unified Minecraft modding environment that supports both modern
+and legacy environments. Whether you're working with the latest Minecraft versions or
+exploring older builds, Unimined provides a comprehensive set of tools to help you
+build mods with ease.
+
+## Features
+* **Unified Modding Environment:** Supports various Minecraft mod loaders and offers tools for a seamless experience across different modding platforms.
+* **Custom Loader Support:** Create and integrate your own loaders with the flexibility of Unimined.
+
+## Supported Loaders
+* [Fabric](https://fabricmc.net/)
+* [Quilt](https://quiltmc.org/)
+* [Forge](https://minecraftforge.net/)
+* [Neoforge](https://neoforged.net/)
+* just plain jarmodding
+    * [Modloader](https://mcarchive.net/mods/modloader)
+    * [JarModAgent](https://github.com/unimined/JarModAgent)
+* [Flint Loader](https://flintloader.net)
+* Rift
+* [Craftbukkit/Spigot](https://hub.spigotmc.org)
+* [Paper](https://papermc.io)
+* [Liteloader](https://liteloader.com)
+
+### Planned
+* Better Bukkit-derivitive support
+    * Spigot currently just kinda runs buildtools in the backround.
+* Sponge
+* NilLoader
+
+### Custom Loaders
+you can create a custom patching/transforming process for minecraft,
+for example [PrcraftExampleMod](https://github.com/prcraft-minecraft/PrcraftExampleMod)'s buildsrc dir.
+
+
+## Planned Features
+* Eclipse / VSCode Support
+* Datagen
+* Fixing neoforge on yarn (again)
+
+## Recommended Setup
+
+you can either re-create a unimined build from a standard gradle project or,
+
+1. take one of the versions from [testing](https://github.com/unimined/Unimined/tree/main/testing)
+1. remove `includeBuild('../../')` from `settings.gradle`
+1. put a proper version number for the plugin in `build.grade`
+
+## Other Setups
+
+### Arch-Loom Style
+* direct porting of arch-loom projects without changing the directory structure is possible.
+* instructions pending...
+### third party template(s)
+* arch style: https://github.com/firstdarkdev/fdd-xplat or https://github.com/LegacyModdingMC/examplemod
+
+::endgroup::
+::group::URL https://maven.fabricmc.net/net/fabricmc/fabric-loom-remap/net.fabricmc.fabric-loom-remap.gradle.plugin/maven-metadata.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>net.fabricmc.fabric-loom-remap</groupId>
+  <artifactId>net.fabricmc.fabric-loom-remap.gradle.plugin</artifactId>
+  <versioning>
+    <latest>1.18-SNAPSHOT</latest>
+    <release>1.18.2</release>
+    <versions>
+      <version>1.14.0-alpha.32</version>
+      <version>1.14.1</version>
+      <version>1.14-SNAPSHOT</version>
+      <version>1.14.3</version>
+      <version>1.14.4</version>
+      <version>1.14.5</version>
+      <version>1.14.6</version>
+      <version>1.15.0-alpha.2</version>
+      <version>1.15.0-alpha.3</version>
+      <version>1.15.0-alpha.4</version>
+      <version>1.15.0-alpha.5</version>
+      <version>1.15.0-alpha.6</version>
+      <version>1.14.7</version>
+      <version>1.14.8</version>
+      <version>1.14.9</version>
+      <version>1.14.10</version>
+      <version>1.15.0-alpha.7</version>
+      <version>1.15.0-alpha.8</version>
+      <version>1.15.0-alpha.12</version>
+      <version>1.15.0-alpha.13</version>
+      <version>1.15.0-alpha.14</version>
+      <version>1.15.0-alpha.15</version>
+      <version>1.15.0-alpha.16</version>
+      <version>1.15.0-alpha.17</version>
+      <version>1.15.0-alpha.18</version>
+      <version>1.15.0-alpha.19</version>
+      <version>1.15.0-alpha.20</version>
+      <version>1.15.0-alpha.21</version>
+      <version>1.15.0-alpha.22</version>
+      <version>1.15.0-alpha.23</version>
+      <version>1.15.0-alpha.24</version>
+      <version>1.15.0-alpha.25</version>
+      <version>1.15.0-alpha.27</version>
+      <version>1.15.0-alpha.28</version>
+      <version>1.15.0-alpha.29</version>
+      <version>1.15.0-alpha.30</version>
+      <version>1.15.1</version>
+      <version>1.15-SNAPSHOT</version>
+      <version>1.15.2</version>
+      <version>1.15.3</version>
+      <version>1.16.0-alpha.1</version>
+      <version>1.16.0-alpha.2</version>
+      <version>1.16.0-alpha.3</version>
+      <version>1.16.0-alpha.4</version>
+      <version>1.16.0-alpha.5</version>
+      <version>1.15.4</version>
+      <version>1.16.0-alpha.6</version>
+      <version>1.16.0-alpha.7</version>
+      <version>1.16.0-alpha.8</version>
+      <version>1.16.0-alpha.9</version>
+      <version>1.16.0-alpha.10</version>
+      <version>1.16.0-alpha.11</version>
+      <version>1.16.0-alpha.12</version>
+      <version>1.15.5</version>
+      <version>1.16.0-alpha.13</version>
+      <version>1.16.0-alpha.14</version>
+      <version>1.16.0-alpha.15</version>
+      <version>1.16.0-alpha.16</version>
+      <version>1.16.0-alpha.17</version>
+      <version>1.16.0-alpha.18</version>
+      <version>1.16.0-alpha.19</version>
+      <version>1.16.0-alpha.20</version>
+      <version>1.16.1</version>
+      <version>1.16-SNAPSHOT</version>
+      <version>1.17.0-alpha.4</version>
+      <version>1.17.0-alpha.5</version>
+      <version>1.17.0-alpha.6</version>
+      <version>1.17.0-alpha.7</version>
+      <version>1.17.0-alpha.8</version>
+      <version>1.16.2</version>
+      <version>1.17.0-alpha.9</version>
+      <version>1.17.0-alpha.10</version>
+      <version>1.17.0-alpha.11</version>
+      <version>1.17.0-alpha.12</version>
+      <version>1.17.0-alpha.13</version>
+      <version>1.16.3</version>
+      <version>1.17.0-alpha.14</version>
+      <version>1.17.0-alpha.15</version>
+      <version>1.17.0-alpha.16</version>
+      <version>1.17.0-alpha.17</version>
+      <version>1.17.0-alpha.18</version>
+      <version>1.17.0-alpha.19</version>
+      <version>1.17.1</version>
+      <version>1.17-SNAPSHOT</version>
+      <version>1.17.2</version>
+      <version>1.17.3</version>
+      <version>1.17.4</version>
+      <version>1.17.5</version>
+      <version>1.17.6</version>
+      <version>1.17.7</version>
+      <version>1.17.8</version>
+      <version>1.17.9</version>
+      <version>1.17.10</version>
+      <version>1.17.11</version>
+      <version>1.17.12</version>
+      <version>1.17.13</version>
+      <version>1.18.0-alpha.1</version>
+      <version>1.18.0-alpha.2</version>
+      <version>1.18.0-alpha.3</version>
+      <version>1.18.0-alpha.4</version>
+      <version>1.17.14</version>
+      <version>1.18.0-alpha.5</version>
+      <version>1.18.0-alpha.6</version>
+      <version>1.18.0-alpha.7</version>
+      <version>1.18.0-alpha.8</version>
+      <version>1.17.15</version>
+      <version>1.17.16</version>
+      <version>1.18.0-alpha.9</version>
+      <version>1.17.17</version>
+      <version>1.17.18</version>
+      <version>1.17.19</version>
+      <version>1.18.0-alpha.10</version>
+      <version>1.18.0-alpha.11</version>
+      <version>1.18.0-alpha.12</version>
+      <version>1.18.0-alpha.13</version>
+      <version>1.18.0-alpha.14</version>
+      <version>1.18.0-alpha.15</version>
+      <version>1.18.0-alpha.16</version>
+      <version>1.17.20</version>
+      <version>1.18.0-alpha.17</version>
+      <version>1.18.0-alpha.18</version>
+      <version>1.18.0-alpha.19</version>
+      <version>1.18.0-alpha.20</version>
+      <version>1.18.0-alpha.21</version>
+      <version>1.17.21</version>
+      <version>1.18.0-alpha.22</version>
+      <version>1.18.0-alpha.23</version>
+      <version>1.18.1</version>
+      <version>1.18-SNAPSHOT</version>
+      <version>1.18.2</version>
+    </versions>
+    <lastUpdated>20260916103916</lastUpdated>
+  </versioning>
+</metadata>
+
+::endgroup::
+::group::x
+Compiled from "SourceFile"
+public class x implements p<x$b> {
+  public x();
+  public nf a();
+  public void a(np, p$a<x$b>);
+  public void b(np, p$a<x$b>);
+  public void a(np);
+  public x$b b(com.google.gson.JsonObject, com.google.gson.JsonDeserializationContext);
+  public void a(oq, ayn, ayn);
+  public q a(com.google.gson.JsonObject, com.google.gson.JsonDeserializationContext);
+}
+::endgroup::
