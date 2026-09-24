@@ -115,14 +115,11 @@
               "min": "1.8",
               "max": "1.8"
             },
-            "buildgen": "legacyforge",
-            "gradle": "8.8",
-            "gradle_jdk": 17,
-            "plugin_version": "0.10.0.+",
-            "mappings": "de.oceanlabs.mcp:mcp_stable:18-1.8",
-            "gradle_properties": {
-              "loom.platform": "forge"
-            },
+            "buildgen": "unimined",
+            "gradle": "8.14.3",
+            "gradle_jdk": 21,
+            "plugin_version": "1.4.1",
+            "mappings": "18-1.8",
             "parts": [
               "mcp",
               "forge"
@@ -133,14 +130,11 @@
               "min": "1.8.8",
               "max": "1.8.8"
             },
-            "buildgen": "legacyforge",
-            "gradle": "8.8",
-            "gradle_jdk": 17,
-            "plugin_version": "0.10.0.+",
-            "mappings": "de.oceanlabs.mcp:mcp_stable:20-1.8.8",
-            "gradle_properties": {
-              "loom.platform": "forge"
-            },
+            "buildgen": "unimined",
+            "gradle": "8.14.3",
+            "gradle_jdk": 21,
+            "plugin_version": "1.4.1",
+            "mappings": "20-1.8.8",
             "parts": [
               "mcp",
               "forge"

@@ -15,7 +15,7 @@ public final class McCanvas implements UiCanvas {
 
     public McCanvas() {
         Minecraft mc = Minecraft.getMinecraft();
-        //#if MC >= 1.12
+        //#if MC >= 1.10
         font = mc.fontRenderer;
         //#else
         font = mc.fontRendererObj;
