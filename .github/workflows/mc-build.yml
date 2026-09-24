@@ -67,18 +67,15 @@ jobs:
           b = json.load(open("minecraft/build-info.json"))
           print("minecraft=" + b["minecraft"])
           print("java=%d" % b["java"])
-          print("build_jdk=%d" % b["build_jdk"])
-          print("gradle_jdk=%d" % b.get("gradle_jdk", b["build_jdk"]))
+          print("jdks<<EOF\n" + "\n".join(str(j) for j in b["jdks"]) + "\nEOF")
           print("loaders=" + " ".join(b["loaders"]))
+          print("gradle_jdks=" + " ".join("%s:%d" % (k, v["gradle_jdk"]) for k, v in b["builds"].items()))
           PY
           cat minecraft/build-info.json
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: |
-            ${{ steps.info.outputs.java }}
-            ${{ steps.info.outputs.build_jdk }}
-            ${{ steps.info.outputs.gradle_jdk }}
+          java-version: ${{ steps.info.outputs.jdks }}
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: false
@@ -93,9 +90,11 @@ jobs:
           extra=""
           if [ -n "$MOD_VERSION_OVERRIDE" ]; then extra="-Pmod_version=$MOD_VERSION_OVERRIDE"; fi
           fail=0
-          for loader in ${{ steps.info.outputs.loaders }}; do
-            echo "::group::build $loader"
-            if ./gradlew ":$loader:build" --stacktrace --no-daemon $extra 2>&1 | tee "../status/$loader.log"; then
+          for spec in ${{ steps.info.outputs.gradle_jdks }}; do
+            loader=${spec%%:*}; jdk=${spec##*:}
+            home_var="JAVA_HOME_${jdk}_X64"; export JAVA_HOME="${!home_var}"
+            echo "::group::build $loader (Gradle JVM $jdk: $JAVA_HOME)"
+            if (cd "$loader" && ./gradlew build --stacktrace --no-daemon $extra) 2>&1 | tee "../status/$loader.log"; then
               jar=$(ls "$loader"/build/libs/mcvoice-*-mc*-"$loader".jar 2>/dev/null | grep -v -- '-sources' | head -1)
               if [ -n "$jar" ] && python3 ../tools/port-version/validate_jar.py "$jar" --loader "$loader" \
                    --minecraft "${{ steps.info.outputs.minecraft }}" --java "${{ steps.info.outputs.java }}" | tee -a "../status/$loader.log"; then

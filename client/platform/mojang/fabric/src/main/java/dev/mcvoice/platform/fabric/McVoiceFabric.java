@@ -13,7 +13,9 @@ import dev.mcvoice.platform.mc.McCanvas;
 import dev.mcvoice.platform.mc.McIds;
 import dev.mcvoice.platform.mc.McLogging;
 import dev.mcvoice.platform.mc.PlatformInfo;
+//#if MC >= 1.20.5
 import dev.mcvoice.platform.mc.RawPayload;
+//#endif
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -24,13 +26,24 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 //#endif
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+//#if MC >= 1.21.6
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+//#else
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+//#endif
+//#if MC >= 1.20.5
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+//#endif
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
+//#if MC >= 1.20.5
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+//#else
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
+//#endif
 
-/** Fabric entry point (Mojang-named Minecraft, 1.21.9+). */
+/** Fabric entry point (Mojang-named Minecraft, official mappings). */
 public final class McVoiceFabric implements ClientModInitializer {
     private static VoiceClient client;
 
@@ -57,8 +70,12 @@ public final class McVoiceFabric implements ClientModInitializer {
         }
         client = new VoiceClient(adapter, modVersion);
         ClientTickEvents.END_CLIENT_TICK.register(mc -> client.clientTick());
+        //#if MC >= 1.21.6
         HudElementRegistry.addLast(McIds.id("mcvoice", "hud"),
             (graphics, delta) -> client.renderHud(new McCanvas(graphics)));
+        //#else
+        HudRenderCallback.EVENT.register((graphics, delta) -> client.renderHud(new McCanvas(graphics)));
+        //#endif
         ClientPlayConnectionEvents.DISCONNECT.register((handler, mc) -> client.invalidateWorld("disconnect"));
         ClientPlayConnectionEvents.JOIN.register((handler, sender, mc) -> client.invalidateWorld("join_world"));
         ClientLifecycleEvents.CLIENT_STOPPING.register(mc -> client.shutdown());
@@ -66,6 +83,7 @@ public final class McVoiceFabric implements ClientModInitializer {
 
     /** Plugin channels for the Simple Voice Chat compatibility layer via Fabric networking. */
     static final class FabricSvcChannels implements SimpleVoiceChatAdapter {
+        //#if MC >= 1.20.5
         private final java.util.Map<String, CustomPacketPayload.Type<RawPayload>> serverbound = new ConcurrentHashMap<>();
         private final Set<String> registered = ConcurrentHashMap.newKeySet();
         private volatile Receiver receiver;
@@ -96,6 +114,25 @@ public final class McVoiceFabric implements ClientModInitializer {
                 serverbound.put(ch, t);
             }
         }
+        //#else
+        private final Set<String> registered = ConcurrentHashMap.newKeySet();
+        private volatile Receiver receiver;
+
+        FabricSvcChannels() {
+            for (String ch : SvcChannelNames.CLIENTBOUND) {
+                ClientPlayNetworking.registerGlobalReceiver(McIds.parse(ch), (mc, handler, buf, sender) -> {
+                    // the buffer is released after this call: copy before handing off
+                    byte[] b = new byte[buf.readableBytes()];
+                    buf.readBytes(b);
+                    Receiver r = receiver;
+                    if (r != null) {
+                        r.onPayload(ch, b);
+                    }
+                });
+                registered.add(ch);
+            }
+        }
+        //#endif
 
         @Override
         public boolean supported() {
@@ -111,6 +148,7 @@ public final class McVoiceFabric implements ClientModInitializer {
             }
         }
 
+        //#if MC >= 1.20.5
         @Override
         public boolean send(String channel, byte[] payload) {
             CustomPacketPayload.Type<RawPayload> t = serverbound.get(channel);
@@ -124,6 +162,17 @@ public final class McVoiceFabric implements ClientModInitializer {
                 return false;
             }
         }
+        //#else
+        @Override
+        public boolean send(String channel, byte[] payload) {
+            try {
+                ClientPlayNetworking.send(McIds.parse(channel), new FriendlyByteBuf(Unpooled.wrappedBuffer(payload)));
+                return true;
+            } catch (RuntimeException e) {
+                return false;
+            }
+        }
+        //#endif
 
         @Override
         public void setReceiver(Receiver r) {

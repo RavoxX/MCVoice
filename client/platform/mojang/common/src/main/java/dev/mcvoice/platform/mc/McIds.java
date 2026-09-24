@@ -19,13 +19,21 @@ public final class McIds {
     public static Identifier parse(String id) {
         return Identifier.parse(id);
     }
-    //#else
+    //#elif MC >= 1.21
     public static ResourceLocation id(String namespace, String path) {
         return ResourceLocation.fromNamespaceAndPath(namespace, path);
     }
 
     public static ResourceLocation parse(String id) {
         return ResourceLocation.parse(id);
+    }
+    //#else
+    public static ResourceLocation id(String namespace, String path) {
+        return new ResourceLocation(namespace, path);
+    }
+
+    public static ResourceLocation parse(String id) {
+        return new ResourceLocation(id);
     }
     //#endif
 }

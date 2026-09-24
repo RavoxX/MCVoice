@@ -30,13 +30,17 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 
 /**
- * MinecraftAdapter for Mojang-named Minecraft (1.21.9+), shared by
+ * MinecraftAdapter for Mojang-named Minecraft (official mappings, 1.20.1+), shared by
  * the Fabric and Forge entry points of this family. Only this package touches
  * Minecraft classes; everything else lives in the version-independent core.
  */
 public final class McAdapter implements MinecraftAdapter {
+    //#if MC >= 1.21.9
     public static final KeyMapping.Category CATEGORY =
         KeyMapping.Category.register(McIds.id("mcvoice", "voice"));
+    //#else
+    public static final String CATEGORY = "key.categories.mcvoice.voice";
+    //#endif
 
     private final String mcVersion;
     private final String loader;
@@ -154,8 +158,13 @@ public final class McAdapter implements MinecraftAdapter {
 
         @Override
         public String serverBrand() {
+            //#if MC >= 1.20.2
             ClientPacketListener c = mc().getConnection();
             return c == null ? null : c.serverBrand();
+            //#else
+            LocalPlayer p = mc().player;
+            return p == null ? null : p.getServerBrand();
+            //#endif
         }
 
         @Override
@@ -200,7 +209,13 @@ public final class McAdapter implements MinecraftAdapter {
         public void joinServer(String serverId) throws Exception {
             User u = mc().getUser();
             // The access token only goes to Mojang's session server, exactly like joining an online-mode server.
+            //#if MC >= 1.21.9
             mc().services().sessionService().joinServer(u.getProfileId(), u.getAccessToken(), serverId);
+            //#elif MC >= 1.20.2
+            mc().getMinecraftSessionService().joinServer(u.getProfileId(), u.getAccessToken(), serverId);
+            //#else
+            mc().getMinecraftSessionService().joinServer(u.getGameProfile(), u.getAccessToken(), serverId);
+            //#endif
         }
     };
 

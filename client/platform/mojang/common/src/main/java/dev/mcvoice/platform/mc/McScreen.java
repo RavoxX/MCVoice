@@ -7,9 +7,11 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.GuiGraphics;
 //#endif
 import net.minecraft.client.gui.screens.Screen;
+//#if MC >= 1.21.9
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+//#endif
 import net.minecraft.network.chat.Component;
 
 /** Hosts one of our self-drawn UiScreens inside a native Screen. */
@@ -30,6 +32,7 @@ public final class McScreen extends Screen {
         ui.render(new McCanvas(g), mouseX, mouseY, partialTicks);
     }
 
+    //#if MC >= 1.21.9
     @Override
     public boolean mouseClicked(MouseButtonEvent e, boolean doubleClick) {
         ui.mouseClicked((int) e.x(), (int) e.y(), e.button());
@@ -49,12 +52,6 @@ public final class McScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double h, double v) {
-        ui.mouseScrolled((int) x, (int) y, v);
-        return true;
-    }
-
-    @Override
     public boolean keyPressed(KeyEvent e) {
         if (ui.keyPressed(e.key())) {
             return true;
@@ -69,6 +66,53 @@ public final class McScreen extends Screen {
         }
         return true;
     }
+    //#else
+    @Override
+    public boolean mouseClicked(double x, double y, int button) {
+        ui.mouseClicked((int) x, (int) y, button);
+        return true;
+    }
+
+    @Override
+    public boolean mouseReleased(double x, double y, int button) {
+        ui.mouseReleased((int) x, (int) y, button);
+        return true;
+    }
+
+    @Override
+    public boolean mouseDragged(double x, double y, int button, double dx, double dy) {
+        ui.mouseDragged((int) x, (int) y, button);
+        return true;
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scanCode, int modifiers) {
+        if (ui.keyPressed(key)) {
+            return true;
+        }
+        return super.keyPressed(key, scanCode, modifiers); // ESC closes
+    }
+
+    @Override
+    public boolean charTyped(char c, int modifiers) {
+        ui.charTyped(c);
+        return true;
+    }
+    //#endif
+
+    //#if MC >= 1.20.2
+    @Override
+    public boolean mouseScrolled(double x, double y, double h, double v) {
+        ui.mouseScrolled((int) x, (int) y, v);
+        return true;
+    }
+    //#else
+    @Override
+    public boolean mouseScrolled(double x, double y, double v) {
+        ui.mouseScrolled((int) x, (int) y, v);
+        return true;
+    }
+    //#endif
 
     @Override
     public void removed() {

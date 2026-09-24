@@ -4,7 +4,7 @@ plugins {
     id 'maven-publish'
 }
 
-def repoRoot = rootProject.file('..')
+def repoRoot = rootProject.file('../..')
 def core = ['common', 'network', 'audio', 'svc-compat', 'ui', 'core'].collect { new File(repoRoot, "client/${it}/src/main/java") }
 
 group = project.maven_group

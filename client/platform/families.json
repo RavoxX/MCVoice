@@ -1,17 +1,73 @@
 {
-  "description": "Minecraft API families. Each family is one set of version-specific adapter sources (client/platform/<id>) valid for a range of Minecraft releases; differences inside a family are //#if MC blocks (tools/port-version/preprocess.py). Each loader lists build setups by Minecraft range; buildgen names tools/port-version/templates/<buildgen>; gradle_jdk is the JVM Gradle itself needs when it is newer than the game's Java (Loom 1.18 runs on Java 25+). A version is only *supported* when CI builds it (versions/build-status.json).",
+  "description": "Minecraft API families. Each family is one set of version-specific adapter sources (client/platform/<id>) valid for a range of Minecraft releases; differences inside a family are //#if MC blocks (tools/port-version/preprocess.py). Each loader lists build setups by Minecraft range; buildgen names tools/port-version/templates/<buildgen>; gradle_jdk is the JVM Gradle itself needs when it is newer than the game's Java (Loom 1.18 runs on Java 25+). A version is only *supported* when CI builds it (versions/build-status.json). A loader entry may name its own source directory (sources) when a loader API generation differs too much for //#if blocks.",
   "families": [
     {
       "id": "mojang",
-      "minecraft": {"min": "1.21.9", "max": "26.3"},
+      "minecraft": {
+        "min": "1.20.1",
+        "max": "26.3"
+      },
       "loaders": {
         "fabric": [
-          {"minecraft": {"min": "26.1", "max": "26.3"}, "buildgen": "unobf", "gradle": "9.8.0", "plugin_version": "1.18.2"},
-          {"minecraft": {"min": "1.21.9", "max": "1.21.11"}, "buildgen": "remap", "gradle": "9.8.0", "gradle_jdk": 25, "plugin_version": "1.18.2"}
+          {
+            "minecraft": {
+              "min": "26.1",
+              "max": "26.3"
+            },
+            "buildgen": "unobf",
+            "gradle": "9.8.0",
+            "plugin_version": "1.18.2"
+          },
+          {
+            "minecraft": {
+              "min": "1.21.9",
+              "max": "1.21.11"
+            },
+            "buildgen": "remap",
+            "gradle": "9.8.0",
+            "gradle_jdk": 25,
+            "plugin_version": "1.18.2"
+          },
+          {
+            "minecraft": {
+              "min": "1.20.1",
+              "max": "1.20.1"
+            },
+            "buildgen": "remap",
+            "gradle": "9.8.0",
+            "gradle_jdk": 25,
+            "plugin_version": "1.18.2"
+          }
         ],
         "forge": [
-          {"minecraft": {"min": "26.1", "max": "26.3"}, "buildgen": "unobf", "gradle": "9.8.0", "plugin_version": "[7.0.17,8)"},
-          {"minecraft": {"min": "1.21.9", "max": "1.21.11"}, "buildgen": "remap", "gradle": "9.8.0", "plugin_version": "[7.0.17,8)"}
+          {
+            "minecraft": {
+              "min": "26.1",
+              "max": "26.3"
+            },
+            "buildgen": "unobf",
+            "gradle": "9.8.0",
+            "plugin_version": "[7.0.17,8)"
+          },
+          {
+            "minecraft": {
+              "min": "1.21.9",
+              "max": "1.21.11"
+            },
+            "buildgen": "remap",
+            "gradle": "9.8.0",
+            "plugin_version": "[7.0.17,8)"
+          },
+          {
+            "minecraft": {
+              "min": "1.20.1",
+              "max": "1.20.1"
+            },
+            "buildgen": "fg6",
+            "gradle": "8.8",
+            "plugin_version": "[6.0,6.2)",
+            "sources": "forge-eb6"
+          }
         ]
       }
     }

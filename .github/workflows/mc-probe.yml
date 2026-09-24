@@ -38,6 +38,10 @@ on:
         description: Regex; list client-jar classes whose name matches (find renamed classes)
         required: false
         default: ""
+      fetch:
+        description: Space-separated URLs of text files to print (maven metadata, build files)
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -70,6 +74,14 @@ jobs:
             [ -n "$u" ] && curl -sSfL "$u" -o "libs/$(basename "$u")"; done
           ls libs
           ls -la
+      - name: Fetch text files
+        if: always() && inputs.fetch != ''
+        continue-on-error: true
+        env:
+          FETCH: ${{ inputs.fetch }}
+        run: |
+          exec > >(tee -a probe-output.txt) 2>&1
+          for u in $FETCH; do echo "::group::URL $u"; curl -sSfL "$u" | head -c 60000 || echo "fetch failed: $u"; echo; echo "::endgroup::"; done
       - name: Search classes
         if: always() && inputs.search != ''
         continue-on-error: true
