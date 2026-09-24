@@ -26,9 +26,25 @@ Please make sure to read and understand the following license:
 > Task :remapSourcesJar
 > Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790276625687.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790277062926.json
 
-BUILD SUCCESSFUL in 1m 8s
+BUILD SUCCESSFUL in 1m 24s
 7 actionable tasks: 7 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.0-mc1.20.6-fabric.jar (327 classes, metadata ['fabric.mod.json'])
+valid: mcvoice-0.1.0-mc1.20.6-fabric.jar (327 classes, 16 platform classes, metadata ['fabric.mod.json'])
+  platform: dev/mcvoice/platform/fabric/McVoiceFabric
+  platform: dev/mcvoice/platform/fabric/McVoiceFabric$FabricSvcChannels
+  platform: dev/mcvoice/platform/mc/McAdapter
+  platform: dev/mcvoice/platform/mc/McAdapter$1
+  platform: dev/mcvoice/platform/mc/McAdapter$2
+  platform: dev/mcvoice/platform/mc/McAdapter$3
+  platform: dev/mcvoice/platform/mc/McAdapter$4
+  platform: dev/mcvoice/platform/mc/McAdapter$5
+  platform: dev/mcvoice/platform/mc/McCanvas
+  platform: dev/mcvoice/platform/mc/McIds
+  platform: dev/mcvoice/platform/mc/McLogging
+  platform: dev/mcvoice/platform/mc/McLogging$1
+  platform: dev/mcvoice/platform/mc/McScreen
+  platform: dev/mcvoice/platform/mc/PlatformInfo
+  platform: dev/mcvoice/platform/mc/RawPayload
+  platform: dev/mcvoice/platform/mc/ScreenHost
