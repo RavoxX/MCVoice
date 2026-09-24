@@ -10,9 +10,9 @@ bot: <- voicechat:secret (56 bytes)
 handshake: SECRET_RECEIVED (compatibility 20)
 secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000, groups=true, host=''} voiceHost=''
 bot: -> voicechat:update_state (1 bytes)
+bot: <- voicechat:state (33 bytes)
 [INFO][SVC] SVC voice server authenticated us (GCM_IV12)
 udp: AUTHENTICATED (GCM_IV12)
-bot: <- voicechat:state (33 bytes)
 [INFO][SVC] SVC voice connection established with 127.0.0.1:24454
 udp: CONNECTED
 bot: <- voicechat:state (33 bytes)
