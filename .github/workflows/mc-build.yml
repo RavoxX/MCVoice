@@ -30,6 +30,11 @@ on:
         required: false
         type: string
         default: ""
+      publish:
+        description: publish the Maven packages to GitHub Packages after a successful build
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -42,7 +47,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # only used to publish build logs to the tooling/probe-output branch
+      contents: write   # publish build logs to the tooling/probe-output branch
+      packages: write   # Maven packages (release builds only, inputs.publish)
     outputs:
       minecraft: ${{ steps.info.outputs.minecraft }}
     steps:
@@ -58,10 +64,10 @@ jobs:
           MC: ${{ inputs.minecraft }}
         run: |
           set -euo pipefail
-          if [ -n "$MC" ] || [ ! -f minecraft/build-info.json ]; then
-            if [ -z "$MC" ]; then MC="${GITHUB_REF_NAME#mc/}"; fi
-            python3 tools/port-version/port.py "$MC"
-          fi
+          # an mc/<version> branch carries its generated build: use it as committed when it matches
+          have=$(python3 -c "import json;print(json.load(open('minecraft/build-info.json'))['minecraft'])" 2>/dev/null || true)
+          if [ -z "$MC" ]; then MC="${have:-${GITHUB_REF_NAME#mc/}}"; fi
+          if [ "$have" != "$MC" ]; then python3 tools/port-version/port.py "$MC"; fi
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json
           b = json.load(open("minecraft/build-info.json"))
@@ -122,6 +128,33 @@ jobs:
           done
           (cd ../dist && sha256sum *.jar > checksums-sha256.txt || true)
           exit $fail
+      - name: Publish Maven packages
+        if: inputs.publish && steps.build.outcome == 'success'
+        working-directory: minecraft
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          MOD_VERSION_OVERRIDE: ${{ inputs.version }}
+        run: |
+          set -uo pipefail
+          extra=""
+          if [ -n "$MOD_VERSION_OVERRIDE" ]; then extra="-Pmod_version=$MOD_VERSION_OVERRIDE"; fi
+          for spec in ${{ steps.info.outputs.gradle_jdks }}; do
+            loader=${spec%%:*}; jdk=${spec##*:}
+            home_var="JAVA_HOME_${jdk}_X64"; export JAVA_HOME="${!home_var}"
+            if (cd "$loader" && ./gradlew publish --no-daemon $extra) > "../status/publish-$loader.log" 2>&1; then
+              result=published
+            else
+              # never report success we did not get: keep the exact reason for the release report
+              result="failed: $(grep -E 'Could not|status code|Received status|Forbidden|Unauthorized|error' "../status/publish-$loader.log" | head -3 | tr '\n' ' ' | head -c 300)"
+            fi
+            python3 - "$loader" "$result" <<'PY'
+          import json, sys
+          loader, result = sys.argv[1:3]
+          p = f"../status/{loader}.json"
+          r = json.load(open(p)); r["maven"] = result; json.dump(r, open(p, "w")); print(r)
+          PY
+          done
       - uses: actions/upload-artifact@v5
         if: always()
         with:

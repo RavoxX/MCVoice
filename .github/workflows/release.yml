@@ -1,0 +1,199 @@
+name: release
+run-name: "release v${{ inputs.version }}"
+
+# Full release: test both backends and the client core, build + validate every
+# selected Minecraft version from its mc/<version> branch, publish per-version
+# GitHub Releases (tag v<version>-mc<minecraft>) with jars and SHA-256 checksums,
+# Maven packages to GitHub Packages, backend images to GHCR, and write
+# release-report.md. Every step records what really happened; nothing is
+# reported as published unless the upload succeeded.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version (semver, e.g. 0.1.0)
+        required: true
+        default: "0.1.0"
+      minecraft:
+        description: Space-separated Minecraft versions, or "supported" (every version whose loaders all pass in versions/build-status.json)
+        required: true
+        default: supported
+      prerelease:
+        description: Mark releases as pre-releases (never tags images as latest)
+        type: boolean
+        default: false
+      images:
+        description: Build and push backend images to GHCR
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: plan
+        env:
+          VERSION: ${{ inputs.version }}
+          SELECT: ${{ inputs.minecraft }}
+        run: |
+          set -euo pipefail
+          echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$' || { echo "::error::version must be semver"; exit 1; }
+          grep -q "^mod_version=$VERSION$" client/gradle.properties || echo "::warning::client/gradle.properties mod_version differs from $VERSION; jars are built with -Pmod_version=$VERSION"
+          python3 - <<'PY' > versions.txt
+          import json, os
+          sel = os.environ["SELECT"].split()
+          status = json.load(open("versions/build-status.json"))["results"]
+          if sel == ["supported"]:
+              sel = [mc for mc, l in status.items() if l and all(v.get("status") == "pass" for v in l.values())]
+          print("\n".join(sel))
+          PY
+          missing=""
+          for mc in $(cat versions.txt); do
+            git ls-remote --exit-code --heads origin "mc/$mc" >/dev/null || missing="$missing $mc"
+          done
+          if [ -n "$missing" ]; then echo "::error::no mc/<version> branch for:$missing (tools/port-version/make-branch.sh)"; exit 1; fi
+          echo "matrix=$(python3 -c 'import json;print(json.dumps(open("versions.txt").read().split()))')" >> "$GITHUB_OUTPUT"
+          cat versions.txt
+
+  test:
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    needs: [plan, test]
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        minecraft: ${{ fromJson(needs.plan.outputs.matrix) }}
+    permissions:
+      contents: write
+      packages: write
+    uses: ./.github/workflows/mc-build.yml
+    with:
+      minecraft: ${{ matrix.minecraft }}
+      ref: mc/${{ matrix.minecraft }}
+      version: ${{ inputs.version }}
+      publish: true
+    secrets: inherit
+
+  github-release:
+    needs: [plan, build]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        minecraft: ${{ fromJson(needs.plan.outputs.matrix) }}
+    env:
+      MC: ${{ matrix.minecraft }}
+      VERSION: ${{ inputs.version }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/download-artifact@v5
+        continue-on-error: true
+        with:
+          name: mc-${{ matrix.minecraft }}-jars
+          path: dist
+      - uses: actions/download-artifact@v5
+        continue-on-error: true
+        with:
+          name: mc-${{ matrix.minecraft }}-status
+          path: status
+      - name: Create release v${{ inputs.version }}-mc${{ matrix.minecraft }}
+        run: |
+          set -uo pipefail
+          mkdir -p out
+          tag="v$VERSION-mc$MC"
+          jars=$(ls dist/*.jar 2>/dev/null || true)
+          failed=$(python3 -c "import json,glob;print(' '.join(json.load(open(f))['loader'] for f in glob.glob('status/*.json') if json.load(open(f))['status']!='pass'))" 2>/dev/null || true)
+          record() { python3 -c "import json,sys;json.dump({'minecraft':'$MC','tag':'$tag','release':sys.argv[1],'detail':sys.argv[2]},open('out/release-$MC.json','w'))" "$1" "$2"; }
+          if [ -z "$jars" ] || [ -n "$failed" ]; then
+            record skipped "build did not pass for: ${failed:-all loaders}"; exit 0
+          fi
+          (cd dist && sha256sum *.jar > checksums-sha256.txt)
+          loaders=$(python3 -c "import json,glob;print(', '.join(sorted(json.load(open(f))['loader'] for f in glob.glob('status/*.json'))))")
+          cat > notes.md <<EOF
+          MCVoice $VERSION for Minecraft $MC ($loaders).
+
+          Install the jar for your loader into \`mods/\`. No server plugin is needed.
+          Checksums: \`checksums-sha256.txt\`. Source: branch \`mc/$MC\`.
+          EOF
+          flags=""; [ "${{ inputs.prerelease }}" = "true" ] && flags="--prerelease"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            out=$(gh release upload "$tag" dist/*.jar dist/checksums-sha256.txt --clobber 2>&1) && record updated "assets replaced" || record failed "$out"
+          else
+            out=$(gh release create "$tag" dist/*.jar dist/checksums-sha256.txt --target "mc/$MC" --title "MCVoice $VERSION for Minecraft $MC" --notes-file notes.md $flags 2>&1) && record created "$out" || record failed "$out"
+          fi
+          cat out/release-$MC.json
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: release-result-${{ matrix.minecraft }}
+          path: out/
+
+  images:
+    needs: test
+    if: inputs.images
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/backend.yml
+    with:
+      version: ${{ inputs.version }}
+      latest: ${{ !inputs.prerelease && github.ref == 'refs/heads/main' }}
+
+  report:
+    needs: [plan, test, build, github-release, images]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          path: artifacts
+      - name: Write release-report.md
+        env:
+          VERSION: ${{ inputs.version }}
+          TEST_RESULT: ${{ needs.test.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          IMAGES_RESULT: ${{ needs.images.result }}
+          IMAGES_REQUESTED: ${{ inputs.images }}
+          LATEST: ${{ !inputs.prerelease && github.ref == 'refs/heads/main' }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 tools/release/report.py artifacts > release-report.md
+          cat release-report.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: release-report
+          path: release-report.md
+      - name: Attach report to release v${{ inputs.version }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          tag="v$VERSION"
+          flags=""; [ "${{ inputs.prerelease }}" = "true" ] && flags="--prerelease"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" release-report.md --clobber
+          else
+            gh release create "$tag" release-report.md --target "$GITHUB_SHA" --title "MCVoice $VERSION" \
+              --notes "Release overview: backend images, per-Minecraft-version releases (tags v$VERSION-mc<version>) and the release report." $flags
+          fi
