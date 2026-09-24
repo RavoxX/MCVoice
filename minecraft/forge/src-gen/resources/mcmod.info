@@ -1,0 +1,13 @@
+[
+  {
+    "modid": "mcvoice",
+    "name": "MCVoice",
+    "description": "Proximity voice chat that works without a server plugin.",
+    "version": "${version}",
+    "mcversion": "${minecraft_version}",
+    "url": "https://github.com/RavoxX/MCVoice",
+    "authorList": ["MCVoice contributors"],
+    "logoFile": "assets/mcvoice/icon.png",
+    "credits": "Opus decoding/encoding by Concentus (BSD-3-Clause)."
+  }
+]
