@@ -72,7 +72,7 @@ Maven POM
 Metadata
   metadata[forge]
   metadata[forge][variants]
-Minecraft Maven has finished, took 2:08.206
+Minecraft Maven has finished, took 3:13.565
 
 > Task :fabric:compileJava
 > Task :fabric:processResources
@@ -88,9 +88,9 @@ Minecraft Maven has finished, took 2:08.206
 > Task :fabric:validateAccessWidener NO-SOURCE
 > Task :fabric:check UP-TO-DATE
 > Task :fabric:build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790274363226.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790274699486.json
 
-BUILD SUCCESSFUL in 2m 57s
+BUILD SUCCESSFUL in 3m 57s
 5 actionable tasks: 5 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
 valid: mcvoice-0.1.0-mc26.1-fabric.jar (326 classes, metadata ['fabric.mod.json'])
