@@ -1,1 +1,1 @@
-{"minecraft": "1.8.8", "loader": "legacyfabric", "status": "pass", "run": "https://github.com/RavoxX/MCVoice/actions/runs/36114499840", "commit": "aadc720d91fde2c0fe88d1c27bb9ce108d8faf5a", "jar": "mcvoice-0.1.0-mc1.8.8-legacyfabric.jar"}
+{"minecraft": "1.8.8", "loader": "legacyfabric", "status": "pass", "run": "https://github.com/RavoxX/MCVoice/actions/runs/36112725820", "commit": "3678d77f229e6bbd3821f1cfd3152c6c0ad45706", "jar": "mcvoice-0.1.0-mc1.8.8-legacyfabric.jar", "maven": "published"}
