@@ -5,22 +5,28 @@ Daemon will be stopped at the end of the build
 Architectury Loom: 0.10.0.5
 
 > Task :generatePomFileForModPublication
-
-> Task :compileJava
-Note: SpongePowered MIXIN Annotation Processor Version=0.8.5
-Note: Supported obfuscation types: ObfuscationServiceFabric supports [official:intermediary,official:named,intermediary:official,intermediary:named,named:official,named:intermediary] ObfuscationServiceMCP supports [searge,notch]
-Note: /home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java uses or overrides a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-
+> Task :compileJava UP-TO-DATE
 > Task :processResources UP-TO-DATE
-> Task :classes
+> Task :classes UP-TO-DATE
 > Task :jar UP-TO-DATE
 > Task :remapJar UP-TO-DATE
 > Task :sourcesJar UP-TO-DATE
 > Task :remapSourcesJar UP-TO-DATE
-> Task :publishModPublicationToGitHubPackagesRepository
-> Task :publish
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790283179334.json
+> Task :publishModPublicationToGitHubPackagesRepository FAILED
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790326011886.json
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':publishModPublicationToGitHubPackagesRepository'.
+> Failed to publish publication 'mod' to repository 'GitHubPackages'
+   > Could not PUT 'https://maven.pkg.github.com/RavoxX/MCVoice/io/github/ravoxx/mcvoice/voice-client-forge/0.1.0+mc1.8.9/voice-client-forge-0.1.0+mc1.8.9.jar'. Received status code 409 from server: Conflict
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -28,5 +34,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 31s
-8 actionable tasks: 3 executed, 5 up-to-date
+BUILD FAILED in 8s
+8 actionable tasks: 2 executed, 6 up-to-date
