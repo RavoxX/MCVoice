@@ -12,8 +12,11 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.AbstractGui;
 
 
+
+
 /**
- * UiCanvas over the game's GUI drawing: MatrixStack + AbstractGui before 1.20, GuiGraphics
+ * UiCanvas over the game's GUI drawing: AbstractGui statics before 1.16, MatrixStack + AbstractGui
+ * before 1.20, GuiGraphics
  * from 1.20 (renamed GuiGraphicsExtractor in 26.1).
  */
 public final class McCanvas implements UiCanvas {
@@ -33,7 +36,11 @@ public final class McCanvas implements UiCanvas {
 
     public McCanvas(MatrixStack g) {
 
+
+
+
         this.g = g;
+
         this.font = Minecraft.getInstance().font;
     }
 
@@ -44,6 +51,8 @@ public final class McCanvas implements UiCanvas {
 
         return Minecraft.getInstance().getWindow().getGuiScaledWidth();
 
+
+
     }
 
     @Override
@@ -53,6 +62,8 @@ public final class McCanvas implements UiCanvas {
 
         return Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
+
+
     }
 
     @Override
@@ -61,6 +72,8 @@ public final class McCanvas implements UiCanvas {
 
 
         AbstractGui.fill(g, x1, y1, x2, y2, argb);
+
+
 
     }
 
@@ -76,6 +89,12 @@ public final class McCanvas implements UiCanvas {
         } else {
             font.draw(g, text, (float) x, (float) y, argb);
         }
+
+
+
+
+
+
 
     }
 
