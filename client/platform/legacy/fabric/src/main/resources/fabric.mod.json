@@ -16,7 +16,9 @@
   "depends": {
     "fabricloader": ">=${loader_min}",
     "minecraft": "${minecraft_dep}",
+//#if LEGACYFABRIC_API
     "legacy-fabric-api": "*",
+//#endif
     "java": ">=${java}"
   }
 }

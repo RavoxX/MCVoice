@@ -100,7 +100,16 @@ jobs:
             loader=${spec%%:*}; jdk=${spec##*:}
             home_var="JAVA_HOME_${jdk}_X64"; export JAVA_HOME="${!home_var}"
             echo "::group::build $loader (Gradle JVM $jdk: $JAVA_HOME)"
-            if (cd "$loader" && ./gradlew build --stacktrace --no-daemon $extra) 2>&1 | tee "../status/$loader.log"; then
+            ok=0
+            (cd "$loader" && ./gradlew build --stacktrace --no-daemon $extra) 2>&1 | tee "../status/$loader.log" && ok=1
+            # ForgeGradle 7's Mavenizer once failed recompiling its own decompiled Minecraft sources for a
+            # version that built before and after: retry a failure while configuring the toolchain, once
+            if [ $ok = 0 ] && grep -q "A problem occurred configuring root project" "../status/$loader.log"; then
+              echo "::warning::$loader: build tool setup failed, retrying once"
+              echo "=== retry: build tool setup failed ===" >> "../status/$loader.log"
+              (cd "$loader" && ./gradlew build --stacktrace --no-daemon $extra) 2>&1 | tee -a "../status/$loader.log" && ok=1
+            fi
+            if [ $ok = 1 ]; then
               jar=$(ls "$loader"/build/libs/mcvoice-*-mc*-"$loader".jar 2>/dev/null | grep -v -- '-sources' | head -1)
               if [ -n "$jar" ] && python3 ../tools/port-version/validate_jar.py "$jar" --loader "$loader" \
                    --minecraft "${{ steps.info.outputs.minecraft }}" --java "${{ steps.info.outputs.java }}" | tee -a "../status/$loader.log"; then
@@ -135,6 +144,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
           MOD_VERSION_OVERRIDE: ${{ inputs.version }}
+          VERSION_TAG: ${{ inputs.version }}+mc${{ steps.info.outputs.minecraft }}
         run: |
           set -uo pipefail
           extra=""
@@ -142,11 +152,26 @@ jobs:
           for spec in ${{ steps.info.outputs.gradle_jdks }}; do
             loader=${spec%%:*}; jdk=${spec##*:}
             home_var="JAVA_HOME_${jdk}_X64"; export JAVA_HOME="${!home_var}"
-            if (cd "$loader" && ./gradlew publish --no-daemon $extra) > "../status/publish-$loader.log" 2>&1; then
+            log="../status/publish-$loader.log"; : > "$log"
+            publish() { (cd "$loader" && ./gradlew publish --no-daemon $extra) >> "$log" 2>&1; }
+            if publish; then
               result=published
+            elif grep -q 'Received status code 409' "$log"; then
+              # GitHub Packages never replaces a Maven version: the one from an earlier run stays
+              result="exists: $VERSION_TAG already in GitHub Packages (409 Conflict), not replaced"
             else
-              # never report success we did not get: keep the exact reason for the release report
-              result="failed: $(grep -E 'Could not|status code|Received status|Forbidden|Unauthorized|error' "../status/publish-$loader.log" | head -3 | tr '\n' ' ' | head -c 300)"
+              # ForgeGradle 7's Mavenizer once found its cached mcp_config zip truncated
+              # ("zip END header not found") although build had just used it: drop it, retry once
+              if grep -qE 'Invalid MCPConfig dependency|ZipException' "$log"; then
+                find "$HOME/.gradle/caches/minecraftforge" -path '*mcp_config*' -prune -exec rm -rf {} + 2>/dev/null || true
+              fi
+              echo "::warning::publish $loader failed, retrying once"; echo "=== retry ===" >> "$log"
+              if publish; then
+                result=published
+              else
+                # never report success we did not get: keep the exact reason for the release report
+                result="failed: $( { grep -E 'Could not|status code|Forbidden|Unauthorized|error|Exception|What went wrong' -A1 "$log" || tail -3 "$log"; } | tail -6 | tr '\n' ' ' | head -c 300)"
+              fi
             fi
             python3 - "$loader" "$result" <<'PY'
           import json, sys
