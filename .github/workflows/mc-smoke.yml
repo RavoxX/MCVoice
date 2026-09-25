@@ -8,7 +8,8 @@ run-name: "mc-smoke ${{ inputs.minecraft }}"
 # MCVoice logged its initialisation, and no MCVoice error showed up in the game
 # log. Versions/loaders the runtime test does not cover are reported as not
 # tested, never as passed. Results: job summary and
-# tooling/probe-output:smoke/<mc>/<loader>.json.
+# tooling/probe-output:smoke/<mc>/<loader>.json. Dispatch-only: it runs third-party
+# code (the action, HeadlessMC and the runtime-test mod it downloads).
 
 on:
   workflow_dispatch:
@@ -22,15 +23,12 @@ on:
       minecraft:
         required: true
         type: string
-  schedule:
-    - cron: "17 4 * * 1"   # weekly, one version per API generation
 
 permissions:
   contents: read
 
 env:
   MCRT_VERSION: "4.5.1"
-  SCHEDULED_VERSIONS: "1.16.5 1.18.2 1.20.1 1.21.11 26.2"
 
 jobs:
   plan:
@@ -52,7 +50,7 @@ jobs:
           import json, os, re, sys
           sys.path.insert(0, "tools/port-version")
           from port import plan
-          sel = (os.environ.get("SELECT") or os.environ["SCHEDULED_VERSIONS"]).split()
+          sel = os.environ["SELECT"].split()
           assets = {a["name"] for a in json.load(open("mcrt.json"))["assets"]}
           def mcrt(mc, kind):
               return any(re.fullmatch(rf"mc-runtime-test-{re.escape(mc)}-[0-9.]+-{kind}-release\.jar", a) for a in assets)
