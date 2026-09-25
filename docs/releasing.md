@@ -60,5 +60,9 @@ lists those packages as "already published earlier, not replaced": the
 Maven artifact is the one from the first successful run, while the release
 assets are the rebuilt jars. To publish new Maven artifacts, bump the version.
 
+A run over selected versions (not `supported`) attaches its report as
+`release-report-run<run id>.md`, so the full report of the last `supported` run stays.
+Run it with `images: false` unless the backend changed.
+
 The `report` job downloads only the `mc-*-status` and `release-result-*`
 artifacts, with one retry each, so a flaky jar download cannot drop the report.
