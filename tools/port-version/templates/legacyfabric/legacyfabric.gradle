@@ -34,8 +34,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings legacy.yarn(project.minecraft_version, '@MAPPINGS@')
     modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader}"
-    modImplementation "net.legacyfabric.legacy-fabric-api:legacy-fabric-api:${project.fabric_api}"
-}
+@LEGACYFABRIC_API_DEP@}
 
 tasks.withType(JavaCompile).configureEach {
     // the Java 8 toolchain compiler has no --release; source/target come from the toolchain
