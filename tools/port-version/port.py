@@ -122,6 +122,7 @@ def generate(mc: str, out: str):
         props = {
             "minecraft_version": mc,
             "mod_version": load_version(),
+            "mcvoiceBackendUrl": client_property("mcvoiceBackendUrl"),
             "maven_group": "io.github.ravoxx.mcvoice",
             "java_version": java,
             "org.gradle.jvmargs": "-Xmx3g",
@@ -263,12 +264,18 @@ def remap_classes(java_dir, table_path):
                     fh.write(text)
 
 
-def load_version():
+def client_property(name, required=False):
     with open(os.path.join(ROOT, "client", "gradle.properties"), encoding="utf-8") as fh:
         for line in fh:
-            if line.startswith("mod_version="):
+            if line.startswith(name + "="):
                 return line.split("=", 1)[1].strip()
-    raise SystemExit("mod_version missing")
+    if required:
+        raise SystemExit(f"{name} missing in client/gradle.properties")
+    return ""
+
+
+def load_version():
+    return client_property("mod_version", required=True)
 
 
 def main():
