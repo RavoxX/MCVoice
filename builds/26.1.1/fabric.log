@@ -18,12 +18,12 @@ Fabric Loom: 1.18.2
 > Task :validateAccessWidener NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790326019957.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790330194537.json
 
-BUILD SUCCESSFUL in 53s
+BUILD SUCCESSFUL in 38s
 5 actionable tasks: 5 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.0-mc26.1.1-fabric.jar (327 classes, 16 platform classes, metadata ['fabric.mod.json'])
+valid: mcvoice-0.1.1-mc26.1.1-fabric.jar (327 classes, 16 platform classes, metadata ['fabric.mod.json'])
   platform: dev/mcvoice/platform/fabric/McVoiceFabric
   platform: dev/mcvoice/platform/fabric/McVoiceFabric$FabricSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
