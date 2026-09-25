@@ -33,7 +33,7 @@ Run workflow). Nothing is built or uploaded from a developer machine.
 |---|---|---|
 | `plan` | Picks the versions: `supported` = all loaders pass in `build-status.json`, or an explicit list; checks that each `mc/<version>` branch exists | a branch is missing |
 | `test` | Full `ci.yml`: vectors, both backends (lint, unit, fuzz), conformance for both, load smoke, client core and end-to-end tests against both backends, secret scan | any failure blocks the builds |
-| `build` | `mc-build.yml` on each `mc/<version>` branch with `-Pmod_version=<version>`: build, validate jar, `gradle publish` to GitHub Packages | per loader: `status`, `reason`, `maven` (`published` or `failed: <exact error>`) |
+| `build` | `mc-build.yml` on each `mc/<version>` branch with `-Pmod_version=<version>`: build, validate jar, `gradle publish` to GitHub Packages | per loader: `status`, `reason`, `maven` (`published`, `exists: …` when the version is already in GitHub Packages, or `failed: <exact error>` after one retry) |
 | `github-release` | Per version: `checksums-sha256.txt`, creates or updates release `v<version>-mc<minecraft>` with the jars | skipped unless **every** loader of that version built; the `gh` error text is recorded on failure |
 | `images` | `backend.yml` with the version: build, container smoke test, push to GHCR | job result |
 | `report` | `tools/release/report.py` → `release-report.md` (job summary, artifact, attached to `v<version>`) | always runs |
@@ -55,5 +55,10 @@ says which.
 
 Releases are idempotent per tag: re-running with the same version replaces
 the release assets (`--clobber`). Maven packages cannot be overwritten:
-GitHub Packages rejects re-publishing the same version, which the report
-shows as `failed: … 409`. Bump the version instead.
+GitHub Packages rejects re-publishing the same version (409). The report
+lists those packages as "already published earlier, not replaced": the
+Maven artifact is the one from the first successful run, while the release
+assets are the rebuilt jars. To publish new Maven artifacts, bump the version.
+
+The `report` job downloads only the `mc-*-status` and `release-result-*`
+artifacts, with one retry each, so a flaky jar download cannot drop the report.

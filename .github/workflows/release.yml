@@ -165,8 +165,29 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v5
+      # only the small status/result artifacts (not the jars); downloading all ~160 once
+      # failed after 5 retries, so try each set twice
+      - id: status1
+        uses: actions/download-artifact@v5
+        continue-on-error: true
         with:
+          pattern: mc-*-status
+          path: artifacts
+      - if: steps.status1.outcome == 'failure'
+        uses: actions/download-artifact@v5
+        with:
+          pattern: mc-*-status
+          path: artifacts
+      - id: results1
+        uses: actions/download-artifact@v5
+        continue-on-error: true
+        with:
+          pattern: release-result-*
+          path: artifacts
+      - if: steps.results1.outcome == 'failure'
+        uses: actions/download-artifact@v5
+        with:
+          pattern: release-result-*
           path: artifacts
       - name: Write release-report.md
         env:
