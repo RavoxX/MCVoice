@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[${forge_major},)"
+license="MIT"
+issueTrackerURL="https://github.com/RavoxX/MCVoice/issues"
+
+[[mods]]
+modId="mcvoice"
+version="${version}"
+displayName="MCVoice"
+displayURL="https://github.com/RavoxX/MCVoice"
+logoFile="assets/mcvoice/icon.png"
+authors="MCVoice contributors"
+description='''Proximity voice chat that works without a server plugin.'''
+
+[[dependencies.mcvoice]]
+    modId="forge"
+    mandatory=true
+    versionRange="[${forge_major},)"
+    ordering="NONE"
+    side="CLIENT"
+
+[[dependencies.mcvoice]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[${minecraft_version}]"
+    ordering="NONE"
+    side="CLIENT"

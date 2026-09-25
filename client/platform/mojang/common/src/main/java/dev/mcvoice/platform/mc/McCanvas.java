@@ -7,13 +7,16 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 //#elif MC >= 1.20
 import net.minecraft.client.gui.GuiGraphics;
-//#else
+//#elif MC >= 1.16
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
+//#else
 import net.minecraft.client.gui.GuiComponent;
 //#endif
 
 /**
- * UiCanvas over the game's GUI drawing: PoseStack + GuiComponent before 1.20, GuiGraphics
+ * UiCanvas over the game's GUI drawing: GuiComponent statics before 1.16, PoseStack + GuiComponent
+ * before 1.20, GuiGraphics
  * from 1.20 (renamed GuiGraphicsExtractor in 26.1).
  */
 public final class McCanvas implements UiCanvas {
@@ -21,7 +24,7 @@ public final class McCanvas implements UiCanvas {
     private final GuiGraphicsExtractor g;
     //#elif MC >= 1.20
     private final GuiGraphics g;
-    //#else
+    //#elif MC >= 1.16
     private final PoseStack g;
     //#endif
     private final Font font;
@@ -30,10 +33,14 @@ public final class McCanvas implements UiCanvas {
     public McCanvas(GuiGraphicsExtractor g) {
     //#elif MC >= 1.20
     public McCanvas(GuiGraphics g) {
-    //#else
+    //#elif MC >= 1.16
     public McCanvas(PoseStack g) {
+    //#else
+    public McCanvas() {
     //#endif
+        //#if MC >= 1.16
         this.g = g;
+        //#endif
         this.font = Minecraft.getInstance().font;
     }
 
@@ -41,8 +48,10 @@ public final class McCanvas implements UiCanvas {
     public int width() {
         //#if MC >= 1.20
         return g.guiWidth();
-        //#else
+        //#elif MC >= 1.15
         return Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        //#else
+        return Minecraft.getInstance().window.getGuiScaledWidth();
         //#endif
     }
 
@@ -50,8 +59,10 @@ public final class McCanvas implements UiCanvas {
     public int height() {
         //#if MC >= 1.20
         return g.guiHeight();
-        //#else
+        //#elif MC >= 1.15
         return Minecraft.getInstance().getWindow().getGuiScaledHeight();
+        //#else
+        return Minecraft.getInstance().window.getGuiScaledHeight();
         //#endif
     }
 
@@ -59,8 +70,10 @@ public final class McCanvas implements UiCanvas {
     public void fill(int x1, int y1, int x2, int y2, int argb) {
         //#if MC >= 1.20
         g.fill(x1, y1, x2, y2, argb);
-        //#else
+        //#elif MC >= 1.16
         GuiComponent.fill(g, x1, y1, x2, y2, argb);
+        //#else
+        GuiComponent.fill(x1, y1, x2, y2, argb);
         //#endif
     }
 
@@ -70,11 +83,17 @@ public final class McCanvas implements UiCanvas {
         g.text(font, text, x, y, argb, shadow);
         //#elif MC >= 1.20
         g.drawString(font, text, x, y, argb, shadow);
-        //#else
+        //#elif MC >= 1.16
         if (shadow) {
             font.drawShadow(g, text, (float) x, (float) y, argb);
         } else {
             font.draw(g, text, (float) x, (float) y, argb);
+        }
+        //#else
+        if (shadow) {
+            font.drawShadow(text, (float) x, (float) y, argb);
+        } else {
+            font.draw(text, (float) x, (float) y, argb);
         }
         //#endif
     }
