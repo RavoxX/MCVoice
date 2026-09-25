@@ -145,6 +145,9 @@ def generate(mc: str, out: str):
             remap_classes(os.path.join(ldir, "src-gen", "java"), os.path.join(HERE, "remap", cfg["class_remap"]))
         tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"], "LOADER": label,
                   "MAPPINGS": cfg.get("mappings", ""),
+                  # ForgeGradle: Mojang's official mappings unless the setup names MCP ones ("stable_47-1.13.2")
+                  "FG_MAPPINGS_CHANNEL": cfg["mappings"].split("_", 1)[0] if buildgen == "fg6" and cfg.get("mappings") else "official",
+                  "FG_MAPPINGS_VERSION": cfg["mappings"].split("_", 1)[1] if buildgen == "fg6" and cfg.get("mappings") else mc,
                   # Legacy Fabric API is optional: without it the adapter hooks the game with its own mixins
                   "LEGACYFABRIC_API_DEP": ('    modImplementation "net.legacyfabric.legacy-fabric-api:legacy-fabric-api:${project.fabric_api}"\n'
                                            if lf_api else ""),
