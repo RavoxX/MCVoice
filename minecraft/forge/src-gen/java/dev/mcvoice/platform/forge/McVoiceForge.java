@@ -48,7 +48,7 @@ import net.minecraftforge.network.event.EventNetworkChannel;
 
 
 /**
- * Forge entry point for Minecraft 1.16.5-1.18.2 (FML ClientRegistry key bindings,
+ * Forge entry point for Minecraft 1.14.4-1.18.2 (FML ClientRegistry key bindings,
  * RenderGameOverlayEvent HUD, NetworkRegistry event channels). Client-only mod.
  */
 @Mod("mcvoice")
@@ -81,7 +81,11 @@ public final class McVoiceForge {
         });
         MinecraftForge.EVENT_BUS.addListener((RenderGameOverlayEvent.Post e) -> {
             if (e.getType() == RenderGameOverlayEvent.ElementType.ALL && client != null) {
+
                 client.renderHud(new McCanvas(e.getMatrixStack()));
+
+
+
             }
         });
         MinecraftForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggedOutEvent e) -> {
