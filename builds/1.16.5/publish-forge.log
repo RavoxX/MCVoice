@@ -15,22 +15,9 @@ WARNING: (c) 2020 Microsoft Corporation. These mappings are provided "as-is" and
 > Task :createMcpToSrg UP-TO-DATE
 > Task :reobfJar
 > Task :sourcesJar UP-TO-DATE
-> Task :publishModPublicationToGitHubPackagesRepository FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790325190359.json
+> Task :publishModPublicationToGitHubPackagesRepository
+> Task :publish
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790329087831.json
 
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task ':publishModPublicationToGitHubPackagesRepository'.
-> Failed to publish publication 'mod' to repository 'GitHubPackages'
-   > Could not PUT 'https://maven.pkg.github.com/RavoxX/MCVoice/io/github/ravoxx/mcvoice/voice-client-forge/0.1.0+mc1.16.5/voice-client-forge-0.1.0+mc1.16.5.jar'. Received status code 409 from server: Conflict
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-
-* Get more help at https://help.gradle.org
-
-BUILD FAILED in 8s
+BUILD SUCCESSFUL in 24s
 10 actionable tasks: 5 executed, 5 up-to-date
