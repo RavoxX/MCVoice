@@ -259,11 +259,12 @@ git show FETCH_HEAD:<path>`).
   * Fabric wherever Fabric API exists for 1.14.4–26.3.
   * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
     without Legacy Fabric API).
-* **Branches:** `mc/<version>` exists for the 54 versions of release run
-  36112725820; the versions added later in session 2 (1.8.1–1.8.7, 1.13.2)
-  and the 1.8.8 Legacy Fabric build are not on `mc/` branches or released yet.
-* **Release v0.1.0:** see the latest `release.yml` run and its
-  `release-report.md` (attached to release `v0.1.0`).
+* **Branches and release v0.1.0:** every passing version has an `mc/` branch
+  and a `v0.1.0-mc<version>` GitHub Release (63 releases). Full run
+  36112725820 (`release-report.md` on `v0.1.0`), then 36115472419 for
+  1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
+  (`release-report-run36115472419.md`). Maven: every jar is in GitHub
+  Packages; re-runs record `exists`. Backend images `0.1.0`/`latest` pushed.
 * **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
   1.20.1 and 1.21.4 (compatibility 20, AES-GCM with 12-byte IV). Older
   compatibility versions (19–16) are not verified.
