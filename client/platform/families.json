@@ -335,6 +335,36 @@
           },
           {
             "minecraft": {
+              "min": "1.8.6",
+              "max": "1.8.6"
+            },
+            "buildgen": "legacyfabric",
+            "gradle": "9.4.0",
+            "gradle_jdk": 21,
+            "plugin_version": "1.16.1",
+            "mappings": "603",
+            "parts": [
+              "yarn",
+              "fabric"
+            ]
+          },
+          {
+            "minecraft": {
+              "min": "1.8.1",
+              "max": "1.8.8"
+            },
+            "buildgen": "legacyfabric",
+            "gradle": "9.4.0",
+            "gradle_jdk": 21,
+            "plugin_version": "1.16.1",
+            "mappings": "604",
+            "parts": [
+              "yarn",
+              "fabric"
+            ]
+          },
+          {
+            "minecraft": {
               "min": "1.8.9",
               "max": "1.8.9"
             },
