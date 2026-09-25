@@ -14,14 +14,14 @@ Matrix generated at 2026-09-24T19:27:16Z; latest release in Mojang manifest: `26
 | Minecraft | Java | Forge | Fabric / Legacy Fabric | Forge version | Fabric loader |
 |---|---|---|---|---|---|
 | 1.8 | 8 | PASS | PASS (Legacy Fabric) | 1.8-11.14.4.1563 | 0.19.3 |
-| 1.8.1 | 8 | N/A | not built (Legacy Fabric) | - | 0.19.3 |
-| 1.8.2 | 8 | N/A | not built (Legacy Fabric) | - | 0.19.3 |
-| 1.8.3 | 8 | N/A | not built (Legacy Fabric) | - | 0.19.3 |
-| 1.8.4 | 8 | N/A | not built (Legacy Fabric) | - | 0.19.3 |
-| 1.8.5 | 8 | N/A | not built (Legacy Fabric) | - | 0.19.3 |
-| 1.8.6 | 8 | N/A | not built (Legacy Fabric) | - | 0.19.3 |
-| 1.8.7 | 8 | N/A | not built (Legacy Fabric) | - | 0.19.3 |
-| 1.8.8 | 8 | PASS | not built (Legacy Fabric) | 1.8.8-11.15.0.1655 | 0.19.3 |
+| 1.8.1 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
+| 1.8.2 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
+| 1.8.3 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
+| 1.8.4 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
+| 1.8.5 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
+| 1.8.6 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
+| 1.8.7 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
+| 1.8.8 | 8 | PASS | PASS (Legacy Fabric) | 1.8.8-11.15.0.1655 | 0.19.3 |
 | 1.8.9 | 8 | PASS | PASS (Legacy Fabric) | 1.8.9-11.15.1.2318-1.8.9 | 0.19.3 |
 | 1.9 | 8 | PASS | N/A | 1.9-12.16.1.1887 | - |
 | 1.9.1 | 8 | N/A | N/A | - | - |
@@ -39,7 +39,7 @@ Matrix generated at 2026-09-24T19:27:16Z; latest release in Mojang manifest: `26
 | 1.12.2 | 8 | PASS | PASS (Legacy Fabric) | 1.12.2-14.23.5.2859 | 0.19.3 |
 | 1.13 | 8 | N/A | N/A | - | - |
 | 1.13.1 | 8 | N/A | N/A | - | - |
-| 1.13.2 | 8 | not built | not built (Legacy Fabric) | 1.13.2-25.0.223 | 0.19.3 |
+| 1.13.2 | 8 | PASS | not built (Legacy Fabric) | 1.13.2-25.0.223 | 0.19.3 |
 | 1.14 | 8 | N/A | not built | - | 0.19.5 |
 | 1.14.1 | 8 | N/A | not built | - | 0.19.5 |
 | 1.14.2 | 8 | not built | not built | 1.14.2-26.0.63 | 0.19.5 |
@@ -89,7 +89,7 @@ Matrix generated at 2026-09-24T19:27:16Z; latest release in Mojang manifest: `26
 | 26.2 | 25 | PASS | PASS | 26.2-65.1.0 | 0.19.5 |
 | 26.3 | 25 | PASS | PASS | 26.3-66.0.3 | 0.19.5 |
 
-**93** Minecraft/loader combinations currently pass CI.
+**102** Minecraft/loader combinations currently pass CI.
 
 ## Unavailable combinations
 
