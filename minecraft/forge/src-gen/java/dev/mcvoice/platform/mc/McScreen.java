@@ -41,7 +41,13 @@ public final class McScreen extends Screen {
 
     public void render(PoseStack g, int mouseX, int mouseY, float partialTicks) {
 
+
+
+
         ui.render(new McCanvas(g), mouseX, mouseY, partialTicks);
+
+
+
     }
 
 
