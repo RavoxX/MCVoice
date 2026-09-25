@@ -104,13 +104,43 @@ Logs are JSON (`LOG_FORMAT=json`). They contain no audio, no positions
 (unless `LOG_POSITIONS=true` **and** `LOG_LEVEL=debug`), and IP addresses
 only as keyed hashes.
 
+## Behind nginx (host nginx + certbot)
+
+The public backend `mcvoice.ravoxx.dev` runs this way: the Compose service
+publishes the control port on `127.0.0.1` only and UDP 24455 publicly, and the
+host's nginx terminates TLS (certificate from certbot) and proxies the
+WebSocket:
+
+```nginx
+location = /v1/control {
+    proxy_pass http://127.0.0.1:18455;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    # TRUST_PROXY_HEADERS=true takes the FIRST X-Forwarded-For entry:
+    # overwrite it with the peer, never append ($proxy_add_x_forwarded_for is spoofable)
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_read_timeout 3600s;
+}
+location = /health { proxy_pass http://127.0.0.1:18455; }
+location = /ready  { proxy_pass http://127.0.0.1:18455; }
+location / { return 404; }   # keep /metrics internal
+```
+
+Voice never passes nginx or a CDN: the DNS name must point at the host
+itself (no Cloudflare proxy), and the host firewall must accept UDP 24455
+(for Docker-published ports that is the FORWARD path, not INPUT).
+
 ## Pointing clients at a backend
 
 The client's backend URL comes from its config file
 (`config/mcvoice.json`, `backendUrl`), the `MCVOICE_BACKEND_URL` environment
-variable / `-Dmcvoice.backendUrl`, or the default compiled into the jar. Release builds set that default from the `mcvoiceBackendUrl` Gradle
-property, or the `MCVOICE_BACKEND_URL` repository variable in the release
-workflow. Production URLs must use `wss://`. The client refuses plain `ws://`
+variable / `-Dmcvoice.backendUrl`, or the default compiled into the jar. That
+default is `mcvoiceBackendUrl` in `client/gradle.properties`
+(`wss://mcvoice.ravoxx.dev/v1/control`); `port.py` copies it into every
+generated Minecraft build. An empty `backendUrl` in the config file means
+"use the default". Production URLs must use `wss://`. The client refuses plain `ws://`
 to non-loopback hosts unless `allowInsecureControl` is set (development only).
 
 ## Images
