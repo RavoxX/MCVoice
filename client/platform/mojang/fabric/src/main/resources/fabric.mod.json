@@ -12,6 +12,9 @@
   "entrypoints": {
     "client": ["dev.mcvoice.platform.fabric.McVoiceFabric"]
   },
+//#if MC < 1.15
+  "mixins": ["mcvoice.mixins.json"],
+//#endif
   "depends": {
     "fabricloader": ">=${loader_min}",
     "minecraft": "${minecraft_dep}",
