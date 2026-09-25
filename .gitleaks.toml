@@ -1,0 +1,13 @@
+# gitleaks configuration: default rules plus a narrow allowlist for public test fixtures.
+# Everything allowlisted here is intentionally published and never used outside tests:
+#   * protocol/test-vectors/*.json: deterministic AES keys of the byte-exact test vectors
+#     (produced by protocol/test-vectors/generate.py);
+#   * the spec's example session key (bytes 00..0f, base64);
+#   * the dummy JWT secret of the client end-to-end test backend.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Public test fixtures (not secrets)"
+paths = ['''^protocol/test-vectors/[a-z]+\.json$''']
+regexes = ['''AAECAwQFBgcICQoLDA0ODw==''', '''e2e-test-secret-[0-9a-f]+''']
