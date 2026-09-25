@@ -1,41 +1,29 @@
-Downloading https://services.gradle.org/distributions/gradle-8.8-bin.zip
-.............10%.............20%.............30%.............40%.............50%.............60%..............70%.............80%.............90%.............100%
-
-Welcome to Gradle 8.8!
-
-Here are the highlights of this release:
- - Running Gradle on Java 22
- - Configurable Gradle daemon JVM
- - Improved IDE performance for large projects
-
-For more details see https://docs.gradle.org/8.8/release-notes.html
-
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.8/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 
 > Configure project :
 Architectury Loom: 0.10.0.5
 :generating dummy intermediary
-:generated dummy intermediary in 963.1 ms
+:generated dummy intermediary in 848.4 ms
 :patching forge
-:patched forge in 30.54 s
+:patched forge in 3.802 s
 :patching jars
-:patched jars in 7.430 s
+:patched jars in 7.522 s
 :access transforming minecraft
-[08:30:15] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
-[08:30:15] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar, --atFile, /tmp/at-conf3428352675367229185.cfg]
-[08:30:15] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-patched.jar
-[08:30:15] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar
-[08:30:15] [main/INFO]: Transformer file /tmp/at-conf3428352675367229185.cfg
-[08:30:15] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar, overwriting
-[08:30:17] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar
-:access transformed minecraft in 13.03 s
+[09:32:34] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
+[09:32:34] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar, --atFile, /tmp/at-conf10664990884708789764.cfg]
+[09:32:34] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-patched.jar
+[09:32:34] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar
+[09:32:34] [main/INFO]: Transformer file /tmp/at-conf10664990884708789764.cfg
+[09:32:34] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar, overwriting
+[09:32:36] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.10.2/forge/1.10.2-12.18.3.2511/merged-at-patched.jar
+:access transformed minecraft in 5.561 s
 :remapping minecraft (TinyRemapper, official -> intermediary)
-:remapped minecraft (TinyRemapper, official -> intermediary) in 1.834 s
+:remapped minecraft (TinyRemapper, official -> intermediary) in 1.965 s
 :remapping minecraft (TinyRemapper, official -> srg)
-:remapped minecraft (TinyRemapper, official -> srg) in 1.550 s
+:remapped minecraft (TinyRemapper, official -> srg) in 1.608 s
 :remapping minecraft (TinyRemapper, official -> named)
-:remapped minecraft (TinyRemapper, official -> named) in 1.546 s
+:remapped minecraft (TinyRemapper, official -> named) in 1.683 s
 
 > Task :compileJava
 Note: SpongePowered MIXIN Annotation Processor Version=0.8.5
@@ -60,7 +48,7 @@ Note: Recompile with -Xlint:deprecation for details.
 :remapping sources
 
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790324925663.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790328707683.json
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -68,9 +56,9 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 2m 14s
+BUILD SUCCESSFUL in 1m 24s
 6 actionable tasks: 6 executed
-valid: mcvoice-0.1.0-mc1.10.2-forge.jar (327 classes, 13 platform classes, metadata ['mcmod.info'])
+valid: mcvoice-0.1.1-mc1.10.2-forge.jar (327 classes, 13 platform classes, metadata ['mcmod.info'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$Events
   platform: dev/mcvoice/platform/mc/McAdapter
