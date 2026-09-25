@@ -18,21 +18,9 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :remapJar UP-TO-DATE
 > Task :sourcesJar UP-TO-DATE
 > Task :remapSourcesJar UP-TO-DATE
-> Task :publishModPublicationToGitHubPackagesRepository FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790324982535.json
-
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-Execution failed for task ':publishModPublicationToGitHubPackagesRepository'.
-> Failed to publish publication 'mod' to repository 'GitHubPackages'
-   > Could not PUT 'https://maven.pkg.github.com/RavoxX/MCVoice/io/github/ravoxx/mcvoice/voice-client-forge/0.1.0+mc1.12.1/voice-client-forge-0.1.0+mc1.12.1.jar'. Received status code 409 from server: Conflict
-
-* Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
-> Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
+> Task :publishModPublicationToGitHubPackagesRepository
+> Task :publish
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790328777240.json
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -40,5 +28,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD FAILED in 13s
+BUILD SUCCESSFUL in 34s
 8 actionable tasks: 3 executed, 5 up-to-date
