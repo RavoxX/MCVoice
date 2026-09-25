@@ -89,7 +89,8 @@ jobs:
 
   github-release:
     needs: [plan, build]
-    if: always() && needs.plan.result == 'success'
+    # per-version failures are handled inside; nothing to release when the builds never ran
+    if: always() && needs.plan.result == 'success' && needs.build.result != 'skipped' && needs.build.result != 'cancelled'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -164,8 +165,29 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v5
+      # only the small status/result artifacts (not the jars); downloading all ~160 once
+      # failed after 5 retries, so try each set twice
+      - id: status1
+        uses: actions/download-artifact@v5
+        continue-on-error: true
         with:
+          pattern: mc-*-status
+          path: artifacts
+      - if: steps.status1.outcome == 'failure'
+        uses: actions/download-artifact@v5
+        with:
+          pattern: mc-*-status
+          path: artifacts
+      - id: results1
+        uses: actions/download-artifact@v5
+        continue-on-error: true
+        with:
+          pattern: release-result-*
+          path: artifacts
+      - if: steps.results1.outcome == 'failure'
+        uses: actions/download-artifact@v5
+        with:
+          pattern: release-result-*
           path: artifacts
       - name: Write release-report.md
         env:
@@ -188,12 +210,20 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           VERSION: ${{ inputs.version }}
+          SELECT: ${{ inputs.minecraft }}
         run: |
           tag="v$VERSION"
+          # a run over selected versions must not replace the full report of a "supported" run
+          name=release-report.md
+          if [ "$SELECT" != supported ]; then name="release-report-run${{ github.run_id }}.md"; cp release-report.md "$name"; fi
+          if grep -q 'GitHub Releases: \*\*0/' release-report.md; then
+            echo "::warning::no Minecraft version was released; not creating or updating release $tag (report is in the run summary and artifacts)"
+            exit 0
+          fi
           flags=""; [ "${{ inputs.prerelease }}" = "true" ] && flags="--prerelease"
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" release-report.md --clobber
+            gh release upload "$tag" "$name" --clobber
           else
-            gh release create "$tag" release-report.md --target "$GITHUB_SHA" --title "MCVoice $VERSION" \
+            gh release create "$tag" "$name" --target "$GITHUB_SHA" --title "MCVoice $VERSION" \
               --notes "Release overview: backend images, per-Minecraft-version releases (tags v$VERSION-mc<version>) and the release report." $flags
           fi
