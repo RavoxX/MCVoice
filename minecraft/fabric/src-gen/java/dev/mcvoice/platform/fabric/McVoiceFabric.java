@@ -76,10 +76,23 @@ public final class McVoiceFabric implements ClientModInitializer {
 
         HudRenderCallback.EVENT.register((graphics, delta) -> client.renderHud(new McCanvas(graphics)));
 
+
+
+
+
         ClientPlayConnectionEvents.DISCONNECT.register((handler, mc) -> client.invalidateWorld("disconnect"));
         ClientPlayConnectionEvents.JOIN.register((handler, sender, mc) -> client.invalidateWorld("join_world"));
         ClientLifecycleEvents.CLIENT_STOPPING.register(mc -> client.shutdown());
     }
+
+
+
+
+
+
+
+
+
 
     /** Plugin channels for the Simple Voice Chat compatibility layer via Fabric networking. */
     static final class FabricSvcChannels implements SimpleVoiceChatAdapter {
