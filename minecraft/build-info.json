@@ -1,0 +1,25 @@
+{
+  "minecraft": "1.8.5",
+  "family": "legacy",
+  "java": 8,
+  "build_jdk": 17,
+  "jdks": [
+    8,
+    17,
+    21
+  ],
+  "loaders": [
+    "legacyfabric"
+  ],
+  "builds": {
+    "legacyfabric": {
+      "buildgen": "legacyfabric",
+      "gradle": "9.4.0",
+      "gradle_jdk": 21,
+      "plugin_version": "1.16.1"
+    }
+  },
+  "not_built": {
+    "forge": "No Forge build for Minecraft 1.8.5 is published on maven.minecraftforge.net"
+  }
+}
