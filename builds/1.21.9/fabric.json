@@ -1,1 +1,1 @@
-{"minecraft": "1.21.9", "loader": "fabric", "status": "pass", "run": "https://github.com/RavoxX/MCVoice/actions/runs/36112725820", "commit": "3678d77f229e6bbd3821f1cfd3152c6c0ad45706", "jar": "mcvoice-0.1.0-mc1.21.9-fabric.jar", "maven": "exists: 0.1.0+mc1.21.9 already in GitHub Packages (409 Conflict), not replaced"}
+{"minecraft": "1.21.9", "loader": "fabric", "status": "pass", "run": "https://github.com/RavoxX/MCVoice/actions/runs/36118508330", "commit": "4adf2c2eb7942dbe2c7e3c1692e5453b9050b63c", "jar": "mcvoice-0.1.1-mc1.21.9-fabric.jar", "maven": "published"}
