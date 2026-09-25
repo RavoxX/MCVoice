@@ -24,48 +24,11 @@ Overwriting dependency searge
 [Unimined/JarMod ::source set 'main'] Adding mappings for added inner class lc$a$2, {official=lc$a$2, searge=net/minecraft/server/management/PlayerManager$PlayerInstance$2, mcp=net/minecraft/server/management/PlayerManager$PlayerInstance$2}
 [Unimined/JarMod ::source set 'main'] Adding mappings for added inner class yj$2, {official=yj$2, searge=net/minecraft/item/ItemArmor$2, mcp=net/minecraft/item/ItemArmor$2}
 [Unimined/JarMod ::source set 'main'] Adding mappings for added inner class zw$18, {official=zw$18, searge=net/minecraft/item/Item$18, mcp=net/minecraft/item/Item$18}
-[Unimined/McRemapper] Remapping minecraft JOINED to searge
-
-Invalid access from field instruction in net/minecraft/item/Item to protected field net/minecraft/util/WeightedRandom$Item/field_76292_a;;I after remapping.
-Invalid access from field instruction in net/minecraftforge/fml/server/FMLServerHandler to protected field net/minecraft/world/storage/SaveFormatOld/field_75808_a;;Ljava/io/File; after remapping.
-Invalid access from method instruction in net/minecraft/block/Block to package-private class net/minecraftforge/fml/common/registry/GameData$ClearableObjectIntIdentityMap after remapping.
-Invalid access from field instruction in net/minecraftforge/fml/common/registry/EntityRegistry to protected field net/minecraft/util/WeightedRandom$Item/field_76292_a;;I after remapping.
-Invalid access from field instruction in net/minecraftforge/common/DungeonHooks to protected field net/minecraft/util/WeightedRandom$Item/field_76292_a;;I after remapping.
-Invalid access from field instruction in net/minecraftforge/common/DungeonHooks to protected field net/minecraft/util/WeightedRandom$Item/field_76292_a;;I after remapping.
-Invalid access from field instruction in net/minecraftforge/common/DungeonHooks to protected field net/minecraft/util/WeightedRandom$Item/field_76292_a;;I after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178315_d;;Lnet/minecraft/client/renderer/block/model/ModelBlock; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178315_d;;Lnet/minecraft/client/renderer/block/model/ModelBlock; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178315_d;;Lnet/minecraft/client/renderer/block/model/ModelBlock; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178318_c;;Ljava/util/Map; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178318_c;;Ljava/util/Map; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178315_d;;Lnet/minecraft/client/renderer/block/model/ModelBlock; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178315_d;;Lnet/minecraft/client/renderer/block/model/ModelBlock; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178318_c;;Ljava/util/Map; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178318_c;;Ljava/util/Map; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178318_c;;Ljava/util/Map; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178318_c;;Ljava/util/Map; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178318_c;;Ljava/util/Map; after remapping.
-Invalid access from field instruction in net/minecraftforge/client/model/ModelLoader$VanillaModelWrapper to protected field net/minecraft/client/renderer/block/model/ModelBlock/field_178318_c;;Ljava/util/Map; after remapping.
-Invalid access from field instruction in net/minecraftforge/fml/client/FMLClientHandler to protected field net/minecraft/world/storage/SaveFormatOld/field_75808_a;;Ljava/io/File; after remapping.
-
-> Configure project :
-Fixing access for 1 classes and 4 members.
-[Unimined/McRemapper] Remapping minecraft JOINED to mcp
 [Unimined/ForgeTransformer] Applying ATs [forge_at.cfg]
-[08:32:41] [main/INFO]: Access Transformer processor running version 8.2.2
-[08:32:41] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/unimined/net/minecraft/minecraft/1.8.8/MinecraftForge-FG2/1.8.8-11.15.0.1655/mcp-stable-20-1.8.8-searge-1.8.8/forge-1.8.8-MinecraftForge-FG2-merged+MinecraftForge-FG2+forge-1.8.8-11.15.0.1655+fixForge-mcp.jar, --outJar, /home/runner/.gradle/caches/unimined/net/minecraft/minecraft/1.8.8/MinecraftForge-FG2/1.8.8-11.15.0.1655/mcp-stable-20-1.8.8-searge-1.8.8/forge-1.8.8-MinecraftForge-FG2-merged+MinecraftForge-FG2+forge-1.8.8-11.15.0.1655+fixForge-mcp-at.jar, --atFile, /home/runner/.gradle/caches/unimined/net/minecraft/minecraft/1.8.8/MinecraftForge-FG2/1.8.8-11.15.0.1655/mcp-stable-20-1.8.8-searge-1.8.8/forge-1.8.8-MinecraftForge-FG2-merged+MinecraftForge-FG2+forge-1.8.8-11.15.0.1655+fixForge-mcp-mergedATs.cfg]
-[08:32:41] [main/INFO]: Reading from /home/runner/.gradle/caches/unimined/net/minecraft/minecraft/1.8.8/MinecraftForge-FG2/1.8.8-11.15.0.1655/mcp-stable-20-1.8.8-searge-1.8.8/forge-1.8.8-MinecraftForge-FG2-merged+MinecraftForge-FG2+forge-1.8.8-11.15.0.1655+fixForge-mcp.jar
-[08:32:41] [main/INFO]: Writing to /home/runner/.gradle/caches/unimined/net/minecraft/minecraft/1.8.8/MinecraftForge-FG2/1.8.8-11.15.0.1655/mcp-stable-20-1.8.8-searge-1.8.8/forge-1.8.8-MinecraftForge-FG2-merged+MinecraftForge-FG2+forge-1.8.8-11.15.0.1655+fixForge-mcp-at.jar
-[08:32:41] [main/INFO]: Transformer file /home/runner/.gradle/caches/unimined/net/minecraft/minecraft/1.8.8/MinecraftForge-FG2/1.8.8-11.15.0.1655/mcp-stable-20-1.8.8-searge-1.8.8/forge-1.8.8-MinecraftForge-FG2-merged+MinecraftForge-FG2+forge-1.8.8-11.15.0.1655+fixForge-mcp-mergedATs.cfg
-[08:32:41] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/unimined/net/minecraft/minecraft/1.8.8/MinecraftForge-FG2/1.8.8-11.15.0.1655/mcp-stable-20-1.8.8-searge-1.8.8/forge-1.8.8-MinecraftForge-FG2-merged+MinecraftForge-FG2+forge-1.8.8-11.15.0.1655+fixForge-mcp-at.jar, overwriting
-[08:32:43] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/unimined/net/minecraft/minecraft/1.8.8/MinecraftForge-FG2/1.8.8-11.15.0.1655/mcp-stable-20-1.8.8-searge-1.8.8/forge-1.8.8-MinecraftForge-FG2-merged+MinecraftForge-FG2+forge-1.8.8-11.15.0.1655+fixForge-mcp-at.jar
 [Unimined/ModRemapper] Remapping mods from searge to mcp
 [Unimined/ModRemapper] No mods found for remapping
 
-> Task :compileJava
-Note: /home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/forge/McVoiceForge.java uses or overrides a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-
+> Task :compileJava FROM-CACHE
 > Task :processResources
 > Task :classes
 > Task :jar
@@ -81,7 +44,7 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790325093681.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790325924103.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/MCVoice/MCVoice/minecraft/forge/build/reports/problems/problems-report.html
 
@@ -91,8 +54,8 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 1m 30s
-5 actionable tasks: 5 executed
+BUILD SUCCESSFUL in 16s
+5 actionable tasks: 4 executed, 1 from cache
 valid: mcvoice-0.1.0-mc1.8.8-forge.jar (327 classes, 13 platform classes, metadata ['mcmod.info'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$Events
