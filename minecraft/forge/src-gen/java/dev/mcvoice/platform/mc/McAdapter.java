@@ -34,7 +34,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 
 /**
- * MinecraftAdapter for Mojang-named Minecraft (official mappings, 1.16.5+), shared by
+ * MinecraftAdapter for Mojang-named Minecraft (official mappings, 1.14.4+), shared by
  * the Fabric and Forge entry points of this family. Only this package touches
  * Minecraft classes; everything else lives in the version-independent core.
  */
@@ -113,9 +113,15 @@ public final class McAdapter implements MinecraftAdapter {
         out.name = p.getName().getString();
         out.entityId = p.getId();
         out.playerIdentity = p;
+
         out.x = p.getX();
         out.y = p.getEyeY();
         out.z = p.getZ();
+
+
+
+
+
 
         out.yaw = p.getYRot();
         out.pitch = p.getXRot();
@@ -140,6 +146,8 @@ public final class McAdapter implements MinecraftAdapter {
 
 
 
+
+
             }
 
             @Override
@@ -158,7 +166,11 @@ public final class McAdapter implements MinecraftAdapter {
 
 
                     if (!gone) {
+
                         v.visit(p.getUUID(), p.getName().getString(), p.getX(), p.getEyeY(), p.getZ());
+
+
+
                     }
                 }
             }
@@ -265,7 +277,11 @@ public final class McAdapter implements MinecraftAdapter {
         @Override
         public String keyName(Action a) {
             KeyMapping k = keys.get(a);
+
             return k == null ? "?" : k.getTranslatedKeyMessage().getString();
+
+
+
         }
     };
 
