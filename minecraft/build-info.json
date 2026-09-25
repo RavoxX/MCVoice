@@ -9,9 +9,16 @@
     21
   ],
   "loaders": [
+    "legacyfabric",
     "forge"
   ],
   "builds": {
+    "legacyfabric": {
+      "buildgen": "legacyfabric",
+      "gradle": "9.4.0",
+      "gradle_jdk": 21,
+      "plugin_version": "1.16.1"
+    },
     "forge": {
       "buildgen": "unimined",
       "gradle": "8.14.3",
@@ -19,7 +26,5 @@
       "plugin_version": "1.4.1"
     }
   },
-  "not_built": {
-    "legacyfabric": "not implemented: the Legacy Fabric loader exists, but Legacy Fabric API is not published for this version and the MCVoice Legacy Fabric adapter needs it (keys, ticks, lifecycle)"
-  }
+  "not_built": {}
 }
