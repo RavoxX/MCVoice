@@ -24,8 +24,9 @@ Run workflow). Nothing is built or uploaded from a developer machine.
    `tools/port-version/make-branch.sh --all-supported --push`. Each
    `mc/<version>` branch is `main` plus the generated `minecraft/` build. It is
    refreshed by merging `main`, never by rewriting its history.
-3. Bump `mod_version` if needed, and set the repository variable
-   `MCVOICE_BACKEND_URL` if release jars should ship with a default backend.
+3. Bump `mod_version` if needed (GitHub Packages never replaces a published
+   version). The default backend of the jars is `mcvoiceBackendUrl` in
+   `client/gradle.properties`.
 
 ## What the workflow does
 
@@ -59,6 +60,10 @@ GitHub Packages rejects re-publishing the same version (409). The report
 lists those packages as "already published earlier, not replaced": the
 Maven artifact is the one from the first successful run, while the release
 assets are the rebuilt jars. To publish new Maven artifacts, bump the version.
+
+A run over selected versions (not `supported`) attaches its report as
+`release-report-run<run id>.md`, so the full report of the last `supported` run stays.
+Run it with `images: false` unless the backend changed.
 
 The `report` job downloads only the `mc-*-status` and `release-result-*`
 artifacts, with one retry each, so a flaky jar download cannot drop the report.
