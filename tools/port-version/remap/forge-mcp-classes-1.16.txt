@@ -16,3 +16,4 @@ net.minecraft.network.chat.TextComponent net.minecraft.util.text.StringTextCompo
 net.minecraft.resources.ResourceLocation net.minecraft.util.ResourceLocation
 net.minecraft.network.FriendlyByteBuf net.minecraft.network.PacketBuffer
 net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket net.minecraft.network.play.client.CCustomPayloadPacket
+net.minecraft.world.level.dimension.DimensionType net.minecraft.world.dimension.DimensionType
