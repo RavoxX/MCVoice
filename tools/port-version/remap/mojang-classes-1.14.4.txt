@@ -1,0 +1,2 @@
+# Minecraft 1.14.4's Mojang names differ from 1.15+ for a few classes used by the Mojang family.
+net.minecraft.client.multiplayer.ClientLevel net.minecraft.client.multiplayer.MultiPlayerLevel
