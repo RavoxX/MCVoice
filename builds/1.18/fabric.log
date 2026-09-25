@@ -26,9 +26,9 @@ Please make sure to read and understand the following license:
 > Task :remapSourcesJar
 > Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790282060932.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790325116996.json
 
-BUILD SUCCESSFUL in 1m
+BUILD SUCCESSFUL in 52s
 7 actionable tasks: 7 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
 valid: mcvoice-0.1.0-mc1.18-fabric.jar (327 classes, 15 platform classes, metadata ['fabric.mod.json'])
