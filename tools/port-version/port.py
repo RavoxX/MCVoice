@@ -77,10 +77,6 @@ def plan(mc: str):
             reasons[label] = ("not built: no Fabric API release is published for this exact Minecraft version, "
                               "and the MCVoice Fabric adapter needs Fabric API")
             continue
-        if cfg is None and label == "legacyfabric" and not up.get("legacy_fabric_api"):
-            reasons[label] = ("not implemented: the Legacy Fabric loader exists, but Legacy Fabric API is not published "
-                              "for this version and the MCVoice Legacy Fabric adapter needs it (keys, ticks, lifecycle)")
-            continue
         if cfg is None:
             reasons[label] = ("not implemented yet for this Minecraft version (no adapter family)" if fam is None else
                               f"not implemented yet: adapter family '{fam['id']}' has no {label} build setup for this version")
@@ -126,6 +122,7 @@ def generate(mc: str, out: str):
         props = {
             "minecraft_version": mc,
             "mod_version": load_version(),
+            "mcvoiceBackendUrl": client_property("mcvoiceBackendUrl"),
             "maven_group": "io.github.ravoxx.mcvoice",
             "java_version": java,
             "org.gradle.jvmargs": "-Xmx3g",
@@ -143,11 +140,18 @@ def generate(mc: str, out: str):
         loader_src = cfg.get("sources", "fabric" if label == "legacyfabric" else label)
         # "parts" replaces the shared part too, for families whose loaders use different mapping sets
         parts = cfg.get("parts") or (["common"] + variants + [loader_src])
-        generate_sources(fam["id"], parts, mc, label, os.path.join(ldir, "src-gen"))
+        lf_api = label == "legacyfabric" and bool(up.get("legacy_fabric_api"))
+        generate_sources(fam["id"], parts, mc, label, os.path.join(ldir, "src-gen"), {"LEGACYFABRIC_API": lf_api})
         if cfg.get("class_remap"):
             remap_classes(os.path.join(ldir, "src-gen", "java"), os.path.join(HERE, "remap", cfg["class_remap"]))
         tokens = {"MC": mc, "JAVA": java, "FAMILY": fam["id"], "PLUGIN_VERSION": cfg["plugin_version"], "LOADER": label,
                   "MAPPINGS": cfg.get("mappings", ""),
+                  # ForgeGradle: Mojang's official mappings unless the setup names MCP ones ("stable_47-1.13.2")
+                  "FG_MAPPINGS_CHANNEL": cfg["mappings"].split("_", 1)[0] if buildgen == "fg6" and cfg.get("mappings") else "official",
+                  "FG_MAPPINGS_VERSION": cfg["mappings"].split("_", 1)[1] if buildgen == "fg6" and cfg.get("mappings") else mc,
+                  # Legacy Fabric API is optional: without it the adapter hooks the game with its own mixins
+                  "LEGACYFABRIC_API_DEP": ('    modImplementation "net.legacyfabric.legacy-fabric-api:legacy-fabric-api:${project.fabric_api}"\n'
+                                           if lf_api else ""),
                   # Fabric API's mod id was "fabric" until the 1.19.2 era, "fabric-api" since (the old id stays provided)
                   "FABRIC_API_ID": "fabric-api" if vkey(mc) >= vkey("1.19.2") else "fabric",
                   # ForgeGradle 6: Forge < 1.20.6 runs with SRG names (reobfuscate the jar); newer Forge runs with official names
@@ -206,7 +210,7 @@ def write_wrapper(d, gradle_version):
 TEXT_EXT = (".java", ".json", ".toml", ".properties", ".mcmeta", ".info", ".cfg", ".txt", ".md")
 
 
-def generate_sources(family, parts, mc, loader, dest):
+def generate_sources(family, parts, mc, loader, dest, flags=None):
     """Preprocess the family's source parts for (mc, loader) into dest/{java,resources}."""
     base = os.path.join(ROOT, "client", "platform", family)
     for part in parts:
@@ -224,7 +228,9 @@ def generate_sources(family, parts, mc, loader, dest):
                     os.makedirs(os.path.dirname(dp), exist_ok=True)
                     if f.endswith(TEXT_EXT):
                         with open(sp, encoding="utf-8") as fh:
-                            text = process(fh.read(), mc, loader, os.path.relpath(sp, ROOT))
+                            text = process(fh.read(), mc, loader, os.path.relpath(sp, ROOT), flags)
+                        if f.endswith(".java") and not text.strip():
+                            continue  # wholly inside an inactive //#if: not part of this build
                         with open(dp, "w", encoding="utf-8") as fh:
                             fh.write(text)
                     else:
@@ -258,12 +264,18 @@ def remap_classes(java_dir, table_path):
                     fh.write(text)
 
 
-def load_version():
+def client_property(name, required=False):
     with open(os.path.join(ROOT, "client", "gradle.properties"), encoding="utf-8") as fh:
         for line in fh:
-            if line.startswith("mod_version="):
+            if line.startswith(name + "="):
                 return line.split("=", 1)[1].strip()
-    raise SystemExit("mod_version missing")
+    if required:
+        raise SystemExit(f"{name} missing in client/gradle.properties")
+    return ""
+
+
+def load_version():
+    return client_property("mod_version", required=True)
 
 
 def main():

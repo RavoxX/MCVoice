@@ -61,6 +61,7 @@ regenerate the vectors.
 | `client/platform/families.json` | Which adapter sources + build setup serve which Minecraft versions |
 | `client/platform/mojang/` | Official-mappings family, 1.16.1–26.3: `common/`, `fabric/`, `forge/` (EventBus 7, 1.21.6+), `forge-eb6/` (1.19–1.21.5), `forge-fml/` (1.16.1–1.18.2) |
 | `client/platform/legacy/` | 1.8–1.12.2: `mcp/` + `forge/` (MCP names), `yarn/` + `fabric/` (Legacy Fabric, Legacy Yarn names) |
+| `client/platform/mcp13/` | 1.13.2 Forge: `common/` + `forge/` (MCP `stable_47-1.13.2` names, 1.13 API) |
 | `tools/port-version/` | `port.py` (generate `minecraft/`), `preprocess.py`, `validate_jar.py`, `make-branch.sh`, build templates, class remap tables |
 | `tools/versions/` | `generate_matrix.py` (official metadata → `versions/versions.json`), `matrix.py`, `collect_status.sh` |
 | `tools/release/report.py` | Renders `release-report.md` from release artifacts |
@@ -111,6 +112,7 @@ python3 tools/port-version/port.py 1.20.1           # writes ./minecraft/<loader
 | `backend.yml` | backend changes on main, `workflow_call` | images, container smoke test, GHCR push (`edge`/`sha-*`; release: `<version>`, `latest` only for stable) |
 | `mc-build.yml` | push `mc/**`, dispatch `{minecraft}` | builds each loader of one version with its own JDK, validates the jar, publishes log + status JSON to `tooling/probe-output:builds/<mc>/` |
 | `mc-probe.yml` | dispatch | **API lookup for porting**: official signatures (Mojang mappings or unobfuscated jar), extra jars (javap), Forge MDK build files, tiny/CSV mapping blocks, arbitrary URLs. Output → `tooling/probe-output:<mc>/latest.txt` |
+| `mc-smoke.yml` | dispatch `{minecraft}` (dispatch only: runs third-party code) | builds the versions, then starts the real client headlessly (headlesshq/mc-runtime-test 4.5.1 + HeadlessMC under Xvfb), joins a world and quits; passes only if MCVoice logged `initialised` and no MCVoice error; results → `tooling/probe-output:smoke/<mc>/` |
 | `svc-interop.yml` | svc-compat changes, weekly, dispatch `{minecraft}` | Paper + real SVC plugin, bot + `SvcProbe`; verdict JSON → job summary and `tooling/probe-output:svc-interop/<mc>/` |
 | `version-matrix.yml` | tools/versions changes, weekly | regenerates `versions/versions.json` and **commits to main** (pull before pushing!) |
 | `release.yml` | dispatch `{version, minecraft, prerelease, images}` | full release; see `docs/releasing.md` |
@@ -183,10 +185,32 @@ git show FETCH_HEAD:<path>`).
   from 1.10. The font is read via `ingameGUI.getFontRenderer()`.
 
 **Legacy Fabric**
+* Without Legacy Fabric API (1.8.1–1.8.8) the adapter uses its own mixins:
+  `MinecraftClient#tick/stop/connect(null,…)`, `GameOptions#load` (keys into
+  `allKeys`). Preprocessor flag `LEGACYFABRIC_API`; Legacy Yarn build 604
+  (603 for 1.8.6). `Window(MinecraftClient)` exists from 1.8.2, not 1.8.1.
 * Legacy Fabric API exists only for 1.8, 1.8.9, 1.9.4, 1.10.2, 1.11.2 and
   1.12.2.
 * Its API classes live in the `-common` module artifacts.
 * It has no HUD callback, so the HUD is a mixin on `InGameHud#render`.
+
+**Forge 1.13.2 (`mcp13`)**
+* No Mojang mappings before 1.14.4: MCP `stable_47-1.13.2` (fg6 template,
+  FG 5.1 on Gradle 7.3.3, `mappings: "stable_47-1.13.2"`). MCP class names
+  are 1.12-style (`GuiScreen`, `EntityPlayerSP`, `WorldClient`,
+  `NetHandlerPlayClient`). Translate Mojang member names through SRG ids
+  (Mojang 1.14.4 mappings → MCPConfig `joined.tsrg` → MCP CSVs), matching
+  methods by descriptor, never by obfuscated name alone.
+* 1.13 API: `GuiScreen()` has no title, `mouseScrolled(double delta)`,
+  `onGuiClosed`, `doesGuiPauseGame`; `Gui.drawRect`; `World#playerEntities`;
+  `TickEvent` is in `net.minecraftforge.fml.common.gameevent`; no
+  `ClientPlayerNetworkEvent` (a lost world counts as a disconnect).
+  `FMLEnvironment`/`FMLPaths` live in the Forge `launcher` artifact.
+
+**Releases**
+* GitHub Packages never replaces a Maven version: a re-run records `exists`
+  (409) for those. A failed publish is retried once; ForgeGradle 7's
+  Mavenizer once found its cached `mcp_config` zip truncated.
 
 **Mojang family input**
 * Keys use `InputConstants.KEY_*` from 1.20 on (26.3 no longer has LWJGL's
@@ -230,20 +254,29 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **Passing:** 50 Minecraft versions, 87 jars.
-  * Every Forge release 1.8–1.12.2 and 1.16.1–26.3.
-  * Fabric wherever Fabric API exists for 1.16.5–26.3.
-  * Legacy Fabric wherever Legacy Fabric API exists.
+* **Passing:** 62 Minecraft versions, 102 jars (`versions/build-status.json`).
+  * Every Forge release 1.8–1.12.2, 1.13.2 and 1.14.4–26.3.
+  * Fabric wherever Fabric API exists for 1.14.4–26.3.
+  * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
+    without Legacy Fabric API).
+* **Branches and release v0.1.0:** every passing version has an `mc/` branch
+  and a `v0.1.0-mc<version>` GitHub Release (62 releases). Full run
+  36112725820 (`release-report.md` on `v0.1.0`), then 36115472419 for
+  1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
+  (`release-report-run36115472419.md`). Maven: every jar is in GitHub
+  Packages; re-runs record `exists`. Backend images `0.1.0`/`latest` pushed.
 * **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
   1.20.1 and 1.21.4 (compatibility 20, AES-GCM with 12-byte IV). Older
   compatibility versions (19–16) are not verified.
+* **Client runtime smoke test:** `mc-smoke.yml` exists but has **never run**:
+  dispatching it (third-party code in CI) needs the owner's approval. The
+  first run will show whether the log checks need tuning (e.g. no audio
+  device on the runner).
 * **Not implemented** (reasons are in `versions/supported.md`):
-  * 1.13.2 (Forge MCP-1.13 era);
-  * 1.14.x–1.15.x (Fabric API v0 modules, ForgeGradle 3 era);
-  * Legacy Fabric versions without Legacy Fabric API.
+  * Forge 1.14.2/1.14.3 (MCP names, 1.14 class names: extend `mcp13`);
+  * Legacy Fabric 1.13.2 (no API; needs a Legacy Yarn 1.13 adapter).
 * **Ideas / next steps:**
-  * client runtime smoke test (headless client launch / Fabric gametest);
+  * run `mc-smoke.yml` once approved; add Legacy Fabric when mc-runtime-test supports it;
   * group voice for SVC interop;
   * receiving SVC voice from a second real client in CI;
-  * shared-state backend scaling (Redis);
-  * the 1.13–1.15 gap.
+  * shared-state backend scaling (Redis).
