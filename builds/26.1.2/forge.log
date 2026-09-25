@@ -69,7 +69,7 @@ Maven POM
 Metadata
   metadata[forge]
   metadata[forge][variants]
-Minecraft Maven has finished, took 3:08.581
+Minecraft Maven has finished, took 2:16.450
 
 > Task :compileJava
 > Task :processResources
@@ -131,9 +131,9 @@ This message will not display again until ForgeGradle 7.1 or the below file is
 deleted:
 /home/runner/.gradle/caches/minecraftforge/forgegradle/messages/7_0_WELCOME_1
 --- End of Message ---
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790283207416.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790326061364.json
 
-BUILD SUCCESSFUL in 3m 35s
+BUILD SUCCESSFUL in 2m 37s
 4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
 valid: mcvoice-0.1.0-mc26.1.2-forge.jar (327 classes, 16 platform classes, metadata ['META-INF/mods.toml'])
