@@ -12,6 +12,9 @@
   "entrypoints": {
     "client": ["dev.mcvoice.platform.fabric.McVoiceFabric"]
   },
+
+
+
   "depends": {
     "fabricloader": ">=${loader_min}",
     "minecraft": "${minecraft_dep}",
