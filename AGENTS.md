@@ -265,6 +265,16 @@ git show FETCH_HEAD:<path>`).
   1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
   (`release-report-run36115472419.md`). Maven: every jar is in GitHub
   Packages; re-runs record `exists`. Backend images `0.1.0`/`latest` pushed.
+* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust, GHCR image
+  pinned by `MCVOICE_VERSION` in `/opt/mcvoice/.env` on 5.83.145.152;
+  `/opt/mcvoice/update.sh` pulls and restarts only that container). Host nginx
+  vhost `mcvoice.ravoxx.dev` → `127.0.0.1:18455`, certbot `dns-cloudflare`
+  certificate, DNS not proxied. UDP 24455 is opened in the host's
+  `vpn_hardening` nftables firewall via `/etc/vpn-hardening/firewall-base.nft`
+  (input + forward). The host is a shared production server (mail, other
+  sites): only ever add, validate (`nginx -t`, `nft --check`), never restart
+  others. Since 0.1.1 the jars default to this backend
+  (`mcvoiceBackendUrl` in `client/gradle.properties`).
 * **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
   1.20.1 and 1.21.4 (compatibility 20, AES-GCM with 12-byte IV). Older
   compatibility versions (19–16) are not verified.
