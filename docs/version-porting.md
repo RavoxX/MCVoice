@@ -47,11 +47,11 @@ The version-independent core (`client/common`, `network`, `audio`,
 |---|---|---|
 | `unobf` | 26.1+ (Minecraft ships unobfuscated) | Fabric Loom `net.fabricmc.fabric-loom` 1.18 (no remapping); ForgeGradle 7 |
 | `remap` | Fabric 1.16.5–1.21.11, Forge 1.21.9–1.21.11 | Loom `net.fabricmc.fabric-loom-remap` 1.18 with `loom.officialMojangMappings()` (Gradle 9.8 on JDK 25); ForgeGradle 7 with `mappings channel: 'official'` |
-| `fg6` | Forge 1.16.1–1.21.8 | ForgeGradle 6 (FG 5.1 on Gradle 7.3.3 for 1.16.x), official mappings; `reobfJar` only where Forge still runs on SRG names (< 1.20.6) |
+| `fg6` | Forge 1.13.2, 1.14.4–1.21.8 | ForgeGradle 6 (FG 5.1 on Gradle 7.3.3 before 1.17), official mappings (MCP `stable_47-1.13.2` for 1.13.2, set by `mappings: "<channel>_<version>"`); `reobfJar` only where Forge still runs on SRG names (< 1.20.6) |
 | `legacyforge` | Forge 1.8.9–1.12.1 | Essential's architectury-loom fork (`gg.essential.loom`), MCP stable mappings, Java 8 |
 | `unimined` | Forge 1.8, 1.8.8 | Unimined 1.4.1 (Essential's loom cannot read their Forge metadata), MCP stable mappings |
 | `rfg` | Forge 1.12.2 | RetroFuturaGradle 2.0.4 (Forge never published a 1.12.2 `userdev` jar) |
-| `legacyfabric` | Legacy Fabric 1.8–1.12.2 | `fabric-loom-remap` + `legacy-looming` 1.16.1, Legacy Yarn, Legacy Fabric API |
+| `legacyfabric` | Legacy Fabric 1.8–1.12.2 | `fabric-loom-remap` + `legacy-looming` 1.16.1, Legacy Yarn; Legacy Fabric API where it is published, otherwise no API dependency (the `LEGACYFABRIC_API` preprocessor flag switches the adapter to its own mixins) |
 
 A loader entry in `families.json` names:
 
@@ -113,11 +113,14 @@ See [`versions/supported.md`](../versions/supported.md) (generated from CI resul
 
 | Family | Minecraft | Loaders |
 |---|---|---|
-| `legacy` (MCP / Legacy Yarn names, LWJGL 2) | 1.8–1.12.2 | Forge on every Forge release; Legacy Fabric where Legacy Fabric API exists (1.8, 1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2) |
-| `mojang` (official mappings) | 1.16.1–26.3 | Forge on every Forge release; Fabric where Fabric API exists for the exact version |
+| `legacy` (MCP / Legacy Yarn names, LWJGL 2) | 1.8–1.12.2 | Forge on every Forge release; Legacy Fabric on 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2 and 1.12.2 (with Legacy Fabric API where it exists, mixins on 1.8.1–1.8.8) |
+| `mcp13` (MCP names, 1.13 API) | 1.13.2 | Forge |
+| `mojang` (official mappings) | 1.14.4–26.3 | Forge on every Forge release; Fabric where Fabric API exists for the exact version |
 
 Not implemented yet, each listed with its reason in `supported.md`:
 
-* 1.13.2 (Forge needs an MCP-era 1.13 adapter; Legacy Fabric has no API there);
-* 1.14.x–1.15.x (Fabric API v0 modules and ForgeGradle 3 era);
-* Legacy Fabric versions without Legacy Fabric API.
+* Forge 1.14.2 and 1.14.3 (MCP names like 1.13.2, but 1.14 class names; a
+  `mcp13` extension);
+* Legacy Fabric 1.13.2 (no Legacy Fabric API, and no Legacy Yarn variant of
+  the 1.13 adapter);
+* Fabric 1.14.x–1.15.x where no Fabric API release exists for the exact version.
