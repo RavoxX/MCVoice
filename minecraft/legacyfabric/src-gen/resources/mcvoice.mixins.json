@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.mcvoice.platform.fabric.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "InGameHudMixin"
+
+    , "MinecraftClientMixin", "GameOptionsMixin"
+
+  ],
+  "injectors": {"defaultRequire": 1}
+}
