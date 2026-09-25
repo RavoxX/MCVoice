@@ -260,7 +260,7 @@ git show FETCH_HEAD:<path>`).
   * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
     without Legacy Fabric API).
 * **Branches and release v0.1.0:** every passing version has an `mc/` branch
-  and a `v0.1.0-mc<version>` GitHub Release (63 releases). Full run
+  and a `v0.1.0-mc<version>` GitHub Release (62 releases). Full run
   36112725820 (`release-report.md` on `v0.1.0`), then 36115472419 for
   1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
   (`release-report-run36115472419.md`). Maven: every jar is in GitHub
