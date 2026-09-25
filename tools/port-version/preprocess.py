@@ -10,8 +10,9 @@ Directives (in any text/Java file):
     ...
     //#endif
 
-Operands: ``MC <op> <version>`` with op in == != >= <= > <, and the loader
-flags FABRIC, FORGE, LEGACYFABRIC. Operators: ``&&``, ``||``, ``!`` and
+Operands: ``MC <op> <version>`` with op in == != >= <= > <, the loader
+flags FABRIC, FORGE, LEGACYFABRIC, and LEGACYFABRIC_API (Legacy Fabric API is
+published for this version; port.py passes it). Operators: ``&&``, ``||``, ``!`` and
 parentheses. Inactive lines and directive lines become empty lines so that
 compiler line numbers match the source tree.
 """
@@ -19,7 +20,7 @@ from __future__ import annotations
 
 import re
 
-TOKEN = re.compile(r"\s*(MC|FABRIC|FORGE|LEGACYFABRIC|&&|\|\||!=|==|>=|<=|>|<|!|\(|\)|\d+(?:\.\d+)*)")
+TOKEN = re.compile(r"\s*(MC|FABRIC|FORGE|LEGACYFABRIC_API|LEGACYFABRIC|&&|\|\||!=|==|>=|<=|>|<|!|\(|\)|\d+(?:\.\d+)*)")
 
 
 def vkey(v: str):
@@ -35,7 +36,7 @@ def _cmp(a, op, b):
 
 
 class _Parser:
-    def __init__(self, expr: str, mc: str, loader: str):
+    def __init__(self, expr: str, mc: str, loader: str, flags=None):
         self.toks = []
         pos = 0
         expr = expr.strip()
@@ -47,7 +48,9 @@ class _Parser:
             pos = m.end()
         self.i = 0
         self.mc = vkey(mc)
-        self.flags = {"FABRIC": loader == "fabric", "FORGE": loader == "forge", "LEGACYFABRIC": loader == "legacyfabric"}
+        self.flags = {"FABRIC": loader == "fabric", "FORGE": loader == "forge", "LEGACYFABRIC": loader == "legacyfabric",
+                      "LEGACYFABRIC_API": False}
+        self.flags.update(flags or {})
 
     def peek(self):
         return self.toks[self.i] if self.i < len(self.toks) else None
@@ -99,14 +102,14 @@ class _Parser:
         raise ValueError(f"unexpected token {tok}")
 
 
-def evaluate(expr: str, mc: str, loader: str) -> bool:
-    return _Parser(expr, mc, loader).parse()
+def evaluate(expr: str, mc: str, loader: str, flags=None) -> bool:
+    return _Parser(expr, mc, loader, flags).parse()
 
 
 DIRECTIVE = re.compile(r"^\s*//#(if|elif|else|endif)\b(.*)$")
 
 
-def process(text: str, mc: str, loader: str, name: str = "<source>") -> str:
+def process(text: str, mc: str, loader: str, name: str = "<source>", flags=None) -> str:
     out = []
     stack = []  # each: [parent_active, branch_taken, current_active]
     active = True
@@ -118,14 +121,14 @@ def process(text: str, mc: str, loader: str, name: str = "<source>") -> str:
         kind, rest = m.group(1), m.group(2).strip()
         try:
             if kind == "if":
-                cond = active and evaluate(rest, mc, loader)
+                cond = active and evaluate(rest, mc, loader, flags)
                 stack.append([active, cond])
                 active = cond
             elif kind == "elif":
                 if not stack:
                     raise ValueError("#elif without #if")
                 parent, taken = stack[-1]
-                cond = parent and not taken and evaluate(rest, mc, loader)
+                cond = parent and not taken and evaluate(rest, mc, loader, flags)
                 stack[-1][1] = taken or cond
                 active = cond
             elif kind == "else":
