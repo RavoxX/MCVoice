@@ -100,7 +100,16 @@ jobs:
             loader=${spec%%:*}; jdk=${spec##*:}
             home_var="JAVA_HOME_${jdk}_X64"; export JAVA_HOME="${!home_var}"
             echo "::group::build $loader (Gradle JVM $jdk: $JAVA_HOME)"
-            if (cd "$loader" && ./gradlew build --stacktrace --no-daemon $extra) 2>&1 | tee "../status/$loader.log"; then
+            ok=0
+            (cd "$loader" && ./gradlew build --stacktrace --no-daemon $extra) 2>&1 | tee "../status/$loader.log" && ok=1
+            # ForgeGradle 7's Mavenizer once failed recompiling its own decompiled Minecraft sources for a
+            # version that built before and after: retry a failure while configuring the toolchain, once
+            if [ $ok = 0 ] && grep -q "A problem occurred configuring root project" "../status/$loader.log"; then
+              echo "::warning::$loader: build tool setup failed, retrying once"
+              echo "=== retry: build tool setup failed ===" >> "../status/$loader.log"
+              (cd "$loader" && ./gradlew build --stacktrace --no-daemon $extra) 2>&1 | tee -a "../status/$loader.log" && ok=1
+            fi
+            if [ $ok = 1 ]; then
               jar=$(ls "$loader"/build/libs/mcvoice-*-mc*-"$loader".jar 2>/dev/null | grep -v -- '-sources' | head -1)
               if [ -n "$jar" ] && python3 ../tools/port-version/validate_jar.py "$jar" --loader "$loader" \
                    --minecraft "${{ steps.info.outputs.minecraft }}" --java "${{ steps.info.outputs.java }}" | tee -a "../status/$loader.log"; then
