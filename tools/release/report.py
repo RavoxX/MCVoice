@@ -50,8 +50,10 @@ def main():
     n_all = sum(len(v) for v in builds.values())
     n_rel = sum(1 for r in releases.values() if r["release"] in ("created", "updated"))
     n_mvn = sum(1 for v in builds.values() for l in v.values() if l.get("maven") == "published")
+    n_old = sum(1 for v in builds.values() for l in v.values() if l.get("maven", "").startswith("exists"))
+    old = f" ({n_old} more already in GitHub Packages from an earlier run, not replaced)" if n_old else ""
     w(f"Jars built and validated: **{n_pass}/{n_all}**. GitHub Releases: **{n_rel}/{len(versions)}**. "
-      f"Maven packages published: **{n_mvn}/{n_all}**.\n")
+      f"Maven packages published: **{n_mvn}/{n_all}**{old}.\n")
 
     w("## Minecraft versions\n")
     w("| Minecraft | Loader | Build | Jar | GitHub Release | Maven package |\n|---|---|---|---|---|---|")
@@ -65,8 +67,11 @@ def main():
             artifact = {"fabric": "voice-client-fabric", "forge": "voice-client-forge",
                         "legacyfabric": "voice-client-legacyfabric"}.get(loader, loader)
             mvn = b.get("maven", "not attempted")
+            coord = f"io.github.ravoxx.mcvoice:{artifact}:{version}+mc{mc}"
             if mvn == "published":
-                mvn = f"io.github.ravoxx.mcvoice:{artifact}:{version}+mc{mc}"
+                mvn = coord
+            elif mvn.startswith("exists"):
+                mvn = f"{coord} (already published earlier, not replaced)"
             w(f"| {mc} | {loader} | {build} | {b.get('jar', '-')} | {rel_cell} | {mvn} |")
         if mc not in builds:
             w(f"| {mc} | - | no build result | - | {rel_cell} | - |")

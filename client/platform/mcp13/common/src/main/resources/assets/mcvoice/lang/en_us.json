@@ -1,0 +1,11 @@
+{
+  "key.category.mcvoice.voice": "MCVoice",
+  "key.categories.mcvoice.voice": "MCVoice",
+  "category.mcvoice.voice": "MCVoice",
+  "key.mcvoice.push_to_talk": "Push to talk",
+  "key.mcvoice.whisper": "Whisper (hold)",
+  "key.mcvoice.toggle_mute": "Mute microphone",
+  "key.mcvoice.toggle_deafen": "Deafen",
+  "key.mcvoice.open_settings": "Voice settings",
+  "key.mcvoice.open_status": "Voice status"
+}
