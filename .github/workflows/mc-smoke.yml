@@ -1,0 +1,205 @@
+name: mc-smoke
+run-name: "mc-smoke ${{ inputs.minecraft }}"
+
+# Client runtime smoke test: builds the selected Minecraft versions like
+# mc-build, then starts the real game client headlessly (HeadlessMC under Xvfb,
+# via headlesshq/mc-runtime-test) with the MCVoice jar, joins a singleplayer
+# world and exits. Passes only if the game got into the world and back out,
+# MCVoice logged its initialisation, and no MCVoice error showed up in the game
+# log. Versions/loaders the runtime test does not cover are reported as not
+# tested, never as passed. Results: job summary and
+# tooling/probe-output:smoke/<mc>/<loader>.json.
+
+on:
+  workflow_dispatch:
+    inputs:
+      minecraft:
+        description: Space-separated Minecraft versions
+        required: true
+        default: "1.16.5 1.20.1 1.21.11 26.2"
+  workflow_call:
+    inputs:
+      minecraft:
+        required: true
+        type: string
+  schedule:
+    - cron: "17 4 * * 1"   # weekly, one version per API generation
+
+permissions:
+  contents: read
+
+env:
+  MCRT_VERSION: "4.5.1"
+  SCHEDULED_VERSIONS: "1.16.5 1.18.2 1.20.1 1.21.11 26.2"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.plan.outputs.versions }}
+      targets: ${{ steps.plan.outputs.targets }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: plan
+        env:
+          SELECT: ${{ inputs.minecraft }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl -sSf -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/headlesshq/mc-runtime-test/releases/tags/$MCRT_VERSION" -o mcrt.json
+          python3 - <<'PY'
+          import json, os, re, sys
+          sys.path.insert(0, "tools/port-version")
+          from port import plan
+          sel = (os.environ.get("SELECT") or os.environ["SCHEDULED_VERSIONS"]).split()
+          assets = {a["name"] for a in json.load(open("mcrt.json"))["assets"]}
+          def mcrt(mc, kind):
+              return any(re.fullmatch(rf"mc-runtime-test-{re.escape(mc)}-[0-9.]+-{kind}-release\.jar", a) for a in assets)
+          targets, notes = [], []
+          for mc in sel:
+              entry, fam, loaders, reasons = plan(mc)
+              for label, cfg, up in loaders:
+                  kind = {"fabric": "fabric", "forge": "lexforge"}.get(label)
+                  if kind is None or not mcrt(mc, kind):
+                      notes.append(f"| {mc} | {label} | not tested: mc-runtime-test {os.environ['MCRT_VERSION']} has no {label} runtime for {mc} |")
+                      continue
+                  targets.append({"minecraft": mc, "loader": label, "java": entry["java"], "mcrt": kind,
+                                  "fabric_api": up.get("fabric_api") or ""})
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write("versions=" + json.dumps(sorted({t["minecraft"] for t in targets})) + "\n")
+              out.write("targets=" + json.dumps(targets) + "\n")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as s:
+              s.write("## Smoke test plan\n\n| Minecraft | Loader | Plan |\n|---|---|---|\n")
+              s.write("".join(f"| {t['minecraft']} | {t['loader']} | run (Java {t['java']}) |\n" for t in targets))
+              s.write("\n".join(notes) + "\n")
+          print(json.dumps(targets, indent=1)); print("\n".join(notes))
+          PY
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.versions != '[]'
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        minecraft: ${{ fromJson(needs.plan.outputs.versions) }}
+    permissions:
+      contents: write   # mc-build publishes its logs to tooling/probe-output
+      packages: write   # requested by mc-build (only used for release builds)
+    uses: ./.github/workflows/mc-build.yml
+    with:
+      minecraft: ${{ matrix.minecraft }}
+
+  smoke:
+    needs: [plan, build]
+    if: always() && needs.plan.outputs.targets != '[]' && needs.plan.outputs.targets != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write   # results to tooling/probe-output
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        include: ${{ fromJson(needs.plan.outputs.targets) }}
+    env:
+      MC: ${{ matrix.minecraft }}
+      LOADER: ${{ matrix.loader }}
+    steps:
+      - uses: actions/download-artifact@v5
+        continue-on-error: true
+        with:
+          name: mc-${{ matrix.minecraft }}-jars
+          path: dist
+      - id: stage
+        name: Stage mods
+        run: |
+          set -euo pipefail
+          mkdir -p run/mods status
+          jar=$(ls dist/mcvoice-*-mc"$MC"-"$LOADER".jar 2>/dev/null | head -1 || true)
+          if [ -z "$jar" ]; then
+            echo "reason=no $LOADER jar: the build of $MC failed (see the build job)" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          cp "$jar" run/mods/
+          if [ "$LOADER" = fabric ]; then
+            v="${{ matrix.fabric_api }}"
+            curl -sSfL -o "run/mods/fabric-api-$v.jar" \
+              "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/$v/fabric-api-$v.jar"
+          fi
+          ls -la run/mods
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+      - id: run
+        name: Run the game (join a world, quit)
+        uses: headlesshq/mc-runtime-test@4.5.1
+        with:
+          mc: ${{ matrix.minecraft }}
+          modloader: ${{ matrix.loader }}
+          regex: .*${{ matrix.loader }}.*
+          java: ${{ matrix.java }}
+          mc-runtime-test: ${{ matrix.mcrt }}
+      - id: check
+        name: Check MCVoice in the game log
+        if: always() && steps.stage.outcome == 'success'
+        run: |
+          set -uo pipefail
+          log=run/logs/latest.log
+          fail=""
+          if [ ! -f "$log" ]; then
+            fail="no game log (run/logs/latest.log)"
+          elif ! grep -q "MCVoice .* initialised (Minecraft $MC, $LOADER" "$log"; then
+            fail="MCVoice did not log its initialisation"
+          elif grep -q "HUD render failed" "$log"; then
+            fail="$(grep -m1 'HUD render failed' "$log" | cut -c1-300)"
+          elif grep -qE '^\s+at dev\.mcvoice\.' "$log"; then
+            fail="stack trace through MCVoice: $(grep -m1 -B3 -E '^\s+at dev\.mcvoice\.' "$log" | head -1 | cut -c1-300)"
+          fi
+          grep -E 'MCVoice|dev\.mcvoice' "$log" 2>/dev/null | head -40 || true
+          echo "fail=$fail" >> "$GITHUB_OUTPUT"
+          [ -z "$fail" ]
+      - name: Record result
+        if: always()
+        env:
+          STAGE: ${{ steps.stage.outcome }}
+          STAGE_REASON: ${{ steps.stage.outputs.reason }}
+          RUN: ${{ steps.run.outcome }}
+          CHECK: ${{ steps.check.outcome }}
+          CHECK_REASON: ${{ steps.check.outputs.fail }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          e = os.environ
+          if e["STAGE"] != "success":
+              status, reason = "fail", e.get("STAGE_REASON") or "could not stage the mods"
+          elif e["RUN"] != "success":
+              status, reason = "fail", "the game did not get into a world and quit cleanly (see the run step and run/logs)"
+          elif e["CHECK"] != "success":
+              status, reason = "fail", e.get("CHECK_REASON") or "log check failed"
+          else:
+              status, reason = "pass", ""
+          r = {"minecraft": e["MC"], "loader": e["LOADER"], "status": status, "reason": reason,
+               "mc_runtime_test": e.get("MCRT_VERSION"), "commit": e["GITHUB_SHA"],
+               "run": f"{e['GITHUB_SERVER_URL']}/{e['GITHUB_REPOSITORY']}/actions/runs/{e['GITHUB_RUN_ID']}"}
+          os.makedirs("status", exist_ok=True)
+          json.dump(r, open(f"status/{e['LOADER']}.json", "w"))
+          with open(e["GITHUB_STEP_SUMMARY"], "a") as s:
+              s.write(f"| {e['MC']} | {e['LOADER']} | **{status}** | {reason} |\n")
+          print(r)
+          PY
+          if [ -f run/logs/latest.log ]; then tail -c 400000 run/logs/latest.log > "status/$LOADER.log"; fi
+      - name: Publish result (developer diagnostics)
+        if: always()
+        run: |
+          set -eu
+          git init -q results && cd results
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          if git fetch -q origin tooling/probe-output 2>/dev/null; then git checkout -q -b tooling/probe-output FETCH_HEAD; else git checkout -q --orphan tooling/probe-output; fi
+          mkdir -p "smoke/$MC"; rm -f "smoke/$MC/$LOADER".*
+          cp ../status/* "smoke/$MC/"
+          git add -A && git commit -q -m "smoke $MC $LOADER run ${{ github.run_id }}" || exit 0
+          for i in 1 2 3 4 5; do git push -q origin HEAD:tooling/probe-output && break; git fetch -q origin tooling/probe-output && git rebase -q FETCH_HEAD || true; done
