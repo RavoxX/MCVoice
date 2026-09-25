@@ -41,8 +41,9 @@ Download the jar for your Minecraft version and loader from
 
 ## For players
 
-1. Put the jar into `mods/`. Fabric needs Fabric API, and Legacy Fabric
-   needs Legacy Fabric API.
+1. Put the jar into `mods/`. Fabric needs Fabric API. Legacy Fabric needs
+   Legacy Fabric API on the versions that have it (1.8, 1.8.9, 1.9.4, 1.10.2,
+   1.11.2, 1.12.2); on 1.8.1–1.8.8 the mod works without it.
 2. Join any server. Nothing is needed on the server.
 3. Default keys:
    * **V**: push to talk;
@@ -52,7 +53,7 @@ Download the jar for your Minecraft version and loader from
 
    Settings and status screens can be bound in Controls.
 4. Settings live in `config/mcvoice.json`:
-   * backend URL;
+   * backend URL (default: the public backend `wss://mcvoice.ravoxx.dev/v1/control`);
    * activation mode (push-to-talk or voice activation) and its threshold;
    * gain, devices and distances;
    * per-player volume and mute;
@@ -117,6 +118,7 @@ CI workflows:
 | `svc-interop.yml` | Real Simple Voice Chat server check |
 | `release.yml` | Releases |
 | `mc-probe.yml` | API lookup for porting |
+| `mc-smoke.yml` | Client runtime smoke test: starts the real client headlessly with the mod and joins a world (dispatch only) |
 
 ## Documentation
 
