@@ -12,8 +12,11 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 
 
+
+
 /**
- * UiCanvas over the game's GUI drawing: PoseStack + GuiComponent before 1.20, GuiGraphics
+ * UiCanvas over the game's GUI drawing: GuiComponent statics before 1.16, PoseStack + GuiComponent
+ * before 1.20, GuiGraphics
  * from 1.20 (renamed GuiGraphicsExtractor in 26.1).
  */
 public final class McCanvas implements UiCanvas {
@@ -33,7 +36,11 @@ public final class McCanvas implements UiCanvas {
 
 
 
+
+
+
         this.g = g;
+
         this.font = Minecraft.getInstance().font;
     }
 
@@ -41,6 +48,8 @@ public final class McCanvas implements UiCanvas {
     public int width() {
 
         return g.guiWidth();
+
+
 
 
 
@@ -53,6 +62,8 @@ public final class McCanvas implements UiCanvas {
 
 
 
+
+
     }
 
     @Override
@@ -62,12 +73,20 @@ public final class McCanvas implements UiCanvas {
 
 
 
+
+
     }
 
     @Override
     public void text(String text, int x, int y, int argb, boolean shadow) {
 
         g.text(font, text, x, y, argb, shadow);
+
+
+
+
+
+
 
 
 
