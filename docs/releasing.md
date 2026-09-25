@@ -24,8 +24,9 @@ Run workflow). Nothing is built or uploaded from a developer machine.
    `tools/port-version/make-branch.sh --all-supported --push`. Each
    `mc/<version>` branch is `main` plus the generated `minecraft/` build. It is
    refreshed by merging `main`, never by rewriting its history.
-3. Bump `mod_version` if needed, and set the repository variable
-   `MCVOICE_BACKEND_URL` if release jars should ship with a default backend.
+3. Bump `mod_version` if needed (GitHub Packages never replaces a published
+   version). The default backend of the jars is `mcvoiceBackendUrl` in
+   `client/gradle.properties`.
 
 ## What the workflow does
 

@@ -53,7 +53,7 @@ Download the jar for your Minecraft version and loader from
 
    Settings and status screens can be bound in Controls.
 4. Settings live in `config/mcvoice.json`:
-   * backend URL;
+   * backend URL (default: the public backend `wss://mcvoice.ravoxx.dev/v1/control`);
    * activation mode (push-to-talk or voice activation) and its threshold;
    * gain, devices and distances;
    * per-player volume and mute;
