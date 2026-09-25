@@ -210,16 +210,20 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           VERSION: ${{ inputs.version }}
+          SELECT: ${{ inputs.minecraft }}
         run: |
           tag="v$VERSION"
+          # a run over selected versions must not replace the full report of a "supported" run
+          name=release-report.md
+          if [ "$SELECT" != supported ]; then name="release-report-run${{ github.run_id }}.md"; cp release-report.md "$name"; fi
           if grep -q 'GitHub Releases: \*\*0/' release-report.md; then
             echo "::warning::no Minecraft version was released; not creating or updating release $tag (report is in the run summary and artifacts)"
             exit 0
           fi
           flags=""; [ "${{ inputs.prerelease }}" = "true" ] && flags="--prerelease"
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" release-report.md --clobber
+            gh release upload "$tag" "$name" --clobber
           else
-            gh release create "$tag" release-report.md --target "$GITHUB_SHA" --title "MCVoice $VERSION" \
+            gh release create "$tag" "$name" --target "$GITHUB_SHA" --title "MCVoice $VERSION" \
               --notes "Release overview: backend images, per-Minecraft-version releases (tags v$VERSION-mc<version>) and the release report." $flags
           fi
