@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "mcvoice",
+  "version": "${version}",
+  "name": "MCVoice",
+  "description": "Proximity voice chat that works without a server plugin, with Simple Voice Chat interoperability.",
+  "authors": ["MCVoice contributors"],
+  "contact": {"sources": "https://github.com/RavoxX/MCVoice", "issues": "https://github.com/RavoxX/MCVoice/issues"},
+  "license": "MIT",
+  "icon": "assets/mcvoice/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.mcvoice.platform.fabric.McVoiceFabric"]
+  },
+
+  "mixins": ["mcvoice.mixins.json"],
+
+  "depends": {
+    "fabricloader": ">=${loader_min}",
+    "minecraft": "${minecraft_dep}",
+    "${fabric_api_id}": "*",
+    "java": ">=${java}"
+  }
+}
