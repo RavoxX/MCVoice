@@ -5,7 +5,7 @@ import dev.mcvoice.client.platform.ui.UiScreen;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 //#elif MC >= 1.20
 import net.minecraft.client.gui.GuiGraphics;
-//#else
+//#elif MC >= 1.16
 import com.mojang.blaze3d.vertex.PoseStack;
 //#endif
 import net.minecraft.client.gui.screens.Screen;
@@ -38,10 +38,16 @@ public final class McScreen extends Screen {
     public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTicks) {
     //#elif MC >= 1.20
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTicks) {
-    //#else
+    //#elif MC >= 1.16
     public void render(PoseStack g, int mouseX, int mouseY, float partialTicks) {
+    //#else
+    public void render(int mouseX, int mouseY, float partialTicks) {
     //#endif
+        //#if MC >= 1.16
         ui.render(new McCanvas(g), mouseX, mouseY, partialTicks);
+        //#else
+        ui.render(new McCanvas(), mouseX, mouseY, partialTicks);
+        //#endif
     }
 
     //#if MC >= 1.21.9

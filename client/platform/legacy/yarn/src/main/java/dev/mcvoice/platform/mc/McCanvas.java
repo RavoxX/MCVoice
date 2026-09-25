@@ -15,7 +15,7 @@ public final class McCanvas implements UiCanvas {
     public McCanvas() {
         MinecraftClient mc = MinecraftClient.getInstance();
         font = mc.textRenderer;
-        //#if MC >= 1.8.1
+        //#if MC >= 1.8.2
         Window w = new Window(mc);
         //#else
         Window w = new Window(mc, mc.width, mc.height);

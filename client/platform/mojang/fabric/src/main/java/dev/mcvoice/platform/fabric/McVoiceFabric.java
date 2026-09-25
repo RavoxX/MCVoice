@@ -28,7 +28,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 //#if MC >= 1.21.6
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-//#else
+//#elif MC >= 1.15
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 //#endif
 //#if MC >= 1.20.5
@@ -73,13 +73,26 @@ public final class McVoiceFabric implements ClientModInitializer {
         //#if MC >= 1.21.6
         HudElementRegistry.addLast(McIds.id("mcvoice", "hud"),
             (graphics, delta) -> client.renderHud(new McCanvas(graphics)));
-        //#else
+        //#elif MC >= 1.16
         HudRenderCallback.EVENT.register((graphics, delta) -> client.renderHud(new McCanvas(graphics)));
+        //#elif MC >= 1.15
+        HudRenderCallback.EVENT.register(delta -> client.renderHud(new McCanvas()));
+        //#else
+        // Fabric API for 1.14 has no HUD callback: dev.mcvoice.platform.fabric.mixin.GuiMixin calls renderHud()
         //#endif
         ClientPlayConnectionEvents.DISCONNECT.register((handler, mc) -> client.invalidateWorld("disconnect"));
         ClientPlayConnectionEvents.JOIN.register((handler, sender, mc) -> client.invalidateWorld("join_world"));
         ClientLifecycleEvents.CLIENT_STOPPING.register(mc -> client.shutdown());
     }
+
+    //#if MC < 1.15
+    /** Called by the Gui mixin after the vanilla HUD is drawn (1.14 only). */
+    public static void renderHud() {
+        if (client != null) {
+            client.renderHud(new McCanvas());
+        }
+    }
+    //#endif
 
     /** Plugin channels for the Simple Voice Chat compatibility layer via Fabric networking. */
     static final class FabricSvcChannels implements SimpleVoiceChatAdapter {
