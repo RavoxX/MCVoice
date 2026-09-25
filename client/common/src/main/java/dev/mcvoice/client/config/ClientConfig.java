@@ -129,7 +129,8 @@ public final class ClientConfig {
 
     void apply(Map<String, Object> m) {
         String url = Json.str(m, "backendUrl");
-        if (url != null) {
+        // empty means "no choice made" (0.1.0 saved "" when its jars had no default): keep the built-in default
+        if (url != null && !url.trim().isEmpty()) {
             backendUrl = url.trim();
         }
         String vo = Json.str(m, "voiceEndpointOverride");
