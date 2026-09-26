@@ -218,6 +218,7 @@ func (s *Server) write(b []byte, addr netip.AddrPort) {
 type target struct {
 	sess  *Session
 	epoch uint32
+	group bool // relayed with mode 2 (spec 8.1)
 }
 
 var targetPool = sync.Pool{New: func() any { t := make([]target, 0, 16); return &t }}
@@ -228,7 +229,9 @@ func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time) {
 	targets := (*tp)[:0]
 
 	s.mu.RLock()
-	if !routing.SenderEligible(&s.rcfg, nowMs, &sender.peer, v.Epoch) {
+	group := routing.GroupApplies(&sender.peer, v.Mode, v.Flags)
+	proximity := v.Mode != protocol.ModeGroup && routing.SenderEligible(&s.rcfg, nowMs, &sender.peer, v.Epoch)
+	if !group && !proximity {
 		reason := "not_routable"
 		if sender.peer.InWorld && v.Epoch != sender.peer.Epoch {
 			reason = "stale_epoch"
@@ -239,9 +242,22 @@ func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time) {
 		targetPool.Put(tp)
 		return
 	}
-	for r := range s.buckets[sender.peer.ScopeKey] {
-		if routing.Deliver(&s.rcfg, nowMs, &sender.peer, &r.peer, v.Mode) {
-			targets = append(targets, target{r, r.peer.Epoch})
+	if group {
+		// spec 8.1: every other member of the sender's group, relayed with mode 2
+		if g := s.groups[sender.peer.Group]; g != nil {
+			for _, r := range g.members {
+				if routing.DeliverGroup(&sender.peer, &r.peer) {
+					targets = append(targets, target{r, r.peer.Epoch, true})
+				}
+			}
+		}
+	}
+	if proximity {
+		// candidates are the players the sender's own world tracks (mutual visibility is mandatory)
+		for u := range sender.peer.Visible {
+			if r := s.byUUID[u]; r != nil && routing.DeliverProximity(&s.rcfg, nowMs, &sender.peer, &r.peer, v.Mode, group) {
+				targets = append(targets, target{r, r.peer.Epoch, false})
+			}
 		}
 	}
 	s.mu.RUnlock()
@@ -250,7 +266,11 @@ func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time) {
 		bp := bufPool.Get().(*[]byte)
 		ptb := bufPool.Get().(*[]byte)
 		for _, t := range targets {
-			plain := protocol.AppendRelay((*ptb)[:0], sender.uuidB, t.epoch, v)
+			rv := v
+			if t.group {
+				rv.Mode, rv.Flags = protocol.ModeGroup, v.Flags&^protocol.FlagGroup
+			}
+			plain := protocol.AppendRelay((*ptb)[:0], sender.uuidB, t.epoch, rv)
 			t.sess.umu.Lock()
 			if !t.sess.hasAddr {
 				t.sess.umu.Unlock()

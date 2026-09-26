@@ -26,6 +26,11 @@ public interface AudioAdapter {
 
         String deviceName();
 
+        /** Diagnostics for the status screen (format, buffer, dropped audio); may be empty. */
+        default String stats() {
+            return "";
+        }
+
         void close();
     }
 
