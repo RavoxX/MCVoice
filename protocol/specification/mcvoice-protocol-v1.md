@@ -358,6 +358,32 @@ Backend → client:
 * `group_list` lists at most 100 groups, most members first, then by id. With
   `query` (1-5 characters `[A-Za-z0-9]`) only groups whose id contains it,
   case-insensitively, are listed (search).
+* **Paged browsing (`group_paging` capability).** A backend advertising this
+  capability accepts `group_list` with `limit` (integer 1–20) and `request_id`
+  (uint32), both required together. An optional `cursor` is a 5-character
+  group id, matched case-insensitively. These fields cannot accompany a legacy
+  request without `limit`. Paged results are ordered by **id ascending**, so
+  member-count changes do not move groups between pages. Only matching ids
+  strictly after the cursor are returned; the cursor need not still exist.
+  Search applies across all active groups before pagination. The response
+  echoes `request_id` and includes `next_cursor` (last returned id when more
+  matches exist, otherwise null). Each page reflects current state: deleted
+  groups disappear; newly created ids before the cursor appear on refresh.
+  Clients discard answers for superseded searches, append subsequent pages
+  without duplicate ids, and reset the cursor when searching or refreshing.
+  Legacy requests retain the 100-entry, member-count ordering above.
+
+  ```json
+  {"type":"group_list","limit":20,"request_id":1,"query":"K"}
+  {"type":"group_list","groups":[{"id":"K7M2Q","members":3,"max":15,"password":true}],"request_id":1,"next_cursor":null}
+  ```
+* **Group request limits.** Per authenticated control connection, independent
+  token buckets permit `group_list` at 2/s (burst 4), `group_create` at 1/10 s
+  (burst 3), and `group_join` at 1/s (burst 6). They apply to legacy and paged
+  requests, before group work or hub locking. Exceeding a budget returns a
+  non-fatal `rate_limited` error. The existing wrong-password and general
+  control limits also apply. Leaving a group has no extra group limiter.
+  These budgets do not consume the voice-frame budget.
 * `group_joined` answers a successful create/join; `group_update` goes to
   every member whenever the member list changes; `group_left` tells a member it
   is no longer in the group (`reason`: `left`, `not_in_world`, `replaced` —

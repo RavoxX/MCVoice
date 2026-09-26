@@ -1,6 +1,7 @@
 package dev.mcvoice.client.core;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -189,6 +190,7 @@ class EndToEndTest {
         a.ptt = true;
         long t0 = System.currentTimeMillis();
         waitFor("Bob hears Alice", () -> loudness(b, t0) > 300, 10000);
+        waitFor("Alice's speaking indicator", () -> vb.isSpeaking(a.uuid), 2000);
         Thread.sleep(1000);
         double[] e = b.audio.energySince(t0 + 500);
         // Bob faces south (yaw 0); Alice at -X (west) is on Bob's right.
@@ -201,6 +203,7 @@ class EndToEndTest {
         long t1 = System.currentTimeMillis();
         Thread.sleep(1500);
         assertEquals(0.0, loudness(b, t1), 1.0, "no voice after dimension switch");
+        assertFalse(vb.isSpeaking(a.uuid), "no name-tag indicator from the old world");
 
         // --- back to the overworld next to Alice: audible again
         b.dimension = "minecraft:overworld";
@@ -273,6 +276,7 @@ class EndToEndTest {
 
         long t0 = System.currentTimeMillis();
         waitFor("Hugo hears Gina through the group", () -> loudness(b, t0) > 300, 10000);
+        assertFalse(vb.isSpeaking(a.uuid), "remote group members have no local name tag");
         Thread.sleep(800);
         double[] e = b.audio.energySince(t0 + 300);
         assertTrue(e[0] > e[1] * 0.8 && e[1] > e[0] * 0.8, "group audio is centred, L=" + e[0] + " R=" + e[1]);
