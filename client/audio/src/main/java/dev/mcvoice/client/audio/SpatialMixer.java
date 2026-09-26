@@ -132,9 +132,9 @@ public final class SpatialMixer {
                     s.decoder.decode(null, 0, 0, s.pcm);
                     concealedFrames++;
                 }
-                s.talking = true;
                 double tl = 0, tr = 0;
                 PlaybackDecision d = validator.check(snap, s.speaker, mode);
+                s.talking = d.accepted();
                 if (d.accepted() && mode == PlaybackValidator.MODE_GROUP) {
                     // voice group: not positional, centred at the player's volume (spec 9.1)
                     Spatializer.gains(0, master * settings.volumeOf(s.speaker), 1, g);
@@ -180,6 +180,12 @@ public final class SpatialMixer {
             out[i] = (short) (v > 32767 ? 32767 : (v < -32768 ? -32768 : v));
         }
         return out;
+    }
+
+    /** Allocation-free lookup for a rendered player's speaking indicator. */
+    public boolean isTalking(UUID speaker) {
+        SpeakerStream s = streams.get(speaker);
+        return s != null && s.talking;
     }
 
     /** Speakers currently producing audio (for the HUD). */

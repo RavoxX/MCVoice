@@ -257,6 +257,7 @@ func (s *Server) HandleControl(w http.ResponseWriter, r *http.Request) {
 
 	timeout := time.Duration(s.cfg.SessionTimeoutSec) * time.Second
 	rateStrikes, strikeWindow := 0, s.now()
+	groupLimits := newGroupLimits()
 	for {
 		frame, err := c.read(timeout)
 		if err != nil {
@@ -296,6 +297,10 @@ func (s *Server) HandleControl(w http.ResponseWriter, r *http.Request) {
 			}
 			c.fail(cerr.Code, cerr.Message)
 			return
+		}
+		if message := groupLimits.check(msg, now); message != "" {
+			sess.send(errorFrame(protocol.CodeRateLimited, message, false))
+			continue
 		}
 		if done := s.dispatch(sess, msg, now, log); done {
 			_ = c.ws.Close(websocket.StatusNormalClosure, "bye")
@@ -429,7 +434,7 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 	case *protocol.Ping:
 		sess.send(marshal(protocol.Pong{Type: "pong", Nonce: *m.Nonce, ServerTime: now.UnixMilli()}))
 	case *protocol.GroupList:
-		s.groupList(sess, m.Query)
+		s.groupList(sess, m)
 	case *protocol.GroupCreate:
 		s.groupCreate(sess, m)
 	case *protocol.GroupJoin:
