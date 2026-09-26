@@ -33,8 +33,8 @@ Copy `backend/rust/.env.example` (identical to the Go one) to `.env` and set at 
 **Never commit `.env`.** The repository's `.gitignore` excludes `.env` and
 `.env.*` except `.env.example`, and CI fails if such a file is tracked.
 Kubernetes users put the secrets into a `Secret` (see below). Other useful
-settings: ranges (`NORMAL_RANGE`, `WHISPER_RANGE`, `MAX_RANGE`),
-`ROUTING_REQUIRE_MUTUAL_VISIBILITY`, rate limits, `MAX_SESSIONS`, `BANS_FILE`
+settings: ranges (`NORMAL_RANGE`, `WHISPER_RANGE`, `MAX_RANGE`,
+`ROUTING_DISTANCE_SLACK`), rate limits, `MAX_SESSIONS`, `BANS_FILE`
 (`{"banned":[uuid…],"muted":[uuid…]}`, re-read every 30 s), and
 `SCOPE_ATTESTATION_KEYS` for the optional companion plugin.
 
