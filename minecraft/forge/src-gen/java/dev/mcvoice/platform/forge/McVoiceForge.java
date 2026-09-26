@@ -6,9 +6,11 @@ import dev.mcvoice.client.log.VoiceLog;
 import dev.mcvoice.platform.mc.McAdapter;
 import dev.mcvoice.platform.mc.McCanvas;
 import dev.mcvoice.platform.mc.McLogging;
+import dev.mcvoice.platform.mc.McNameTags;
 import dev.mcvoice.platform.mc.PlatformInfo;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -52,6 +54,19 @@ public final class McVoiceForge {
 
     /** Game event hooks. */
     public static final class Events {
+        @SubscribeEvent
+
+        public void onNameTag(RenderLivingEvent.Specials.Post<?> e) {
+
+
+
+
+
+
+            McNameTags.render(e.renderer, e.entity, e.x, e.y, e.z, client);
+
+        }
+
         @SubscribeEvent
         public void onTick(TickEvent.ClientTickEvent e) {
             if (e.phase == TickEvent.Phase.END && client != null) {
