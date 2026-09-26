@@ -1,7 +1,23 @@
 package dev.mcvoice.client.ui;
 
-/** Original MCVoice colour palette (ARGB). */
+/** Colours (ARGB): the voice HUD palette, and the vanilla-style palette of the settings screens. */
 public final class Theme {
+    // --- settings screens: modelled on Minecraft's own option screens
+    public static final int SCREEN_DIM = 0xC0101010;
+    public static final int BUTTON = 0xFF6F6F6F;
+    public static final int BUTTON_LIGHT = 0xFFA8A8A8;
+    public static final int BUTTON_DARK = 0xFF4A4A4A;
+    public static final int BUTTON_OUTLINE = 0xFF000000;
+    public static final int BUTTON_FOCUS = 0xFFFFFFFF;
+    public static final int SLIDER_TRACK = 0xFF2B2B2B;
+    public static final int LABEL = 0xFFFFFFFF;
+    public static final int LABEL_SELECTED = 0xFFFFFFA0;
+    public static final int LABEL_DIM = 0xFFA0A0A0;
+    public static final int METER_ON = 0xFF55FF55;
+    public static final int METER_OFF = 0xFF3F7F3F;
+    public static final int METER_MARK = 0xFFFFFF55;
+
+    // --- voice HUD
     public static final int BACKDROP = 0xC0101418;
     public static final int PANEL = 0xE01C232B;
     public static final int PANEL_BORDER = 0xFF3A4654;

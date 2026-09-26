@@ -96,6 +96,9 @@ def udp_vectors():
         ("voice_end_of_stream_empty", 7, 1, 0, 1, b"", 6, KEY, 0),
         ("voice_max_payload", 4294967295, 12, 0, 0, opus_max, 2**40, KEY, 0),
         ("voice_rotated_key", 8, 77, 0, 0, opus_20, 1, KEY2, 1),
+        ("voice_group_only", 7, 42, 2, 0, opus_small, 7, KEY, 0),
+        ("voice_normal_also_group", 7, 43, 0, 2, opus_small, 8, KEY, 0),
+        ("voice_group_end_of_stream", 7, 44, 2, 1, b"", 9, KEY, 0),
     ]:
         add(name, key, DIR_C2S, T_VOICE, kid, counter,
             {"epoch": epoch, "sequence": seq, "timestamp": ts, "codec": 1, "mode": mode, "flags": flags,
@@ -109,6 +112,10 @@ def udp_vectors():
         {"sender_uuid": UUID_C, "recipient_epoch": 11, "sender_epoch": 2, "sequence": 5, "timestamp": 0,
          "codec": 1, "mode": 1, "flags": 1, "payload": ""},
         relay_pt(UUID_C, 11, 2, 5, 0, 1, 1, 1, b""))
+    add("voice_relay_group", KEY, DIR_S2C, T_VOICE_RELAY, 0, 11,
+        {"sender_uuid": UUID_D, "recipient_epoch": 4, "sender_epoch": 9, "sequence": 12, "timestamp": ts,
+         "codec": 1, "mode": 2, "flags": 0, "payload": opus_small.hex()},
+        relay_pt(UUID_D, 4, 9, 12, ts, 1, 2, 0, opus_small))
 
     good = bytes.fromhex(valid[4]["datagram"])  # voice_normal
     invalid = []
@@ -139,6 +146,9 @@ def udp_vectors():
     bad("bad_codec", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 9, 0, 0, b"\x01")), "bad_payload")
     bad("bad_mode", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 7, 0, b"\x01")), "bad_payload")
     bad("bad_voice_flags", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 0, 0x80, b"\x01")), "bad_payload")
+    bad("bad_voice_flag_bit2", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 0, 0x04, b"\x01")), "bad_payload")
+    bad("group_mode_with_group_flag", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 2, 0x02, b"\x01")),
+        "bad_payload")
     bad("zero_counter", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 0, voice_pt(1, 1, 1, 1, 0, 0, b"\x01")), "bad_counter")
     bad("hello_wrong_length", seal(KEY, DIR_C2S, T_HELLO, 0, CONN, 3, b"\x00" * 23), "bad_payload")
     bad("relay_truncated", seal(KEY, DIR_S2C, T_VOICE_RELAY, 0, CONN, 3, b"\x00" * 20), "bad_payload", direction="s2c")
@@ -225,6 +235,24 @@ def control_vectors():
         ("auth_offline", {"type": "auth", "method": "offline", "username": "Dev_1", "uuid": UUID_A}, None),
         ("resume", {"type": "resume", "resume_token": "a.b.c"}, None),
         ("bye", {"type": "bye"}, None),
+        ("group_list", {"type": "group_list"}, None),
+        ("group_list_query", {"type": "group_list", "query": "k7"}, None),
+        ("group_list_query_too_long", {"type": "group_list", "query": "K7M2QX"}, "bad_message"),
+        ("group_list_query_bad_chars", {"type": "group_list", "query": "K 7"}, "bad_message"),
+        ("group_list_query_empty", {"type": "group_list", "query": ""}, "bad_message"),
+        ("group_create_open", {"type": "group_create"}, None),
+        ("group_create_null_password", {"type": "group_create", "password": None}, None),
+        ("group_create_password", {"type": "group_create", "password": "hunter 2!"}, None),
+        ("group_create_password_empty", {"type": "group_create", "password": ""}, "bad_message"),
+        ("group_create_password_too_long", {"type": "group_create", "password": "x" * 33}, "bad_message"),
+        ("group_create_password_control_char", {"type": "group_create", "password": "a\nb"}, "bad_message"),
+        ("group_create_password_non_ascii", {"type": "group_create", "password": "pässwort"}, "bad_message"),
+        ("group_join", {"type": "group_join", "id": "K7M2Q", "password": "hunter 2!"}, None),
+        ("group_join_lowercase", {"type": "group_join", "id": "k7m2q"}, None),
+        ("group_join_short_id", {"type": "group_join", "id": "K7M2"}, "bad_message"),
+        ("group_join_bad_id_chars", {"type": "group_join", "id": "K7M2!"}, "bad_message"),
+        ("group_join_missing_id", {"type": "group_join"}, "bad_message"),
+        ("group_leave", {"type": "group_leave"}, None),
         ("missing_type", {"epoch": 1}, "bad_message"),
         ("unknown_type", {"type": "teleport", "x": 1}, "unknown_message"),
     ]
@@ -243,12 +271,14 @@ def routing_vectors():
     net, net2 = "n1:6b86b273ff34fce19d6b804eff5a3f57", "n1:d4735e3a265e16eee03f59718b9b5d03"
     ow, nether = "minecraft:overworld", "minecraft:the_nether"
     cfg = {"normal_range": 48.0, "whisper_range": 8.0, "max_range": 96.0, "distance_slack": 4.0,
-           "require_mutual_visibility": True, "position_stale_ms": 3000}
+           "position_stale_ms": 3000}
     now = 100000
 
-    def s(u, pos, visible, network=net, world=ow, epoch=1, **kw):
+    def s(u, pos, visible, network=net, world=ow, epoch=1, attested="", group="", **kw):
+        # network_id is informational (spec 6.3): vectors vary it to prove routing ignores it
         d = {"uuid": u, "authenticated": True, "udp_verified": True, "in_world": True,
-             "network_id": network, "world_id": world, "epoch": epoch, "pos": pos, "pos_at_ms": now - 100,
+             "network_id": network, "world_id": world, "attested": attested, "group": group, "epoch": epoch, "pos": pos,
+             "pos_at_ms": now - 100,
              "visible": visible, "muted": False, "deafened": False}
         d.update(kw)
         return d
@@ -260,7 +290,14 @@ def routing_vectors():
         ("distance_within_slack", [s(A, [0, 64, 0], [B]), s(B, [51, 64, 0], [A])], A, 1, 0, [B]),
         ("whisper_range", [s(A, [0, 64, 0], [B, C]), s(B, [5, 64, 0], [A]), s(C, [20, 64, 0], [A])], A, 1, 1, [B]),
         ("different_dimension_same_coords", [s(A, [100, 64, 100], [B]), s(B, [100, 64, 100], [A], world=nether)], A, 1, 0, []),
-        ("different_network_same_coords", [s(A, [100, 64, 100], [B]), s(B, [100, 64, 100], [A], network=net2)], A, 1, 0, []),
+        # same server joined through two addresses (alias, IP, tunnel): both games show the other player
+        ("different_address_same_server", [s(A, [100, 64, 100], [B]), s(B, [100, 64, 100], [A], network=net2)], A, 1, 0, [B]),
+        ("different_address_one_sided", [s(A, [100, 64, 100], []), s(B, [100, 64, 100], [A], network=net2)], A, 1, 0, []),
+        ("attested_same_subserver", [s(A, [0, 64, 0], [B], attested="net/lobby-1"),
+                                     s(B, [3, 64, 0], [A], attested="net/lobby-1", network=net2)], A, 1, 0, [B]),
+        ("attested_different_subserver", [s(A, [0, 64, 0], [B], attested="net/lobby-1"),
+                                          s(B, [3, 64, 0], [A], attested="net/lobby-2")], A, 1, 0, []),
+        ("attested_and_unattested", [s(A, [0, 64, 0], [B], attested="net/lobby-1"), s(B, [3, 64, 0], [A])], A, 1, 0, [B]),
         ("proxy_subserver_not_visible", [s(A, [100, 64, 100], []), s(B, [100, 64, 100], [])], A, 1, 0, []),
         ("recipient_does_not_see_sender", [s(A, [0, 64, 0], [B]), s(B, [3, 64, 0], [])], A, 1, 0, []),
         ("sender_does_not_see_recipient_mutual", [s(A, [0, 64, 0], []), s(B, [3, 64, 0], [A])], A, 1, 0, []),
@@ -281,23 +318,49 @@ def routing_vectors():
     out = []
     for name, sessions, sender, epoch, mode, expect in scen:
         out.append({"name": name, "config": cfg, "now_ms": now, "sessions": sessions,
-                    "packet": {"sender": sender, "epoch": epoch, "mode": mode}, "expect": sorted(expect)})
-    nm = {"name": "non_mutual_mode_allows_one_sided",
-          "config": dict(cfg, require_mutual_visibility=False), "now_ms": now,
-          "sessions": [s(A, [0, 64, 0], []), s(B, [3, 64, 0], [A])],
-          "packet": {"sender": A, "epoch": 1, "mode": 0}, "expect": [B]}
-    out.append(nm)
-    return {"description": "Backend routing decisions (spec section 8). expect = sorted recipient UUIDs.", "cases": out}
+                    "packet": {"sender": sender, "epoch": epoch, "mode": mode, "flags": 0},
+                    "expect": sorted(expect), "expect_group": []})
+    # voice groups (spec 8.1): group recipients get the frame with mode 2, never also by proximity
+    G, H = "K7M2Q", "P3XY9"
+    far_nether = dict(world=nether)
+    groups = [
+        ("group_only_across_worlds", [s(A, [0, 64, 0], [], group=G), s(B, [5000, 10, 0], [], group=G, **far_nether)],
+         A, 1, 2, 0, [], [B]),
+        ("group_only_without_group_dropped", [s(A, [0, 64, 0], [B]), s(B, [3, 64, 0], [A])], A, 1, 2, 0, [], []),
+        ("group_other_group_not_delivered", [s(A, [0, 64, 0], [], group=G), s(B, [3, 64, 0], [], group=H)],
+         A, 1, 2, 0, [], []),
+        ("group_and_proximity_no_double", [s(A, [0, 64, 0], [B, C], group=G), s(B, [3, 64, 0], [A], group=G),
+                                           s(C, [5, 64, 0], [A])], A, 1, 0, 2, [C], [B]),
+        ("group_member_nearby_without_group_flag", [s(A, [0, 64, 0], [B], group=G), s(B, [3, 64, 0], [A], group=G)],
+         A, 1, 0, 0, [B], []),
+        ("group_recipient_deafened", [s(A, [0, 64, 0], [], group=G), s(B, [0, 64, 0], [], group=G, deafened=True)],
+         A, 1, 2, 0, [], []),
+        ("group_recipient_no_udp", [s(A, [0, 64, 0], [], group=G), s(B, [0, 64, 0], [], group=G, udp_verified=False)],
+         A, 1, 2, 0, [], []),
+        ("group_sender_muted", [s(A, [0, 64, 0], [], group=G, muted=True), s(B, [0, 64, 0], [], group=G)],
+         A, 1, 2, 0, [], []),
+        ("group_sender_between_worlds", [s(A, None, [], group=G, in_world=False, epoch=3), s(B, [0, 64, 0], [], group=G)],
+         A, 1, 2, 0, [], [B]),
+        ("group_whisper_proximity_part_still_ranged", [s(A, [0, 64, 0], [B, C], group=G), s(B, [40, 64, 0], [A], group=G),
+                                                       s(C, [20, 64, 0], [A])], A, 1, 1, 2, [], [B]),
+    ]
+    for name, sessions, sender, epoch, mode, flags, expect, expect_group in groups:
+        out.append({"name": name, "config": cfg, "now_ms": now, "sessions": sessions,
+                    "packet": {"sender": sender, "epoch": epoch, "mode": mode, "flags": flags},
+                    "expect": sorted(expect), "expect_group": sorted(expect_group)})
+    return {"description": "Backend routing decisions (spec section 8 and 8.1). expect = sorted proximity recipients "
+                           "(relayed with the frame's mode), expect_group = sorted group recipients (relayed with mode 2).",
+            "cases": out}
 
 
 def playback_vectors():
     A, B, C = UUID_A, UUID_B, UUID_C
     ow, nether = "minecraft:overworld", "minecraft:the_nether"
 
-    def case(name, tracked, frame, expect, local=None, muted=(), deafened=False, normal=48.0, whisper=8.0):
+    def case(name, tracked, frame, expect, local=None, muted=(), deafened=False, normal=48.0, whisper=8.0, group=()):
         return {"name": name,
                 "local": local or {"in_world": True, "world": ow, "epoch": 5, "pos": [0, 64, 0]},
-                "tracked": tracked, "frame": frame, "muted": list(muted), "deafened": deafened,
+                "tracked": tracked, "frame": frame, "muted": list(muted), "deafened": deafened, "group": list(group),
                 "normal_range": normal, "whisper_range": whisper, "expect": expect}
 
     def fr(sender=B, epoch=5, mode=0):
@@ -322,6 +385,19 @@ def playback_vectors():
                 case("whisper_out_of_range", [{"uuid": B, "world": ow, "pos": [20, 64, 0]}], fr(mode=1), "reject:out_of_range"),
                 case("svc_frame_no_epoch", [{"uuid": B, "world": ow, "pos": [5, 64, 0]}],
                      {"sender": B, "recipient_epoch": None, "mode": 0}, "accept"),
+                # voice groups (spec 9.1): non-positional, but only from members of my current group
+                case("group_member_not_tracked", [], fr(mode=2), "accept", group=[A, B]),
+                case("group_member_other_world_far", [{"uuid": B, "world": nether, "pos": [9000, 64, 0]}], fr(mode=2),
+                     "accept", group=[A, B]),
+                case("group_frame_old_epoch", [], fr(mode=2, epoch=4), "accept", group=[B]),
+                case("group_frame_not_member", [{"uuid": C, "world": ow, "pos": [1, 64, 0]}], fr(sender=C, mode=2),
+                     "reject:not_in_group", group=[A, B]),
+                case("group_frame_no_group", [{"uuid": B, "world": ow, "pos": [1, 64, 0]}], fr(mode=2), "reject:not_in_group"),
+                case("group_member_muted", [], fr(mode=2), "reject:muted", group=[B], muted=[B]),
+                case("group_member_deafened", [], fr(mode=2), "reject:deafened", group=[B], deafened=True),
+                case("group_frame_self", [], fr(sender=A, mode=2), "reject:self", group=[A, B],
+                     local={"in_world": True, "world": ow, "epoch": 5, "pos": [0, 64, 0], "uuid": A}),
+                case("positional_frame_group_member_still_needs_entity", [], fr(mode=0), "reject:not_tracked", group=[B]),
             ]}
 
 
