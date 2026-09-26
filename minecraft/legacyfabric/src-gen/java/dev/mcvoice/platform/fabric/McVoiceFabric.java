@@ -69,6 +69,9 @@ public final class McVoiceFabric implements ClientModInitializer {
             client.renderHud(new McCanvas());
         }
     }
+    public static void renderNameTag(net.minecraft.entity.LivingEntity entity, double x, double y, double z) {
+        dev.mcvoice.platform.mc.McNameTags.render(entity, x, y, z, client);
+    }
 
 
     /** Key bindings to add to GameOptions#allKeys (read by GameOptionsMixin). */
