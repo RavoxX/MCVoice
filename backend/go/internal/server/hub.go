@@ -30,10 +30,11 @@ type Server struct {
 	metrics *metrics.Registry
 	mojang  *auth.MojangVerifier
 
-	mu      sync.RWMutex
-	byConn  map[uint64]*Session
-	byUUID  map[string]*Session
-	buckets map[string]map[*Session]struct{}
+	mu     sync.RWMutex
+	byConn map[uint64]*Session
+	byUUID map[string]*Session
+	groups map[string]*group
+	outbox []outMsg // group messages queued under mu, sent by unlockAndFlush
 
 	bansMu    sync.RWMutex
 	banned    map[string]struct{}
@@ -53,13 +54,13 @@ func New(cfg *config.Config, log *slog.Logger) *Server {
 	return &Server{
 		cfg: cfg,
 		rcfg: routing.Config{NormalRange: cfg.NormalRange, WhisperRange: cfg.WhisperRange, MaxRange: cfg.MaxRange,
-			DistanceSlack: cfg.DistanceSlack, RequireMutual: cfg.RequireMutual, PositionStaleMs: 3000},
+			DistanceSlack: cfg.DistanceSlack, PositionStaleMs: 3000},
 		log:             log,
 		metrics:         metrics.New("go", Version),
 		mojang:          auth.NewMojangVerifier(cfg.MojangSessionURL),
 		byConn:          map[uint64]*Session{},
 		byUUID:          map[string]*Session{},
-		buckets:         map[string]map[*Session]struct{}{},
+		groups:          map[string]*group{},
 		banned:          map[string]struct{}{},
 		muted:           map[string]struct{}{},
 		connectLimiter:  newIPLimiter(cfg.RateConnectPerMin),
@@ -102,7 +103,7 @@ func (s *Server) register(sess *Session) (ok bool) {
 	}
 	s.byConn[sess.connID] = sess
 	s.byUUID[sess.ident.UUID] = sess
-	s.mu.Unlock()
+	s.unlockAndFlush()
 	if old != nil {
 		old.send(errorFrame(protocol.CodeSessionReplaced, "replaced by a newer session", true))
 		old.close(protocol.CodeSessionReplaced)
@@ -117,7 +118,7 @@ func (s *Server) unregister(sess *Session) {
 	if removed {
 		s.removeLocked(sess)
 	}
-	s.mu.Unlock()
+	s.unlockAndFlush()
 	if removed {
 		s.metrics.ConnectedClients.Add(-1)
 		sess.umu.Lock()
@@ -131,34 +132,11 @@ func (s *Server) unregister(sess *Session) {
 
 // removeLocked drops sess from all indexes (caller holds s.mu).
 func (s *Server) removeLocked(sess *Session) {
+	s.leaveGroupLocked(sess, "") // disconnected: out of the group (spec 6.12)
 	delete(s.byConn, sess.connID)
 	if s.byUUID[sess.ident.UUID] == sess {
 		delete(s.byUUID, sess.ident.UUID)
 	}
-	s.leaveBucketLocked(sess)
-}
-
-func (s *Server) leaveBucketLocked(sess *Session) {
-	if sess.peer.ScopeKey == "" {
-		return
-	}
-	if b := s.buckets[sess.peer.ScopeKey]; b != nil {
-		delete(b, sess)
-		if len(b) == 0 {
-			delete(s.buckets, sess.peer.ScopeKey)
-		}
-	}
-	sess.peer.ScopeKey = ""
-}
-
-func (s *Server) joinBucketLocked(sess *Session, key string) {
-	sess.peer.ScopeKey = key
-	b := s.buckets[key]
-	if b == nil {
-		b = map[*Session]struct{}{}
-		s.buckets[key] = b
-	}
-	b[sess] = struct{}{}
 }
 
 func (s *Server) isBanned(uuid string) bool {
@@ -235,6 +213,7 @@ func (s *Server) reloadBans() {
 
 // presenceTick recomputes presence (spec 6.7) for every session and sends diffs.
 func (s *Server) presenceTick() {
+	s.groupTick(s.now())
 	type upd struct {
 		sess *Session
 		msg  []byte
@@ -245,7 +224,8 @@ func (s *Server) presenceTick() {
 		next := map[string]struct{}{}
 		if r.peer.InWorld {
 			for u := range r.peer.Visible {
-				if o := s.byUUID[u]; o != nil && o.peer.InWorld && o.peer.UDPVerified && o.peer.ScopeKey == r.peer.ScopeKey {
+				if o := s.byUUID[u]; o != nil && o.peer.InWorld && o.peer.UDPVerified &&
+					routing.CompatibleScopes(&o.peer, &r.peer) && routing.MutuallyVisible(&o.peer, &r.peer) {
 					next[u] = struct{}{}
 				}
 			}
