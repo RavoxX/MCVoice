@@ -50,6 +50,10 @@ client                                   backend
 
 * **Groups** (1.1, capability `groups`). `group_list` (with optional id
   search), `group_create` (optional password), `group_join`, `group_leave`;
+  `group_paging` adds cursor-based pages of at most 20 groups. Search and
+  refresh reset the cursor; legacy clients retain the previous list format.
+  Browsing is limited to 2/s (burst 4), creation to 1/10 s (burst 3), and
+  joining to 1/s (burst 6), per connection. Leaving has no extra limiter;
   the backend answers `group_joined`/`group_update`/`group_left`. Voice mode
   `2` is group only, flag bit 1 adds the group to a normal/whisper frame.
 
@@ -83,10 +87,13 @@ Backend routing (§8) is a bandwidth filter:
 * positions fresh within 3 s;
 * not muted, banned or deafened.
 
-The **client playback rule (§9)** is the security boundary. The speaker must
-currently be a tracked player entity in the listener's world, within range by
-local positions, and not muted or deafened. It is checked for every frame of
-every transport. See [proximity-security.md](proximity-security.md).
+The **client playback rule (§9)** is the security boundary for positional
+audio. The speaker must currently be a tracked player entity in the
+listener's world, within range by local positions, and not muted or
+deafened. It is checked for every positional frame of every transport. Group
+frames (mode 2, §9.1) are played centred instead, and only if the speaker is a
+member of the listener's current group. See
+[proximity-security.md](proximity-security.md).
 
 ## Versioning
 
