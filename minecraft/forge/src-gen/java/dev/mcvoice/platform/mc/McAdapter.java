@@ -61,6 +61,8 @@ public final class McAdapter implements MinecraftAdapter {
         keys.put(InputAdapter.Action.WHISPER, key("whisper", InputConstants.KEY_B));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", InputConstants.KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", InputConstants.KEY_N));
+        keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", InputConstants.KEY_G));
+
 
 
 
@@ -311,6 +313,24 @@ public final class McAdapter implements MinecraftAdapter {
         @Override
         public boolean isAnyScreenOpen() {
             return ScreenHost.current() != null;
+        }
+
+        @Override
+        public int[] chatPointer() {
+            if (!(ScreenHost.current() instanceof net.minecraft.client.gui.screens.ChatScreen)) {
+                return null;
+            }
+            Minecraft m = mc();
+            // window pixels -> GUI coordinates, as Minecraft itself converts mouse input
+
+            double sx = (double) m.getWindow().getGuiScaledWidth() / Math.max(1, m.getWindow().getScreenWidth());
+            double sy = (double) m.getWindow().getGuiScaledHeight() / Math.max(1, m.getWindow().getScreenHeight());
+
+
+
+
+            return new int[] {(int) (m.mouseHandler.xpos() * sx), (int) (m.mouseHandler.ypos() * sy),
+                m.mouseHandler.isLeftPressed() ? 1 : 0};
         }
     };
 
