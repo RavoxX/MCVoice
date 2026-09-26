@@ -19,10 +19,28 @@ pub mod code {
     pub const SESSION_REPLACED: &str = "session_replaced";
     pub const STALE_EPOCH: &str = "stale_epoch";
     pub const SERVER_FULL: &str = "server_full";
+    pub const GROUP_NOT_FOUND: &str = "group_not_found";
+    pub const GROUP_FULL: &str = "group_full";
+    pub const GROUP_PASSWORD: &str = "group_password";
+    pub const NOT_IN_WORLD: &str = "not_in_world";
     pub const INTERNAL: &str = "internal";
 }
 
-pub const SERVER_CAPABILITIES: &[&str] = &["opus", "whisper", "peers_delta", "presence", "key_rotation", "scope_attestation"];
+pub const SERVER_CAPABILITIES: &[&str] = &[
+    "opus",
+    "whisper",
+    "peers_delta",
+    "presence",
+    "key_rotation",
+    "scope_attestation",
+    "groups",
+];
+
+/// Voice groups (spec 6.12).
+pub const GROUP_MAX_MEMBERS: usize = 15;
+pub const GROUP_LIST_MAX: usize = 100;
+pub const GROUP_ID_ALPHABET: &[u8] = b"ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+pub const GROUP_ID_LEN: usize = 5;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ControlError {
@@ -116,6 +134,22 @@ pub struct Ping {
     pub nonce: Option<u64>,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct GroupList {
+    pub query: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GroupCreate {
+    pub password: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GroupJoin {
+    pub id: Option<String>,
+    pub password: Option<String>,
+}
+
 /// A validated client -> backend control message.
 #[derive(Debug)]
 pub enum ClientMsg {
@@ -128,6 +162,10 @@ pub enum ClientMsg {
     PeersDelta(PeersDelta),
     State(State),
     Ping(Ping),
+    GroupList(GroupList),
+    GroupCreate(GroupCreate),
+    GroupJoin(GroupJoin),
+    GroupLeave,
     Bye,
 }
 
@@ -162,6 +200,10 @@ pub fn parse_control(frame: &[u8]) -> Result<ClientMsg, ControlError> {
         "peers_delta" => ClientMsg::PeersDelta(parse_as(frame)?),
         "state" => ClientMsg::State(parse_as(frame)?),
         "ping" => ClientMsg::Ping(parse_as(frame)?),
+        "group_list" => ClientMsg::GroupList(parse_as(frame)?),
+        "group_create" => ClientMsg::GroupCreate(parse_as(frame)?),
+        "group_join" => ClientMsg::GroupJoin(parse_as(frame)?),
+        "group_leave" => ClientMsg::GroupLeave,
         "bye" => return Ok(ClientMsg::Bye),
         _ => {
             return Err(ControlError {
@@ -197,6 +239,15 @@ fn is_world(s: &str) -> bool {
     (1..=128).contains(&s.len())
         && s.bytes()
             .all(|c| c.is_ascii_digit() || c.is_ascii_lowercase() || b":._/-".contains(&c))
+}
+
+/// 1-32 printable ASCII characters (spec 6.12).
+fn is_group_password(s: &str) -> bool {
+    (1..=32).contains(&s.len()) && s.bytes().all(|c| (0x20..=0x7e).contains(&c))
+}
+
+fn is_group_id(s: &str) -> bool {
+    s.len() == GROUP_ID_LEN && s.bytes().all(|c| c.is_ascii_alphanumeric())
 }
 
 fn uuid_list(l: &[String]) -> Result<(), ControlError> {
@@ -303,7 +354,28 @@ fn validate(m: &ClientMsg) -> Result<(), ControlError> {
                 return Err(bad("missing nonce"));
             }
         }
-        ClientMsg::Bye => {}
+        ClientMsg::GroupCreate(g) => {
+            if g.password.as_deref().is_some_and(|p| !is_group_password(p)) {
+                return Err(bad("invalid group password"));
+            }
+        }
+        ClientMsg::GroupJoin(g) => {
+            if !g.id.as_deref().is_some_and(is_group_id) {
+                return Err(bad("invalid group id"));
+            }
+            if g.password.as_deref().is_some_and(|p| !is_group_password(p)) {
+                return Err(bad("invalid group password"));
+            }
+        }
+        ClientMsg::GroupList(g) => {
+            if g.query
+                .as_deref()
+                .is_some_and(|q| q.is_empty() || q.len() > GROUP_ID_LEN || !q.bytes().all(|c| c.is_ascii_alphanumeric()))
+            {
+                return Err(bad("invalid group query"));
+            }
+        }
+        ClientMsg::GroupLeave | ClientMsg::Bye => {}
     }
     Ok(())
 }
