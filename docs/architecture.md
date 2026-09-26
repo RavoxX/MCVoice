@@ -113,8 +113,8 @@ tested by the same black-box suite.
   moderation (bans/mutes file).
 * **Voice** (UDP): fixed 22-byte header as AAD; AES-128-GCM with a direction-
   and key-scoped nonce; a 1024-packet replay window. Routing is the pure
-  function from spec §8: same scope key, recipient visibility (mutual by
-  default), distance ≤ range + slack, fresh positions. The backend relays one
+  function from spec §8: same dimension (and attested sub-server, if both are
+  attested), mandatory mutual visibility, distance ≤ range + slack, fresh positions. The backend relays one
   datagram per eligible recipient, re-encrypted with the recipient's key and
   tagged with the **recipient's** epoch.
 * **State** is in memory, in one process. Players who should hear each other
