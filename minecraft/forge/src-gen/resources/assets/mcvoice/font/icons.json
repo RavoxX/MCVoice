@@ -1,0 +1,11 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "mcvoice:font/voice_tags.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": ["\uE000\uE001\uE002"]
+    }
+  ]
+}
