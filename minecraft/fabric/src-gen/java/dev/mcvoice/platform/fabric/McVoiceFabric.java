@@ -47,6 +47,22 @@ import net.minecraft.network.FriendlyByteBuf;
 public final class McVoiceFabric implements ClientModInitializer {
     private static VoiceClient client;
 
+
+    public static net.minecraft.network.chat.Component decorateNameTag(net.minecraft.world.entity.Entity entity,
+                                                                     net.minecraft.network.chat.Component name) {
+        return dev.mcvoice.platform.mc.McNameTags.decorate(entity, name, client);
+    }
+
+
+
+
+
+
+
+
+
+
+
     @Override
     public void onInitializeClient() {
         VoiceLog.setSink(new McLogging());
