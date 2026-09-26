@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import dev.mcvoice.client.proximity.PlaybackDecision;
 import dev.mcvoice.client.ui.TransportStatus;
+import dev.mcvoice.client.ui.VoiceControls;
 
 /**
  * First production milestone, headless: two MCVoice clients on an unmodified
@@ -228,6 +229,72 @@ class EndToEndTest {
         a.ptt = false;
         assertTrue(vb.rejectedCount(PlaybackDecision.NOT_TRACKED) + vb.rejectedCount(PlaybackDecision.STALE_EPOCH)
             + vb.rejectedCount(PlaybackDecision.OUT_OF_RANGE) >= 0);
+    }
+
+    /**
+     * Voice groups (spec 6.12, 8.1, 9.1): Alice and Bob on different Minecraft servers, in
+     * different dimensions, not seeing each other, hear each other through their group - centred
+     * (not positional), without push-to-talk; a locally muted member is silent but listed as a
+     * muted talker; leaving the group ends it.
+     */
+    @Test
+    void voiceGroupAcrossServers() throws Exception {
+        final FakeMinecraft a = player("Gina");
+        final FakeMinecraft b = player("Hugo");
+        a.serverAddress = "alpha.example.org";
+        b.serverAddress = "beta.example.org";
+        b.dimension = "minecraft:the_nether";
+        b.x = 5000;
+        final VoiceClient va = start(a);
+        final VoiceClient vb = start(b);
+        waitFor("both clients on cloud voice", () -> va.transportStatus() == TransportStatus.CLOUD
+            && vb.transportStatus() == TransportStatus.CLOUD, 20000);
+        waitFor("backend supports groups", () -> va.groupsAvailable() && vb.groupsAvailable(), 5000);
+        Thread.sleep(500);
+        long quiet = System.currentTimeMillis();
+        Thread.sleep(1200);
+        assertEquals(0.0, loudness(b, quiet), 1.0, "no group yet: nothing to hear");
+
+        va.createGroup("");
+        waitFor("group created", () -> va.group() != null, 5000);
+        final String id = va.group().id;
+        assertEquals(5, id.length());
+        vb.requestGroups(id.substring(0, 3).toLowerCase(java.util.Locale.ROOT));
+        waitFor("search finds the group", () -> {
+            for (VoiceControls.GroupInfo g : vb.groupList()) {
+                if (g.id.equals(id)) {
+                    return true;
+                }
+            }
+            return false;
+        }, 5000);
+        vb.joinGroup(id, "");
+        waitFor("both in the group", () -> vb.group() != null && va.group() != null && va.group().members.size() == 2, 5000);
+
+        long t0 = System.currentTimeMillis();
+        waitFor("Hugo hears Gina through the group", () -> loudness(b, t0) > 300, 10000);
+        Thread.sleep(800);
+        double[] e = b.audio.energySince(t0 + 300);
+        assertTrue(e[0] > e[1] * 0.8 && e[1] > e[0] * 0.8, "group audio is centred, L=" + e[0] + " R=" + e[1]);
+
+        vb.setPlayerMuted(a.uuid, true);
+        Thread.sleep(400);
+        long t1 = System.currentTimeMillis();
+        Thread.sleep(1200);
+        assertEquals(0.0, loudness(b, t1), 1.0, "a locally muted member is silent");
+        boolean listedMuted = false;
+        for (VoiceControls.Talker t : vb.talkers()) {
+            listedMuted |= t.uuid.equals(a.uuid) && t.muted && t.group;
+        }
+        assertTrue(listedMuted, "the muted member still shows as a (muted) talker");
+        vb.setPlayerMuted(a.uuid, false);
+
+        vb.leaveGroup();
+        waitFor("Hugo left", () -> vb.group() == null && va.group() != null && va.group().members.size() == 1, 5000);
+        Thread.sleep(400);
+        long t2 = System.currentTimeMillis();
+        Thread.sleep(1200);
+        assertEquals(0.0, loudness(b, t2), 1.0, "no group audio after leaving");
     }
 
     /**
