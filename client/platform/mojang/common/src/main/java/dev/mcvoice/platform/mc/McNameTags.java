@@ -3,6 +3,7 @@ package dev.mcvoice.platform.mc;
 
 import dev.mcvoice.client.core.VoiceClient;
 import dev.mcvoice.client.platform.ui.VoiceIcon;
+import dev.mcvoice.client.ui.Theme;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 //#if MC >= 1.21.9
@@ -52,7 +53,7 @@ public final class McNameTags {
         if (name == null || !(entity instanceof Player) || voice == null || !voice.isSpeaking(entity.getUUID())) {
             return name;
         }
-        Style style = Style.EMPTY.withColor(0xE8EEF2)
+        Style style = Style.EMPTY.withColor(Theme.GOOD & 0xFFFFFF)
             //#if MC >= 1.21.9
             .withFont(new FontDescription.Resource(McIds.id("mcvoice", "icons")));
             //#else
