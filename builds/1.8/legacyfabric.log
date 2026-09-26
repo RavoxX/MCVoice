@@ -36,11 +36,11 @@ Note: Recompile with -Xlint:unchecked for details.
 > Task :remapSourcesJar
 > Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790461926164.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790464323890.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/MCVoice/MCVoice/minecraft/legacyfabric/build/reports/problems/problems-report.html
 
-BUILD SUCCESSFUL in 51s
+BUILD SUCCESSFUL in 45s
 7 actionable tasks: 7 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.4.0/userguide/configuration_cache_enabling.html
 valid: mcvoice-0.1.3-rc.1-mc1.8-legacyfabric.jar (358 classes, 17 platform classes, metadata ['fabric.mod.json'])
