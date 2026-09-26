@@ -123,11 +123,13 @@ pub async fn run(srv: Arc<Server>, shutdown: impl std::future::Future<Output = (
         let mut presence = tokio::time::interval(Duration::from_millis(500));
         let mut bans = tokio::time::interval(Duration::from_secs(30));
         let mut jitter = tokio::time::interval(Duration::from_secs(5));
+        let mut presence_updates = Vec::new();
+        let mut sessions = Vec::new();
         loop {
             tokio::select! {
-                _ = presence.tick() => bg.presence_tick(),
+                _ = presence.tick() => bg.presence_tick(&mut presence_updates),
                 _ = bans.tick() => bg.reload_bans(),
-                _ = jitter.tick() => bg.update_jitter_gauge(),
+                _ = jitter.tick() => bg.update_jitter_gauge(&mut sessions),
             }
         }
     }));

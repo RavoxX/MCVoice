@@ -367,14 +367,6 @@ impl Server {
             ClientMsg::Scope(s) => {
                 let epoch = s.epoch.unwrap();
                 let in_world = s.in_world.unwrap();
-                let mut hub = self.hub.write().unwrap();
-                let Some(ps) = hub.peers.get(&sess.conn_id) else { return };
-                if ps.has_scope && epoch <= ps.peer.epoch {
-                    drop(hub);
-                    sess.send(error_frame(code::STALE_EPOCH, "epoch must increase", false));
-                    return;
-                }
-                *last_pos = None; // the first position of a new epoch is always accepted
                 let attested = if in_world {
                     s.attestation.as_deref().and_then(|a| {
                         let r = auth::verify_attestation(&self.cfg.attestation_keys, a, &sess.ident.uuid, unix_now());
@@ -386,7 +378,14 @@ impl Server {
                 } else {
                     None
                 };
-                let ps = hub.peers.get_mut(&sess.conn_id).unwrap();
+                let mut hub = self.hub.write().unwrap();
+                let Some(ps) = hub.peers.get_mut(&sess.conn_id) else { return };
+                if ps.has_scope && epoch <= ps.peer.epoch {
+                    drop(hub);
+                    sess.send(error_frame(code::STALE_EPOCH, "epoch must increase", false));
+                    return;
+                }
+                *last_pos = None; // the first position of a new epoch is always accepted
                 ps.has_scope = true;
                 ps.peer.epoch = epoch;
                 ps.peer.in_world = in_world;
@@ -419,13 +418,15 @@ impl Server {
                 }
             }
             ClientMsg::Peers(p) => {
+                let mut visible = p.full.unwrap().into_iter().filter(|u| *u != sess.ident.uuid).collect();
                 let mut hub = self.hub.write().unwrap();
                 if let Some(ps) = hub.peers.get_mut(&sess.conn_id) {
                     if p.epoch.unwrap() == ps.peer.epoch {
-                        ps.peer.visible = p.full.unwrap().into_iter().filter(|u| *u != sess.ident.uuid).collect();
+                        std::mem::swap(&mut ps.peer.visible, &mut visible);
                         ps.peers_rev = p.rev.unwrap();
                     }
                 }
+                drop(hub); // release the old visibility set outside the global lock
             }
             ClientMsg::PeersDelta(d) => {
                 let mut hub = self.hub.write().unwrap();

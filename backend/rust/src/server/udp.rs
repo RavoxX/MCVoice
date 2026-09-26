@@ -14,6 +14,9 @@ use crate::routing;
 pub(crate) struct Scratch {
     plain: Vec<u8>,
     relay_plain: Vec<u8>,
+    // At most MAX_PEER_LIST + GROUP_MAX_MEMBERS - 1 targets, bounded by the
+    // control protocol. Capacity grows on demand and stays local to this worker.
+    targets: Vec<(Arc<Session>, u32, bool)>,
     outgoing: Vec<(SocketAddr, Vec<u8>)>,
     free: Vec<Vec<u8>>,
 }
@@ -23,6 +26,7 @@ impl Scratch {
         Scratch {
             plain: Vec::with_capacity(MAX_DATAGRAM),
             relay_plain: Vec::with_capacity(MAX_DATAGRAM),
+            targets: Vec::new(),
             outgoing: Vec::new(),
             free: Vec::new(),
         }
@@ -190,7 +194,8 @@ impl Server {
             flags: v.flags & !FLAG_GROUP,
             ..*v
         };
-        let targets: Vec<(Arc<Session>, u32, bool)> = {
+        scratch.targets.clear();
+        {
             let hub = self.hub.read().unwrap();
             let Some(sp) = hub.peers.get(&sender.conn_id) else { return };
             let group = routing::group_applies(&sp.peer, v.mode, v.flags);
@@ -204,14 +209,13 @@ impl Server {
                 self.metrics.drop(reason);
                 return;
             }
-            let mut targets = Vec::new();
             if group {
                 // spec 8.1: every other member of the sender's group, relayed with mode 2
                 if let Some(g) = hub.groups.get(&sp.peer.group) {
                     for c in &g.members {
                         if let (Some(rp), Some(rs)) = (hub.peers.get(c), hub.by_conn.get(c)) {
                             if routing::deliver_group(&sp.peer, &rp.peer) {
-                                targets.push((rs.clone(), rp.peer.epoch, true));
+                                scratch.targets.push((rs.clone(), rp.peer.epoch, true));
                             }
                         }
                     }
@@ -223,15 +227,17 @@ impl Server {
                     let Some((c, rp)) = hub.peer_of(u) else { continue };
                     if routing::deliver_proximity(&self.rcfg, now_ms, &sp.peer, &rp.peer, v.mode, group) {
                         if let Some(rs) = hub.by_conn.get(&c) {
-                            targets.push((rs.clone(), rp.peer.epoch, false));
+                            scratch.targets.push((rs.clone(), rp.peer.epoch, false));
                         }
                     }
                 }
             }
-            targets
-        };
+        }
         let now = Instant::now();
-        for (r, epoch, via_group) in targets {
+        // Detach the Vec so buf() can borrow scratch while draining it. Restore
+        // its capacity afterwards; no session references survive this packet.
+        let mut targets = std::mem::take(&mut scratch.targets);
+        for (r, epoch, via_group) in targets.drain(..) {
             scratch.relay_plain.clear();
             write_relay(
                 &mut scratch.relay_plain,
@@ -241,7 +247,10 @@ impl Server {
             );
             let mut out = scratch.buf();
             let mut u = r.udp.lock().unwrap();
-            let Some(addr) = u.addr else { continue };
+            let Some(addr) = u.addr else {
+                scratch.free.push(out);
+                continue;
+            };
             let k = u.send_key(now);
             k.send_counter += 1;
             let h = Header {
@@ -254,6 +263,7 @@ impl Server {
             drop(u);
             scratch.outgoing.push((addr, out));
         }
+        scratch.targets = targets;
     }
 }
 
@@ -272,3 +282,7 @@ fn track_jitter(u: &mut super::session::UdpState, ts: u32, now: Instant) {
     u.last_transit = Some(transit);
     u.last_voice = Some(now);
 }
+
+#[cfg(test)]
+#[path = "udp_tests.rs"]
+mod tests;
