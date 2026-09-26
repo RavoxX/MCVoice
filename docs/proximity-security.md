@@ -29,9 +29,9 @@ voice path can forge on the listener's behalf.
 
 | Layer | Where | What it prevents |
 |---|---|---|
-| 1. Scope key | backend | Routing between different networks (`network_id`) or dimension names (`world_id`). |
+| 1. Scope | backend | Routing between different dimension names (`world_id`), or different sub-servers when both players carry a companion-plugin attestation. The address a player joined through (`network_id`) is **not** compared: one server has many addresses (aliases, IPs, tunnels, several proxies), and players who joined through different ones must still hear each other. |
 | 2. World-session epoch | client + backend | Audio from before a server switch, dimension change, respawn or reconnect. Every such event creates a new epoch; the backend clears position + visibility atomically; relayed frames carry the **recipient's** epoch and the client drops mismatches. |
-| 3. Recipient visibility | backend | A frame is only routed to R if **R reported the sender's UUID** as a locally tracked player (and, by default, the sender reported R). A player on another sub-server is never in R's report. |
+| 3. Mutual visibility | backend | A frame is only routed to R if **R reported the sender's UUID** as a locally tracked player **and the sender reported R** (mandatory). UUIDs are Mojang-verified and a player is on one server at a time, so this ties routing to the actual game, whatever address each player used. A player on another server or sub-server is never in R's report. |
 | 4. Backend distance | backend | Bandwidth: no routing beyond range + slack (4 blocks for latency). |
 | 5. **Local entity check** | receiving client | Final authority, runs for every frame of every transport (cloud *and* Simple Voice Chat): tracked entity exists, same world, locally computed distance ≤ range, not muted, not deafened. |
 
@@ -66,6 +66,7 @@ players.
 | 60 blocks → rejected | `distance_60_range_48`, conformance `distance_60_blocks_not_delivered` |
 | same coordinates, other dimension → rejected | `same_coords_other_dimension`, conformance `different_dimension_same_coordinates_not_delivered` |
 | same coordinates, same dimension, not tracked → rejected | `not_tracked_same_coords`, `ProximityScenarioTest.sameCoordinatesSameDimensionButNotTrackedRejected` |
+| same server joined through two different addresses, both see each other → delivered | `routing.json: different_address_same_server`, conformance `different_address_same_server_delivered_both_ways` |
 | same proxy address + coordinates + dimension name, other population → rejected | `ProximityScenarioTest.proxySubserverDifferentPopulationRejected`, conformance `proxy_subserver_same_coordinates_not_visible_not_delivered`, `attested_subservers_are_isolated`, `EndToEndTest` (sub-server switch) |
 | frame from old epoch after switch → rejected | `old_epoch_after_switch`, conformance `stale_epoch_packet_dropped`, `recipient_epoch_is_current` |
 | entity removed → next packet rejected | `ProximityScenarioTest.senderEntityRemovedNextPacketRejected`, conformance `disconnect_removes_peer` |
@@ -77,8 +78,6 @@ players.
   voice range is 48. This is the price of the local-entity rule.
 * Invisible/vanished players who are not sent to the client are not audible,
   which is intended.
-* LAN worlds: the host and guests see different server addresses, so their
-  `network_id`s differ, and LAN voice is not supported through the cloud path.
 * A malicious *speaker* can still be heard by nearby honest listeners, as in
   any voice chat. Moderation (bans, mutes) is backend-side, with an optional
   companion plugin for server-verified identity.

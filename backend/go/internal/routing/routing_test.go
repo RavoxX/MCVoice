@@ -26,8 +26,9 @@ type vecSession struct {
 	Authenticated bool       `json:"authenticated"`
 	UDPVerified   bool       `json:"udp_verified"`
 	InWorld       bool       `json:"in_world"`
-	NetworkID     string     `json:"network_id"`
+	NetworkID     string     `json:"network_id"` // informational: routing must ignore it
 	WorldID       string     `json:"world_id"`
+	Attested      string     `json:"attested"`
 	Epoch         uint32     `json:"epoch"`
 	Pos           *[]float64 `json:"pos"`
 	PosAtMs       int64      `json:"pos_at_ms"`
@@ -49,7 +50,6 @@ func TestRoutingVectors(t *testing.T) {
 				WhisperRange  float64 `json:"whisper_range"`
 				MaxRange      float64 `json:"max_range"`
 				DistanceSlack float64 `json:"distance_slack"`
-				Mutual        bool    `json:"require_mutual_visibility"`
 				PosStale      int64   `json:"position_stale_ms"`
 			} `json:"config"`
 			NowMs    int64        `json:"now_ms"`
@@ -70,12 +70,12 @@ func TestRoutingVectors(t *testing.T) {
 	}
 	for _, c := range vs.Cases {
 		t.Run(c.Name, func(t *testing.T) {
-			cfg := Config{c.Config.NormalRange, c.Config.WhisperRange, c.Config.MaxRange, c.Config.DistanceSlack, c.Config.Mutual, c.Config.PosStale}
+			cfg := Config{c.Config.NormalRange, c.Config.WhisperRange, c.Config.MaxRange, c.Config.DistanceSlack, c.Config.PosStale}
 			var peers []*Peer
 			var sender *Peer
 			for _, s := range c.Sessions {
 				p := &Peer{UUID: s.UUID, Authenticated: s.Authenticated, UDPVerified: s.UDPVerified, InWorld: s.InWorld,
-					ScopeKey: ScopeKey(s.NetworkID, "", s.WorldID), Epoch: s.Epoch, PosAtMs: s.PosAtMs,
+					WorldID: s.WorldID, Attested: s.Attested, Epoch: s.Epoch, PosAtMs: s.PosAtMs,
 					Visible: map[string]struct{}{}, Muted: s.Muted, Deafened: s.Deafened}
 				if s.Pos != nil {
 					p.HasPos, p.X, p.Y, p.Z = true, (*s.Pos)[0], (*s.Pos)[1], (*s.Pos)[2]

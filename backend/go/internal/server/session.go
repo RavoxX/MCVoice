@@ -42,9 +42,6 @@ type Session struct {
 
 	// Routing state, guarded by Hub.mu.
 	peer      routing.Peer
-	networkID string
-	worldID   string
-	attested  string
 	peersRev  uint32
 	presence  map[string]struct{}
 	selfMuted bool

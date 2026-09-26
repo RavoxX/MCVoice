@@ -199,9 +199,6 @@ impl Session {
 /// Routing-relevant state of a session, guarded by the hub lock.
 pub struct PeerState {
     pub peer: Peer,
-    pub network_id: String,
-    pub world_id: String,
-    pub attested: String,
     pub peers_rev: u32,
     pub presence: HashSet<String>,
     pub self_muted: bool,

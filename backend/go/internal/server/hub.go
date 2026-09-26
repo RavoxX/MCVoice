@@ -30,10 +30,9 @@ type Server struct {
 	metrics *metrics.Registry
 	mojang  *auth.MojangVerifier
 
-	mu      sync.RWMutex
-	byConn  map[uint64]*Session
-	byUUID  map[string]*Session
-	buckets map[string]map[*Session]struct{}
+	mu     sync.RWMutex
+	byConn map[uint64]*Session
+	byUUID map[string]*Session
 
 	bansMu    sync.RWMutex
 	banned    map[string]struct{}
@@ -53,13 +52,12 @@ func New(cfg *config.Config, log *slog.Logger) *Server {
 	return &Server{
 		cfg: cfg,
 		rcfg: routing.Config{NormalRange: cfg.NormalRange, WhisperRange: cfg.WhisperRange, MaxRange: cfg.MaxRange,
-			DistanceSlack: cfg.DistanceSlack, RequireMutual: cfg.RequireMutual, PositionStaleMs: 3000},
+			DistanceSlack: cfg.DistanceSlack, PositionStaleMs: 3000},
 		log:             log,
 		metrics:         metrics.New("go", Version),
 		mojang:          auth.NewMojangVerifier(cfg.MojangSessionURL),
 		byConn:          map[uint64]*Session{},
 		byUUID:          map[string]*Session{},
-		buckets:         map[string]map[*Session]struct{}{},
 		banned:          map[string]struct{}{},
 		muted:           map[string]struct{}{},
 		connectLimiter:  newIPLimiter(cfg.RateConnectPerMin),
@@ -135,30 +133,6 @@ func (s *Server) removeLocked(sess *Session) {
 	if s.byUUID[sess.ident.UUID] == sess {
 		delete(s.byUUID, sess.ident.UUID)
 	}
-	s.leaveBucketLocked(sess)
-}
-
-func (s *Server) leaveBucketLocked(sess *Session) {
-	if sess.peer.ScopeKey == "" {
-		return
-	}
-	if b := s.buckets[sess.peer.ScopeKey]; b != nil {
-		delete(b, sess)
-		if len(b) == 0 {
-			delete(s.buckets, sess.peer.ScopeKey)
-		}
-	}
-	sess.peer.ScopeKey = ""
-}
-
-func (s *Server) joinBucketLocked(sess *Session, key string) {
-	sess.peer.ScopeKey = key
-	b := s.buckets[key]
-	if b == nil {
-		b = map[*Session]struct{}{}
-		s.buckets[key] = b
-	}
-	b[sess] = struct{}{}
 }
 
 func (s *Server) isBanned(uuid string) bool {
@@ -245,7 +219,8 @@ func (s *Server) presenceTick() {
 		next := map[string]struct{}{}
 		if r.peer.InWorld {
 			for u := range r.peer.Visible {
-				if o := s.byUUID[u]; o != nil && o.peer.InWorld && o.peer.UDPVerified && o.peer.ScopeKey == r.peer.ScopeKey {
+				if o := s.byUUID[u]; o != nil && o.peer.InWorld && o.peer.UDPVerified &&
+					routing.CompatibleScopes(&o.peer, &r.peer) && routing.MutuallyVisible(&o.peer, &r.peer) {
 					next[u] = struct{}{}
 				}
 			}

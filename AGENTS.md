@@ -207,6 +207,13 @@ git show FETCH_HEAD:<path>`).
   `ClientPlayerNetworkEvent` (a lost world counts as a disconnect).
   `FMLEnvironment`/`FMLPaths` live in the Forge `launcher` artifact.
 
+**Routing scope**
+* Routing never compares `network_id` (the joined address): the same server
+  has many addresses (aliases, IPs, tunnels, several proxies, LAN). Scope is
+  `world_id` (+ attested sub-server when both sides are attested); mutual
+  visibility is mandatory and is what ties routing to the actual game.
+  Recipients come from the sender's visible set via the UUID index.
+
 **Releases**
 * GitHub Packages never replaces a Maven version: a re-run records `exists`
   (409) for those. A failed publish is retried once; ForgeGradle 7's

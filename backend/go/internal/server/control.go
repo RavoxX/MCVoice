@@ -341,7 +341,6 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 			sess.send(errorFrame(protocol.CodeStaleEpoch, "epoch must increase", false))
 			return false
 		}
-		s.leaveBucketLocked(sess)
 		sess.hasScope = true
 		sess.lastPos = time.Time{} // the first position of a new epoch is always accepted
 		sess.peer.Epoch = *m.Epoch
@@ -350,17 +349,17 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 		sess.peer.Visible = map[string]struct{}{}
 		sess.peersRev = 0
 		sess.presence = map[string]struct{}{}
-		sess.attested = ""
+		sess.peer.WorldID, sess.peer.Attested = "", ""
 		if *m.InWorld {
-			sess.networkID, sess.worldID = *m.NetworkID, *m.WorldID
+			// network_id is validated by the parser but never used for routing (spec 6.3)
+			sess.peer.WorldID = *m.WorldID
 			if m.Attestation != nil {
 				if a, ok := auth.VerifyAttestation(s.cfg.AttestationKeys, *m.Attestation, sess.ident.UUID, now); ok {
-					sess.attested = a.Network + "/" + a.Subserver
+					sess.peer.Attested = a.Network + "/" + a.Subserver
 				} else {
 					log.Debug("ignored invalid scope attestation")
 				}
 			}
-			s.joinBucketLocked(sess, routing.ScopeKey(sess.networkID, sess.attested, sess.worldID))
 		}
 		s.mu.Unlock()
 	case *protocol.Pos:

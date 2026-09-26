@@ -39,12 +39,14 @@ client                                   backend
   Mojang's `joinServer`, and the backend checks `hasJoined`. Tokens never
   travel over our protocol. A `resume` token (HS256, short-lived) skips the
   round trip on reconnect.
-* **Scope.** `network_id = "n1:" + sha256(host:port)[:32]` of the server
-  the user joined. `world_id` is the dimension key. `epoch` increases on
+* **Scope.** `world_id` is the dimension key. `network_id = "n1:" +
+  sha256(host:port)[:32]` of the address the user joined is sent too, but is
+  informational only: the same server has many addresses (aliases, IPs,
+  tunnels, several proxies), so it never decides who hears whom. `epoch` increases on
   every world-session change (join, server switch, JoinGame on a proxy,
   dimension change, respawn, world replaced).
 * **Peers.** The UUIDs of player entities the client currently tracks. The
-  backend routes A → B only if B reported A (and, by default, A reported B).
+  backend routes A → B only if B reported A **and** A reported B (mandatory).
 
 ## Voice datagram
 
@@ -70,8 +72,8 @@ client                                   backend
 
 Backend routing (§8) is a bandwidth filter:
 
-* same `network_id` + `world_id`;
-* recipient visibility (mutual by default);
+* same `world_id` (and the same attested sub-server if both are attested);
+* mutual visibility (each game tracks the other player), mandatory;
 * distance ≤ range + 4 blocks slack;
 * positions fresh within 3 s;
 * not muted, banned or deafened.

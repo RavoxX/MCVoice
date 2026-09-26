@@ -8,7 +8,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -20,6 +19,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -40,6 +40,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       10,
@@ -70,7 +71,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -82,6 +82,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -102,6 +103,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       60,
@@ -130,7 +132,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -142,6 +143,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -162,6 +164,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       51,
@@ -192,7 +195,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -204,6 +206,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -225,6 +228,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       5,
@@ -245,6 +249,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       20,
@@ -275,7 +280,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -287,6 +291,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       100,
@@ -307,6 +312,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:the_nether",
+     "attested": "",
      "epoch": 1,
      "pos": [
       100,
@@ -329,13 +335,12 @@
    "expect": []
   },
   {
-   "name": "different_network_same_coords",
+   "name": "different_address_same_server",
    "config": {
     "normal_range": 48.0,
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -347,6 +352,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       100,
@@ -367,6 +373,68 @@
      "in_world": true,
      "network_id": "n1:d4735e3a265e16eee03f59718b9b5d03",
      "world_id": "minecraft:overworld",
+     "attested": "",
+     "epoch": 1,
+     "pos": [
+      100,
+      64,
+      100
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "epoch": 1,
+    "mode": 0
+   },
+   "expect": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ]
+  },
+  {
+   "name": "different_address_one_sided",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "epoch": 1,
+     "pos": [
+      100,
+      64,
+      100
+     ],
+     "pos_at_ms": 99900,
+     "visible": [],
+     "muted": false,
+     "deafened": false
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:d4735e3a265e16eee03f59718b9b5d03",
+     "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       100,
@@ -389,13 +457,12 @@
    "expect": []
   },
   {
-   "name": "proxy_subserver_not_visible",
+   "name": "attested_same_subserver",
    "config": {
     "normal_range": 48.0,
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -407,6 +474,194 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "net/lobby-1",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:d4735e3a265e16eee03f59718b9b5d03",
+     "world_id": "minecraft:overworld",
+     "attested": "net/lobby-1",
+     "epoch": 1,
+     "pos": [
+      3,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "epoch": 1,
+    "mode": 0
+   },
+   "expect": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ]
+  },
+  {
+   "name": "attested_different_subserver",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "net/lobby-1",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "net/lobby-2",
+     "epoch": 1,
+     "pos": [
+      3,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "epoch": 1,
+    "mode": 0
+   },
+   "expect": []
+  },
+  {
+   "name": "attested_and_unattested",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "net/lobby-1",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "epoch": 1,
+     "pos": [
+      3,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "epoch": 1,
+    "mode": 0
+   },
+   "expect": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ]
+  },
+  {
+   "name": "proxy_subserver_not_visible",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       100,
@@ -425,6 +680,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       100,
@@ -451,7 +707,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -463,6 +718,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -483,6 +739,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       3,
@@ -509,7 +766,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -521,6 +777,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -539,6 +796,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       3,
@@ -567,7 +825,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -579,6 +836,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 2,
      "pos": [
       0,
@@ -599,6 +857,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       3,
@@ -627,7 +886,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -639,6 +897,7 @@
      "in_world": false,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -659,6 +918,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       3,
@@ -687,7 +947,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -699,6 +958,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -719,6 +979,7 @@
      "in_world": false,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       3,
@@ -747,7 +1008,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -759,6 +1019,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -779,6 +1040,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       3,
@@ -807,7 +1069,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -819,6 +1080,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -839,6 +1101,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       3,
@@ -867,7 +1130,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -879,6 +1141,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -899,6 +1162,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       3,
@@ -927,7 +1191,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -939,6 +1202,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -959,6 +1223,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       3,
@@ -987,7 +1252,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -999,6 +1263,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -1019,6 +1284,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       3,
@@ -1047,7 +1313,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -1059,6 +1324,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -1079,6 +1345,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": null,
      "pos_at_ms": 99900,
@@ -1103,7 +1370,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -1115,6 +1381,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -1137,6 +1404,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       10,
@@ -1157,6 +1425,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -1177,6 +1446,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -1208,7 +1478,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -1220,6 +1489,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -1240,6 +1510,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -1268,7 +1539,6 @@
     "whisper_range": 8.0,
     "max_range": 96.0,
     "distance_slack": 4.0,
-    "require_mutual_visibility": true,
     "position_stale_ms": 3000
    },
    "now_ms": 100000,
@@ -1280,6 +1550,7 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 1,
      "pos": [
       0,
@@ -1300,67 +1571,8 @@
      "in_world": true,
      "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
      "world_id": "minecraft:overworld",
+     "attested": "",
      "epoch": 9,
-     "pos": [
-      3,
-      64,
-      0
-     ],
-     "pos_at_ms": 99900,
-     "visible": [
-      "069a79f4-44e9-4726-a5be-fca90e38aaf5"
-     ],
-     "muted": false,
-     "deafened": false
-    }
-   ],
-   "packet": {
-    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
-    "epoch": 1,
-    "mode": 0
-   },
-   "expect": [
-    "853c80ef-3c37-49fd-aa49-938b674adae6"
-   ]
-  },
-  {
-   "name": "non_mutual_mode_allows_one_sided",
-   "config": {
-    "normal_range": 48.0,
-    "whisper_range": 8.0,
-    "max_range": 96.0,
-    "distance_slack": 4.0,
-    "require_mutual_visibility": false,
-    "position_stale_ms": 3000
-   },
-   "now_ms": 100000,
-   "sessions": [
-    {
-     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
-     "authenticated": true,
-     "udp_verified": true,
-     "in_world": true,
-     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
-     "world_id": "minecraft:overworld",
-     "epoch": 1,
-     "pos": [
-      0,
-      64,
-      0
-     ],
-     "pos_at_ms": 99900,
-     "visible": [],
-     "muted": false,
-     "deafened": false
-    },
-    {
-     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
-     "authenticated": true,
-     "udp_verified": true,
-     "in_world": true,
-     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
-     "world_id": "minecraft:overworld",
-     "epoch": 1,
      "pos": [
       3,
       64,

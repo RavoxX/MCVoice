@@ -15,7 +15,7 @@ use super::Server;
 use crate::auth::{self, AuthError, Identity};
 use crate::protocol::control::*;
 use crate::protocol::udp::{MAJOR, MINOR};
-use crate::routing::{scope_key, Peer};
+use crate::routing::Peer;
 
 const HELLO_TIMEOUT: Duration = Duration::from_secs(10);
 const AUTH_TIMEOUT: Duration = Duration::from_secs(30);
@@ -191,9 +191,6 @@ pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: Strin
             muted: admin_muted,
             ..Default::default()
         },
-        network_id: String::new(),
-        world_id: String::new(),
-        attested: String::new(),
         peers_rev: 0,
         presence: HashSet::new(),
         self_muted: false,
@@ -369,7 +366,6 @@ impl Server {
                     sess.send(error_frame(code::STALE_EPOCH, "epoch must increase", false));
                     return;
                 }
-                hub.leave_bucket(sess.conn_id);
                 *last_pos = None; // the first position of a new epoch is always accepted
                 let attested = if in_world {
                     s.attestation.as_deref().and_then(|a| {
@@ -390,13 +386,9 @@ impl Server {
                 ps.peer.visible.clear();
                 ps.peers_rev = 0;
                 ps.presence.clear();
-                ps.attested = attested.unwrap_or_default();
-                if in_world {
-                    ps.network_id = s.network_id.unwrap();
-                    ps.world_id = s.world_id.unwrap();
-                    let key = scope_key(&ps.network_id, &ps.attested, &ps.world_id);
-                    hub.join_bucket(sess.conn_id, key);
-                }
+                // network_id is validated by the parser but never used for routing (spec 6.3)
+                ps.peer.attested = attested.unwrap_or_default();
+                ps.peer.world_id = if in_world { s.world_id.unwrap() } else { String::new() };
             }
             ClientMsg::Pos(p) => {
                 if last_pos.is_some_and(|t| now.duration_since(t) < Duration::from_millis(90)) {

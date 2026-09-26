@@ -10,12 +10,11 @@ type Config struct {
 	WhisperRange    float64
 	MaxRange        float64
 	DistanceSlack   float64
-	RequireMutual   bool
 	PositionStaleMs int64
 }
 
 func DefaultConfig() Config {
-	return Config{NormalRange: 48, WhisperRange: 8, MaxRange: 96, DistanceSlack: 4, RequireMutual: true, PositionStaleMs: 3000}
+	return Config{NormalRange: 48, WhisperRange: 8, MaxRange: 96, DistanceSlack: 4, PositionStaleMs: 3000}
 }
 
 // Peer is the routing-relevant state of one session.
@@ -24,7 +23,8 @@ type Peer struct {
 	Authenticated bool
 	UDPVerified   bool
 	InWorld       bool
-	ScopeKey      string
+	WorldID       string // dimension key the client reported (spec 6.3)
+	Attested      string // companion-plugin attested scope "<network>/<subserver>", empty if none (spec 6.3.1)
 	Epoch         uint32
 	HasPos        bool
 	X, Y, Z       float64
@@ -34,12 +34,17 @@ type Peer struct {
 	Deafened      bool
 }
 
-// ScopeKey builds the scope key used to bucket sessions.
-func ScopeKey(networkID, attested, worldID string) string {
-	if attested != "" {
-		return "attested:" + attested + "|" + worldID
-	}
-	return networkID + "|" + worldID
+// CompatibleScopes is check 5: same dimension, and the same attested sub-server when both are
+// attested. The address a player joined through (network_id) is deliberately not compared (spec 6.3).
+func CompatibleScopes(s, r *Peer) bool {
+	return s.WorldID == r.WorldID && (s.Attested == "" || r.Attested == "" || s.Attested == r.Attested)
+}
+
+// MutuallyVisible is checks 7-8: each side's own world tracks the other player (mandatory, spec 8).
+func MutuallyVisible(s, r *Peer) bool {
+	_, rSeesS := r.Visible[s.UUID]
+	_, sSeesR := s.Visible[r.UUID]
+	return rSeesS && sSeesR
 }
 
 func (p *Peer) freshPos(cfg *Config, now int64) bool {
@@ -68,16 +73,11 @@ func Deliver(cfg *Config, now int64, s, r *Peer, mode byte) bool {
 	if r == s || r.UUID == s.UUID {
 		return false
 	}
-	if r.ScopeKey != s.ScopeKey || !r.InWorld || !r.UDPVerified || !r.Authenticated || r.Deafened || !r.freshPos(cfg, now) {
+	if !CompatibleScopes(s, r) || !r.InWorld || !r.UDPVerified || !r.Authenticated || r.Deafened || !r.freshPos(cfg, now) {
 		return false
 	}
-	if _, ok := r.Visible[s.UUID]; !ok {
+	if !MutuallyVisible(s, r) {
 		return false
-	}
-	if cfg.RequireMutual {
-		if _, ok := s.Visible[r.UUID]; !ok {
-			return false
-		}
 	}
 	limit := cfg.Range(mode) + cfg.DistanceSlack
 	dx, dy, dz := s.X-r.X, s.Y-r.Y, s.Z-r.Z

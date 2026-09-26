@@ -197,15 +197,14 @@ impl Server {
                 self.metrics.drop(reason);
                 return;
             }
-            let Some(bucket) = hub.buckets.get(&sp.peer.scope_key) else {
-                return;
-            };
-            bucket
+            // candidates are the players the sender's own world tracks (mutual visibility is mandatory)
+            sp.peer
+                .visible
                 .iter()
-                .filter_map(|c| {
-                    let rp = hub.peers.get(c)?;
+                .filter_map(|u| {
+                    let (c, rp) = hub.peer_of(u)?;
                     if routing::deliver(&self.rcfg, now_ms, &sp.peer, &rp.peer, v.mode) {
-                        Some((hub.by_conn.get(c)?.clone(), rp.peer.epoch))
+                        Some((hub.by_conn.get(&c)?.clone(), rp.peer.epoch))
                     } else {
                         None
                     }

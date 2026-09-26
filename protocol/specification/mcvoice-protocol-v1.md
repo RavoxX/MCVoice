@@ -69,7 +69,7 @@ that is a bug that has to be fixed before release.
 | `connection_id` | u64, hex string in JSON, big-endian on UDP | random per session, non-secret, selects the voice session on UDP |
 | `key_id` | u8 | identifies the current voice key; increments (mod 256) on rotation |
 | `epoch` | u32 | **world-session epoch**, chosen by the client, strictly increasing within a control session (§6.3) |
-| `network_id` | string ≤ 64 chars `[0-9a-z:._-]` | client-computed hash of the server address the user joined (§6.3) |
+| `network_id` | string ≤ 64 chars `[0-9a-z:._-]` | client-computed hash of the server address the user joined (§6.3); informational, never used for routing |
 | `world_id` | string ≤ 128 chars | dimension key as the client sees it, e.g. `minecraft:overworld` |
 
 ## 4. Transport limits
@@ -206,9 +206,12 @@ tracker reset MUST produce a new scope with a larger `epoch`.
 
 * `network_id`: `"n1:"` + first 32 hex chars of
   `SHA-256(lowercase(host) + ":" + port)` of the address the user connected to
-  (before SRV resolution). It groups players connected through the same
-  public address. It **does not** identify proxy sub-servers and is **not**
-  trusted as a proximity signal on its own.
+  (before SRV resolution). It is **informational only**: backends MUST NOT
+  use it to decide who can hear whom (§8). The same server is reachable under
+  many addresses (aliases, IPs, SRV records, tunnels, several proxies of one
+  network, LAN), and a hash of the address is trivially forged, so it can
+  neither group players reliably nor protect anyone. Backends still validate
+  its syntax.
 * `in_world:false` (e.g. main menu, loading screen, disconnect) removes the
   session from all routing; `network_id`/`world_id` MAY then be omitted.
 * On a new scope the backend MUST atomically: clear the session's position,
@@ -224,8 +227,10 @@ is JSON `{"v":1,"network":"<name>","subserver":"<name>","player":"<uuid>","iat":
 `mac = HMAC-SHA256(key[network], payload_bytes)`. Keys are configured on the
 backend (`SCOPE_ATTESTATION_KEYS=name:base64key,...`). If valid (known
 network, correct MAC, `player` equals the session UUID, |now − iat| ≤ 300 s),
-the backend replaces the scope key with `attested:<network>/<subserver>`.
-Invalid attestations are ignored (logged at debug) — never fatal.
+the session carries the attested scope `<network>/<subserver>`. Routing
+then additionally requires that **both** sides, if both are attested, carry
+the same attested scope (§8, check 5). Invalid attestations are ignored
+(logged at debug) — never fatal.
 
 ### 6.4 Position
 
@@ -281,8 +286,9 @@ A muted session's voice is not routed. A deafened session receives nothing.
 ```
 
 Lists, **restricted to UUIDs the recipient itself reported as visible**, which
-of those players currently hold a healthy MCVoice cloud session in the same
-scope. Used by the client-side transport deduplication (§10). Presence never
+of those players currently hold a healthy MCVoice cloud session that is
+compatible with the recipient's (§8 check 5) and reports the recipient as
+visible in turn (mutual visibility, §8 checks 7-8). Used by the client-side transport deduplication (§10). Presence never
 reveals players the client does not already see in its own world.
 
 ### 6.8 Heartbeat
@@ -435,10 +441,23 @@ the following, in order; the first failing check drops the packet:
 
 Then for every other session **R** (R ≠ S):
 
-5. `R.scope_key == S.scope_key` (network id / attested sub-server **and** world id).
+5. Compatible scopes: `R.world_id == S.world_id`, and if **both** R and S
+   carry an attested scope (§6.3.1), those are equal. `network_id` is not
+   compared (§6.3).
 6. R is in a world, UDP-verified, not deafened, has a position newer than 3 000 ms.
 7. **S's UUID is in R's visible-peer set** for R's current epoch.
-8. If `ROUTING_REQUIRE_MUTUAL_VISIBILITY=true` (default): R's UUID is in S's visible set.
+8. **R's UUID is in S's visible-peer set** for S's current epoch. Mutual
+   visibility is mandatory; it is not configurable.
+
+Mutual visibility is what ties routing to the actual game: a player UUID is
+authenticated by Mojang (§6.2), a player is on one server at a time, and an
+honest client reports only entities its own world tracks. Two players are
+routed only when *both* games show the other player's entity — independent
+of the addresses they used to connect. A client lying about its visible set
+gains nothing unless its victim's own client reports it back.
+
+Implementations SHOULD find candidates through S's visible set (at most 512
+UUIDs) and a UUID index, not by scanning all sessions.
 9. Euclidean distance(S.pos, R.pos) ≤ range + `ROUTING_DISTANCE_SLACK` (default 4 blocks,
    absorbs position-update latency).
 
@@ -506,7 +525,7 @@ The complete state machine, including hysteresis and switch-over fades, is in
 * Voice payloads are never stored or logged by the backend.
 * Positions are only kept in memory for routing and never written to normal logs.
   Position logging requires `LOG_POSITIONS=true` *and* `LOG_LEVEL=debug`.
-* The backend keeps in memory: UUID, username, scope key, epoch, last position,
+* The backend keeps in memory: UUID, username, world id and attested scope, epoch, last position,
   visible-peer set, UDP source address, counters, and statistics — for the
   lifetime of the session only.
 * Persistent data (only if configured): ban list (`BANS_FILE`).

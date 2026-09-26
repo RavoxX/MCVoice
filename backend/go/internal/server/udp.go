@@ -239,8 +239,9 @@ func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time) {
 		targetPool.Put(tp)
 		return
 	}
-	for r := range s.buckets[sender.peer.ScopeKey] {
-		if routing.Deliver(&s.rcfg, nowMs, &sender.peer, &r.peer, v.Mode) {
+	// candidates are the players the sender's own world tracks (mutual visibility is mandatory)
+	for u := range sender.peer.Visible {
+		if r := s.byUUID[u]; r != nil && routing.Deliver(&s.rcfg, nowMs, &sender.peer, &r.peer, v.Mode) {
 			targets = append(targets, target{r, r.peer.Epoch})
 		}
 	}

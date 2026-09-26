@@ -243,12 +243,14 @@ def routing_vectors():
     net, net2 = "n1:6b86b273ff34fce19d6b804eff5a3f57", "n1:d4735e3a265e16eee03f59718b9b5d03"
     ow, nether = "minecraft:overworld", "minecraft:the_nether"
     cfg = {"normal_range": 48.0, "whisper_range": 8.0, "max_range": 96.0, "distance_slack": 4.0,
-           "require_mutual_visibility": True, "position_stale_ms": 3000}
+           "position_stale_ms": 3000}
     now = 100000
 
-    def s(u, pos, visible, network=net, world=ow, epoch=1, **kw):
+    def s(u, pos, visible, network=net, world=ow, epoch=1, attested="", **kw):
+        # network_id is informational (spec 6.3): vectors vary it to prove routing ignores it
         d = {"uuid": u, "authenticated": True, "udp_verified": True, "in_world": True,
-             "network_id": network, "world_id": world, "epoch": epoch, "pos": pos, "pos_at_ms": now - 100,
+             "network_id": network, "world_id": world, "attested": attested, "epoch": epoch, "pos": pos,
+             "pos_at_ms": now - 100,
              "visible": visible, "muted": False, "deafened": False}
         d.update(kw)
         return d
@@ -260,7 +262,14 @@ def routing_vectors():
         ("distance_within_slack", [s(A, [0, 64, 0], [B]), s(B, [51, 64, 0], [A])], A, 1, 0, [B]),
         ("whisper_range", [s(A, [0, 64, 0], [B, C]), s(B, [5, 64, 0], [A]), s(C, [20, 64, 0], [A])], A, 1, 1, [B]),
         ("different_dimension_same_coords", [s(A, [100, 64, 100], [B]), s(B, [100, 64, 100], [A], world=nether)], A, 1, 0, []),
-        ("different_network_same_coords", [s(A, [100, 64, 100], [B]), s(B, [100, 64, 100], [A], network=net2)], A, 1, 0, []),
+        # same server joined through two addresses (alias, IP, tunnel): both games show the other player
+        ("different_address_same_server", [s(A, [100, 64, 100], [B]), s(B, [100, 64, 100], [A], network=net2)], A, 1, 0, [B]),
+        ("different_address_one_sided", [s(A, [100, 64, 100], []), s(B, [100, 64, 100], [A], network=net2)], A, 1, 0, []),
+        ("attested_same_subserver", [s(A, [0, 64, 0], [B], attested="net/lobby-1"),
+                                     s(B, [3, 64, 0], [A], attested="net/lobby-1", network=net2)], A, 1, 0, [B]),
+        ("attested_different_subserver", [s(A, [0, 64, 0], [B], attested="net/lobby-1"),
+                                          s(B, [3, 64, 0], [A], attested="net/lobby-2")], A, 1, 0, []),
+        ("attested_and_unattested", [s(A, [0, 64, 0], [B], attested="net/lobby-1"), s(B, [3, 64, 0], [A])], A, 1, 0, [B]),
         ("proxy_subserver_not_visible", [s(A, [100, 64, 100], []), s(B, [100, 64, 100], [])], A, 1, 0, []),
         ("recipient_does_not_see_sender", [s(A, [0, 64, 0], [B]), s(B, [3, 64, 0], [])], A, 1, 0, []),
         ("sender_does_not_see_recipient_mutual", [s(A, [0, 64, 0], []), s(B, [3, 64, 0], [A])], A, 1, 0, []),
@@ -282,11 +291,6 @@ def routing_vectors():
     for name, sessions, sender, epoch, mode, expect in scen:
         out.append({"name": name, "config": cfg, "now_ms": now, "sessions": sessions,
                     "packet": {"sender": sender, "epoch": epoch, "mode": mode}, "expect": sorted(expect)})
-    nm = {"name": "non_mutual_mode_allows_one_sided",
-          "config": dict(cfg, require_mutual_visibility=False), "now_ms": now,
-          "sessions": [s(A, [0, 64, 0], []), s(B, [3, 64, 0], [A])],
-          "packet": {"sender": A, "epoch": 1, "mode": 0}, "expect": [B]}
-    out.append(nm)
     return {"description": "Backend routing decisions (spec section 8). expect = sorted recipient UUIDs.", "cases": out}
 
 
