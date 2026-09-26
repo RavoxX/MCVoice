@@ -133,6 +133,96 @@
    "error": null
   },
   {
+   "name": "group_list",
+   "json": "{\"type\":\"group_list\"}",
+   "error": null
+  },
+  {
+   "name": "group_list_query",
+   "json": "{\"type\":\"group_list\",\"query\":\"k7\"}",
+   "error": null
+  },
+  {
+   "name": "group_list_query_too_long",
+   "json": "{\"type\":\"group_list\",\"query\":\"K7M2QX\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_list_query_bad_chars",
+   "json": "{\"type\":\"group_list\",\"query\":\"K 7\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_list_query_empty",
+   "json": "{\"type\":\"group_list\",\"query\":\"\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_create_open",
+   "json": "{\"type\":\"group_create\"}",
+   "error": null
+  },
+  {
+   "name": "group_create_null_password",
+   "json": "{\"type\":\"group_create\",\"password\":null}",
+   "error": null
+  },
+  {
+   "name": "group_create_password",
+   "json": "{\"type\":\"group_create\",\"password\":\"hunter 2!\"}",
+   "error": null
+  },
+  {
+   "name": "group_create_password_empty",
+   "json": "{\"type\":\"group_create\",\"password\":\"\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_create_password_too_long",
+   "json": "{\"type\":\"group_create\",\"password\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_create_password_control_char",
+   "json": "{\"type\":\"group_create\",\"password\":\"a\\nb\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_create_password_non_ascii",
+   "json": "{\"type\":\"group_create\",\"password\":\"p\\u00e4sswort\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_join",
+   "json": "{\"type\":\"group_join\",\"id\":\"K7M2Q\",\"password\":\"hunter 2!\"}",
+   "error": null
+  },
+  {
+   "name": "group_join_lowercase",
+   "json": "{\"type\":\"group_join\",\"id\":\"k7m2q\"}",
+   "error": null
+  },
+  {
+   "name": "group_join_short_id",
+   "json": "{\"type\":\"group_join\",\"id\":\"K7M2\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_join_bad_id_chars",
+   "json": "{\"type\":\"group_join\",\"id\":\"K7M2!\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_join_missing_id",
+   "json": "{\"type\":\"group_join\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_leave",
+   "json": "{\"type\":\"group_leave\"}",
+   "error": null
+  },
+  {
    "name": "missing_type",
    "json": "{\"epoch\":1}",
    "error": "bad_message"
