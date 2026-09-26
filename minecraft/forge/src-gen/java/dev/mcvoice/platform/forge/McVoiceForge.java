@@ -12,6 +12,7 @@ import dev.mcvoice.platform.mc.McAdapter;
 import dev.mcvoice.platform.mc.McCanvas;
 import dev.mcvoice.platform.mc.McIds;
 import dev.mcvoice.platform.mc.McLogging;
+import dev.mcvoice.platform.mc.McNameTags;
 import dev.mcvoice.platform.mc.PlatformInfo;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.KeyMapping;
@@ -29,6 +30,7 @@ import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 
 
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.event.RenderNameTagEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.event.TickEvent;
@@ -76,6 +78,13 @@ public final class McVoiceForge {
             }
         });
         modBus.addListener((FMLClientSetupEvent e) -> client = new VoiceClient(adapter, modVersion));
+        MinecraftForge.EVENT_BUS.addListener((RenderNameTagEvent e) -> {
+
+
+
+            e.setContent(McNameTags.decorate(e.getEntity(), e.getContent(), client));
+
+        });
 
         // Forge 1.20.6-1.21.x has no HUD layer registration; the chat overlay event fires every frame the HUD is visible
         MinecraftForge.EVENT_BUS.addListener((CustomizeGuiOverlayEvent.Chat e) -> {
