@@ -28,9 +28,9 @@ Cannot remap modifiers because it does not exist in any of the targets [] or the
 > Task :remapSourcesJar
 > Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790425219579.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790435986920.json
 
-BUILD SUCCESSFUL in 1m 9s
+BUILD SUCCESSFUL in 1m 30s
 7 actionable tasks: 7 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
 valid: mcvoice-0.1.2-mc1.21.11-fabric.jar (350 classes, 16 platform classes, metadata ['fabric.mod.json'])

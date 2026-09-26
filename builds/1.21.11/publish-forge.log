@@ -1,0 +1,97 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+Minecraft Mavenizer 0.5.21 by Forge Development LLC
+  Output:             /home/runner/work/MCVoice/MCVoice/minecraft/forge/.gradle/mavenizer/repo
+  Output JSON:        /home/runner/work/MCVoice/MCVoice/minecraft/forge/.gradle/mavenizer/dependencies/default.json
+  Dependencies Only:  false
+  Cache:              /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
+  JDK Cache:          /home/runner/.gradle/caches/minecraftforge/forgegradle/mavenizer/caches
+  Offline:            false
+  Cache Only:         false
+  Ignore Cache:       false
+  Mappings:           official-1.21.11
+  Foreign Repos:      [https://repo.maven.apache.org/maven2/, https://maven.minecraftforge.net/, https://libraries.minecraft.net/]
+  GradleVariantHack:  true
+  Disable Gradle:     false
+  Stub Jars:          false
+
+Processing Minecraft dependency: net.minecraftforge:forge:1.21.11-61.2.0
+Processing Minecraft Forge (userdev): 1.21.11-61.2.0
+Mappings Zip
+  extract[mappings]
+  downloadLauncherManifest
+  downloadVersionJson[1.21.11]
+  download[1.21.11][client_mappings]
+  mergeMappings
+  download[1.21.11][server_mappings]
+  srg2names[official-1.21.11]
+Mappings POM
+  pom[mappings_official]
+Mappings map2obf
+  mapped2obf[official-1.21.11]
+Mappings map2srg
+  mapped2srg[official-1.21.11]
+Client Extra
+  download[1.21.11][client]
+  extract[mappings]
+  mergeMappings
+  extra[client]
+Client Maven POM
+  pom[client-extra]
+Sources
+  listLibraries
+  download[1.21.11][server]
+  extractServer
+  stripServer
+  stripClient
+  merge
+  rename
+  modifyAccess
+  stripSides
+  decompile
+  extract[inject]
+  inject
+  patch
+  patch[forge]
+  downloadSources
+  injectSources[forge]
+  remap[forge][official-1.21.11][javadoc]
+  remap[forge][official-1.21.11][javadoc][variants]
+Classes
+  recompile[forge][official-1.21.11]
+  injectData[forge][official-1.21.11]
+  injectData[forge][official-1.21.11][variants]
+Maven POM
+  pom[forge]
+Metadata
+  metadata[forge]
+    Cache miss!
+    java.lang.Exception: Cache miss! Stacktrace for Information Only
+    	at net.minecraftforge.mcmaven.impl.Mavenizer.assertNotCacheOnly(Mavenizer.java:60)
+    	at net.minecraftforge.mcmaven.impl.Mavenizer.checkCache(Mavenizer.java:94)
+    	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.lambda$metadata$0(ForgeRepo.java:365)
+    	at net.minecraftforge.mcmaven.impl.util.Task$Simple.execute(Task.java:145)
+    	at net.minecraftforge.mcmaven.impl.repo.Repo$PendingArtifact.get(Repo.java:243)
+    	at net.minecraftforge.mcmaven.impl.MinecraftMaven.finalize(MinecraftMaven.java:408)
+    	at net.minecraftforge.mcmaven.impl.MinecraftMaven.createForge(MinecraftMaven.java:241)
+    	at net.minecraftforge.mcmaven.impl.MinecraftMaven.run(MinecraftMaven.java:119)
+    	at net.minecraftforge.mcmaven.cli.MavenTask.run(MavenTask.java:218)
+    	at net.minecraftforge.mcmaven.cli.Main.run(Main.java:70)
+    	at net.minecraftforge.mcmaven.cli.Main.main(Main.java:23)
+  metadata[forge][variants]
+Minecraft Maven has finished, took 0:00.870
+
+> Task :generatePomFileForModPublication
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :sourcesJar UP-TO-DATE
+> Task :publishModPublicationToGitHubPackagesRepository
+> Task :publish
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790436548637.json
+
+BUILD SUCCESSFUL in 25s
+6 actionable tasks: 2 executed, 4 up-to-date
