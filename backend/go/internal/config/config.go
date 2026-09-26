@@ -35,7 +35,6 @@ type Config struct {
 	WhisperRange      float64
 	MaxRange          float64
 	DistanceSlack     float64
-	RequireMutual     bool
 	KeyRotationSecs   int
 	ResumeTokenTTL    int
 	MaxSessions       int
@@ -133,7 +132,6 @@ func Load() (*Config, error) {
 		WhisperRange:       envFloat("WHISPER_RANGE", 8, &errs),
 		MaxRange:           envFloat("MAX_RANGE", 96, &errs),
 		DistanceSlack:      envFloat("ROUTING_DISTANCE_SLACK", 4, &errs),
-		RequireMutual:      envBool("ROUTING_REQUIRE_MUTUAL_VISIBILITY", true, &errs),
 		KeyRotationSecs:    envInt("KEY_ROTATION_SECONDS", 600, &errs),
 		ResumeTokenTTL:     envInt("RESUME_TOKEN_TTL_SECONDS", 3600, &errs),
 		MaxSessions:        envInt("MAX_SESSIONS", 10000, &errs),
@@ -205,6 +203,9 @@ func Load() (*Config, error) {
 			}
 			c.AttestationKeys[name] = k
 		}
+	}
+	if strings.EqualFold(env("ROUTING_REQUIRE_MUTUAL_VISIBILITY", ""), "false") {
+		c.Warnings = append(c.Warnings, "ROUTING_REQUIRE_MUTUAL_VISIBILITY=false is ignored: mutual visibility is always required (spec 8)")
 	}
 	if c.DatabaseURL != "" {
 		c.Warnings = append(c.Warnings, "DATABASE_URL is set but this version keeps all state in memory (bans via BANS_FILE); it is ignored")
