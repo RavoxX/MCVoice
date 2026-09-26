@@ -1,0 +1,21 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.8.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :
+Fabric Loom: 1.18.2
+
+> Task :generatePomFileForModPublication
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :jar UP-TO-DATE
+> Task :processIncludeJars UP-TO-DATE
+> Task :remapJar UP-TO-DATE
+> Task :sourcesJar UP-TO-DATE
+> Task :remapSourcesJar UP-TO-DATE
+> Task :publishModPublicationToGitHubPackagesRepository
+> Task :publish
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790435276098.json
+
+BUILD SUCCESSFUL in 30s
+9 actionable tasks: 2 executed, 7 up-to-date
