@@ -14,7 +14,7 @@ Architectury Loom: 0.10.0.5
 > Task :remapSourcesJar UP-TO-DATE
 > Task :publishModPublicationToGitHubPackagesRepository
 > Task :publish
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790328827743.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1790435167091.json
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -22,5 +22,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 28s
+BUILD SUCCESSFUL in 29s
 8 actionable tasks: 2 executed, 6 up-to-date
