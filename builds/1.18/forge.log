@@ -18,14 +18,14 @@ Executing steps
  > Running 'listLibraries'
  > Running 'rename'
 Stopping at requested step: /home/runner/.gradle/caches/forge_gradle/mcp_repo/de/oceanlabs/mcp/mcp_config/1.18-20211130.085255/joined/rename/output.jar
-[09:39:42] [main/INFO]: Writing debug log file accesstransform.log
-[09:39:42] [main/INFO]: Access Transformer processor running version 8.2.14
-[09:39:42] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17/forge-1.18-38.0.17-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17_mapped_official_1.18/forge-1.18-38.0.17_mapped_official_1.18.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg]
-[09:39:42] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17/forge-1.18-38.0.17-injected.jar
-[09:39:42] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17_mapped_official_1.18/forge-1.18-38.0.17_mapped_official_1.18.jar
-[09:39:42] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg
-[09:39:42] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17_mapped_official_1.18/forge-1.18-38.0.17_mapped_official_1.18.jar, overwriting
-[09:39:45] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17_mapped_official_1.18/forge-1.18-38.0.17_mapped_official_1.18.jar
+[15:12:40] [main/INFO]: Writing debug log file accesstransform.log
+[15:12:40] [main/INFO]: Access Transformer processor running version 8.2.14
+[15:12:40] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17/forge-1.18-38.0.17-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17_mapped_official_1.18/forge-1.18-38.0.17_mapped_official_1.18.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg]
+[15:12:40] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17/forge-1.18-38.0.17-injected.jar
+[15:12:40] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17_mapped_official_1.18/forge-1.18-38.0.17_mapped_official_1.18.jar
+[15:12:40] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg
+[15:12:40] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17_mapped_official_1.18/forge-1.18-38.0.17_mapped_official_1.18.jar, overwriting
+[15:12:43] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.18-38.0.17_mapped_official_1.18/forge-1.18-38.0.17_mapped_official_1.18.jar
 Creating SRG -> MCP TSRG
 
 > Task :processResources
@@ -45,11 +45,11 @@ Creating SRG -> MCP TSRG
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790329097828.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790435398095.json
 
-BUILD SUCCESSFUL in 1m 55s
+BUILD SUCCESSFUL in 3m 12s
 8 actionable tasks: 8 executed
-valid: mcvoice-0.1.1-mc1.18-forge.jar (327 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.2-mc1.18-forge.jar (350 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
