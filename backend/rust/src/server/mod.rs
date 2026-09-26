@@ -267,64 +267,67 @@ impl Server {
     }
 
     /// Recompute presence for all sessions and send diffs (spec 6.7).
-    pub(crate) fn presence_tick(&self) {
+    pub(crate) fn presence_tick(&self, updates: &mut Vec<(Arc<Session>, PresenceMsg)>) {
         self.group_tick(Instant::now());
-        let mut updates = Vec::new();
+        updates.clear();
         {
             let mut hub = self.hub.write().unwrap();
-            let conns: Vec<u64> = hub.peers.keys().copied().collect();
-            for conn in conns {
-                let next: HashSet<String> = {
-                    let r = &hub.peers[&conn];
-                    if !r.peer.in_world {
-                        HashSet::new()
-                    } else {
-                        r.peer
-                            .visible
-                            .iter()
-                            .filter(|u| {
-                                hub.peer_of(u).is_some_and(|(_, o)| {
-                                    o.peer.in_world
-                                        && o.peer.udp_verified
-                                        && routing::compatible_scopes(&o.peer, &r.peer)
-                                        && routing::mutually_visible(&o.peer, &r.peer)
-                                })
-                            })
-                            .cloned()
-                            .collect()
-                    }
+            for (conn, r) in &hub.peers {
+                let present = |u: &str| {
+                    r.peer.in_world
+                        && hub.peer_of(u).is_some_and(|(_, o)| {
+                            o.peer.in_world
+                                && o.peer.udp_verified
+                                && routing::compatible_scopes(&o.peer, &r.peer)
+                                && routing::mutually_visible(&o.peer, &r.peer)
+                        })
                 };
-                let r = hub.peers.get_mut(&conn).unwrap();
-                let mut add: Vec<String> = next.difference(&r.presence).cloned().collect();
-                let mut remove: Vec<String> = r.presence.difference(&next).cloned().collect();
+                // Unchanged presence needs no owned UUIDs or temporary set.
+                let add: Vec<String> = r
+                    .peer
+                    .visible
+                    .iter()
+                    .filter(|u| !r.presence.contains(*u) && present(u))
+                    .cloned()
+                    .collect();
+                let remove: Vec<String> = r.presence.iter().filter(|u| !present(u)).cloned().collect();
                 if add.is_empty() && remove.is_empty() {
                     continue;
                 }
-                add.sort();
-                remove.sort();
-                r.presence = next;
-                let msg = serde_json::to_string(&PresenceMsg {
-                    t: "presence",
-                    epoch: r.peer.epoch,
-                    add,
-                    remove,
-                })
-                .unwrap();
-                if let Some(s) = hub.by_conn.get(&conn) {
-                    updates.push((s.clone(), msg));
+                if let Some(s) = hub.by_conn.get(conn) {
+                    updates.push((
+                        s.clone(),
+                        PresenceMsg {
+                            t: "presence",
+                            epoch: r.peer.epoch,
+                            add,
+                            remove,
+                        },
+                    ));
                 }
             }
+            // Compute and commit under the same lock: no stale presence snapshot.
+            for (s, msg) in updates.iter() {
+                let r = hub.peers.get_mut(&s.conn_id).unwrap();
+                for u in &msg.remove {
+                    r.presence.remove(u);
+                }
+                r.presence.extend(msg.add.iter().cloned());
+            }
         }
-        for (s, m) in updates {
-            s.send(m);
+        for (s, mut msg) in updates.drain(..) {
+            msg.add.sort();
+            msg.remove.sort();
+            s.send(serde_json::to_string(&msg).unwrap());
         }
     }
 
-    pub(crate) fn update_jitter_gauge(&self) {
+    pub(crate) fn update_jitter_gauge(&self, sessions: &mut Vec<Arc<Session>>) {
         let now = Instant::now();
-        let hub = self.hub.read().unwrap();
+        sessions.clear();
+        sessions.extend(self.hub.read().unwrap().by_conn.values().cloned());
         let (mut sum, mut n) = (0.0, 0);
-        for s in hub.by_conn.values() {
+        for s in sessions.drain(..) {
             let u = s.udp.lock().unwrap();
             if u.last_voice.is_some_and(|t| now.duration_since(t).as_secs() < 5) && u.last_transit.is_some() {
                 sum += u.jitter;
