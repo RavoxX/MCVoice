@@ -33,10 +33,10 @@ Processing Minecraft Forge (userdev): 1.21.9-59.0.5
   	at net.minecraftforge.mcmaven.cli.Main.run(Main.java:70)
   	at net.minecraftforge.mcmaven.cli.Main.main(Main.java:23)
 Mappings Zip
+  extract[mappings]
   downloadLauncherManifest
   downloadVersionJson[1.21.9]
   download[1.21.9][client_mappings]
-  extract[mappings]
   mergeMappings
   download[1.21.9][server_mappings]
   srg2names[official-1.21.9]
@@ -81,7 +81,7 @@ Maven POM
 Metadata
   metadata[forge]
   metadata[forge][variants]
-Minecraft Maven has finished, took 3:52.555
+Minecraft Maven has finished, took 3:49.492
 
 > Task :compileJava
 > Task :processResources
@@ -143,12 +143,12 @@ This message will not display again until ForgeGradle 7.1 or the below file is
 deleted:
 /home/runner/.gradle/caches/minecraftforge/forgegradle/messages/7_0_WELCOME_1
 --- End of Message ---
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790329908610.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790436315448.json
 
-BUILD SUCCESSFUL in 4m 19s
+BUILD SUCCESSFUL in 4m 18s
 4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.1-mc1.21.9-forge.jar (327 classes, 16 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.2-mc1.21.9-forge.jar (350 classes, 16 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
