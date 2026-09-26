@@ -138,6 +138,71 @@
    "error": null
   },
   {
+   "name": "group_page",
+   "json": "{\"type\":\"group_list\",\"limit\":20,\"request_id\":1}",
+   "error": null
+  },
+  {
+   "name": "group_page_cursor",
+   "json": "{\"type\":\"group_list\",\"limit\":1,\"cursor\":\"k7m2q\",\"request_id\":4294967295}",
+   "error": null
+  },
+  {
+   "name": "group_page_zero_limit",
+   "json": "{\"type\":\"group_list\",\"limit\":0,\"request_id\":1}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_page_large_limit",
+   "json": "{\"type\":\"group_list\",\"limit\":21,\"request_id\":1}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_page_negative_limit",
+   "json": "{\"type\":\"group_list\",\"limit\":-1,\"request_id\":1}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_page_fractional_limit",
+   "json": "{\"type\":\"group_list\",\"limit\":2.5,\"request_id\":1}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_page_missing_request",
+   "json": "{\"type\":\"group_list\",\"limit\":20}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_page_request_without_limit",
+   "json": "{\"type\":\"group_list\",\"request_id\":1}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_page_cursor_without_limit",
+   "json": "{\"type\":\"group_list\",\"cursor\":\"K7M2Q\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_page_short_cursor",
+   "json": "{\"type\":\"group_list\",\"limit\":20,\"cursor\":\"K7\",\"request_id\":1}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_page_empty_cursor",
+   "json": "{\"type\":\"group_list\",\"limit\":20,\"cursor\":\"\",\"request_id\":1}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_page_bad_cursor",
+   "json": "{\"type\":\"group_list\",\"limit\":20,\"cursor\":\"K7!2Q\",\"request_id\":1}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_page_request_overflow",
+   "json": "{\"type\":\"group_list\",\"limit\":20,\"request_id\":4294967296}",
+   "error": "bad_message"
+  },
+  {
    "name": "group_list_query",
    "json": "{\"type\":\"group_list\",\"query\":\"k7\"}",
    "error": null

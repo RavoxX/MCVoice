@@ -4,6 +4,7 @@ package conformance
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/RavoxX/MCVoice/backend/go/pkg/voiceclient"
@@ -438,4 +439,154 @@ func scGroupMembershipEnds(e *Env) error {
 		return errorf("group_left reason %q, want not_in_world", left.Reason)
 	}
 	return nil
+}
+
+// Paging remains stable when a cursor group disappears or membership counts change.
+func scGroupPages(e *Env) error {
+	owners, err := e.groupPlayers(45)
+	if err != nil {
+		return err
+	}
+	ids := make([]string, 0, len(owners))
+	ownerByID := map[string]*voiceclient.Client{}
+	for _, owner := range owners {
+		id, err := createGroup(owner, "")
+		if err != nil {
+			return err
+		}
+		ids = append(ids, id)
+		ownerByID[id] = owner
+	}
+	sort.Strings(ids)
+	browser, err := e.Player()
+	if err != nil {
+		return err
+	}
+	cursor := ""
+	for page := 0; page < 3; page++ {
+		request := uint32(page + 1)
+		if err := browser.GroupPage("", toLower(cursor), request); err != nil {
+			return err
+		}
+		ev, err := browser.NextGroupEvent("group_list", groupWait)
+		if err != nil {
+			return err
+		}
+		want := 20
+		if page == 2 {
+			want = 5
+		}
+		if ev.RequestID != request || len(ev.Groups) != want {
+			return errorf("page %d: %+v", page, ev)
+		}
+		for i, g := range ev.Groups {
+			if g.ID != ids[page*20+i] {
+				return errorf("page %d entry %d: got %s want %s", page, i, g.ID, ids[page*20+i])
+			}
+		}
+		if page < 2 {
+			if ev.NextCursor == nil || *ev.NextCursor != ev.Groups[len(ev.Groups)-1].ID {
+				return errorf("bad next cursor: %+v", ev)
+			}
+			cursor = *ev.NextCursor
+		} else if ev.NextCursor != nil {
+			return errorf("last page has a cursor")
+		}
+		if page == 0 {
+			departing := ownerByID[cursor]
+			if err := departing.GroupLeave(); err != nil {
+				return err
+			}
+			if _, err := departing.NextGroupEvent("group_left", groupWait); err != nil {
+				return err
+			}
+			if _, err := joinGroup(departing, ids[44], ""); err != nil {
+				return err
+			}
+		}
+	}
+	// Search reaches the last group, not just groups already in the first page.
+	if err := browser.GroupPage(toLower(ids[44]), "", 4); err != nil {
+		return err
+	}
+	ev, err := browser.NextGroupEvent("group_list", groupWait)
+	if err != nil {
+		return err
+	}
+	if ev.RequestID != 4 || len(ev.Groups) != 1 || ev.Groups[0].ID != ids[44] || ev.Groups[0].Members != 2 || ev.NextCursor != nil {
+		return errorf("bad paged search: %+v", ev)
+	}
+	// Legacy clients retain their unpaged, most-popular-first response.
+	legacy := owners[0]
+	if err := legacy.GroupList(); err != nil {
+		return err
+	}
+	ev, err = legacy.NextGroupEvent("group_list", groupWait)
+	if err != nil {
+		return err
+	}
+	if len(ev.Groups) != 44 || ev.Groups[0].ID != ids[44] {
+		return errorf("legacy list changed: %+v", ev)
+	}
+	return nil
+}
+
+func scGroupRequestBudgets(e *Env) error {
+	clients, err := e.groupPlayers(2)
+	if err != nil {
+		return err
+	}
+	a, b := clients[0], clients[1]
+	for i := 0; i < 4; i++ {
+		if err := a.GroupList(); err != nil {
+			return err
+		}
+		if _, err := a.NextGroupEvent("group_list", groupWait); err != nil {
+			return err
+		}
+	}
+	if err := a.GroupList(); err != nil {
+		return err
+	}
+	if err := expectError(a, "rate_limited"); err != nil {
+		return err
+	}
+	if err := b.GroupList(); err != nil {
+		return err
+	}
+	if _, err := b.NextGroupEvent("group_list", groupWait); err != nil {
+		return err
+	}
+	var id string
+	for i := 0; i < 3; i++ {
+		id, err = createGroup(a, "")
+		if err != nil {
+			return err
+		}
+	}
+	if err := a.GroupCreate(""); err != nil {
+		return err
+	}
+	if err := expectError(a, "rate_limited"); err != nil {
+		return err
+	}
+	for i := 0; i < 6; i++ {
+		if _, err := joinGroup(b, id, ""); err != nil {
+			return err
+		}
+	}
+	if err := b.GroupJoin(id, ""); err != nil {
+		return err
+	}
+	if err := expectError(b, "rate_limited"); err != nil {
+		return err
+	}
+	if err := b.GroupLeave(); err != nil {
+		return err
+	}
+	if _, err := b.NextGroupEvent("group_left", groupWait); err != nil {
+		return err
+	}
+	// Throttling must not close the session or block ordinary control messages.
+	return b.Sync(groupWait)
 }
