@@ -6,8 +6,11 @@
   "client": [
 //#if MC >= 1.16
     "NameTagMixin"
-//#elif MC < 1.15
-    "GuiMixin"
+//#else
+    "LegacyNameTagMixin"
+//#if MC < 1.15
+    , "GuiMixin"
+//#endif
 //#endif
   ],
   "injectors": {"defaultRequire": 1}
