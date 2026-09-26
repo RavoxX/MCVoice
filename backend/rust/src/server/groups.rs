@@ -5,6 +5,7 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use rand::Rng;
+use serde::Serialize;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use subtle::ConstantTimeEq;
@@ -12,12 +13,39 @@ use subtle::ConstantTimeEq;
 use super::session::Session;
 use super::{Hub, Server};
 use crate::protocol::control::{
-    code, error_frame, GroupCreate, GroupJoin, GROUP_ID_ALPHABET, GROUP_ID_LEN, GROUP_LIST_MAX, GROUP_MAX_MEMBERS,
+    code, error_frame, GroupCreate, GroupJoin, GroupList, GROUP_ID_ALPHABET, GROUP_ID_LEN, GROUP_LIST_MAX, GROUP_MAX_MEMBERS,
 };
 
 /// Out of a world for longer than this ends the membership (respawn, dimension or server switch are shorter).
 pub(crate) const OUT_OF_WORLD_GRACE: Duration = Duration::from_secs(10);
 const PASSWORD_FAILS_PER_MIN: u32 = 5;
+
+/// Owned only by the connection's control task; rejected work never reaches the hub.
+pub(crate) struct GroupLimits {
+    list: super::session::TokenBucket,
+    create: super::session::TokenBucket,
+    join: super::session::TokenBucket,
+}
+
+impl GroupLimits {
+    pub(crate) fn new() -> Self {
+        Self {
+            list: super::session::TokenBucket::new(2.0, 4.0),
+            create: super::session::TokenBucket::new(0.1, 3.0),
+            join: super::session::TokenBucket::new(1.0, 6.0),
+        }
+    }
+
+    pub(crate) fn check(&mut self, msg: &crate::protocol::control::ClientMsg, now: Instant) -> Option<&'static str> {
+        use crate::protocol::control::ClientMsg;
+        match msg {
+            ClientMsg::GroupList(_) if !self.list.allow(now) => Some("group list rate limit; try again shortly"),
+            ClientMsg::GroupCreate(_) if !self.create.allow(now) => Some("group create rate limit; wait 10 seconds"),
+            ClientMsg::GroupJoin(_) if !self.join.allow(now) => Some("group join rate limit; try again shortly"),
+            _ => None,
+        }
+    }
+}
 
 pub(crate) struct Group {
     pub id: String,
@@ -53,6 +81,29 @@ impl Group {
             (Some((salt, want)), Some(p)) => hash(salt, p).ct_eq(want).into(),
             (Some(_), None) => false,
         }
+    }
+}
+
+#[derive(Serialize)]
+struct GroupEntry {
+    id: String,
+    members: usize,
+    max: usize,
+    password: bool,
+}
+
+// Only copied public metadata is sorted/serialized, after releasing the hub lock.
+fn group_list_json(mut entries: Vec<GroupEntry>, m: &GroupList) -> String {
+    if let Some(limit) = m.limit {
+        entries.sort_unstable_by(|a, b| a.id.cmp(&b.id));
+        let more = entries.len() > limit as usize;
+        entries.truncate(limit as usize);
+        let next = if more { entries.last().map(|g| g.id.clone()) } else { None };
+        json!({"type": "group_list", "groups": entries, "request_id": m.request_id, "next_cursor": next}).to_string()
+    } else {
+        entries.sort_unstable_by(|a, b| b.members.cmp(&a.members).then_with(|| a.id.cmp(&b.id)));
+        entries.truncate(GROUP_LIST_MAX);
+        json!({"type": "group_list", "groups": entries}).to_string()
     }
 }
 
@@ -134,22 +185,6 @@ impl Hub {
         self.announce_members(id, Some(conn));
     }
 
-    fn group_list_json(&self, query: Option<&str>) -> String {
-        let q = query.map(|q| q.to_ascii_uppercase());
-        let mut l: Vec<&Group> = self
-            .groups
-            .values()
-            .filter(|g| q.as_deref().map_or(true, |q| g.id.contains(q)))
-            .collect();
-        l.sort_by(|a, b| b.members.len().cmp(&a.members.len()).then_with(|| a.id.cmp(&b.id)));
-        let groups: Vec<Value> = l
-            .into_iter()
-            .take(GROUP_LIST_MAX)
-            .map(|g| json!({"id": g.id, "members": g.members.len(), "max": GROUP_MAX_MEMBERS, "password": g.password.is_some()}))
-            .collect();
-        json!({"type": "group_list", "groups": groups}).to_string()
-    }
-
     /// Messages queued by group operations, to send once the hub lock is released.
     pub(crate) fn take_outbox(&mut self) -> Vec<(Arc<Session>, String)> {
         std::mem::take(&mut self.outbox)
@@ -171,14 +206,26 @@ impl Server {
         caps
     }
 
-    pub(crate) fn group_list(&self, sess: &Session, query: Option<&str>) {
+    pub(crate) fn group_list(&self, sess: &Session, m: GroupList) {
+        let query = m.query.as_deref().unwrap_or("").to_ascii_uppercase();
+        let cursor = m.cursor.as_deref().unwrap_or("").to_ascii_uppercase();
         let hub = self.hub.read().unwrap();
         if !self.group_session_ok(sess, &hub) {
             return;
         }
-        let msg = hub.group_list_json(query);
+        let entries: Vec<GroupEntry> = hub
+            .groups
+            .values()
+            .filter(|g| g.id.contains(&query) && g.id > cursor)
+            .map(|g| GroupEntry {
+                id: g.id.clone(),
+                members: g.members.len(),
+                max: GROUP_MAX_MEMBERS,
+                password: g.password.is_some(),
+            })
+            .collect();
         drop(hub);
-        sess.send(msg);
+        sess.send(group_list_json(entries, &m));
     }
 
     pub(crate) fn group_create(&self, sess: &Session, m: GroupCreate) {
@@ -274,5 +321,42 @@ impl Server {
         let out = hub.take_outbox();
         drop(hub);
         send_all(out);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::protocol::control::ClientMsg;
+
+    #[test]
+    fn group_budgets_are_independent_refill_and_never_block_leave() {
+        let now = Instant::now();
+        let list = ClientMsg::GroupList(GroupList {
+            query: None,
+            limit: Some(20),
+            cursor: None,
+            request_id: Some(1),
+        });
+        let create = ClientMsg::GroupCreate(GroupCreate { password: None });
+        let join = ClientMsg::GroupJoin(GroupJoin {
+            id: Some("ABCDE".into()),
+            password: None,
+        });
+        let mut limits = GroupLimits::new();
+        for (msg, burst, refill) in [
+            (&list, 4, Duration::from_millis(500)),
+            (&create, 3, Duration::from_secs(10)),
+            (&join, 6, Duration::from_secs(1)),
+        ] {
+            for _ in 0..burst {
+                assert!(limits.check(msg, now).is_none());
+            }
+            assert!(limits.check(msg, now).is_some());
+            assert!(limits.check(&ClientMsg::GroupLeave, now).is_none());
+            assert!(limits.check(msg, now + refill).is_none());
+            assert!(limits.check(msg, now + refill).is_some());
+        }
+        assert!(GroupLimits::new().check(&list, now).is_none());
     }
 }
