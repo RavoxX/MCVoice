@@ -15,14 +15,19 @@ import dev.mcvoice.client.platform.AudioAdapter;
  */
 final class AudioEngine {
     interface FrameSink {
+        /** Transmit to nearby players (push-to-talk / voice activation). */
+        int TX_PROXIMITY = 1;
+        /** Transmit to my voice group (open microphone while unmuted, gated by voice activity). */
+        int TX_GROUP = 2;
+
         /** Called on the capture thread for each encoded frame while transmitting. */
-        void onEncoded(byte[] opus, int len, boolean whisper);
+        void onEncoded(byte[] opus, int len, int txMask, boolean whisper);
 
         /** Transmission stopped (send end-of-stream). */
         void onTransmitEnd();
 
-        /** Whether we should be transmitting this frame (PTT/VAD/mute logic). */
-        boolean shouldTransmit(boolean voiceDetected);
+        /** Where this frame goes: a combination of TX_PROXIMITY and TX_GROUP, 0 = not at all. */
+        int transmitMask(boolean voiceDetected);
 
         boolean whisper();
     }
@@ -134,11 +139,12 @@ final class AudioEngine {
                     if (m != null) {
                         m.offer(pcm);
                     }
-                    boolean tx = m == null && sink.shouldTransmit(voice);
+                    int mask = m == null ? sink.transmitMask(voice) : 0;
+                    boolean tx = mask != 0;
                     if (tx) {
                         int n = encoder.encode(pcm, packet);
                         if (n > 0) {
-                            sink.onEncoded(packet, n, sink.whisper());
+                            sink.onEncoded(packet, n, mask, sink.whisper());
                         }
                     } else if (transmitting) {
                         sink.onTransmitEnd();
