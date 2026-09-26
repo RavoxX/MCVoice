@@ -7,6 +7,9 @@ import dev.mcvoice.client.ui.Theme;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 
+
+
+
 import net.minecraft.network.chat.FontDescription;
 
 
@@ -53,7 +56,12 @@ public final class McNameTags {
         if (name == null || !(entity instanceof Player) || voice == null || !voice.isSpeaking(entity.getUUID())) {
             return name;
         }
-        Style style = Style.EMPTY.withColor(Theme.GOOD & 0xFFFFFF)
+        Style style = Style.EMPTY
+
+
+
+            .withColor(Theme.GOOD & 0xFFFFFF)
+
 
             .withFont(new FontDescription.Resource(McIds.id("mcvoice", "icons")));
 
