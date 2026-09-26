@@ -98,7 +98,10 @@ public final class JavaSoundBackend implements AudioAdapter {
             for (int ch = 1; ch <= 2; ch++) {
                 AudioFormat f = new AudioFormat(rate, 16, ch, true, false);
                 int frameBytes = 2 * ch;
-                int buf = (int) (rate / 50) * frameBytes * 4;
+                // A generous device buffer, so a late capture thread (GC pause, macOS scheduling the
+                // thread on an efficiency core) never loses audio. 80 ms overflowed on macOS and cut
+                // the voice up. JsCapture polls instead of blocking, so this adds no latency.
+                int buf = (int) (rate * CAPTURE_BUFFER_MS / 1000) * frameBytes;
                 try {
                     TargetDataLine line = open(m, TargetDataLine.class, f, buf);
                     VoiceLog.info(Category.AUDIO, "microphone opened: " + (deviceName == null || deviceName.isEmpty() ? "default" : deviceName)
@@ -133,20 +136,78 @@ public final class JavaSoundBackend implements AudioAdapter {
         throw new Exception("no supported speaker format", last);
     }
 
-    private static final class JsCapture implements CaptureLine {
+    private static final int CAPTURE_BUFFER_MS = 400;
+    /** A backlog above this is trimmed back to CAPTURE_TARGET_MS, so latency cannot build up. */
+    private static final int CAPTURE_MAX_BACKLOG_MS = 150;
+    private static final int CAPTURE_TARGET_MS = 40;
+    /** No data for this long: treat the device as gone (the engine reopens it). */
+    private static final long CAPTURE_STALL_NS = 2_000_000_000L;
+
+    static final class JsCapture implements CaptureLine {
         private final TargetDataLine line;
         private final float rate;
         private final int channels;
         private final String name;
+        private final int frameBytes;
+        private final int bufferBytes;
         private byte[] raw = new byte[0];
+        private byte[] discard = new byte[0];
         private double carry; // fractional device frames not yet consumed
         private short lastSample;
+        private volatile long overruns;
+        private volatile long trims;
 
         JsCapture(TargetDataLine line, float rate, int channels, String name) {
             this.line = line;
             this.rate = rate;
             this.channels = channels;
             this.name = name == null || name.isEmpty() ? "default" : name;
+            this.frameBytes = 2 * channels;
+            this.bufferBytes = line.getBufferSize();
+        }
+
+        private int bytesFor(int ms) {
+            return (int) (rate * ms / 1000) * frameBytes;
+        }
+
+        /**
+         * Wait until {@code bytes} are buffered without blocking inside Java Sound: its read() sleeps
+         * a quarter of the buffer length (100 ms here) whenever data is short, which would add latency.
+         */
+        private boolean awaitBytes(int bytes) {
+            long start = System.nanoTime();
+            while (line.available() < bytes) {
+                if (!line.isOpen() || System.nanoTime() - start > CAPTURE_STALL_NS) {
+                    return false;
+                }
+                java.util.concurrent.locks.LockSupport.parkNanos(2_000_000L);
+            }
+            return true;
+        }
+
+        /** Detect lost audio (a full device buffer) and drop a backlog that would add latency. */
+        private void keepUp() {
+            int avail = line.available();
+            if (avail >= bufferBytes - 2 * frameBytes) {
+                overruns++;
+                VoiceLog.every(60000, "mic-overrun", dev.mcvoice.client.log.LogSink.Level.WARN, Category.AUDIO,
+                    "microphone buffer overflowed (audio lost), total " + overruns);
+            }
+            int excess = avail - bytesFor(CAPTURE_MAX_BACKLOG_MS);
+            if (excess > 0) {
+                int drop = avail - bytesFor(CAPTURE_TARGET_MS);
+                drop -= drop % frameBytes;
+                if (discard.length < drop) {
+                    discard = new byte[drop];
+                }
+                line.read(discard, 0, drop);
+                trims++;
+            }
+        }
+
+        @Override
+        public String stats() {
+            return (int) rate + " Hz " + channels + " ch, buffer " + CAPTURE_BUFFER_MS + " ms, overruns " + overruns + ", trimmed " + trims;
         }
 
         @Override
@@ -158,6 +219,10 @@ public final class JavaSoundBackend implements AudioAdapter {
             int bytes = need * 2 * channels;
             if (raw.length < bytes) {
                 raw = new byte[bytes];
+            }
+            keepUp();
+            if (!awaitBytes(bytes)) {
+                return false;
             }
             int got = 0;
             while (got < bytes) {
