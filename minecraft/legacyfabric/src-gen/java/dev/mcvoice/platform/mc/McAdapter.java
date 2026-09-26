@@ -54,6 +54,7 @@ public final class McAdapter implements MinecraftAdapter {
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", Keyboard.KEY_N));
         keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", Keyboard.KEY_NONE));
         keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", Keyboard.KEY_NONE));
+        keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", Keyboard.KEY_G));
     }
 
     private static KeyBinding key(String name, int code) {
@@ -279,6 +280,18 @@ public final class McAdapter implements MinecraftAdapter {
         @Override
         public boolean isAnyScreenOpen() {
             return mc().currentScreen != null;
+        }
+
+        @Override
+        public int[] chatPointer() {
+            MinecraftClient m = mc();
+            if (!(m.currentScreen instanceof net.minecraft.client.gui.screen.ChatScreen)) {
+                return null;
+            }
+            McCanvas c = new McCanvas();
+            int x = org.lwjgl.input.Mouse.getX() * c.width() / Math.max(1, m.width);
+            int y = c.height() - org.lwjgl.input.Mouse.getY() * c.height() / Math.max(1, m.height) - 1;
+            return new int[] {x, y, org.lwjgl.input.Mouse.isButtonDown(0) ? 1 : 0};
         }
     };
 
