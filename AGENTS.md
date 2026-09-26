@@ -26,9 +26,11 @@ regenerate the vectors.
 
 1. **Local entity rule.** Never play positional audio from a speaker who
    is not a currently tracked player entity in the listener's current local
-   world, in range. `PlaybackValidator` is checked on every frame of every
-   transport. Never rely on server address, dimension name or coordinates
-   alone (proxy sub-servers share all three). See `docs/proximity-security.md`.
+   world, in range. `PlaybackValidator` is checked on every positional frame
+   of every transport. Never rely on server address, dimension name or
+   coordinates alone (proxy sub-servers share all three). The only
+   non-positional audio is voice groups: played centred, and only from members
+   of the listener's current group (spec 9.1). See `docs/proximity-security.md`.
 2. **Never fake success.**
    * A Minecraft version/loader counts as supported only when CI built and
      validated its jar (`versions/build-status.json`).
@@ -218,6 +220,10 @@ git show FETCH_HEAD:<path>`).
 * Backend-only state (`backend/*/…/groups`), up to 15 members, 5-char ids
   from `ABCDEFGHJKLMNPQRSTUVWXYZ23456789`, optional password (salted SHA-256,
   constant-time compare, 5 wrong tries/min), search via `group_list.query`.
+  `group_paging` adds id-ordered pages (limit 1–20, cursor, request_id); legacy
+  lists retain popularity order and the 100-entry cap. Per-connection group
+  budgets: list 2/s burst 4, create 0.1/s burst 3, join 1/s burst 6; leave has
+  no extra limiter. Limits run in the control task before hub locking.
   Membership needs `in_world` and ends on disconnect or after 10 s out of a
   world. Group messages are queued in the hub `outbox` under the lock and
   sent after it (never send under the hub lock).
@@ -283,8 +289,11 @@ git show FETCH_HEAD:<path>`).
   * Fabric wherever Fabric API exists for 1.14.4–26.3.
   * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
     without Legacy Fabric API).
-* **Releases:** v0.1.2 (see the latest `release.yml` run and `release-report.md`)
-  adds voice groups, the macOS microphone fix and vanilla-style screens.
+* **Releases:** v0.1.2 (run 36250351566: 102/102 jars, 62/62 GitHub
+  Releases, 102/102 Maven packages, images `0.1.2`/`latest`) adds voice
+  groups, the macOS microphone fix and vanilla-style screens. The public
+  backend uses protocol 1.1 and advertises `groups`; see the backend-only
+  deployment below for its current image.
 * **Earlier release v0.1.0:** every passing version has an `mc/` branch
   and a `v0.1.0-mc<version>` GitHub Release (62 releases). Full run
   36112725820 (`release-report.md` on `v0.1.0`), then 36115472419 for
@@ -301,6 +310,12 @@ git show FETCH_HEAD:<path>`).
   sites): only ever add, validate (`nginx -t`, `nft --check`), never restart
   others. Since 0.1.1 the jars default to this backend
   (`mcvoiceBackendUrl` in `client/gradle.properties`).
+  Backend-only routing optimization `948bd584df18` deployed 2026-09-26 as
+  `sha-948bd584df18` after CI `36254844464` and image build `36254844465`
+  passed. Health/readiness and protocol 1.1 `groups` verified; other containers
+  unchanged. Rollback image: `0.1.2`. Measurements and limitations are in
+  `docs/rust-routing-performance.md` (allocation/presence-lock improvements;
+  no general end-to-end latency improvement established).
 * **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
   1.20.1 and 1.21.4 (compatibility 20, AES-GCM with 12-byte IV). Older
   compatibility versions (19–16) are not verified.
