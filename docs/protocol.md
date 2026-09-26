@@ -48,6 +48,11 @@ client                                   backend
 * **Peers.** The UUIDs of player entities the client currently tracks. The
   backend routes A → B only if B reported A **and** A reported B (mandatory).
 
+* **Groups** (1.1, capability `groups`). `group_list` (with optional id
+  search), `group_create` (optional password), `group_join`, `group_leave`;
+  the backend answers `group_joined`/`group_update`/`group_left`. Voice mode
+  `2` is group only, flag bit 1 adds the group to a normal/whisper frame.
+
 ## Voice datagram
 
 ```

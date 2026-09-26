@@ -214,6 +214,23 @@ git show FETCH_HEAD:<path>`).
   visibility is mandatory and is what ties routing to the actual game.
   Recipients come from the sender's visible set via the UUID index.
 
+**Voice groups (protocol 1.1)**
+* Backend-only state (`backend/*/…/groups`), up to 15 members, 5-char ids
+  from `ABCDEFGHJKLMNPQRSTUVWXYZ23456789`, optional password (salted SHA-256,
+  constant-time compare, 5 wrong tries/min), search via `group_list.query`.
+  Membership needs `in_world` and ends on disconnect or after 10 s out of a
+  world. Group messages are queued in the hub `outbox` under the lock and
+  sent after it (never send under the hub lock).
+* One frame serves both channels: mode 2 = group only, flag bit 1 on mode
+  0/1 = also to the group. Proximity routing skips members of the sender's
+  group when group delivery applied (no double audio).
+* Client: group channel = open mic gated by VAD while unmuted; proximity
+  keeps push-to-talk. Group frames are mixed centred and validated against
+  the current member list (`PlaybackValidator` mode 2).
+* HUD clicks: `GuiAdapter.chatPointer()` polls the cursor while the chat is
+  open (Mojang `mouseHandler.xpos/ypos/isLeftPressed` stable 1.14.4-26.3;
+  1.13.2 `mouseHelper.getMouseX/isLeftDown`; legacy LWJGL 2 `Mouse`).
+
 **Releases**
 * GitHub Packages never replaces a Maven version: a re-run records `exists`
   (409) for those. A failed publish is retried once; ForgeGradle 7's
@@ -266,7 +283,9 @@ git show FETCH_HEAD:<path>`).
   * Fabric wherever Fabric API exists for 1.14.4–26.3.
   * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
     without Legacy Fabric API).
-* **Branches and release v0.1.0:** every passing version has an `mc/` branch
+* **Releases:** v0.1.2 (see the latest `release.yml` run and `release-report.md`)
+  adds voice groups, the macOS microphone fix and vanilla-style screens.
+* **Earlier release v0.1.0:** every passing version has an `mc/` branch
   and a `v0.1.0-mc<version>` GitHub Release (62 releases). Full run
   36112725820 (`release-report.md` on `v0.1.0`), then 36115472419 for
   1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
@@ -292,6 +311,10 @@ git show FETCH_HEAD:<path>`).
 * **Not implemented** (reasons are in `versions/supported.md`):
   * Forge 1.14.2/1.14.3 (MCP names, 1.14 class names: extend `mcp13`);
   * Legacy Fabric 1.13.2 (no API; needs a Legacy Yarn 1.13 adapter).
+* **Voice groups:** implemented in both backends (conformance 38/38) and the
+  client (end-to-end test against both backends). Never tried by humans in
+  game before release 0.1.2; watch for feedback on the Voice Groups screen
+  and HUD clicks.
 * **Ideas / next steps:**
   * run `mc-smoke.yml` once approved; add Legacy Fabric when mc-runtime-test supports it;
   * group voice for SVC interop;

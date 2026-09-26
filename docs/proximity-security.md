@@ -71,6 +71,18 @@ players.
 | frame from old epoch after switch → rejected | `old_epoch_after_switch`, conformance `stale_epoch_packet_dropped`, `recipient_epoch_is_current` |
 | entity removed → next packet rejected | `ProximityScenarioTest.senderEntityRemovedNextPacketRejected`, conformance `disconnect_removes_peer` |
 
+## Voice groups
+
+Group audio (spec 8.1, 9.1) is the one deliberate exception to positional
+playback: players who joined the same group chose to hear each other
+anywhere. It is played **centred, not positional**, and only if the sender is
+a member of the listener's current group according to the backend's member
+list (`group_joined`/`group_update`). Every positional frame still has to
+pass the local entity rule, also from group members. Membership needs an
+authenticated session that is in a world, ends on disconnect or after 10 s
+out of a world, and is capped at 15; passwords are hashed in memory and
+wrong guesses are rate limited.
+
 ## Known limits (stated honestly)
 
 * Tracking range limits voice range: if a server tracks players only within
