@@ -7,7 +7,7 @@ RUN go mod download
 COPY cmd ./cmd
 COPY internal ./internal
 COPY pkg ./pkg
-ARG VERSION=0.1.0
+ARG VERSION=0.1.2
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/mcvoice-backend ./cmd/mcvoice-backend
 
 FROM gcr.io/distroless/static-debian12:nonroot
