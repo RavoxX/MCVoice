@@ -199,6 +199,8 @@ func All() []Scenario {
 		{"attested_subservers_are_isolated", "offline", scAttested},
 		{"one_sided_visibility_not_delivered", "offline", scOneSided},
 		{"group_create_list_join_leave", "offline", scGroupLifecycle},
+		{"group_pages_search_and_deleted_cursor", "offline", scGroupPages},
+		{"group_request_budgets_and_leave", "offline", scGroupRequestBudgets},
 		{"group_password_and_rate_limit", "offline", scGroupPassword},
 		{"group_full_at_15_members", "offline", scGroupFull},
 		{"group_requires_being_in_a_world", "offline", scGroupNeedsWorld},

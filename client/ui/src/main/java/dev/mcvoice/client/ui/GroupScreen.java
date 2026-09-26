@@ -46,15 +46,20 @@ public final class GroupScreen extends BaseScreen {
         VoiceControls.Group g = v.group();
         int members = g == null ? -1 : g.members.size();
         if (!eq(st, laidOutFor) || members != laidOutMembers) {
+            if (st != null && st.isEmpty() && !eq(st, laidOutFor)) {
+                sentQuery = null;
+                scroll = 0;
+            }
             laidOutFor = st;
             laidOutMembers = members;
             relayout();
         }
         if (st != null && st.isEmpty()) {
             long now = System.currentTimeMillis();
-            // search as you type (debounced), and keep the list fresh while the screen is open
-            boolean changed = !search.equals(sentQuery) && now - searchChangedMs > 250;
-            if (changed || now - lastRequestMs > 5000) {
+            // Debounce searches; refresh the first page without interrupting deeper browsing.
+            boolean changed = !search.equals(sentQuery) && now - searchChangedMs > 300;
+            if (changed || (scroll == 0 && !v.groupsLoading() && now - lastRequestMs > 30000)) {
+                scroll = 0;
                 v.requestGroups(search);
                 sentQuery = search;
                 lastRequestMs = now;
@@ -110,6 +115,7 @@ public final class GroupScreen extends BaseScreen {
         }), left, y);
         add(Button.of(100, "Refresh", new Button.Action() {
             public void run() {
+                scroll = 0;
                 v.requestGroups(search);
                 sentQuery = search;
                 lastRequestMs = System.currentTimeMillis();
@@ -161,6 +167,7 @@ public final class GroupScreen extends BaseScreen {
     }
 
     private VoiceControls.GroupInfo entry(int slot) {
+        if (!search.equals(sentQuery)) return null;
         List<VoiceControls.GroupInfo> l = v.groupList();
         int i = scroll + slot;
         return i < l.size() ? l.get(i) : null;
@@ -194,8 +201,12 @@ public final class GroupScreen extends BaseScreen {
 
     @Override
     public void mouseScrolled(int x, int y, double amount) {
+        if (!"".equals(state()) || amount == 0 || !search.equals(sentQuery)) return;
         int max = Math.max(0, v.groupList().size() - slots.length);
         scroll = Math.max(0, Math.min(max, scroll + (amount > 0 ? -1 : 1)));
+        if (amount < 0 && scroll >= Math.max(0, max - 2) && v.hasMoreGroups() && !v.groupsLoading()) {
+            v.loadMoreGroups();
+        }
     }
 
     @Override
@@ -212,10 +223,11 @@ public final class GroupScreen extends BaseScreen {
         if (st.isEmpty()) {
             List<VoiceControls.GroupInfo> l = v.groupList();
             for (int i = 0; i < slots.length; i++) {
-                slots[i].visible = scroll + i < l.size();
+                slots[i].visible = search.equals(sentQuery) && scroll + i < l.size();
             }
-            if (l.isEmpty() && slots.length > 0) {
+            if ((l.isEmpty() || !search.equals(sentQuery)) && slots.length > 0) {
                 String none = search.isEmpty() ? "No active groups. Create one below." : "No group matches \"" + search + "\".";
+                if (v.groupsLoading() || !search.equals(sentQuery)) none = "Loading groups...";
                 c.text(none, cx - c.textWidth(none) / 2, slots[0].y + 6, Theme.LABEL_DIM, true);
             }
         } else {
@@ -228,9 +240,14 @@ public final class GroupScreen extends BaseScreen {
             }
         }
         String notice = v.groupNotice();
+        int noticeColor = Theme.BAD;
+        if (notice.isEmpty() && st.isEmpty() && !v.groupList().isEmpty()) {
+            notice = v.groupsLoading() ? "Loading more groups..." : v.hasMoreGroups() ? "Scroll down to load more groups" : "";
+            noticeColor = Theme.LABEL_DIM;
+        }
         if (!notice.isEmpty()) {
             int ny = st.isEmpty() ? c.height() - 27 - 4 - 20 - 12 : c.height() - 27 - 24 - 12;
-            c.text(notice, cx - c.textWidth(notice) / 2, ny, Theme.BAD, true);
+            c.text(notice, cx - c.textWidth(notice) / 2, ny, noticeColor, true);
         }
     }
 }
