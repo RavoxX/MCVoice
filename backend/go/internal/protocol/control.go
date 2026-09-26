@@ -28,6 +28,10 @@ const (
 	CodeSessionReplaced       = "session_replaced"
 	CodeStaleEpoch            = "stale_epoch"
 	CodeServerFull            = "server_full"
+	CodeGroupNotFound         = "group_not_found"
+	CodeGroupFull             = "group_full"
+	CodeGroupPassword         = "group_password"
+	CodeNotInWorld            = "not_in_world"
 	CodeInternal              = "internal"
 )
 
@@ -116,6 +120,56 @@ type Ping struct {
 
 type Bye struct{}
 
+// Voice groups (spec 6.12).
+type GroupList struct {
+	Query *string `json:"query"`
+}
+
+type GroupCreate struct {
+	Password *string `json:"password"`
+}
+
+type GroupJoin struct {
+	ID       *string `json:"id"`
+	Password *string `json:"password"`
+}
+
+type GroupLeave struct{}
+
+const (
+	GroupMaxMembers = 15
+	GroupListMax    = 100
+	GroupIDAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+	GroupIDLen      = 5
+)
+
+// validGroupPassword: 1-32 printable ASCII characters.
+func validGroupPassword(p string) bool {
+	if len(p) < 1 || len(p) > 32 {
+		return false
+	}
+	for i := 0; i < len(p); i++ {
+		if p[i] < 0x20 || p[i] > 0x7e {
+			return false
+		}
+	}
+	return true
+}
+
+func validGroupID(id string) bool {
+	return len(id) == GroupIDLen && validGroupIDChars(id)
+}
+
+func validGroupIDChars(id string) bool {
+	for i := 0; i < len(id); i++ {
+		c := id[i]
+		if !(c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {
+			return false
+		}
+	}
+	return true
+}
+
 // ParseControl parses and validates one client -> backend control frame.
 // It returns one of *Hello, *Auth, *Resume, *Scope, *Pos, *Peers, *PeersDelta,
 // *State, *Ping, *Bye.
@@ -158,6 +212,14 @@ func ParseControl(frame []byte) (any, *ControlError) {
 		msg = &Ping{}
 	case "bye":
 		return &Bye{}, nil
+	case "group_list":
+		msg = &GroupList{}
+	case "group_leave":
+		return &GroupLeave{}, nil
+	case "group_create":
+		msg = &GroupCreate{}
+	case "group_join":
+		msg = &GroupJoin{}
 	default:
 		return nil, &ControlError{Code: CodeUnknownMessage, Message: "unknown message type"}
 	}
@@ -261,6 +323,21 @@ func validate(m any) *ControlError {
 	case *Ping:
 		if v.Nonce == nil {
 			return bad("missing nonce")
+		}
+	case *GroupList:
+		if v.Query != nil && (*v.Query == "" || len(*v.Query) > GroupIDLen || !validGroupIDChars(*v.Query)) {
+			return bad("invalid group query")
+		}
+	case *GroupCreate:
+		if v.Password != nil && !validGroupPassword(*v.Password) {
+			return bad("invalid group password")
+		}
+	case *GroupJoin:
+		if v.ID == nil || !validGroupID(*v.ID) {
+			return bad("invalid group id")
+		}
+		if v.Password != nil && !validGroupPassword(*v.Password) {
+			return bad("invalid group password")
 		}
 	}
 	return nil
@@ -393,4 +470,4 @@ type Simple struct {
 }
 
 // Capabilities advertised by both backend implementations.
-var ServerCapabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "scope_attestation"}
+var ServerCapabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "scope_attestation", "groups"}
