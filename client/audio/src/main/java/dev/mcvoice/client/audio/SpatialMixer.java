@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import dev.mcvoice.client.proximity.PlaybackDecision;
+import dev.mcvoice.client.proximity.PlaybackValidator;
 import dev.mcvoice.client.proximity.TrackedPlayer;
 import dev.mcvoice.client.proximity.WorldSnapshot;
 
@@ -134,7 +135,12 @@ public final class SpatialMixer {
                 s.talking = true;
                 double tl = 0, tr = 0;
                 PlaybackDecision d = validator.check(snap, s.speaker, mode);
-                if (d.accepted()) {
+                if (d.accepted() && mode == PlaybackValidator.MODE_GROUP) {
+                    // voice group: not positional, centred at the player's volume (spec 9.1)
+                    Spatializer.gains(0, master * settings.volumeOf(s.speaker), 1, g);
+                    tl = g[0];
+                    tr = g[1];
+                } else if (d.accepted()) {
                     TrackedPlayer p = snap.player(s.speaker);
                     double dist = snap.distanceTo(p);
                     double att = Spatializer.attenuation(dist, settings.range(mode));
