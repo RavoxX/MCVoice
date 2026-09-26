@@ -40,6 +40,7 @@ final class AudioEngine {
     private volatile MonitorSource monitor;
     private volatile String inputDevice = "", outputDevice = "";
     private volatile String captureStatus = "stopped", playbackStatus = "stopped";
+    private volatile AudioAdapter.CaptureLine captureLine;
     private final FrameSink sink;
     private final MixSource mix;
     private final SpatialMixer mixer;
@@ -114,6 +115,7 @@ final class AudioEngine {
             try {
                 line = audio.openCapture(inputDevice);
                 captureStatus = "ok: " + line.deviceName();
+                captureLine = line;
             } catch (Throwable e) {
                 captureStatus = "microphone unavailable: " + e.getMessage();
                 VoiceLog.every(60000, "mic-open", dev.mcvoice.client.log.LogSink.Level.WARN, Category.AUDIO, captureStatus);
@@ -147,6 +149,7 @@ final class AudioEngine {
             } catch (Throwable t) {
                 VoiceLog.warn(Category.AUDIO, "capture failed: " + t);
             } finally {
+                captureLine = null;
                 line.close();
                 if (transmitting) {
                     sink.onTransmitEnd();
@@ -226,7 +229,9 @@ final class AudioEngine {
     }
 
     String captureStatus() {
-        return captureStatus;
+        AudioAdapter.CaptureLine l = captureLine;
+        String stats = l == null ? "" : l.stats();
+        return stats.isEmpty() ? captureStatus : captureStatus + " (" + stats + ")";
     }
 
     String playbackStatus() {

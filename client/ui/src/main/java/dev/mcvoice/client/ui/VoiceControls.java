@@ -12,6 +12,9 @@ public interface VoiceControls {
     /** Persist and apply configuration changes (restarts audio/network parts if needed). */
     void applyConfig();
 
+    /** Close our screen without applying anything. */
+    void closeScreen();
+
     TransportStatus transportStatus();
 
     boolean transmitting();

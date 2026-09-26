@@ -594,6 +594,11 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             stopControl("configuration changed");
         }
         stateDirty = true;
+        closeScreen();
+    }
+
+    @Override
+    public void closeScreen() {
         if (mc.gui() != null && mc.gui().isOurScreenOpen()) {
             mc.gui().close();
         }
