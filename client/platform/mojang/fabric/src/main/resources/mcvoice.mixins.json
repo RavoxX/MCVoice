@@ -3,6 +3,15 @@
   "minVersion": "0.8",
   "package": "dev.mcvoice.platform.fabric.mixin",
   "compatibilityLevel": "JAVA_8",
-  "client": ["GuiMixin"],
+  "client": [
+//#if MC >= 1.16
+    "NameTagMixin"
+//#else
+    "LegacyNameTagMixin"
+//#if MC < 1.15
+    , "GuiMixin"
+//#endif
+//#endif
+  ],
   "injectors": {"defaultRequire": 1}
 }
