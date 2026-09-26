@@ -1,5 +1,15 @@
 Downloading https://services.gradle.org/distributions/gradle-9.4.0-bin.zip
 .............10%.............20%.............30%.............40%.............50%.............60%..............70%.............80%.............90%.............100%
+
+Welcome to Gradle 9.4.0!
+
+Here are the highlights of this release:
+ - Java 26 support
+ - Non-class-based JVM tests
+ - Enhanced console progress bar
+
+For more details see https://docs.gradle.org/9.4.0/release-notes.html
+
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.4.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 
@@ -23,17 +33,20 @@ Legacy Looming: 1.16.1
 > Task :remapSourcesJar
 > Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790436398004.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790462160390.json
 
-BUILD SUCCESSFUL in 44s
+BUILD SUCCESSFUL in 50s
 7 actionable tasks: 7 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.4.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.2-mc1.8.3-legacyfabric.jar (353 classes, 16 platform classes, metadata ['fabric.mod.json'])
+valid: mcvoice-0.1.3-rc.1-mc1.8.3-legacyfabric.jar (361 classes, 20 platform classes, metadata ['fabric.mod.json'])
   platform: dev/mcvoice/platform/fabric/KeyHolder
   platform: dev/mcvoice/platform/fabric/McVoiceFabric
   platform: dev/mcvoice/platform/fabric/mixin/GameOptionsMixin
   platform: dev/mcvoice/platform/fabric/mixin/InGameHudMixin
   platform: dev/mcvoice/platform/fabric/mixin/MinecraftClientMixin
+  platform: dev/mcvoice/platform/fabric/mixin/NameTagMixin
+  platform: dev/mcvoice/platform/mc/LegacyNameTagIcon
+  platform: dev/mcvoice/platform/mc/LegacyNameTagIcon$1
   platform: dev/mcvoice/platform/mc/McAdapter
   platform: dev/mcvoice/platform/mc/McAdapter$1
   platform: dev/mcvoice/platform/mc/McAdapter$2
@@ -43,5 +56,6 @@ valid: mcvoice-0.1.2-mc1.8.3-legacyfabric.jar (353 classes, 16 platform classes,
   platform: dev/mcvoice/platform/mc/McCanvas
   platform: dev/mcvoice/platform/mc/McLogging
   platform: dev/mcvoice/platform/mc/McLogging$1
+  platform: dev/mcvoice/platform/mc/McNameTags
   platform: dev/mcvoice/platform/mc/McScreen
   platform: dev/mcvoice/platform/mc/PlatformInfo
