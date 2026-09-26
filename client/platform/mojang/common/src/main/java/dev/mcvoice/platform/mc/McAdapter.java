@@ -61,11 +61,13 @@ public final class McAdapter implements MinecraftAdapter {
         keys.put(InputAdapter.Action.WHISPER, key("whisper", InputConstants.KEY_B));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", InputConstants.KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", InputConstants.KEY_N));
+        keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", InputConstants.KEY_G));
         //#else
         keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", GLFW.GLFW_KEY_V));
         keys.put(InputAdapter.Action.WHISPER, key("whisper", GLFW.GLFW_KEY_B));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", GLFW.GLFW_KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", GLFW.GLFW_KEY_N));
+        keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", GLFW.GLFW_KEY_G));
         //#endif
         keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", -1));
         keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", -1));
@@ -311,6 +313,24 @@ public final class McAdapter implements MinecraftAdapter {
         @Override
         public boolean isAnyScreenOpen() {
             return ScreenHost.current() != null;
+        }
+
+        @Override
+        public int[] chatPointer() {
+            if (!(ScreenHost.current() instanceof net.minecraft.client.gui.screens.ChatScreen)) {
+                return null;
+            }
+            Minecraft m = mc();
+            // window pixels -> GUI coordinates, as Minecraft itself converts mouse input
+            //#if MC >= 1.15
+            double sx = (double) m.getWindow().getGuiScaledWidth() / Math.max(1, m.getWindow().getScreenWidth());
+            double sy = (double) m.getWindow().getGuiScaledHeight() / Math.max(1, m.getWindow().getScreenHeight());
+            //#else
+            double sx = (double) m.window.getGuiScaledWidth() / Math.max(1, m.window.getScreenWidth());
+            double sy = (double) m.window.getGuiScaledHeight() / Math.max(1, m.window.getScreenHeight());
+            //#endif
+            return new int[] {(int) (m.mouseHandler.xpos() * sx), (int) (m.mouseHandler.ypos() * sy),
+                m.mouseHandler.isLeftPressed() ? 1 : 0};
         }
     };
 
