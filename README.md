@@ -21,6 +21,11 @@ can still be heard on servers that run the Simple Voice Chat plugin.
   SVC client protocol reaches SVC-only players. MCVoice users connected both
   ways are heard exactly once (sender-aware deduplication), and the mod falls
   back to SVC when the cloud is unreachable. See [SVC interop](docs/svc-interop.md).
+* **Voice groups.** Up to 15 players hear each other everywhere, even on
+  different servers: search and join active groups, or create one with an
+  optional password (hotkey **G**). Group members hear you while your
+  microphone is on; nearby players still need push-to-talk, and nobody hears
+  you twice.
 * Two interchangeable backends, in **Rust** (Tokio/axum) and **Go**, that
   pass the same black-box conformance suite.
 * Minecraft **1.8 → 26.3** on Forge, Fabric and Legacy Fabric (gaps listed with reasons). Every
@@ -49,10 +54,14 @@ Download the jar for your Minecraft version and loader from
    * **V**: push to talk;
    * **B**: whisper;
    * **M**: mute;
-   * **N**: deafen.
+   * **N**: deafen;
+   * **G**: voice groups.
 
    Settings and status screens can be bound in Controls.
-4. Settings live in `config/mcvoice.json`:
+4. The HUD shows your microphone bottom left and who is talking top left
+   (muted players greyed out). Open the chat and click a name to change that
+   player's volume or mute them.
+5. Settings live in `config/mcvoice.json`:
    * backend URL (default: the public backend `wss://mcvoice.ravoxx.dev/v1/control`);
    * activation mode (push-to-talk or voice activation) and its threshold;
    * gain, devices and distances;
