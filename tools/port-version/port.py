@@ -213,7 +213,7 @@ TEXT_EXT = (".java", ".json", ".toml", ".properties", ".mcmeta", ".info", ".cfg"
 def generate_sources(family, parts, mc, loader, dest, flags=None):
     """Preprocess the family's source parts for (mc, loader) into dest/{java,resources}."""
     base = os.path.join(ROOT, "client", "platform", family)
-    for part in parts:
+    for part in ["../shared"] + parts:
         for kind in ("java", "resources"):
             src = os.path.join(base, part, "src", "main", kind)
             if not os.path.isdir(src):
