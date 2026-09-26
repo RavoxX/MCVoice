@@ -6,6 +6,7 @@ net.minecraft.client.KeyMapping net.minecraft.client.settings.KeyBinding
 net.minecraft.client.User net.minecraft.util.Session
 net.minecraft.client.multiplayer.ClientLevel net.minecraft.client.world.ClientWorld
 net.minecraft.client.multiplayer.ClientPacketListener net.minecraft.client.network.play.ClientPlayNetHandler
+net.minecraft.client.multiplayer.PlayerInfo net.minecraft.client.network.play.NetworkPlayerInfo
 net.minecraft.client.player.AbstractClientPlayer net.minecraft.client.entity.player.AbstractClientPlayerEntity
 net.minecraft.client.player.LocalPlayer net.minecraft.client.entity.player.ClientPlayerEntity
 net.minecraft.client.gui.Font net.minecraft.client.gui.FontRenderer
@@ -14,6 +15,11 @@ net.minecraft.client.gui.screens.Screen net.minecraft.client.gui.screen.Screen
 net.minecraft.client.gui.screens.ChatScreen net.minecraft.client.gui.screen.ChatScreen
 com.mojang.blaze3d.vertex.PoseStack com.mojang.blaze3d.matrix.MatrixStack
 net.minecraft.network.chat.TextComponent net.minecraft.util.text.StringTextComponent
+net.minecraft.network.chat.Component net.minecraft.util.text.ITextComponent
+net.minecraft.network.chat.Style net.minecraft.util.text.Style
+net.minecraft.ChatFormatting net.minecraft.util.text.TextFormatting
+net.minecraft.world.entity.player.Player net.minecraft.entity.player.PlayerEntity
+net.minecraft.world.entity.Entity net.minecraft.entity.Entity
 net.minecraft.resources.ResourceLocation net.minecraft.util.ResourceLocation
 net.minecraft.network.FriendlyByteBuf net.minecraft.network.PacketBuffer
 net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket net.minecraft.network.play.client.CCustomPayloadPacket

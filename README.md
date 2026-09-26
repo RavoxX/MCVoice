@@ -9,11 +9,12 @@ can still be heard on servers that run the Simple Voice Chat plugin.
 
 * Positional 3D audio (equal-power stereo panning, distance attenuation),
   Opus at 48 kHz in 20 ms frames, a jitter buffer and a whisper mode.
-* **The local entity rule.** A speaker is played only while they currently
-  exist as a tracked player entity in the listener's own Minecraft world,
-  within range. This holds on proxy networks (Velocity/BungeeCord) where
-  sub-servers share an address, dimension names and coordinates. See
-  [proximity security](docs/proximity-security.md).
+* **The local entity rule.** Positional voice from a speaker is played only
+  while they currently exist as a tracked player entity in the listener's own
+  Minecraft world, within range. This holds on proxy networks
+  (Velocity/BungeeCord) where sub-servers share an address, dimension names
+  and coordinates. The one exception is voice groups, which members join on
+  purpose. See [proximity security](docs/proximity-security.md).
 * Encrypted voice (AES-128-GCM with replay protection and key rotation) and
   Minecraft account verification through Mojang's session server. Access
   tokens never leave the client towards our backend.
@@ -23,7 +24,9 @@ can still be heard on servers that run the Simple Voice Chat plugin.
   back to SVC when the cloud is unreachable. See [SVC interop](docs/svc-interop.md).
 * **Voice groups.** Up to 15 players hear each other everywhere, even on
   different servers: search and join active groups, or create one with an
-  optional password (hotkey **G**). Group members hear you while your
+  optional password (hotkey **G**). The menu loads 20 groups at a time and
+  fetches more as you scroll; searching starts a fresh page of matching codes.
+  Group members hear you while your
   microphone is on; nearby players still need push-to-talk, and nobody hears
   you twice.
 * Two interchangeable backends, in **Rust** (Tokio/axum) and **Go**, that
@@ -59,8 +62,13 @@ Download the jar for your Minecraft version and loader from
 
    Settings and status screens can be bound in Controls.
 4. The HUD shows your microphone bottom left and who is talking top left
-   (muted players greyed out). Open the chat and click a name to change that
+   (muted microphones greyed out). Open the chat and click a name to change that
    player's volume or mute them.
+   The current 1.16+ adapters preserve server name colours and prefixes in the
+   HUD and add a green microphone beside visible speaking players' name tags.
+   Compact, shaded pixel icons use a 10-pixel grid in the HUD and an 8-pixel
+   grid on name tags. Older HUD adapters draw the same pixel artwork directly.
+   These indicators are rendered by MCVoice on the listener's client.
 5. Settings live in `config/mcvoice.json`:
    * backend URL (default: the public backend `wss://mcvoice.ravoxx.dev/v1/control`);
    * activation mode (push-to-talk or voice activation) and its threshold;
