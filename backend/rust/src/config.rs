@@ -25,7 +25,6 @@ pub struct Config {
     pub whisper_range: f64,
     pub max_range: f64,
     pub distance_slack: f64,
-    pub require_mutual: bool,
     pub key_rotation_secs: u64,
     pub resume_token_ttl: u64,
     pub max_sessions: usize,
@@ -110,7 +109,6 @@ impl Config {
             whisper_range: e.parse("WHISPER_RANGE", 8.0, "a number"),
             max_range: e.parse("MAX_RANGE", 96.0, "a number"),
             distance_slack: e.parse("ROUTING_DISTANCE_SLACK", 4.0, "a number"),
-            require_mutual: e.b("ROUTING_REQUIRE_MUTUAL_VISIBILITY", true),
             key_rotation_secs: e.parse("KEY_ROTATION_SECONDS", 600, "an integer"),
             resume_token_ttl: e.parse("RESUME_TOKEN_TTL_SECONDS", 3600, "an integer"),
             max_sessions: e.parse("MAX_SESSIONS", 10000, "an integer"),
@@ -175,6 +173,9 @@ impl Config {
                     _ => errs.push(format!("SCOPE_ATTESTATION_KEYS[{name}]: key must be base64 of >= 32 bytes")),
                 }
             }
+        }
+        if raw("ROUTING_REQUIRE_MUTUAL_VISIBILITY").is_some_and(|v| v.eq_ignore_ascii_case("false")) {
+            warnings.push("ROUTING_REQUIRE_MUTUAL_VISIBILITY=false is ignored: mutual visibility is always required (spec 8)".into());
         }
         if raw("DATABASE_URL").is_some() {
             warnings.push("DATABASE_URL is set but this version keeps all state in memory (bans via BANS_FILE); it is ignored".into());

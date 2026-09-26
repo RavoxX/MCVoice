@@ -1,6 +1,6 @@
-# MCVoice Protocol, version 1.0
+# MCVoice Protocol, version 1.1
 
-Status: **normative** for `OUR_VOICE_PROTOCOL_MAJOR = 1`, `OUR_VOICE_PROTOCOL_MINOR = 0`.
+Status: **normative** for `OUR_VOICE_PROTOCOL_MAJOR = 1`, `OUR_VOICE_PROTOCOL_MINOR = 1`.
 
 Key words MUST, MUST NOT, SHOULD, MAY are used as in RFC 2119.
 
@@ -59,6 +59,7 @@ that is a bug that has to be fixed before release.
 | `key_rotation`      | backend rotates voice keys during the session (§7.6) |
 | `scope_attestation` | backend verifies optional companion-plugin scope attestations (§6.3.1) |
 | `svc_interop`       | client-only; informative, lets the backend count hybrid clients |
+| `groups`            | voice groups (§6.12, §8.1, §9.1); added in 1.1 |
 
 ## 3. Identifiers
 
@@ -69,7 +70,7 @@ that is a bug that has to be fixed before release.
 | `connection_id` | u64, hex string in JSON, big-endian on UDP | random per session, non-secret, selects the voice session on UDP |
 | `key_id` | u8 | identifies the current voice key; increments (mod 256) on rotation |
 | `epoch` | u32 | **world-session epoch**, chosen by the client, strictly increasing within a control session (§6.3) |
-| `network_id` | string ≤ 64 chars `[0-9a-z:._-]` | client-computed hash of the server address the user joined (§6.3) |
+| `network_id` | string ≤ 64 chars `[0-9a-z:._-]` | client-computed hash of the server address the user joined (§6.3); informational, never used for routing |
 | `world_id` | string ≤ 128 chars | dimension key as the client sees it, e.g. `minecraft:overworld` |
 
 ## 4. Transport limits
@@ -132,7 +133,7 @@ Client → backend, MUST be the first message, within 10 s of connecting.
 
 ```json
 {"type":"hello",
- "protocol":{"major":1,"minor":0},
+ "protocol":{"major":1,"minor":1},
  "client":{"name":"mcvoice","version":"0.1.0","minecraft":"1.20.1","loader":"fabric"},
  "capabilities":["opus","whisper","peers_delta","presence","key_rotation"]}
 ```
@@ -141,7 +142,7 @@ Backend → client:
 
 ```json
 {"type":"hello_ok",
- "protocol":{"major":1,"minor":0},
+ "protocol":{"major":1,"minor":1},
  "server":{"name":"mcvoice-backend","version":"0.1.0","implementation":"rust"},
  "capabilities":["opus","whisper","peers_delta","presence","key_rotation"],
  "auth":{"methods":["mojang"],"challenge":"3f7c0e8d4a1b2c3d4e5f60718293a4b5"}}
@@ -206,9 +207,12 @@ tracker reset MUST produce a new scope with a larger `epoch`.
 
 * `network_id`: `"n1:"` + first 32 hex chars of
   `SHA-256(lowercase(host) + ":" + port)` of the address the user connected to
-  (before SRV resolution). It groups players connected through the same
-  public address. It **does not** identify proxy sub-servers and is **not**
-  trusted as a proximity signal on its own.
+  (before SRV resolution). It is **informational only**: backends MUST NOT
+  use it to decide who can hear whom (§8). The same server is reachable under
+  many addresses (aliases, IPs, SRV records, tunnels, several proxies of one
+  network, LAN), and a hash of the address is trivially forged, so it can
+  neither group players reliably nor protect anyone. Backends still validate
+  its syntax.
 * `in_world:false` (e.g. main menu, loading screen, disconnect) removes the
   session from all routing; `network_id`/`world_id` MAY then be omitted.
 * On a new scope the backend MUST atomically: clear the session's position,
@@ -224,8 +228,10 @@ is JSON `{"v":1,"network":"<name>","subserver":"<name>","player":"<uuid>","iat":
 `mac = HMAC-SHA256(key[network], payload_bytes)`. Keys are configured on the
 backend (`SCOPE_ATTESTATION_KEYS=name:base64key,...`). If valid (known
 network, correct MAC, `player` equals the session UUID, |now − iat| ≤ 300 s),
-the backend replaces the scope key with `attested:<network>/<subserver>`.
-Invalid attestations are ignored (logged at debug) — never fatal.
+the session carries the attested scope `<network>/<subserver>`. Routing
+then additionally requires that **both** sides, if both are attested, carry
+the same attested scope (§8, check 5). Invalid attestations are ignored
+(logged at debug) — never fatal.
 
 ### 6.4 Position
 
@@ -281,8 +287,9 @@ A muted session's voice is not routed. A deafened session receives nothing.
 ```
 
 Lists, **restricted to UUIDs the recipient itself reported as visible**, which
-of those players currently hold a healthy MCVoice cloud session in the same
-scope. Used by the client-side transport deduplication (§10). Presence never
+of those players currently hold a healthy MCVoice cloud session that is
+compatible with the recipient's (§8 check 5) and reports the recipient as
+visible in turn (mutual visibility, §8 checks 7-8). Used by the client-side transport deduplication (§10). Presence never
 reveals players the client does not already see in its own world.
 
 ### 6.8 Heartbeat
@@ -306,6 +313,60 @@ retry `HELLO` with back-off and report "UDP blocked" if it never arrives.
 ### 6.11 Bye
 
 `{"type":"bye"}` from either side, then close.
+
+### 6.12 Voice groups (capability `groups`, protocol 1.1)
+
+A voice group is a set of at most **15** sessions that hear each other
+non-positionally, independent of worlds and servers: members may be on
+different Minecraft servers. Groups live only in backend memory.
+
+* **Identifier.** The backend creates the group id: 5 characters from
+  `ABCDEFGHJKLMNPQRSTUVWXYZ23456789`, random, unique among active groups.
+* **Membership requires being in a world.** `group_create`/`group_join` are
+  refused with `not_in_world` unless the session's current scope has
+  `in_world:true`. Membership ends when the control session ends (disconnect,
+  timeout, replacement), on `group_leave`, or when the session has been out of
+  a world (`in_world:false`) for more than **10 s** (grace for respawn,
+  dimension change and proxy server switches). Creating or joining a group
+  first leaves the current one. An empty group is deleted.
+* **Password.** Optional, 1-32 printable characters. The backend keeps only a
+  salted SHA-256 hash, compares in constant time, never logs it and never
+  sends it to anyone. At most 5 wrong passwords per session per minute; more
+  are answered with `rate_limited`.
+* **Privacy.** The group list reveals id, member count, capacity and whether a
+  password is required. Member names and UUIDs are sent to members only.
+
+Client → backend:
+
+```json
+{"type":"group_list","query":"optional"}
+{"type":"group_create","password":"optional"}
+{"type":"group_join","id":"K7M2Q","password":"optional"}
+{"type":"group_leave"}
+```
+
+Backend → client:
+
+```json
+{"type":"group_list","groups":[{"id":"K7M2Q","members":3,"max":15,"password":true}]}
+{"type":"group_joined","group":{"id":"K7M2Q","max":15,"password":true,
+ "members":[{"uuid":"…","name":"Alex"}]}}
+{"type":"group_update","id":"K7M2Q","members":[{"uuid":"…","name":"Alex"}]}
+{"type":"group_left","id":"K7M2Q","reason":"left"}
+```
+
+* `group_list` lists at most 100 groups, most members first, then by id. With
+  `query` (1-5 characters `[A-Za-z0-9]`) only groups whose id contains it,
+  case-insensitively, are listed (search).
+* `group_joined` answers a successful create/join; `group_update` goes to
+  every member whenever the member list changes; `group_left` tells a member it
+  is no longer in the group (`reason`: `left`, `not_in_world`, `replaced` —
+  it left for another group).
+* Errors (non-fatal `error` frames): `group_not_found`, `group_full`,
+  `group_password` (missing or wrong password), `not_in_world`,
+  `rate_limited`. A group message from a client that did not advertise
+  `groups` is answered with `unknown_message`.
+* Ids in `group_join` are matched case-insensitively.
 
 ## 7. Voice datagrams (UDP)
 
@@ -349,8 +410,8 @@ Datagrams of any other type are dropped (counted as invalid).
 | 4 | 2 | sequence (u16, wraps) |
 | 6 | 4 | timestamp (u32, 48 kHz sample clock, wraps) |
 | 10 | 1 | codec (`1` = Opus) |
-| 11 | 1 | mode (`0` normal, `1` whisper) |
-| 12 | 1 | flags (bit 0 = end of transmission; others MUST be 0) |
+| 11 | 1 | mode (`0` normal, `1` whisper, `2` group only — §8.1) |
+| 12 | 1 | flags (bit 0 = end of transmission; bit 1 = also deliver to the sender's group, only with mode `0`/`1`; others MUST be 0) |
 | 13 | 2 | payload_length (u16, ≤ 1000) |
 | 15 | n | Opus payload (exactly payload_length bytes) |
 
@@ -369,7 +430,9 @@ Datagrams of any other type are dropped (counted as invalid).
 | 33 | 2 | payload_length |
 | 35 | n | Opus payload |
 
-The backend copies sequence/timestamp/codec/mode/flags/payload unchanged.
+The backend copies sequence/timestamp/codec/mode/flags/payload unchanged,
+except for group deliveries (§8.1): those are relayed with mode `2` and flag
+bit 1 cleared.
 A frame with `payload_length = 0` and the end-of-transmission flag set is a
 valid "stop talking" marker.
 
@@ -435,10 +498,23 @@ the following, in order; the first failing check drops the packet:
 
 Then for every other session **R** (R ≠ S):
 
-5. `R.scope_key == S.scope_key` (network id / attested sub-server **and** world id).
+5. Compatible scopes: `R.world_id == S.world_id`, and if **both** R and S
+   carry an attested scope (§6.3.1), those are equal. `network_id` is not
+   compared (§6.3).
 6. R is in a world, UDP-verified, not deafened, has a position newer than 3 000 ms.
 7. **S's UUID is in R's visible-peer set** for R's current epoch.
-8. If `ROUTING_REQUIRE_MUTUAL_VISIBILITY=true` (default): R's UUID is in S's visible set.
+8. **R's UUID is in S's visible-peer set** for S's current epoch. Mutual
+   visibility is mandatory; it is not configurable.
+
+Mutual visibility is what ties routing to the actual game: a player UUID is
+authenticated by Mojang (§6.2), a player is on one server at a time, and an
+honest client reports only entities its own world tracks. Two players are
+routed only when *both* games show the other player's entity — independent
+of the addresses they used to connect. A client lying about its visible set
+gains nothing unless its victim's own client reports it back.
+
+Implementations SHOULD find candidates through S's visible set (at most 512
+UUIDs) and a UUID index, not by scanning all sessions.
 9. Euclidean distance(S.pos, R.pos) ≤ range + `ROUTING_DISTANCE_SLACK` (default 4 blocks,
    absorbs position-update latency).
 
@@ -447,6 +523,21 @@ If all hold, the backend sends `VOICE_RELAY` to R with `recipient_epoch = R.epoc
 This check is **defence in depth**, not a security boundary: a modified client can
 lie about its position or visible set. The receiving client's own check (§9) is the
 final authority for playback.
+
+### 8.1 Group delivery
+
+A `VOICE` datagram requests group delivery if its mode is `2`, or its flag
+bit 1 is set. Then, if S passes check 1 (authenticated, UDP-verified, not
+muted, not banned) and is a member of group G, the backend relays it with
+mode `2` to every other member R of G that is UDP-verified and not deafened.
+Worlds, epochs, positions and visibility are **not** checked: the members
+chose to hear each other.
+
+A mode-`2` datagram gets no proximity delivery, and is dropped if S is in no
+group. A mode `0`/`1` datagram additionally gets proximity delivery (checks
+2-9), **except** to members of G when group delivery applied, so nobody hears
+a group member twice. A frame from a group member without flag bit 1 (e.g.
+push-to-talk pressed while the group channel is silent) is routed by §8 only.
 
 ## 9. Client playback rule (normative)
 
@@ -468,6 +559,16 @@ at playback-decision time:
 Positions or distance claims from the backend or the remote player are never used
 for this decision. When a check starts failing mid-stream the client fades the
 stream out over ≤ 20 ms instead of cutting it hard.
+
+### 9.1 Group frames
+
+A relayed frame with mode `2` is not positional. The client plays it only if
+the sender is a member of the client's **current** group according to the
+latest `group_joined`/`group_update`, and the sender is not the client
+itself, not locally muted and the client is not deafened. It is mixed
+centred at the per-player volume, without distance attenuation. The local
+entity rule above applies to every positional frame (mode `0`/`1`) and is
+unchanged.
 
 ## 10. Transport identity and deduplication
 
@@ -506,7 +607,7 @@ The complete state machine, including hysteresis and switch-over fades, is in
 * Voice payloads are never stored or logged by the backend.
 * Positions are only kept in memory for routing and never written to normal logs.
   Position logging requires `LOG_POSITIONS=true` *and* `LOG_LEVEL=debug`.
-* The backend keeps in memory: UUID, username, scope key, epoch, last position,
+* The backend keeps in memory: UUID, username, world id and attested scope, epoch, last position,
   visible-peer set, UDP source address, counters, and statistics — for the
   lifetime of the session only.
 * Persistent data (only if configured): ban list (`BANS_FILE`).

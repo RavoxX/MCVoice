@@ -10,7 +10,8 @@ public enum PlaybackDecision {
     MUTED("reject:muted"),
     NOT_TRACKED("reject:not_tracked"),
     OTHER_WORLD("reject:other_world"),
-    OUT_OF_RANGE("reject:out_of_range");
+    OUT_OF_RANGE("reject:out_of_range"),
+    NOT_IN_GROUP("reject:not_in_group");
 
     public final String code;
 
