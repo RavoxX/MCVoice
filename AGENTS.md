@@ -220,6 +220,10 @@ git show FETCH_HEAD:<path>`).
 * Backend-only state (`backend/*/…/groups`), up to 15 members, 5-char ids
   from `ABCDEFGHJKLMNPQRSTUVWXYZ23456789`, optional password (salted SHA-256,
   constant-time compare, 5 wrong tries/min), search via `group_list.query`.
+  `group_paging` adds id-ordered pages (limit 1–20, cursor, request_id); legacy
+  lists retain popularity order and the 100-entry cap. Per-connection group
+  budgets: list 2/s burst 4, create 0.1/s burst 3, join 1/s burst 6; leave has
+  no extra limiter. Limits run in the control task before hub locking.
   Membership needs `in_world` and ends on disconnect or after 10 s out of a
   world. Group messages are queued in the hub `outbox` under the lock and
   sent after it (never send under the hub lock).
