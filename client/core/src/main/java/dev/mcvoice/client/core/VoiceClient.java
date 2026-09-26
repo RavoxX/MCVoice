@@ -8,7 +8,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -20,6 +22,7 @@ import dev.mcvoice.client.audio.JavaSoundBackend;
 import dev.mcvoice.client.audio.SpatialMixer;
 import dev.mcvoice.client.audio.ToneSource;
 import dev.mcvoice.client.config.ClientConfig;
+import dev.mcvoice.client.json.Json;
 import dev.mcvoice.client.log.Category;
 import dev.mcvoice.client.log.LogSink;
 import dev.mcvoice.client.log.VoiceLog;
@@ -41,6 +44,8 @@ import dev.mcvoice.client.svc.SvcCompat;
 import dev.mcvoice.client.transport.TransportKind;
 import dev.mcvoice.client.transport.TransportSelector;
 import dev.mcvoice.client.ui.DebugScreen;
+import dev.mcvoice.client.ui.GroupScreen;
+import dev.mcvoice.client.ui.PlayerScreen;
 import dev.mcvoice.client.ui.HudRenderer;
 import dev.mcvoice.client.ui.SettingsScreen;
 import dev.mcvoice.client.ui.TransportStatus;
@@ -89,6 +94,21 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     private int seq;
     private long timestamp;
     private volatile long sentFrames;
+    private int lastTxMode = VoiceProtocol.MODE_NORMAL;
+    private int lastTxGroupFlag;
+
+    // voice groups (spec 6.12): membership ends with the backend session
+    private volatile Group group;
+    private volatile Set<UUID> groupMembers = Collections.emptySet();
+    private volatile List<GroupInfo> groupList = Collections.emptyList();
+    private volatile String groupNotice = "";
+
+    // HUD
+    private final Map<UUID, Long> mutedTalking = new ConcurrentHashMap<UUID, Long>();
+    private volatile List<HudRenderer.Row> hudRows = Collections.emptyList();
+    private boolean hudMouseWasDown;
+    private String lastTransportLabel = "";
+    private long transportLabelUntilMs;
 
     public VoiceClient(MinecraftAdapter mc, String modVersion) {
         this.mc = mc;
@@ -169,6 +189,9 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             if (in.consumePress(InputAdapter.Action.OPEN_DEBUG) && mc.gui() != null) {
                 mc.gui().open(new DebugScreen(this));
             }
+            if (in.consumePress(InputAdapter.Action.OPEN_GROUPS) && mc.gui() != null) {
+                mc.gui().open(new GroupScreen(this));
+            }
         }
 
         manageControl(snap, multiplayer, now);
@@ -226,6 +249,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     private void stopControl(String why) {
         ControlClient ctl = control;
         control = null;
+        setGroup(null, "");
         if (ctl != null) {
             VoiceLog.info(Category.CONTROL, "closing backend connection (" + why + ")");
             ctl.stop();
@@ -304,7 +328,8 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     public void renderHud(UiCanvas canvas) {
         try {
             if (config.showHud && tracker.snapshot().inWorld && (mc.gui() == null || !mc.gui().isOurScreenOpen())) {
-                HudRenderer.render(canvas, this, config.showDebugOverlay);
+                hudRows = HudRenderer.render(canvas, this, config.showDebugOverlay);
+                handleHudClick();
             }
         } catch (Throwable t) {
             VoiceLog.every(60000, "hud", LogSink.Level.WARN, Category.VOICE, "HUD render failed: " + t);
@@ -324,7 +349,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     private final SpatialMixer.Validator mixValidator = new SpatialMixer.Validator() {
         public PlaybackDecision check(WorldSnapshot s, UUID speaker, int mode) {
             return PlaybackValidator.check(s, speaker, PlaybackValidator.NO_EPOCH, mode, normalRange(), whisperRange(),
-                config.mutedPlayers, config.deafened);
+                config.mutedPlayers, config.deafened, groupMembers);
         }
     };
 
@@ -362,28 +387,46 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     private final class CaptureSink implements AudioEngine.FrameSink {
         private final byte[] empty = new byte[0];
 
-        public boolean shouldTransmit(boolean voiceDetected) {
-            if (config.muted || config.deafened || !tracker.snapshot().inWorld) {
-                return false;
+        public int transmitMask(boolean voiceDetected) {
+            if (config.muted || config.deafened) {
+                return 0;
             }
-            return config.activationMode == ClientConfig.ActivationMode.PUSH_TO_TALK ? pttDown : voiceDetected;
+            int mask = 0;
+            // nearby players: push-to-talk or voice activation, as configured
+            if (tracker.snapshot().inWorld
+                && (config.activationMode == ClientConfig.ActivationMode.PUSH_TO_TALK ? pttDown : voiceDetected)) {
+                mask |= TX_PROXIMITY;
+            }
+            // my group: open microphone while unmuted (push-to-talk does not apply), gated by voice activity
+            if (group != null && voiceDetected) {
+                mask |= TX_GROUP;
+            }
+            return mask;
         }
 
         public boolean whisper() {
             return whisperDown;
         }
 
-        public void onEncoded(byte[] opus, int len, boolean whisper) {
+        public void onEncoded(byte[] opus, int len, int txMask, boolean whisper) {
             long epoch = tracker.snapshot().epoch;
             seq = (seq + 1) & 0xFFFF;
             timestamp = (timestamp + 960) & 0xFFFFFFFFL;
-            int mode = whisper ? VoiceProtocol.MODE_WHISPER : VoiceProtocol.MODE_NORMAL;
+            boolean proximity = (txMask & TX_PROXIMITY) != 0;
+            boolean toGroup = (txMask & TX_GROUP) != 0;
+            // one frame for both: the backend relays it to the group (mode 2) and to nearby non-members
+            int mode = !proximity ? VoiceProtocol.MODE_GROUP : whisper ? VoiceProtocol.MODE_WHISPER : VoiceProtocol.MODE_NORMAL;
+            int flags = proximity && toGroup ? VoiceProtocol.FLAG_GROUP : 0;
+            lastTxMode = mode;
+            lastTxGroupFlag = flags;
             CloudVoiceChannel c = cloud;
             if (c != null && session != null && !scopeDirty) {
-                c.sendVoice(epoch & 0xFFFFFFFFL, seq, timestamp, mode, 0, opus, 0, len);
+                c.sendVoice(epoch & 0xFFFFFFFFL, seq, timestamp, mode, flags, opus, 0, len);
                 sentFrames++;
             }
-            svc.sendMic(opus, 0, len, whisper);
+            if (proximity) {
+                svc.sendMic(opus, 0, len, whisper);
+            }
             if (VoiceLog.enabled(LogSink.Level.TRACE)) {
                 VoiceLog.trace(Category.AUDIO, "encoded frame seq=" + seq + " bytes=" + len);
             }
@@ -393,7 +436,8 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             CloudVoiceChannel c = cloud;
             if (c != null && session != null) {
                 seq = (seq + 1) & 0xFFFF;
-                c.sendVoice(tracker.snapshot().epoch & 0xFFFFFFFFL, seq, timestamp, 0, VoiceProtocol.FLAG_EOS, empty, 0, 0);
+                c.sendVoice(tracker.snapshot().epoch & 0xFFFFFFFFL, seq, timestamp, lastTxMode,
+                    VoiceProtocol.FLAG_EOS | lastTxGroupFlag, empty, 0, 0);
             }
         }
     }
@@ -405,9 +449,12 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
                         byte[] payload, int off, int len) {
         WorldSnapshot snap = tracker.snapshot();
         PlaybackDecision d = PlaybackValidator.check(snap, sender, recipientEpoch, mode, normalRange(), whisperRange(),
-            config.mutedPlayers, config.deafened);
+            config.mutedPlayers, config.deafened, groupMembers);
         if (!d.accepted()) {
             rejected.get(d).incrementAndGet();
+            if (d == PlaybackDecision.MUTED) {
+                mutedTalking.put(sender, System.currentTimeMillis());
+            }
             if (VoiceLog.enabled(LogSink.Level.TRACE)) {
                 VoiceLog.trace(Category.PROXIMITY, "dropped cloud frame from " + sender + ": " + d.code);
             }
@@ -431,6 +478,9 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             whisperRange(), config.mutedPlayers, config.deafened);
         if (!d.accepted()) {
             rejected.get(d).incrementAndGet();
+            if (d == PlaybackDecision.MUTED) {
+                mutedTalking.put(sender, System.currentTimeMillis());
+            }
             return;
         }
         long now = System.currentTimeMillis();
@@ -567,6 +617,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     @Override
     public void onSessionLost(String reason) {
         session = null;
+        setGroup(null, "");
         udpOk = false;
         closeCloud();
         selector.clearCloudPeers();
@@ -594,6 +645,11 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             stopControl("configuration changed");
         }
         stateDirty = true;
+        closeScreen();
+    }
+
+    @Override
+    public void closeScreen() {
         if (mc.gui() != null && mc.gui().isOurScreenOpen()) {
             mc.gui().close();
         }
@@ -713,17 +769,236 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         }
     }
 
+    private String nameOf(UUID u, WorldSnapshot s) {
+        TrackedPlayer p = s.player(u);
+        if (p != null) {
+            return p.name;
+        }
+        Group g = group;
+        if (g != null) {
+            for (Member m : g.members) {
+                if (m.uuid.equals(u)) {
+                    return m.name;
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
-    public List<String> talkingNames() {
+    public List<Talker> talkers() {
         WorldSnapshot s = tracker.snapshot();
-        List<String> out = new ArrayList<String>();
+        Set<UUID> members = groupMembers;
+        List<Talker> out = new ArrayList<Talker>();
+        List<UUID> seen = new ArrayList<UUID>();
         for (UUID u : mixer.talking()) {
-            TrackedPlayer p = s.player(u);
-            if (p != null) {
-                out.add(p.name);
+            String name = nameOf(u, s);
+            if (name != null && !config.mutedPlayers.contains(u)) {
+                out.add(new Talker(u, name, false, members.contains(u)));
+                seen.add(u);
+            }
+        }
+        long now = System.currentTimeMillis();
+        for (Map.Entry<UUID, Long> e : mutedTalking.entrySet()) {
+            if (now - e.getValue() > 400) {
+                mutedTalking.remove(e.getKey());
+                continue;
+            }
+            String name = nameOf(e.getKey(), s);
+            if (name != null && !seen.contains(e.getKey()) && config.mutedPlayers.contains(e.getKey())) {
+                out.add(new Talker(e.getKey(), name, true, members.contains(e.getKey())));
             }
         }
         return out;
+    }
+
+    /** The label shows for 5 s after it changes (joining a server, connecting, reconnecting). Render thread. */
+    @Override
+    public boolean transportLabelVisible() {
+        String label = transportStatus().label;
+        long now = System.currentTimeMillis();
+        if (!label.equals(lastTransportLabel)) {
+            lastTransportLabel = label;
+            transportLabelUntilMs = now + 5000;
+        }
+        return now < transportLabelUntilMs;
+    }
+
+    /** While the chat is open, a click on a talker in the HUD opens the player menu. Render thread. */
+    private void handleHudClick() {
+        int[] p = mc.gui() == null ? null : mc.gui().chatPointer();
+        boolean down = p != null && p[2] != 0;
+        if (down && !hudMouseWasDown) {
+            for (HudRenderer.Row r : hudRows) {
+                if (r.contains(p[0], p[1])) {
+                    openPlayerMenu(r.uuid, r.name);
+                    break;
+                }
+            }
+        }
+        hudMouseWasDown = down;
+    }
+
+    @Override
+    public void openPlayerMenu(UUID player, String name) {
+        if (mc.gui() != null) {
+            mc.gui().open(new PlayerScreen(this, player, name));
+        }
+    }
+
+    @Override
+    public double playerVolume(UUID player) {
+        return config.volumeOf(player);
+    }
+
+    @Override
+    public boolean playerMuted(UUID player) {
+        return config.mutedPlayers.contains(player);
+    }
+
+    // ================================================================= voice groups
+
+    @Override
+    public boolean groupsAvailable() {
+        ControlClient ctl = control;
+        return ctl != null && ctl.serverSupports("groups");
+    }
+
+    @Override
+    public Group group() {
+        return group;
+    }
+
+    @Override
+    public List<GroupInfo> groupList() {
+        return groupList;
+    }
+
+    @Override
+    public void requestGroups(String query) {
+        ControlClient ctl = control;
+        if (ctl != null) {
+            ctl.sendGroupList(query);
+        }
+    }
+
+    @Override
+    public void createGroup(String password) {
+        ControlClient ctl = control;
+        groupNotice = "";
+        if (ctl == null || !ctl.sendGroupCreate(password)) {
+            groupNotice = "Not connected to the voice server";
+        }
+    }
+
+    @Override
+    public void joinGroup(String id, String password) {
+        ControlClient ctl = control;
+        groupNotice = "";
+        if (ctl == null || !ctl.sendGroupJoin(id, password)) {
+            groupNotice = "Not connected to the voice server";
+        }
+    }
+
+    @Override
+    public void leaveGroup() {
+        ControlClient ctl = control;
+        if (ctl != null) {
+            ctl.sendGroupLeave();
+        }
+    }
+
+    @Override
+    public String groupNotice() {
+        return groupNotice;
+    }
+
+    private void setGroup(Group g, String notice) {
+        group = g;
+        Set<UUID> m = new java.util.HashSet<UUID>();
+        if (g != null) {
+            for (Member x : g.members) {
+                m.add(x.uuid);
+            }
+        }
+        groupMembers = Collections.unmodifiableSet(m);
+        if (notice != null) {
+            groupNotice = notice;
+        }
+    }
+
+    private static List<Member> members(List<Object> l) {
+        List<Member> out = new ArrayList<Member>();
+        if (l != null) {
+            for (Object o : l) {
+                if (o instanceof Map) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> m = (Map<String, Object>) o;
+                    try {
+                        out.add(new Member(UUID.fromString(Json.str(m, "uuid")), String.valueOf(Json.str(m, "name"))));
+                    } catch (RuntimeException ignored) {
+                        // skip malformed entries
+                    }
+                }
+            }
+        }
+        return out;
+    }
+
+    @Override
+    public void onGroupMessage(String type, Map<String, Object> m) {
+        if ("group_list".equals(type)) {
+            List<GroupInfo> l = new ArrayList<GroupInfo>();
+            List<Object> gs = Json.list(m, "groups");
+            if (gs != null) {
+                for (Object o : gs) {
+                    if (o instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> g = (Map<String, Object>) o;
+                        l.add(new GroupInfo(String.valueOf(Json.str(g, "id")), (int) Json.lng(g, "members", 0),
+                            (int) Json.lng(g, "max", 15), Json.bool(g, "password", false)));
+                    }
+                }
+            }
+            groupList = Collections.unmodifiableList(l);
+        } else if ("group_joined".equals(type)) {
+            Map<String, Object> g = Json.objAt(m, "group");
+            if (g != null) {
+                setGroup(new Group(String.valueOf(Json.str(g, "id")), Json.bool(g, "password", false), (int) Json.lng(g, "max", 15),
+                    members(Json.list(g, "members"))), "");
+                VoiceLog.info(Category.VOICE, "joined voice group " + Json.str(g, "id"));
+            }
+        } else if ("group_update".equals(type)) {
+            Group cur = group;
+            if (cur != null && cur.id.equals(Json.str(m, "id"))) {
+                setGroup(new Group(cur.id, cur.password, cur.max, members(Json.list(m, "members"))), null);
+            }
+        } else if ("group_left".equals(type)) {
+            String reason = Json.str(m, "reason");
+            Group cur = group;
+            if (cur != null && cur.id.equals(Json.str(m, "id"))) {
+                setGroup(null, "not_in_world".equals(reason) ? "You left the group (not on a server)" : "");
+            }
+        }
+    }
+
+    @Override
+    public void onNotice(String code, String message) {
+        String text;
+        if ("group_not_found".equals(code)) {
+            text = "No group with that code";
+        } else if ("group_full".equals(code)) {
+            text = "That group is full";
+        } else if ("group_password".equals(code)) {
+            text = "Wrong password";
+        } else if ("not_in_world".equals(code)) {
+            text = "Join a server first";
+        } else if ("rate_limited".equals(code)) {
+            text = "Too many attempts, try again in a minute";
+        } else {
+            return;
+        }
+        groupNotice = text;
     }
 
     @Override
@@ -749,6 +1024,9 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         l.add("World: " + (s.inWorld ? s.world + " (epoch " + s.epoch + ")" : "not in a world"));
         l.add("Tracked players: " + s.players.size() + ", cloud peers visible: " + countCloudPeers(s));
         l.add("Transport: " + transportStatus().label);
+        Group g = group;
+        l.add("Voice group: " + (g == null ? (groupsAvailable() ? "none" : "not supported by this backend")
+            : g.id + " (" + g.members.size() + "/" + g.max + (g.password ? ", password" : "") + ")"));
         l.add("SVC: " + svc.status() + (svc.detected() ? " (detected, compatibility " + svc.compatibilityVersion() + ", " + svc.cipherMode() + ")" : "")
             + (svc.detail().isEmpty() ? "" : " - " + svc.detail()));
         l.add(String.format(Locale.ROOT, "Loss %.1f%%, jitter %.1f ms, bitrate %d kbps, streams %d", mixer.averageLoss() * 100,

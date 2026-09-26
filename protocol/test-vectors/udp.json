@@ -183,6 +183,66 @@
    "datagram": "4d56011000011a2b3c4d5e6f708100000000000000013838dcc446e18f72451a00e13cfb808f85ccfcdc208204e74aec3b64d2e63f7914f2cf8599d6ea21c8e428b296db576a1823bf8aba73f4a310cefebfa9ddffe5dd62c6ef8a519ff08aaf5d6768d0791d72d9ce44bc7b1c152068b5"
   },
   {
+   "name": "voice_group_only",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "c2s",
+   "type": 16,
+   "key_id": 0,
+   "connection_id": "1a2b3c4d5e6f7081",
+   "counter": 7,
+   "fields": {
+    "epoch": 7,
+    "sequence": 42,
+    "timestamp": 123456789,
+    "codec": 1,
+    "mode": 2,
+    "flags": 0,
+    "payload": "fcfffe"
+   },
+   "plaintext": "00000007002a075bcd150102000003fcfffe",
+   "datagram": "4d56011000001a2b3c4d5e6f70810000000000000007a716e673c41cbd7b22ff868ce77a6a923abf58da2514b7113eaac0abee4c0cbac0ca"
+  },
+  {
+   "name": "voice_normal_also_group",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "c2s",
+   "type": 16,
+   "key_id": 0,
+   "connection_id": "1a2b3c4d5e6f7081",
+   "counter": 8,
+   "fields": {
+    "epoch": 7,
+    "sequence": 43,
+    "timestamp": 123456789,
+    "codec": 1,
+    "mode": 0,
+    "flags": 2,
+    "payload": "fcfffe"
+   },
+   "plaintext": "00000007002b075bcd150100020003fcfffe",
+   "datagram": "4d56011000001a2b3c4d5e6f708100000000000000087b9f589fe53a7650ac1d5c6c9ff08333e5dc204bc2f49a9aa3e9bb3b643db24932c1"
+  },
+  {
+   "name": "voice_group_end_of_stream",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "c2s",
+   "type": 16,
+   "key_id": 0,
+   "connection_id": "1a2b3c4d5e6f7081",
+   "counter": 9,
+   "fields": {
+    "epoch": 7,
+    "sequence": 44,
+    "timestamp": 123456789,
+    "codec": 1,
+    "mode": 2,
+    "flags": 1,
+    "payload": ""
+   },
+   "plaintext": "00000007002c075bcd150102010000",
+   "datagram": "4d56011000001a2b3c4d5e6f70810000000000000009a127bbdd73371976b911c09d07edbc087da8acc8be10486bd5f6b765542a57"
+  },
+  {
    "name": "voice_relay",
    "key": "000102030405060708090a0b0c0d0e0f",
    "direction": "s2c",
@@ -225,6 +285,28 @@
    },
    "plaintext": "61699b2ed3274a019f1e0ea8c3f06bc60000000b000000020005000000000101010000",
    "datagram": "4d56011100001a2b3c4d5e6f7081000000000000000a4e71090deebc0147c099657c1d54675380b226dd0532274bf3e8b1bf1ee66105a60833b549f681edb933e754fbaad753efd5b5"
+  },
+  {
+   "name": "voice_relay_group",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "s2c",
+   "type": 17,
+   "key_id": 0,
+   "connection_id": "1a2b3c4d5e6f7081",
+   "counter": 11,
+   "fields": {
+    "sender_uuid": "e2b8c3d1-0f4a-4c6e-9b7d-2a1f3e5c7b90",
+    "recipient_epoch": 4,
+    "sender_epoch": 9,
+    "sequence": 12,
+    "timestamp": 123456789,
+    "codec": 1,
+    "mode": 2,
+    "flags": 0,
+    "payload": "fcfffe"
+   },
+   "plaintext": "e2b8c3d10f4a4c6e9b7d2a1f3e5c7b900000000400000009000c075bcd150102000003fcfffe",
+   "datagram": "4d56011100001a2b3c4d5e6f7081000000000000000b613b44f45b7cab814d0721aa9f5b2776ca81c2a6116100f918047b7ae0cb9a084a6bab2bb078594b3e038da1fb4fca8da6d90d1c1e49"
   }
  ],
  "invalid": [
@@ -359,6 +441,20 @@
    "key": "000102030405060708090a0b0c0d0e0f",
    "direction": "c2s",
    "datagram": "4d56011000001a2b3c4d5e6f70810000000000000003678eb7fd791926919114818774b5b6fc056f850b59c1f22c4b3948d9c85315e0",
+   "error": "bad_payload"
+  },
+  {
+   "name": "bad_voice_flag_bit2",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "c2s",
+   "datagram": "4d56011000001a2b3c4d5e6f70810000000000000003678eb7fd7919269191148187f0b5b6fceea11ce1f3e86ce1117283b160925252",
+   "error": "bad_payload"
+  },
+  {
+   "name": "group_mode_with_group_flag",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "c2s",
+   "datagram": "4d56011000001a2b3c4d5e6f70810000000000000003678eb7fd7919269191148185f6b5b6fcf7f0b8c2bede4c5cc9246839645472bc",
    "error": "bad_payload"
   },
   {
