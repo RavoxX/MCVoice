@@ -288,7 +288,8 @@ git show FETCH_HEAD:<path>`).
 * **Releases:** v0.1.2 (run 36250351566: 102/102 jars, 62/62 GitHub
   Releases, 102/102 Maven packages, images `0.1.2`/`latest`) adds voice
   groups, the macOS microphone fix and vanilla-style screens. The public
-  backend runs image `0.1.2` (protocol 1.1, advertises `groups`).
+  backend uses protocol 1.1 and advertises `groups`; see the backend-only
+  deployment below for its current image.
 * **Earlier release v0.1.0:** every passing version has an `mc/` branch
   and a `v0.1.0-mc<version>` GitHub Release (62 releases). Full run
   36112725820 (`release-report.md` on `v0.1.0`), then 36115472419 for
@@ -305,6 +306,12 @@ git show FETCH_HEAD:<path>`).
   sites): only ever add, validate (`nginx -t`, `nft --check`), never restart
   others. Since 0.1.1 the jars default to this backend
   (`mcvoiceBackendUrl` in `client/gradle.properties`).
+  Backend-only routing optimization `948bd584df18` deployed 2026-09-26 as
+  `sha-948bd584df18` after CI `36254844464` and image build `36254844465`
+  passed. Health/readiness and protocol 1.1 `groups` verified; other containers
+  unchanged. Rollback image: `0.1.2`. Measurements and limitations are in
+  `docs/rust-routing-performance.md` (allocation/presence-lock improvements;
+  no general end-to-end latency improvement established).
 * **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
   1.20.1 and 1.21.4 (compatibility 20, AES-GCM with 12-byte IV). Older
   compatibility versions (19–16) are not verified.
