@@ -34,11 +34,13 @@ pub const SERVER_CAPABILITIES: &[&str] = &[
     "key_rotation",
     "scope_attestation",
     "groups",
+    "group_paging",
 ];
 
 /// Voice groups (spec 6.12).
 pub const GROUP_MAX_MEMBERS: usize = 15;
 pub const GROUP_LIST_MAX: usize = 100;
+pub const GROUP_PAGE_MAX: u32 = 20;
 pub const GROUP_ID_ALPHABET: &[u8] = b"ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 pub const GROUP_ID_LEN: usize = 5;
 
@@ -137,6 +139,9 @@ pub struct Ping {
 #[derive(Debug, Deserialize)]
 pub struct GroupList {
     pub query: Option<String>,
+    pub limit: Option<u32>,
+    pub cursor: Option<String>,
+    pub request_id: Option<u32>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -368,6 +373,12 @@ fn validate(m: &ClientMsg) -> Result<(), ControlError> {
             }
         }
         ClientMsg::GroupList(g) => {
+            if g.limit.is_some_and(|n| n == 0 || n > GROUP_PAGE_MAX)
+                || g.limit.is_some() != g.request_id.is_some()
+                || g.cursor.as_deref().is_some_and(|c| g.limit.is_none() || !is_group_id(c))
+            {
+                return Err(bad("invalid group page"));
+            }
             if g.query
                 .as_deref()
                 .is_some_and(|q| q.is_empty() || q.len() > GROUP_ID_LEN || !q.bytes().all(|c| c.is_ascii_alphanumeric()))
