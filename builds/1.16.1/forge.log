@@ -28,11 +28,11 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790435173493.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790456352533.json
 
-BUILD SUCCESSFUL in 52s
+BUILD SUCCESSFUL in 1m 7s
 8 actionable tasks: 8 executed
-valid: mcvoice-0.1.2-mc1.16.1-forge.jar (352 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.2-mc1.16.1-forge.jar (353 classes, 16 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
@@ -45,6 +45,7 @@ valid: mcvoice-0.1.2-mc1.16.1-forge.jar (352 classes, 15 platform classes, metad
   platform: dev/mcvoice/platform/mc/McIds
   platform: dev/mcvoice/platform/mc/McLogging
   platform: dev/mcvoice/platform/mc/McLogging$1
+  platform: dev/mcvoice/platform/mc/McNameTags
   platform: dev/mcvoice/platform/mc/McScreen
   platform: dev/mcvoice/platform/mc/PlatformInfo
   platform: dev/mcvoice/platform/mc/ScreenHost
