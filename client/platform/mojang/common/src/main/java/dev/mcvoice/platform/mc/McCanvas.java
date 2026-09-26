@@ -3,6 +3,7 @@ package dev.mcvoice.platform.mc;
 import java.util.UUID;
 
 import dev.mcvoice.client.platform.ui.UiCanvas;
+import dev.mcvoice.client.platform.ui.VoiceIcon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -131,6 +132,19 @@ public final class McCanvas implements UiCanvas {
     @Override
     public void playerName(UUID uuid, String fallback, int x, int y, int argb, boolean shadow) {
         Component name = playerName(uuid, fallback);
+        styledText(name, x, y, argb, shadow);
+    }
+
+    //#if MC >= 1.16
+    @Override
+    public boolean voiceIcon(VoiceIcon icon, int x, int y, int argb) {
+        // Bitmap fonts draw at y + 7 - ascent; this font's ascent is 13.
+        styledText(McVoiceIcons.hud(icon), x, y + 6, argb, false);
+        return true;
+    }
+    //#endif
+
+    private void styledText(Component name, int x, int y, int argb, boolean shadow) {
         //#if MC >= 26.1
         g.text(font, name, x, y, argb, shadow);
         //#elif MC >= 1.20

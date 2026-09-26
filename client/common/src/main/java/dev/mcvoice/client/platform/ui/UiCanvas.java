@@ -14,6 +14,11 @@ public interface UiCanvas {
 
     int textWidth(String text);
 
+    /** Draw a 16x16 voice glyph; false asks the HUD to use its legacy pixel fallback. */
+    default boolean voiceIcon(VoiceIcon icon, int x, int y, int argb) {
+        return false;
+    }
+
     /** Draw the server's current styled player name, falling back when the player is unknown. */
     default void playerName(UUID player, String fallback, int x, int y, int argb, boolean shadow) {
         text(fallback, x, y, argb, shadow);

@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.UUID;
 
 import dev.mcvoice.client.platform.ui.UiCanvas;
+import dev.mcvoice.client.platform.ui.VoiceIcon;
 
 /**
- * In-game overlay: an original microphone glyph drawn from rectangles (state
- * coloured), the transport mode for a few seconds, and who is talking (muted players greyed out). Cheap enough to run every
+ * In-game overlay: original voice icons (state coloured), the transport mode for a few
+ * seconds, and who is talking (muted players greyed out). Cheap enough to run every
  * frame on the render thread (reads volatile state only).
  */
 public final class HudRenderer {
@@ -18,8 +19,9 @@ public final class HudRenderer {
     /** Microphone glyph at (x, y), 9x13 px. */
     public static void micIcon(UiCanvas c, int x, int y, int color, boolean crossed) {
         c.fill(x + 3, y, x + 6, y + 1, color);
-        c.fill(x + 2, y + 1, x + 7, y + 7, color);
-        c.fill(x + 3, y + 7, x + 6, y + 8, color);
+        c.fill(x + 2, y + 1, x + 3, y + 6, color);
+        c.fill(x + 6, y + 1, x + 7, y + 6, color);
+        c.fill(x + 3, y + 6, x + 6, y + 7, color);
         c.fill(x, y + 5, x + 1, y + 8, color);
         c.fill(x + 8, y + 5, x + 9, y + 8, color);
         c.fill(x + 1, y + 8, x + 3, y + 9, color);
@@ -71,6 +73,17 @@ public final class HudRenderer {
     private static final int GROUP_TALKING = 0xFF55FFFF;
     private static final int MUTED_TALKING = 0xFF555555;
 
+    private static void voiceIcon(UiCanvas c, VoiceIcon icon, int x, int y, int color) {
+        if (c.voiceIcon(icon, x, y, color)) {
+            return;
+        }
+        if (icon == VoiceIcon.HEADPHONES_MUTED) {
+            headphones(c, x + 2, y + 3, color);
+        } else {
+            micIcon(c, x + 3, y + 1, color, icon == VoiceIcon.MICROPHONE_MUTED);
+        }
+    }
+
     /** Draw the HUD; returns the talker rows (for clicks). */
     public static List<Row> render(UiCanvas c, VoiceControls v, boolean showDebug) {
         List<Row> rows = new ArrayList<Row>();
@@ -81,30 +94,33 @@ public final class HudRenderer {
             return rows;
         }
         if (v.deafened()) {
-            headphones(c, x, y + 1, Theme.TEXT_DIM);
+            voiceIcon(c, VoiceIcon.HEADPHONES_MUTED, x, y, Theme.BAD);
         } else {
             boolean talking = v.transmitting();
             int color = v.micMuted() ? Theme.TEXT_DIM : talking ? Theme.GOOD : Theme.TEXT;
-            micIcon(c, x, y, color, v.micMuted());
+            voiceIcon(c, v.micMuted() ? VoiceIcon.MICROPHONE_MUTED : VoiceIcon.MICROPHONE, x, y,
+                v.micMuted() ? Theme.BAD : color);
         }
         // just the microphone; the transport shows for a few seconds after joining or when it changes
         if (v.transportLabelVisible()) {
             int sc = st == TransportStatus.OFFLINE ? Theme.BAD : st == TransportStatus.RECONNECTING ? Theme.WARN : Theme.TEXT_DIM;
-            c.text(st.label, x + 14, y + 3, sc, true);
+            c.text(st.label, x + 20, y + 4, sc, true);
         }
 
-        int ty = 6;
+        int ty = 4;
+        int rowHeight = Math.max(18, c.fontHeight() + 6);
         for (VoiceControls.Talker t : v.talkers()) {
             if (ty > c.height() / 2) {
                 break;
             }
-            int w = c.playerNameWidth(t.uuid, t.name) + 16;
-            c.fill(4, ty - 2, 4 + w, ty + c.fontHeight() + 1, 0x80101418);
+            int w = c.playerNameWidth(t.uuid, t.name) + 25;
+            c.fill(4, ty, 4 + w, ty + rowHeight, 0x80101418);
             int mic = t.muted ? MUTED_TALKING : t.group ? GROUP_TALKING : Theme.GOOD;
-            micIcon(c, 6, ty - 2, mic, t.muted);
-            c.playerName(t.uuid, t.name, 17, ty, Theme.TEXT, true);
-            rows.add(new Row(t.uuid, t.name, 4, ty - 2, 4 + w, ty + c.fontHeight() + 1));
-            ty += c.fontHeight() + 5;
+            voiceIcon(c, t.muted ? VoiceIcon.MICROPHONE_MUTED : VoiceIcon.MICROPHONE,
+                6, ty + (rowHeight - 16) / 2, mic);
+            c.playerName(t.uuid, t.name, 25, ty + (rowHeight - c.fontHeight()) / 2, Theme.TEXT, true);
+            rows.add(new Row(t.uuid, t.name, 4, ty, 4 + w, ty + rowHeight));
+            ty += rowHeight + 2;
         }
         if (showDebug) {
             int dy = ty + 4;
