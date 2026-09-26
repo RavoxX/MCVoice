@@ -4,7 +4,7 @@
   "package": "dev.mcvoice.platform.fabric.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "InGameHudMixin"
+    "InGameHudMixin", "NameTagMixin"
 //#if !LEGACYFABRIC_API
     , "MinecraftClientMixin", "GameOptionsMixin"
 //#endif
