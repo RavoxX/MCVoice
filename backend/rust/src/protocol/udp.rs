@@ -4,7 +4,7 @@ use aes_gcm::aead::{AeadInPlace, KeyInit};
 use aes_gcm::{Aes128Gcm, Nonce, Tag};
 
 pub const MAJOR: u8 = 1;
-pub const MINOR: u8 = 0;
+pub const MINOR: u8 = 1;
 pub const HEADER_LEN: usize = 22;
 pub const TAG_LEN: usize = 16;
 pub const MAX_DATAGRAM: usize = 1200;
@@ -24,7 +24,11 @@ pub const DIR_S2C: u8 = 0x53;
 pub const CODEC_OPUS: u8 = 1;
 pub const MODE_NORMAL: u8 = 0;
 pub const MODE_WHISPER: u8 = 1;
+/// Voice-group frame (spec 8.1): delivered to the sender's group only, relayed with this mode.
+pub const MODE_GROUP: u8 = 2;
 pub const FLAG_EOS: u8 = 0x01;
+/// On a normal/whisper frame: also deliver to the sender's group.
+pub const FLAG_GROUP: u8 = 0x02;
 
 const VOICE_FIXED: usize = 15;
 const RELAY_FIXED: usize = 35;
@@ -185,7 +189,12 @@ pub fn parse_voice(p: &[u8]) -> Result<Voice<'_>, DecodeError> {
         payload: &p[VOICE_FIXED..],
     };
     let n = u16::from_be_bytes(p[13..15].try_into().unwrap()) as usize;
-    if v.codec != CODEC_OPUS || v.mode > MODE_WHISPER || v.flags & !FLAG_EOS != 0 || n > MAX_PAYLOAD {
+    if v.codec != CODEC_OPUS
+        || v.mode > MODE_GROUP
+        || v.flags & !(FLAG_EOS | FLAG_GROUP) != 0
+        || (v.mode == MODE_GROUP && v.flags & FLAG_GROUP != 0)
+        || n > MAX_PAYLOAD
+    {
         return Err(DecodeError::BadPayload);
     }
     if p.len() != VOICE_FIXED + n {

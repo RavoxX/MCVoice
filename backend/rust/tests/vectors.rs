@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use mcvoice_backend::protocol::control::{parse_control, uuid_bytes, uuid_string};
 use mcvoice_backend::protocol::replay::ReplayWindow;
 use mcvoice_backend::protocol::udp::*;
-use mcvoice_backend::routing::{route, scope_key, Peer, RoutingConfig};
+use mcvoice_backend::routing::{route, Peer, RoutingConfig};
 use serde_json::Value;
 
 fn vectors(name: &str) -> Value {
@@ -157,7 +157,6 @@ fn routing_vectors() {
             whisper_range: cf["whisper_range"].as_f64().unwrap(),
             max_range: cf["max_range"].as_f64().unwrap(),
             distance_slack: cf["distance_slack"].as_f64().unwrap(),
-            require_mutual: cf["require_mutual_visibility"].as_bool().unwrap(),
             position_stale_ms: cf["position_stale_ms"].as_i64().unwrap(),
         };
         let peers: Vec<Peer> = c["sessions"]
@@ -169,7 +168,9 @@ fn routing_vectors() {
                 authenticated: s["authenticated"].as_bool().unwrap(),
                 udp_verified: s["udp_verified"].as_bool().unwrap(),
                 in_world: s["in_world"].as_bool().unwrap(),
-                scope_key: scope_key(s["network_id"].as_str().unwrap(), "", s["world_id"].as_str().unwrap()),
+                world_id: s["world_id"].as_str().unwrap().into(),
+                attested: s["attested"].as_str().unwrap().into(),
+                group: s["group"].as_str().unwrap().into(),
                 epoch: s["epoch"].as_u64().unwrap() as u32,
                 pos: s["pos"]
                     .as_array()
@@ -187,25 +188,23 @@ fn routing_vectors() {
             .collect();
         let pkt = &c["packet"];
         let sender = peers.iter().find(|p| p.uuid == pkt["sender"].as_str().unwrap()).unwrap();
-        let mut got: Vec<String> = route(
+        let routed = route(
             &cfg,
             c["now_ms"].as_i64().unwrap(),
             sender,
             pkt["epoch"].as_u64().unwrap() as u32,
             pkt["mode"].as_u64().unwrap() as u8,
+            pkt["flags"].as_u64().unwrap() as u8,
             peers.iter(),
-        )
-        .into_iter()
-        .map(|p| p.uuid.clone())
-        .collect();
-        got.sort();
-        let want: Vec<String> = c["expect"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|x| x.as_str().unwrap().to_string())
-            .collect();
-        assert_eq!(got, want, "{name}");
+        );
+        let ids = |l: &[&Peer]| {
+            let mut v: Vec<String> = l.iter().map(|p| p.uuid.clone()).collect();
+            v.sort();
+            v
+        };
+        let want = |k: &str| -> Vec<String> { c[k].as_array().unwrap().iter().map(|x| x.as_str().unwrap().to_string()).collect() };
+        assert_eq!(ids(&routed.proximity), want("expect"), "{name} (proximity)");
+        assert_eq!(ids(&routed.group), want("expect_group"), "{name} (group)");
     }
 }
 

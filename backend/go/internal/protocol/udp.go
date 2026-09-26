@@ -12,7 +12,7 @@ import (
 
 const (
 	Major = 1
-	Minor = 0
+	Minor = 1
 
 	HeaderLen   = 22
 	TagLen      = 16
@@ -33,7 +33,11 @@ const (
 	CodecOpus   byte = 1
 	ModeNormal  byte = 0
 	ModeWhisper byte = 1
-	FlagEOS     byte = 0x01
+	// ModeGroup is a voice-group frame (spec 8.1): group only, relayed with this mode.
+	ModeGroup byte = 2
+	FlagEOS   byte = 0x01
+	// FlagGroup on a normal/whisper frame: also deliver to the sender's group.
+	FlagGroup byte = 0x02
 
 	voiceFixed = 15
 	relayFixed = 35
@@ -185,7 +189,8 @@ func ParseVoice(p []byte) (Voice, error) {
 }
 
 func checkVoiceFields(codec, mode, flags byte, n int) error {
-	if codec != CodecOpus || mode > ModeWhisper || flags&^FlagEOS != 0 || n > MaxPayload {
+	if codec != CodecOpus || mode > ModeGroup || flags&^(FlagEOS|FlagGroup) != 0 ||
+		(mode == ModeGroup && flags&FlagGroup != 0) || n > MaxPayload {
 		return ErrBadPayload
 	}
 	return nil
