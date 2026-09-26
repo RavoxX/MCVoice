@@ -315,6 +315,7 @@ public final class ControlClient {
         caps.add("presence");
         caps.add("key_rotation");
         caps.add("groups");
+        caps.add("group_paging");
         if (opts.svcInterop) {
             caps.add("svc_interop");
         }
@@ -509,6 +510,13 @@ public final class ControlClient {
         if (query != null && !query.isEmpty()) {
             o.put("query", query);
         }
+        return connected() && send(o.toString());
+    }
+
+    public boolean sendGroupPage(String query, String cursor, long requestId) {
+        Json.Obj o = Json.obj().put("type", "group_list").put("limit", 20).put("request_id", requestId);
+        if (query != null && !query.isEmpty()) o.put("query", query);
+        if (cursor != null && !cursor.isEmpty()) o.put("cursor", cursor);
         return connected() && send(o.toString());
     }
 
