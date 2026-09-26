@@ -1,12 +1,14 @@
 package dev.mcvoice.client.ui;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import dev.mcvoice.client.platform.ui.UiCanvas;
 
 /**
  * In-game overlay: an original microphone glyph drawn from rectangles (state
- * coloured), the transport mode, and who is talking. Cheap enough to run every
+ * coloured), the transport mode for a few seconds, and who is talking (muted players greyed out). Cheap enough to run every
  * frame on the render thread (reads volatile state only).
  */
 public final class HudRenderer {
@@ -46,35 +48,62 @@ public final class HudRenderer {
         }
     }
 
-    public static void render(UiCanvas c, VoiceControls v, boolean showDebug) {
+    /** A talker line of the HUD, clickable while the chat is open. */
+    public static final class Row {
+        public final UUID uuid;
+        public final String name;
+        final int x0, y0, x1, y1;
+
+        Row(UUID uuid, String name, int x0, int y0, int x1, int y1) {
+            this.uuid = uuid;
+            this.name = name;
+            this.x0 = x0;
+            this.y0 = y0;
+            this.x1 = x1;
+            this.y1 = y1;
+        }
+
+        public boolean contains(int x, int y) {
+            return x >= x0 && x < x1 && y >= y0 && y < y1;
+        }
+    }
+
+    private static final int GROUP_TALKING = 0xFF55FFFF;
+    private static final int MUTED_TALKING = 0xFF555555;
+
+    /** Draw the HUD; returns the talker rows (for clicks). */
+    public static List<Row> render(UiCanvas c, VoiceControls v, boolean showDebug) {
+        List<Row> rows = new ArrayList<Row>();
         int x = 6;
         int y = c.height() - 22;
         TransportStatus st = v.transportStatus();
         if (st == TransportStatus.DISABLED) {
-            return;
+            return rows;
         }
-        int color;
         if (v.deafened()) {
             headphones(c, x, y + 1, Theme.TEXT_DIM);
-            color = Theme.BAD;
         } else {
             boolean talking = v.transmitting();
-            color = v.micMuted() ? Theme.TEXT_DIM : talking ? Theme.GOOD : Theme.TEXT;
+            int color = v.micMuted() ? Theme.TEXT_DIM : talking ? Theme.GOOD : Theme.TEXT;
             micIcon(c, x, y, color, v.micMuted());
         }
-        int sc = st == TransportStatus.OFFLINE ? Theme.BAD : st == TransportStatus.RECONNECTING ? Theme.WARN : Theme.TEXT_DIM;
-        c.text(st.label, x + 14, y + 3, sc, true);
+        // just the microphone; the transport shows for a few seconds after joining or when it changes
+        if (v.transportLabelVisible()) {
+            int sc = st == TransportStatus.OFFLINE ? Theme.BAD : st == TransportStatus.RECONNECTING ? Theme.WARN : Theme.TEXT_DIM;
+            c.text(st.label, x + 14, y + 3, sc, true);
+        }
 
-        List<String> talking = v.talkingNames();
         int ty = 6;
-        for (String name : talking) {
+        for (VoiceControls.Talker t : v.talkers()) {
             if (ty > c.height() / 2) {
                 break;
             }
-            int w = c.textWidth(name) + 16;
+            int w = c.textWidth(t.name) + 16;
             c.fill(4, ty - 2, 4 + w, ty + c.fontHeight() + 1, 0x80101418);
-            micIcon(c, 6, ty - 2, Theme.GOOD, false);
-            c.text(name, 17, ty, Theme.TEXT, true);
+            int mic = t.muted ? MUTED_TALKING : t.group ? GROUP_TALKING : Theme.GOOD;
+            micIcon(c, 6, ty - 2, mic, t.muted);
+            c.text(t.name, 17, ty, t.muted ? Theme.TEXT_DIM : Theme.TEXT, true);
+            rows.add(new Row(t.uuid, t.name, 4, ty - 2, 4 + w, ty + c.fontHeight() + 1));
             ty += c.fontHeight() + 5;
         }
         if (showDebug) {
@@ -87,5 +116,6 @@ public final class HudRenderer {
                 }
             }
         }
+        return rows;
     }
 }
