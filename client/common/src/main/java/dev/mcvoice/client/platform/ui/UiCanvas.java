@@ -14,7 +14,7 @@ public interface UiCanvas {
 
     int textWidth(String text);
 
-    /** Draw a 16x16 voice glyph; false asks the HUD to use its legacy pixel fallback. */
+    /** Draw a 10x10 voice glyph; false asks the HUD to draw the same pixel art directly. */
     default boolean voiceIcon(VoiceIcon icon, int x, int y, int argb) {
         return false;
     }

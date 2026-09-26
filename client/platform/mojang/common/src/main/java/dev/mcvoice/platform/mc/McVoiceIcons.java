@@ -11,7 +11,7 @@ import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.TextComponent;
 //#endif
 
-/** Cached HUD glyphs; the same artwork is used by the smaller name-tag font. */
+/** Cached compact pixel glyphs for the HUD. */
 public final class McVoiceIcons {
     private static final Component[] HUD = new Component[VoiceIcon.values().length];
 

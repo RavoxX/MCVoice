@@ -1,19 +1,27 @@
 # Voice icons
 
 The microphone, muted microphone and deafened headphones are original MCVoice
-artwork. Their rounded strokes share a 16 × 16 design grid. The transparent
-64 × 64 cells retain detail at larger Minecraft GUI scales; both the HUD and
-name-tag bitmap fonts use the same atlas. Muted icons have a clear gap around
-the diagonal slash, so it remains readable at small sizes.
+pixel artwork. The HUD uses a 10 × 10 grid, and name tags use a separately
+tuned 8 × 8 grid. Four shades give the silhouettes a bright upper edge and
+darker underside. There is no antialiasing or downsampling: each source pixel
+maps to one GUI pixel, retaining Minecraft's pixel style at larger GUI scales.
 
-Regenerate the atlas with JDK 11 or later, from the repository root:
+`VoiceIcon` defines both grids and draws the older adapters' HUD icons directly.
+The generator calls that same drawing code to export the native bitmap fonts.
+Regenerate the two atlases with JDK 11 or later, from the repository root:
 
 ```sh
-java -Djava.awt.headless=true tools/icons/GenerateVoiceIcons.java
+mkdir -p build/voice-icons
+javac -d build/voice-icons \
+  client/common/src/main/java/dev/mcvoice/client/platform/ui/UiCanvas.java \
+  client/common/src/main/java/dev/mcvoice/client/platform/ui/VoiceIcon.java \
+  tools/icons/GenerateVoiceIcons.java
+java -Djava.awt.headless=true -cp build/voice-icons GenerateVoiceIcons
 # Optional visual check at enlarged, HUD and name-tag sizes:
-java -Djava.awt.headless=true tools/icons/GenerateVoiceIcons.java release-output/voice-icons-preview.png
+java -Djava.awt.headless=true -cp build/voice-icons GenerateVoiceIcons release-output/voice-icons-preview.png
 ```
 
-The HUD uses 16-pixel glyphs with ascent 13. Name tags use 12-pixel glyphs with
-ascent 10. `VoiceIcon` and the fonts use the same order (U+E000 through U+E002).
-Clients before Minecraft 1.16 retain the Java 8 pixel fallback.
+The HUD font uses `voice.png` (30 × 10), height 10 and ascent 9. Name tags use
+`voice_tags.png` (24 × 8), height 8 and ascent 7. `VoiceIcon` and both fonts use
+the same order (U+E000 through U+E002). RGB shading is multiplied by the caller's
+colour; only transparent or fully opaque pixels are stored in the atlases.

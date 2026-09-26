@@ -33,8 +33,8 @@ class HudRendererTest {
         assertEquals(1, rows.size());
         assertEquals(player, rows.get(0).uuid);
         assertEquals("name", rows.get(0).name, "menu identity stays the plain name");
-        assertTrue(rows.get(0).contains(128, 6), "prefix and icon width are included in the click target");
-        assertFalse(rows.get(0).contains(129, 6));
+        assertTrue(rows.get(0).contains(121, 6), "prefix and icon width are included in the click target");
+        assertFalse(rows.get(0).contains(122, 6));
         assertFalse(canvas.plainNameDrawn, "do not draw over the server-formatted name in white");
     }
 

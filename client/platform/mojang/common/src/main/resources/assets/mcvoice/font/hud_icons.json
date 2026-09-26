@@ -3,8 +3,8 @@
     {
       "type": "bitmap",
       "file": "mcvoice:font/voice.png",
-      "ascent": 13,
-      "height": 16,
+      "ascent": 9,
+      "height": 10,
       "chars": ["\uE000\uE001\uE002"]
     }
   ]

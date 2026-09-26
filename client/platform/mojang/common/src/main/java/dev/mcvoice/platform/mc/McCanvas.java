@@ -138,8 +138,8 @@ public final class McCanvas implements UiCanvas {
     //#if MC >= 1.16
     @Override
     public boolean voiceIcon(VoiceIcon icon, int x, int y, int argb) {
-        // Bitmap fonts draw at y + 7 - ascent; this font's ascent is 13.
-        styledText(McVoiceIcons.hud(icon), x, y + 6, argb, false);
+        // Bitmap fonts draw at y + 7 - ascent; this font's ascent is 9.
+        styledText(McVoiceIcons.hud(icon), x, y + 2, argb, false);
         return true;
     }
     //#endif

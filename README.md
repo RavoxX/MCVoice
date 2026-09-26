@@ -64,9 +64,9 @@ Download the jar for your Minecraft version and loader from
    player's volume or mute them.
    The current 1.16+ adapters preserve server name colours and prefixes in the
    HUD and add a microphone beside visible speaking players' name tags.
-   Rounded microphone, mute and deafen icons share the same artwork at both
-   sizes; older adapters use pixel icons. These indicators are rendered by
-   MCVoice on the listener's client.
+   Compact, shaded pixel icons use a 10-pixel grid in the HUD and an 8-pixel
+   grid on name tags. Older HUD adapters draw the same pixel artwork directly.
+   These indicators are rendered by MCVoice on the listener's client.
 5. Settings live in `config/mcvoice.json`:
    * backend URL (default: the public backend `wss://mcvoice.ravoxx.dev/v1/control`);
    * activation mode (push-to-talk or voice activation) and its threshold;
