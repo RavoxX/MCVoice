@@ -28,6 +28,19 @@ public final class CaptureProcessor {
         this.vadThresholdDb = thresholdDb;
     }
 
+    private static final double KNEE = 24000; // about -2.7 dBFS
+    private static final double HEADROOM = 32767 - KNEE;
+
+    /** Linear below the knee, then a smooth tanh curve towards full scale instead of hard clipping. */
+    static double softLimit(double v) {
+        double a = Math.abs(v);
+        if (a <= KNEE) {
+            return v;
+        }
+        double out = KNEE + HEADROOM * Math.tanh((a - KNEE) / HEADROOM);
+        return v < 0 ? -out : out;
+    }
+
     /** Process {@code pcm} in place; returns true if voice activity was detected in this frame. */
     public boolean process(short[] pcm, int n) {
         double sum = 0;
@@ -37,7 +50,7 @@ public final class CaptureProcessor {
             double y = x - hpPrevIn + 0.992 * hpPrevOut;
             hpPrevIn = x;
             hpPrevOut = y;
-            double v = y * gain * agcGain;
+            double v = softLimit(y * gain * agcGain);
             sum += v * v;
             pcm[i] = (short) Math.max(-32768, Math.min(32767, Math.round(v)));
         }

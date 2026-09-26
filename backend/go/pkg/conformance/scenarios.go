@@ -150,6 +150,19 @@ func expectFrom(c *voiceclient.Client, sender string, within time.Duration) (voi
 	}
 }
 
+// drain discards relays already in flight (e.g. before checking that nothing more arrives).
+func drain(cs ...*voiceclient.Client) {
+	for _, c := range cs {
+		for empty := false; !empty; {
+			select {
+			case <-c.Relays():
+			case <-time.After(100 * time.Millisecond):
+				empty = true
+			}
+		}
+	}
+}
+
 func expectNothing(c *voiceclient.Client, within time.Duration) error {
 	select {
 	case f := <-c.Relays():
@@ -181,10 +194,18 @@ func All() []Scenario {
 		{"whisper_mode_uses_whisper_range", "offline", scWhisper},
 		{"different_dimension_same_coordinates_not_delivered", "offline", scDimension},
 		{"dimension_switch_stops_voice_immediately", "offline", scDimensionSwitch},
-		{"different_network_same_coordinates_not_delivered", "offline", scNetwork},
+		{"different_address_same_server_delivered_both_ways", "offline", scDifferentAddress},
 		{"proxy_subserver_same_coordinates_not_visible_not_delivered", "offline", scSubserver},
 		{"attested_subservers_are_isolated", "offline", scAttested},
 		{"one_sided_visibility_not_delivered", "offline", scOneSided},
+		{"group_create_list_join_leave", "offline", scGroupLifecycle},
+		{"group_password_and_rate_limit", "offline", scGroupPassword},
+		{"group_full_at_15_members", "offline", scGroupFull},
+		{"group_requires_being_in_a_world", "offline", scGroupNeedsWorld},
+		{"group_requires_capability", "offline", scGroupNeedsCapability},
+		{"group_voice_across_servers_not_to_outsiders", "offline", scGroupVoiceAcrossServers},
+		{"group_and_proximity_no_double_delivery", "offline", scGroupNoDoubleDelivery},
+		{"group_membership_ends_on_disconnect_and_out_of_world", "offline", scGroupMembershipEnds},
 		{"stale_epoch_packet_dropped", "offline", scStaleEpoch},
 		{"recipient_epoch_is_current", "offline", scRecipientEpoch},
 		{"disconnect_removes_peer", "offline", scDisconnect},
@@ -431,15 +452,33 @@ func scDimensionSwitch(e *Env) error {
 	return expectNothing(b, 500*time.Millisecond)
 }
 
-func scNetwork(e *Env) error {
-	a, b, err := e.pair(placement{Net1, Overworld, 100, 64, 100}, placement{Net2, Overworld, 100, 64, 100})
+// The same server joined through two addresses (alias, IP, tunnel): the network ids differ,
+// but both games track the other player, so voice flows (network_id is informational, spec 6.3).
+func scDifferentAddress(e *Env) error {
+	a, b, err := e.pair(placement{Net1, Overworld, 100, 64, 100}, placement{Net2, Overworld, 102, 64, 100})
 	if err != nil {
 		return err
 	}
-	if err := talk(a, 5, 0); err != nil {
+	for _, p := range [][2]*voiceclient.Client{{a, b}, {b, a}} {
+		if err := talk(p[0], 1, 0); err != nil {
+			return err
+		}
+		if _, err := expectFrom(p[1], p[0].Session.PlayerUUID, 2*time.Second); err != nil {
+			return errorf("different addresses, mutually visible: %v", err)
+		}
+	}
+	// Visibility stays the gate: once A's world no longer tracks B, nothing flows either way.
+	if err := a.Peers([]string{}); err != nil {
 		return err
 	}
-	return expectNothing(b, 500*time.Millisecond)
+	if err := syncAll(a); err != nil {
+		return err
+	}
+	drain(a, b)
+	if err := talk(b, 5, 0); err != nil {
+		return err
+	}
+	return expectNothing(a, 500*time.Millisecond)
 }
 
 // Same public proxy address, same dimension, identical coordinates, but the
@@ -536,6 +575,25 @@ func scAttested(e *Env) error {
 	}
 	// Same sub-server -> delivered.
 	if _, err := b.ScopeWithAttestation(Net1, Overworld, attestation(e.T.AttestationKey, "testnet", "survival-1", b.Session.PlayerUUID)); err != nil {
+		return err
+	}
+	if err := b.Pos(100, 64, 100); err != nil {
+		return err
+	}
+	if err := b.Peers([]string{a.Session.PlayerUUID}); err != nil {
+		return err
+	}
+	if err := syncAll(b); err != nil {
+		return err
+	}
+	if err := talk(a, 1, 0); err != nil {
+		return err
+	}
+	if _, err := expectFrom(b, a.Session.PlayerUUID, 2*time.Second); err != nil {
+		return err
+	}
+	// Only one side attested: the attestation cannot be compared, mutual visibility decides.
+	if _, err := b.Scope(true, Net2, Overworld); err != nil {
 		return err
 	}
 	if err := b.Pos(100, 64, 100); err != nil {

@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"net"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -35,6 +36,35 @@ type Options struct {
 	Join func(challenge string) error
 	// ResumeToken, if set, is used instead of auth.
 	ResumeToken string
+}
+
+// GroupMember is one entry of a group member list (spec 6.12).
+type GroupMember struct {
+	UUID string `json:"uuid"`
+	Name string `json:"name"`
+}
+
+// GroupInfo is one entry of a group_list answer.
+type GroupInfo struct {
+	ID       string `json:"id"`
+	Members  int    `json:"members"`
+	Max      int    `json:"max"`
+	Password bool   `json:"password"`
+}
+
+// GroupEvent is a received group_list, group_joined, group_update or group_left message.
+type GroupEvent struct {
+	Type    string        `json:"type"`
+	ID      string        `json:"id"`
+	Reason  string        `json:"reason"`
+	Members []GroupMember `json:"members"`
+	Groups  []GroupInfo   `json:"groups"`
+	Group   *struct {
+		ID       string        `json:"id"`
+		Max      int           `json:"max"`
+		Password bool          `json:"password"`
+		Members  []GroupMember `json:"members"`
+	} `json:"group"`
 }
 
 // RelayFrame is one received VOICE_RELAY datagram.
@@ -79,15 +109,16 @@ type Client struct {
 	lastPong  atomic.Int64
 	RTT       atomic.Int64 // nanoseconds, from UDP ping
 
-	pongs    chan uint64
-	nonce    atomic.Uint64
-	relays   chan RelayFrame
-	errors   chan string
-	wmu      sync.Mutex
-	closed   atomic.Bool
-	Stats    Stats
-	LastErr  atomic.Value
-	sendBufs []byte
+	pongs       chan uint64
+	nonce       atomic.Uint64
+	relays      chan RelayFrame
+	groupEvents chan GroupEvent
+	errors      chan string
+	wmu         sync.Mutex
+	closed      atomic.Bool
+	Stats       Stats
+	LastErr     atomic.Value
+	sendBufs    []byte
 }
 
 type Stats struct {
@@ -136,10 +167,11 @@ func Dial(ctx context.Context, o Options) (*Client, error) {
 		o.Method = "offline"
 	}
 	if o.Capabilities == nil {
-		o.Capabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation"}
+		o.Capabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "groups"}
 	}
 	c := &Client{opts: o, presence: map[string]bool{}, udpOK: make(chan struct{}),
-		relays: make(chan RelayFrame, 4096), errors: make(chan string, 64), pongs: make(chan uint64, 16)}
+		relays: make(chan RelayFrame, 4096), errors: make(chan string, 64), pongs: make(chan uint64, 16),
+		groupEvents: make(chan GroupEvent, 64)}
 	c.ctx, c.cancel = context.WithCancel(context.Background())
 	dctx, dcancel := context.WithTimeout(ctx, 15*time.Second)
 	defer dcancel()
@@ -283,6 +315,16 @@ func (c *Client) readControl() {
 			Key    string   `json:"key"`
 		}
 		if json.Unmarshal(b, &m) != nil {
+			continue
+		}
+		if strings.HasPrefix(m.Type, "group_") {
+			var ev GroupEvent
+			if json.Unmarshal(b, &ev) == nil {
+				select {
+				case c.groupEvents <- ev:
+				default:
+				}
+			}
 			continue
 		}
 		switch m.Type {
@@ -490,6 +532,61 @@ func (c *Client) Sync(timeout time.Duration) error {
 		case <-c.ctx.Done():
 			return errors.New("sync: connection closed")
 		}
+	}
+}
+
+// GroupList requests the group list (spec 6.12).
+func (c *Client) GroupList() error { return c.sendJSON(map[string]any{"type": "group_list"}) }
+
+// GroupSearch requests the groups whose id contains query.
+func (c *Client) GroupSearch(query string) error {
+	return c.sendJSON(map[string]any{"type": "group_list", "query": query})
+}
+
+// GroupCreate creates a group; password "" means open.
+func (c *Client) GroupCreate(password string) error {
+	m := map[string]any{"type": "group_create"}
+	if password != "" {
+		m["password"] = password
+	}
+	return c.sendJSON(m)
+}
+
+// GroupJoin joins group id; password "" sends none.
+func (c *Client) GroupJoin(id, password string) error {
+	m := map[string]any{"type": "group_join", "id": id}
+	if password != "" {
+		m["password"] = password
+	}
+	return c.sendJSON(m)
+}
+
+func (c *Client) GroupLeave() error { return c.sendJSON(map[string]any{"type": "group_leave"}) }
+
+// NextGroupEvent waits for the next group message of the given type ("" = any).
+func (c *Client) NextGroupEvent(typ string, timeout time.Duration) (GroupEvent, error) {
+	deadline := time.After(timeout)
+	for {
+		select {
+		case ev := <-c.groupEvents:
+			if typ == "" || ev.Type == typ {
+				return ev, nil
+			}
+		case <-deadline:
+			return GroupEvent{}, fmt.Errorf("no %s message within %v", typ, timeout)
+		case <-c.ctx.Done():
+			return GroupEvent{}, errors.New("connection closed")
+		}
+	}
+}
+
+// NextError waits for the next error code from the backend.
+func (c *Client) NextError(timeout time.Duration) (string, error) {
+	select {
+	case e := <-c.errors:
+		return e, nil
+	case <-time.After(timeout):
+		return "", fmt.Errorf("no error within %v", timeout)
 	}
 }
 
