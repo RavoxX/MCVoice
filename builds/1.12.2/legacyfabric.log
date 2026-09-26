@@ -21,12 +21,12 @@ Legacy Looming: 1.16.1
 > Task :remapSourcesJar
 > Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790328664843.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790425206682.json
 
-BUILD SUCCESSFUL in 52s
+BUILD SUCCESSFUL in 56s
 7 actionable tasks: 7 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.4.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.1-mc1.12.2-legacyfabric.jar (327 classes, 13 platform classes, metadata ['fabric.mod.json'])
+valid: mcvoice-0.1.2-mc1.12.2-legacyfabric.jar (350 classes, 13 platform classes, metadata ['fabric.mod.json'])
   platform: dev/mcvoice/platform/fabric/McVoiceFabric
   platform: dev/mcvoice/platform/fabric/mixin/InGameHudMixin
   platform: dev/mcvoice/platform/mc/McAdapter
