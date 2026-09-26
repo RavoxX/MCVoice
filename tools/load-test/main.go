@@ -8,6 +8,7 @@ package main
 
 import (
 	"context"
+	cryptorand "crypto/rand"
 	"encoding/binary"
 	"encoding/json"
 	"flag"
@@ -36,6 +37,8 @@ type options struct {
 	dimChange    float64
 	serverSwitch float64
 	jsonOut      string
+	seed         int64
+	peerRefresh  time.Duration
 }
 
 type stats struct {
@@ -51,22 +54,21 @@ type stats struct {
 
 func (s *stats) latency(ms float64) {
 	s.mu.Lock()
-	if len(s.latencies) < 2_000_000 {
-		s.latencies = append(s.latencies, ms)
-	}
+	s.latencies = append(s.latencies, ms)
 	s.mu.Unlock()
 }
 
 // player is one simulated client. Players of a group stand close together in
 // the same scope and report each other as visible, like a real crowd.
 type player struct {
-	c       *voiceclient.Client
-	group   int
-	x, z    float64
-	world   string
-	network string
-	talker  bool
-	seq     uint16
+	c        *voiceclient.Client
+	group    int
+	x, z     float64
+	world    string
+	network  string
+	talker   bool
+	seq      uint16
+	expected int
 }
 
 func main() {
@@ -82,7 +84,13 @@ func main() {
 	flag.Float64Var(&o.dimChange, "dim-change", 0.005, "per-second probability of a dimension change")
 	flag.Float64Var(&o.serverSwitch, "server-switch", 0.003, "per-second probability of a proxy sub-server switch")
 	flag.StringVar(&o.jsonOut, "json", "", "write the summary as JSON to this file")
+	flag.Int64Var(&o.seed, "seed", 1, "repeatable movement seed (talker count is exact, rounded down)")
+	flag.DurationVar(&o.peerRefresh, "peer-refresh", 0, "refresh visibility periodically as well as on changes (0 disables)")
 	flag.Parse()
+	if o.clients <= 0 || o.groupSize <= 0 || o.talkers < 0 || o.talkers > 1 || o.duration <= 0 || o.peerRefresh < 0 {
+		fmt.Fprintln(os.Stderr, "loadtest: invalid client, group, talker, duration or refresh setting")
+		os.Exit(1)
+	}
 	if err := run(o); err != nil {
 		fmt.Fprintln(os.Stderr, "loadtest:", err)
 		os.Exit(1)
@@ -91,7 +99,9 @@ func main() {
 
 func uuid() string {
 	b := make([]byte, 16)
-	rand.Read(b)
+	if _, err := cryptorand.Read(b); err != nil {
+		panic(err)
+	}
 	b[6] = b[6]&0x0f | 0x40
 	b[8] = b[8]&0x3f | 0x80
 	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:16])
@@ -109,6 +119,42 @@ func run(o options) error {
 	var mu sync.Mutex // guards group membership while players move around
 	groups := (o.clients + o.groupSize - 1) / o.groupSize
 	net := conformance.Net1
+	rng := rand.New(rand.NewSource(o.seed))
+	talkers := int(float64(o.clients) * o.talkers)
+	talking := make([]bool, o.clients)
+	for _, i := range rng.Perm(o.clients)[:talkers] {
+		talking[i] = true
+	}
+
+	byUUID := map[string]*player{}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	var receivers sync.WaitGroup
+	var reconnects sync.WaitGroup
+	startReceiver := func(p *player) {
+		receivers.Add(1)
+		go func(p *player) {
+			defer receivers.Done()
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case f := <-p.c.Relays():
+					n := st.received.Add(1)
+					if n%16 == 0 && len(f.Payload) >= 8 {
+						sentNs := int64(binary.BigEndian.Uint64(f.Payload))
+						st.latency(float64(f.Received.UnixNano()-sentNs) / 1e6)
+					}
+					mu.Lock()
+					s := byUUID[f.Sender]
+					if s != nil && (s.world != p.world || s.group != p.group) {
+						st.wrongScopeDeliveries.Add(1) // tolerated only within the settle window after a move
+					}
+					mu.Unlock()
+				}
+			}
+		}(p)
+	}
 
 	connect := func(i int) error {
 		id := uuid()
@@ -119,15 +165,18 @@ func run(o options) error {
 		}
 		st.connected.Add(1)
 		g := i % groups
-		p := &player{c: c, group: g, x: float64(g*200) + rand.Float64()*6, z: rand.Float64() * 6, world: conformance.Overworld,
-			network: net, talker: rand.Float64() < o.talkers}
+		initial := rand.New(rand.NewSource(o.seed + int64(i)))
+		p := &player{c: c, group: g, x: float64(g*200) + initial.Float64()*6, z: initial.Float64() * 6, world: conformance.Overworld,
+			network: net, talker: talking[i]}
 		if _, err := c.Scope(true, p.network, p.world); err != nil {
 			return err
 		}
 		_ = c.Pos(p.x, 64, p.z)
 		mu.Lock()
 		players[i] = p
+		byUUID[p.c.Session.PlayerUUID] = p
 		mu.Unlock()
+		startReceiver(p)
 		return nil
 	}
 
@@ -159,47 +208,17 @@ func run(o options) error {
 				}
 			}
 			_ = p.c.Peers(vis)
+			p.expected = len(vis)
 		}
 	}
 	refreshPeers()
-	time.Sleep(time.Second)
-
-	// receivers: measure latency from the embedded send timestamp and check scope
-	byUUID := map[string]*player{}
-	mu.Lock()
+	// Early connections may have stale positions after the ramp.
 	for _, p := range players {
 		if p != nil {
-			byUUID[p.c.Session.PlayerUUID] = p
+			_ = p.c.Pos(p.x, 64, p.z)
 		}
 	}
-	mu.Unlock()
-	ctx, cancel := context.WithTimeout(context.Background(), o.duration)
-	defer cancel()
-	for _, p := range players {
-		if p == nil {
-			continue
-		}
-		go func(p *player) {
-			for {
-				select {
-				case <-ctx.Done():
-					return
-				case f := <-p.c.Relays():
-					st.received.Add(1)
-					if len(f.Payload) >= 8 {
-						sentNs := int64(binary.BigEndian.Uint64(f.Payload))
-						st.latency(float64(f.Received.UnixNano()-sentNs) / 1e6)
-					}
-					mu.Lock()
-					s := byUUID[f.Sender]
-					if s != nil && (s.world != p.world || s.group != p.group) {
-						st.wrongScopeDeliveries.Add(1) // tolerated only within the settle window after a move
-					}
-					mu.Unlock()
-				}
-			}
-		}(p)
-	}
+	time.Sleep(time.Second)
 
 	// voice: 50 Hz frames from talkers; 60-byte payload with the send timestamp
 	tick := time.NewTicker(20 * time.Millisecond)
@@ -208,14 +227,24 @@ func run(o options) error {
 	defer posTick.Stop()
 	eventTick := time.NewTicker(time.Second)
 	defer eventTick.Stop()
+	var peerTick <-chan time.Time
+	if o.peerRefresh > 0 {
+		t := time.NewTicker(o.peerRefresh)
+		defer t.Stop()
+		peerTick = t.C
+	}
+	deadline := time.NewTimer(o.duration)
+	defer deadline.Stop()
 	payload := make([]byte, 60)
 	start := time.Now()
 	fmt.Printf("running for %v ...\n", o.duration)
 loop:
 	for {
 		select {
-		case <-ctx.Done():
+		case <-deadline.C:
 			break loop
+		case <-peerTick:
+			refreshPeers()
 		case <-tick.C:
 			mu.Lock()
 			for _, p := range players {
@@ -226,13 +255,7 @@ loop:
 				p.seq++
 				if p.c.SendVoice(p.seq, uint32(p.seq)*960, 0, 0, payload) == nil {
 					st.sent.Add(1)
-					n := 0
-					for _, q := range players {
-						if q != nil && q != p && q.group == p.group && q.world == p.world {
-							n++
-						}
-					}
-					st.expected.Add(int64(n))
+					st.expected.Add(int64(p.expected))
 				}
 			}
 			mu.Unlock()
@@ -242,8 +265,8 @@ loop:
 				if p == nil {
 					continue
 				}
-				p.x += (rand.Float64() - 0.5) * 0.8
-				p.z += (rand.Float64() - 0.5) * 0.8
+				p.x += (rng.Float64() - 0.5) * 0.8
+				p.z += (rng.Float64() - 0.5) * 0.8
 				_ = p.c.Pos(p.x, 64, p.z)
 			}
 			mu.Unlock()
@@ -254,7 +277,7 @@ loop:
 				if p == nil {
 					continue
 				}
-				r := rand.Float64()
+				r := rng.Float64()
 				switch {
 				case r < o.dimChange:
 					if p.world == conformance.Overworld {
@@ -267,8 +290,8 @@ loop:
 					st.dimChanges.Add(1)
 					changed = true
 				case r < o.dimChange+o.serverSwitch:
-					p.group = rand.Intn(groups) // proxy switch: new sub-server population
-					p.x = float64(p.group*200) + rand.Float64()*6
+					p.group = rng.Intn(groups) // proxy switch: new sub-server population
+					p.x = float64(p.group*200) + rng.Float64()*6
 					_, _ = p.c.Scope(true, p.network, p.world)
 					_ = p.c.Pos(p.x, 64, p.z)
 					st.switches.Add(1)
@@ -276,13 +299,13 @@ loop:
 				case r < o.dimChange+o.serverSwitch+o.churn:
 					old := p
 					players[i] = nil
+					reconnects.Add(1)
 					go func(i int) {
+						defer reconnects.Done()
 						old.c.Close()
 						if connect(i) == nil {
 							st.reconnects.Add(1)
-							mu.Lock()
-							byUUID[players[i].c.Session.PlayerUUID] = players[i]
-							mu.Unlock()
+							refreshPeers()
 						}
 					}(i)
 					changed = true
@@ -296,6 +319,9 @@ loop:
 	}
 	elapsed := time.Since(start)
 	time.Sleep(300 * time.Millisecond)
+	reconnects.Wait()
+	cancel()
+	receivers.Wait()
 	mu.Lock()
 	for _, p := range players {
 		if p != nil {
@@ -329,6 +355,8 @@ func report(o options, st *stats, elapsed time.Duration) error {
 		delivery = float64(rec) / float64(exp)
 	}
 	sum := map[string]any{
+		"seed": o.seed, "talkers": int(float64(o.clients) * o.talkers), "group_size": o.groupSize,
+		"voice_hz": 50, "peer_refresh_s": o.peerRefresh.Seconds(), "latency_samples": len(lat), "latency_sample_every": 16,
 		"clients": o.clients, "connected": st.connected.Load(), "connect_failures": st.failed.Load(),
 		"duration_s": elapsed.Seconds(), "frames_sent": st.sent.Load(), "relays_received": rec, "relays_expected": exp,
 		"delivery_ratio": delivery, "sent_pps": float64(st.sent.Load()) / elapsed.Seconds(),
@@ -337,7 +365,10 @@ func report(o options, st *stats, elapsed time.Duration) error {
 		"dimension_changes": st.dimChanges.Load(), "server_switches": st.switches.Load(), "reconnects": st.reconnects.Load(),
 		"cross_scope_deliveries": st.wrongScopeDeliveries.Load(),
 	}
-	b, _ := json.MarshalIndent(sum, "", "  ")
+	b, err := json.MarshalIndent(sum, "", "  ")
+	if err != nil {
+		return fmt.Errorf("encode summary (received %d relays): %w", rec, err)
+	}
 	fmt.Println(string(b))
 	if o.jsonOut != "" {
 		if err := os.WriteFile(o.jsonOut, b, 0o644); err != nil {
