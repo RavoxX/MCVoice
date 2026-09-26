@@ -52,6 +52,15 @@ public final class McVoiceFabric implements ClientModInitializer {
                                                                      net.minecraft.network.chat.Component name) {
         return dev.mcvoice.platform.mc.McNameTags.decorate(entity, name, client);
     }
+    //#elif MC >= 1.15
+    public static void renderNameTag(net.minecraft.world.entity.Entity entity, String name,
+            com.mojang.blaze3d.vertex.PoseStack poses, net.minecraft.client.renderer.MultiBufferSource buffers, int light) {
+        dev.mcvoice.platform.mc.McLegacyNameTags.render(entity, name, poses, buffers, light, false, client);
+    }
+    //#else
+    public static void renderNameTag(net.minecraft.world.entity.Entity entity, double x, double y, double z) {
+        dev.mcvoice.platform.mc.McLegacyNameTags.render(entity, x, y, z, client);
+    }
     //#endif
 
     @Override

@@ -88,6 +88,20 @@ public final class McVoiceForge {
         //#if MC >= 1.16
         MinecraftForge.EVENT_BUS.addListener((RenderNameplateEvent e) ->
             e.setContent(McNameTags.decorate(e.getEntity(), e.getContent(), client)));
+        //#elif MC >= 1.15
+        MinecraftForge.EVENT_BUS.addListener(net.minecraftforge.eventbus.api.EventPriority.LOWEST, (RenderNameplateEvent e) -> {
+            if (e.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && e.getEntityRenderer() != null
+                    && dev.mcvoice.platform.mc.LegacyNameTagIcon.canShow(e.getEntityRenderer(), e.getEntity())) {
+                dev.mcvoice.platform.mc.McLegacyNameTags.render(e.getEntity(), e.getContent(), e.getMatrixStack(),
+                    e.getRenderTypeBuffer(), e.getPackedLight(), true, client);
+            }
+        });
+        //#else
+        MinecraftForge.EVENT_BUS.addListener((net.minecraftforge.client.event.RenderLivingEvent.Specials.Post<?, ?> e) -> {
+            if (dev.mcvoice.platform.mc.LegacyNameTagIcon.canShow(e.getRenderer(), e.getEntity())) {
+                dev.mcvoice.platform.mc.McLegacyNameTags.render(e.getEntity(), e.getX(), e.getY(), e.getZ(), client);
+            }
+        });
         //#endif
         MinecraftForge.EVENT_BUS.addListener((RenderGameOverlayEvent.Post e) -> {
             if (e.getType() == RenderGameOverlayEvent.ElementType.ALL && client != null) {
