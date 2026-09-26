@@ -12,6 +12,9 @@ import dev.mcvoice.platform.mc.McAdapter;
 import dev.mcvoice.platform.mc.McCanvas;
 import dev.mcvoice.platform.mc.McIds;
 import dev.mcvoice.platform.mc.McLogging;
+
+
+
 import dev.mcvoice.platform.mc.PlatformInfo;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.settings.KeyBinding;
@@ -22,6 +25,9 @@ import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+
+
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -79,6 +85,42 @@ public final class McVoiceForge {
                 client.clientTick();
             }
         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        MinecraftForge.EVENT_BUS.addListener((net.minecraftforge.client.event.RenderLivingEvent.Specials.Post<?, ?> e) -> {
+            if (dev.mcvoice.platform.mc.LegacyNameTagIcon.canShow(e.getRenderer(), e.getEntity())) {
+                Minecraft mc = Minecraft.getInstance();
+                int light = mc.getEntityRenderDispatcher().getRenderer(e.getEntity())
+                    .getPackedLightCoords(e.getEntity(), e.getPartialRenderTick());
+                dev.mcvoice.platform.mc.McLegacyNameTags.render(e.getEntity(), e.getEntity().getDisplayName().getColoredString(),
+                    e.getMatrixStack(), mc.renderBuffers().bufferSource(), light, true, client);
+            }
+        });
+
+
+
+
+
+
+
         MinecraftForge.EVENT_BUS.addListener((RenderGameOverlayEvent.Post e) -> {
             if (e.getType() == RenderGameOverlayEvent.ElementType.ALL && client != null) {
 
