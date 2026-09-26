@@ -65,5 +65,20 @@ A run over selected versions (not `supported`) attaches its report as
 `release-report-run<run id>.md`, so the full report of the last `supported` run stays.
 Run it with `images: false` unless the backend changed.
 
+## Backend-only deployments
+
+When the client and protocol are unchanged, `backend.yml` also publishes
+immutable `sha-<first 12 commit characters>` images from `main`. A backend-only
+deployment can pin that tag after the matching `ci.yml` and image smoke tests
+pass. This does not publish a new mod/Maven version or create a versioned
+release; the binary's semantic version can still be the previous release.
+
+For the public backend, retain the previous image tag and a mode-600 backup of
+`/opt/mcvoice/.env`, change only `MCVOICE_VERSION`, then run its `update.sh`.
+Verify the container's image revision, local `/ready`, external `/health`, and
+a protocol 1.1 WebSocket `hello_ok` advertising `groups`. Roll back by restoring
+the previous tag and rerunning the update. Do not change nginx, firewall rules,
+or other containers for an image-only deployment.
+
 The `report` job downloads only the `mc-*-status` and `release-result-*`
 artifacts, with one retry each, so a flaky jar download cannot drop the report.
