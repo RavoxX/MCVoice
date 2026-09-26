@@ -12,6 +12,9 @@ import dev.mcvoice.platform.mc.McAdapter;
 import dev.mcvoice.platform.mc.McCanvas;
 import dev.mcvoice.platform.mc.McIds;
 import dev.mcvoice.platform.mc.McLogging;
+
+import dev.mcvoice.platform.mc.McNameTags;
+
 import dev.mcvoice.platform.mc.PlatformInfo;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.KeyMapping;
@@ -22,6 +25,9 @@ import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+
+import net.minecraftforge.client.event.RenderNameplateEvent;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -79,6 +85,42 @@ public final class McVoiceForge {
                 client.clientTick();
             }
         });
+
+        MinecraftForge.EVENT_BUS.addListener((RenderNameplateEvent e) ->
+            e.setContent(McNameTags.decorate(e.getEntity(), e.getContent(), client)));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         MinecraftForge.EVENT_BUS.addListener((RenderGameOverlayEvent.Post e) -> {
             if (e.getType() == RenderGameOverlayEvent.ElementType.ALL && client != null) {
 
