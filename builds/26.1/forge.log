@@ -45,7 +45,6 @@ Client Extra
 Client Maven POM
   pom[client-extra]
 Sources
-  listLibraries
   stripClient
   download[26.1][server]
   extractServer
@@ -53,6 +52,7 @@ Sources
   merge
   modifyAccess
   stripSides
+  listLibraries
   decompile
   patch
   patch[forge]
@@ -69,7 +69,7 @@ Maven POM
 Metadata
   metadata[forge]
   metadata[forge][variants]
-Minecraft Maven has finished, took 3:09.859
+Minecraft Maven has finished, took 3:22.934
 
 > Task :compileJava
 > Task :processResources
@@ -131,12 +131,12 @@ This message will not display again until ForgeGradle 7.1 or the below file is
 deleted:
 /home/runner/.gradle/caches/minecraftforge/forgegradle/messages/7_0_WELCOME_1
 --- End of Message ---
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790330221844.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790436658661.json
 
-BUILD SUCCESSFUL in 3m 34s
+BUILD SUCCESSFUL in 3m 48s
 4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.1-mc26.1-forge.jar (327 classes, 16 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.2-mc26.1-forge.jar (350 classes, 16 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
