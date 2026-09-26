@@ -12,6 +12,7 @@ import dev.mcvoice.platform.mc.McAdapter;
 import dev.mcvoice.platform.mc.McCanvas;
 import dev.mcvoice.platform.mc.McIds;
 import dev.mcvoice.platform.mc.McLogging;
+import dev.mcvoice.platform.mc.McNameTags;
 import dev.mcvoice.platform.mc.PlatformInfo;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.KeyMapping;
@@ -26,6 +27,7 @@ import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 //#endif
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.event.RenderNameTagEvent;
 import net.minecraftforge.event.GameShuttingDownEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -64,6 +66,7 @@ public final class McVoiceForge {
             }
         });
         FMLClientSetupEvent.getBus(context.getModBusGroup()).addListener(e -> client = new VoiceClient(adapter, modVersion));
+        RenderNameTagEvent.BUS.addListener(e -> e.setContent(McNameTags.decorateState(e.getState(), e.getContent(), client)));
         TickEvent.ClientTickEvent.Post.BUS.addListener(e -> {
             if (client != null) {
                 client.clientTick();
