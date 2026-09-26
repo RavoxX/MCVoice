@@ -6,11 +6,13 @@ import dev.mcvoice.client.log.VoiceLog;
 import dev.mcvoice.platform.mc.McAdapter;
 import dev.mcvoice.platform.mc.McCanvas;
 import dev.mcvoice.platform.mc.McLogging;
+import dev.mcvoice.platform.mc.McNameTags;
 import dev.mcvoice.platform.mc.PlatformInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -62,6 +64,8 @@ public final class McVoiceForge {
                 client.renderHud(new McCanvas());
             }
         });
+        MinecraftForge.EVENT_BUS.addListener((RenderLivingEvent.Specials.Post<?> e) ->
+            McNameTags.render(e.getRenderer(), e.getEntity(), e.getX(), e.getY(), e.getZ(), client));
         // no client shutdown event on this Forge version: stop audio and network threads on JVM exit
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (client != null) {
