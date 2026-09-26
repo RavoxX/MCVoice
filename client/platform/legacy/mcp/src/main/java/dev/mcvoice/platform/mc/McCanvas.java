@@ -1,11 +1,14 @@
 package dev.mcvoice.platform.mc;
 
+import java.util.UUID;
+
 import dev.mcvoice.client.platform.ui.UiCanvas;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
 
 /** UiCanvas over legacy immediate-mode GUI drawing (Gui.drawRect + FontRenderer). */
 public final class McCanvas implements UiCanvas {
@@ -51,6 +54,26 @@ public final class McCanvas implements UiCanvas {
     @Override
     public int textWidth(String text) {
         return font.getStringWidth(text);
+    }
+
+    private String playerName(UUID uuid, String fallback) {
+        Minecraft mc = Minecraft.getMinecraft();
+        //#if MC >= 1.10
+        EntityPlayer player = mc.world == null ? null : mc.world.getPlayerEntityByUUID(uuid);
+        //#else
+        EntityPlayer player = mc.theWorld == null ? null : mc.theWorld.getPlayerEntityByUUID(uuid);
+        //#endif
+        return player == null ? fallback : player.getDisplayName().getFormattedText();
+    }
+
+    @Override
+    public void playerName(UUID uuid, String fallback, int x, int y, int argb, boolean shadow) {
+        text(playerName(uuid, fallback), x, y, argb, shadow);
+    }
+
+    @Override
+    public int playerNameWidth(UUID uuid, String fallback) {
+        return textWidth(playerName(uuid, fallback));
     }
 
     @Override

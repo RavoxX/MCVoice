@@ -64,10 +64,11 @@ Download the jar for your Minecraft version and loader from
 4. The HUD shows your microphone bottom left and who is talking top left
    (muted microphones greyed out). Open the chat and click a name to change that
    player's volume or mute them.
-   The current 1.16+ adapters preserve server name colours and prefixes in the
+   The adapters preserve server name colours and prefixes in the
    HUD and add a green microphone beside visible speaking players' name tags.
    Compact, shaded pixel icons use a 10-pixel grid in the HUD and an 8-pixel
-   grid on name tags. Older HUD adapters draw the same pixel artwork directly.
+   grid on name tags. Older adapters draw the same pixel artwork directly, preserving vanilla
+   name-tag visibility and range checks.
    These indicators are rendered by MCVoice on the listener's client.
 5. Settings live in `config/mcvoice.json`:
    * backend URL (default: the public backend `wss://mcvoice.ravoxx.dev/v1/control`);
