@@ -1,0 +1,4 @@
+::group::net.minecraft.client.Minecraft
+Error: class not found: net.minecraft.client.Minecraft
+::endgroup::
+downloaded https://maven.minecraftforge.net/net/minecraftforge/forge/1.8.8-11.15.0.1655/forge-1.8.8-11.15.0.1655-universal.jar: Java archive data (JAR) 3527472 bytes
