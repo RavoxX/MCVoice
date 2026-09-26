@@ -1,14 +1,12 @@
 package dev.mcvoice.client.ui;
 
 import java.util.List;
-import java.util.Locale;
 
 import dev.mcvoice.client.config.ClientConfig;
 import dev.mcvoice.client.platform.ui.UiCanvas;
 import dev.mcvoice.client.ui.widget.Button;
 import dev.mcvoice.client.ui.widget.LevelMeter;
 import dev.mcvoice.client.ui.widget.Slider;
-import dev.mcvoice.client.ui.widget.TextField;
 
 /** Voice settings: General, Audio and Players tabs. */
 public final class SettingsScreen extends BaseScreen {
@@ -24,7 +22,7 @@ public final class SettingsScreen extends BaseScreen {
 
     @Override
     public String title() {
-        return "MCVoice - Voice Chat Settings";
+        return "Voice Chat Settings";
     }
 
     private ClientConfig cfg() {
@@ -35,14 +33,23 @@ public final class SettingsScreen extends BaseScreen {
         return Math.round(d * 100) + "%";
     }
 
+    /** Row pitch: Minecraft's 24 px, tighter on short screens (large GUI scale). */
+    private int row;
+    private int colW;
+
+    private static Button toggle(int w, Button.Label label, Button.Action action) {
+        return new Button(w, 20, label, action);
+    }
+
     @Override
     protected void layout(int width, int height) {
-        int left = panelX + 8;
-        int colW = (panelW - 24) / 2;
-        int y = panelY + 22;
+        row = height < 250 ? 21 : ROW;
+        colW = (panelW - 10) / 2;
+        int left = panelX;
+        int y = panelY + 12;
         final Tab[] tabs = Tab.values();
         String[] names = {"General", "Audio", "Players"};
-        int tw = (panelW - 16 - 2 * 4) / 3;
+        int tw = (panelW - 2 * 4) / 3;
         for (int i = 0; i < tabs.length; i++) {
             final Tab t = tabs[i];
             Button b = Button.of(tw, names[i], new Button.Action() {
@@ -56,21 +63,21 @@ public final class SettingsScreen extends BaseScreen {
             b.y = y;
             widgets.add(b);
         }
-        y += 26;
+        y += row + 8;
         if (tab == Tab.GENERAL) {
-            layoutGeneral(left, y, colW);
+            layoutGeneral(left, y);
         } else if (tab == Tab.AUDIO) {
-            layoutAudio(left, y, colW);
+            layoutAudio(left, y);
         } else {
             layoutPlayers(left, y);
         }
-        Button done = Button.of(80, "Done", new Button.Action() {
+        Button done = Button.of(200, "Done", new Button.Action() {
             public void run() {
                 v.applyConfig();
             }
         });
-        done.x = panelX + panelW - 88;
-        done.y = panelY + panelH - 24;
+        done.x = (width - 200) / 2;
+        done.y = height - 27;
         widgets.add(done);
     }
 
@@ -80,27 +87,12 @@ public final class SettingsScreen extends BaseScreen {
         widgets.add(w);
     }
 
-    private void layoutGeneral(int left, int y, int colW) {
-        int full = panelW - 16;
-        place(new TextField(full, "Backend URL (wss://host/v1/control)", 256, new TextField.Model() {
-            public String get() { return cfg().backendUrl; }
-            public void set(String s) { cfg().backendUrl = s; }
-        }), left, y);
-        y += 24;
-        place(new Button(colW, 18, new Button.Label() {
-            public String get() { return "Cloud voice: " + (cfg().cloudEnabled ? "ON" : "OFF"); }
-        }, new Button.Action() {
-            public void run() { cfg().cloudEnabled = !cfg().cloudEnabled; }
-        }), left, y);
-        place(new Button(colW, 18, new Button.Label() {
-            public String get() { return "SVC interop: " + (cfg().svcInteropEnabled ? "ON" : "OFF"); }
-        }, new Button.Action() {
-            public void run() { cfg().svcInteropEnabled = !cfg().svcInteropEnabled; }
-        }), left + colW + 8, y);
-        y += 22;
-        place(new Button(colW, 18, new Button.Label() {
+    private void layoutGeneral(int left, int y) {
+        int right = left + colW + 10;
+        // the backend is fixed (release default); only config/mcvoice.json can point elsewhere
+        place(toggle(colW, new Button.Label() {
             public String get() {
-                return cfg().activationMode == ClientConfig.ActivationMode.PUSH_TO_TALK ? "Mode: Push to talk (" + v.pushToTalkKey() + ")" : "Mode: Voice activation";
+                return cfg().activationMode == ClientConfig.ActivationMode.PUSH_TO_TALK ? "Mode: Push to Talk (" + v.pushToTalkKey() + ")" : "Mode: Voice Activation";
             }
         }, new Button.Action() {
             public void run() {
@@ -108,44 +100,55 @@ public final class SettingsScreen extends BaseScreen {
                     ? ClientConfig.ActivationMode.VOICE_ACTIVATION : ClientConfig.ActivationMode.PUSH_TO_TALK;
             }
         }), left, y);
-        place(new Slider(colW, "Threshold", -60, 0, new Slider.Model() {
+        place(new Slider(colW, "Activation", -60, 0, new Slider.Model() {
             public double get() { return cfg().voiceActivationThresholdDb; }
             public void set(double d) { cfg().voiceActivationThresholdDb = Math.round(d); }
             public String format(double d) { return Math.round(d) + " dB"; }
-        }), left + colW + 8, y);
-        y += 22;
-        place(new Slider(colW, "Voice range", 8, 96, new Slider.Model() {
+        }), right, y);
+        y += row;
+        place(new Slider(colW, "Voice Range", 8, 96, new Slider.Model() {
             public double get() { return cfg().normalDistance; }
             public void set(double d) { cfg().normalDistance = Math.round(d); }
             public String format(double d) { return Math.round(d) + " blocks"; }
         }), left, y);
-        place(new Slider(colW, "Whisper range", 2, 24, new Slider.Model() {
+        place(new Slider(colW, "Whisper Range", 2, 24, new Slider.Model() {
             public double get() { return cfg().whisperDistance; }
             public void set(double d) { cfg().whisperDistance = Math.round(d); }
             public String format(double d) { return Math.round(d) + " blocks"; }
-        }), left + colW + 8, y);
-        y += 22;
-        place(new Button(colW, 18, new Button.Label() {
-            public String get() { return "Microphone: " + (v.micMuted() ? "MUTED" : "on"); }
+        }), right, y);
+        y += row;
+        place(toggle(colW, new Button.Label() {
+            public String get() { return "Microphone: " + (v.micMuted() ? "Muted" : "On"); }
         }, new Button.Action() {
             public void run() { v.setMicMuted(!v.micMuted()); }
         }), left, y);
-        place(new Button(colW, 18, new Button.Label() {
-            public String get() { return "Deafen: " + (v.deafened() ? "ON" : "off"); }
+        place(toggle(colW, new Button.Label() {
+            public String get() { return "Deafen: " + (v.deafened() ? "On" : "Off"); }
         }, new Button.Action() {
             public void run() { v.setDeafened(!v.deafened()); }
-        }), left + colW + 8, y);
-        y += 22;
-        place(new Button(colW, 18, new Button.Label() {
-            public String get() { return "Debug overlay: " + (cfg().showDebugOverlay ? "ON" : "off"); }
+        }), right, y);
+        y += row;
+        place(toggle(colW, new Button.Label() {
+            public String get() { return "Voice Chat: " + (cfg().cloudEnabled ? "On" : "Off"); }
         }, new Button.Action() {
-            public void run() { cfg().showDebugOverlay = !cfg().showDebugOverlay; }
+            public void run() { cfg().cloudEnabled = !cfg().cloudEnabled; }
         }), left, y);
-        place(new Button(colW, 18, new Button.Label() {
-            public String get() { return "Voice HUD: " + (cfg().showHud ? "ON" : "off"); }
+        place(toggle(colW, new Button.Label() {
+            public String get() { return "Simple Voice Chat: " + (cfg().svcInteropEnabled ? "On" : "Off"); }
+        }, new Button.Action() {
+            public void run() { cfg().svcInteropEnabled = !cfg().svcInteropEnabled; }
+        }), right, y);
+        y += row;
+        place(toggle(colW, new Button.Label() {
+            public String get() { return "Voice HUD: " + (cfg().showHud ? "On" : "Off"); }
         }, new Button.Action() {
             public void run() { cfg().showHud = !cfg().showHud; }
-        }), left + colW + 8, y);
+        }), left, y);
+        place(toggle(colW, new Button.Label() {
+            public String get() { return "Debug Overlay: " + (cfg().showDebugOverlay ? "On" : "Off"); }
+        }, new Button.Action() {
+            public void run() { cfg().showDebugOverlay = !cfg().showDebugOverlay; }
+        }), right, y);
     }
 
     private static String cycle(List<String> options, String current, int dir) {
@@ -155,44 +158,44 @@ public final class SettingsScreen extends BaseScreen {
         return next == 0 ? "" : options.get(next - 1);
     }
 
-    private void layoutAudio(int left, int y, int colW) {
-        int full = panelW - 16;
-        place(new Button(full, 18, new Button.Label() {
-            public String get() { return "Microphone: " + (cfg().inputDevice.isEmpty() ? "System default" : cfg().inputDevice); }
+    private void layoutAudio(int left, int y) {
+        int right = left + colW + 10;
+        place(toggle(panelW, new Button.Label() {
+            public String get() { return "Microphone: " + (cfg().inputDevice.isEmpty() ? "System Default" : cfg().inputDevice); }
         }, new Button.Action() {
             public void run() { cfg().inputDevice = cycle(v.inputDevices(), cfg().inputDevice, 1); }
         }), left, y);
-        y += 22;
-        place(new Button(full, 18, new Button.Label() {
-            public String get() { return "Speaker: " + (cfg().outputDevice.isEmpty() ? "System default" : cfg().outputDevice); }
+        y += row;
+        place(toggle(panelW, new Button.Label() {
+            public String get() { return "Speaker: " + (cfg().outputDevice.isEmpty() ? "System Default" : cfg().outputDevice); }
         }, new Button.Action() {
             public void run() { cfg().outputDevice = cycle(v.outputDevices(), cfg().outputDevice, 1); }
         }), left, y);
-        y += 22;
-        place(new Slider(colW, "Mic gain", 0, 4, new Slider.Model() {
+        y += row;
+        place(new Slider(colW, "Mic Volume", 0, 4, new Slider.Model() {
             public double get() { return cfg().micGain; }
             public void set(double d) { cfg().micGain = Math.round(d * 20) / 20.0; }
             public String format(double d) { return pct(d); }
         }), left, y);
-        place(new Slider(colW, "Voice volume", 0, 2, new Slider.Model() {
+        place(new Slider(colW, "Voice Volume", 0, 2, new Slider.Model() {
             public double get() { return cfg().masterVolume; }
             public void set(double d) { cfg().masterVolume = Math.round(d * 20) / 20.0; }
             public String format(double d) { return pct(d); }
-        }), left + colW + 8, y);
-        y += 22;
-        place(new Button(colW, 18, new Button.Label() {
-            public String get() { return "Noise suppression: " + (cfg().noiseSuppression ? "ON" : "off"); }
+        }), right, y);
+        y += row;
+        place(toggle(colW, new Button.Label() {
+            public String get() { return "Noise Suppression: " + (cfg().noiseSuppression ? "On" : "Off"); }
         }, new Button.Action() {
             public void run() { cfg().noiseSuppression = !cfg().noiseSuppression; }
         }), left, y);
-        place(new Button(colW, 18, new Button.Label() {
-            public String get() { return "Auto gain: " + (cfg().automaticGainControl ? "ON" : "off"); }
+        place(toggle(colW, new Button.Label() {
+            public String get() { return "Auto Gain: " + (cfg().automaticGainControl ? "On" : "Off"); }
         }, new Button.Action() {
             public void run() { cfg().automaticGainControl = !cfg().automaticGainControl; }
-        }), left + colW + 8, y);
-        y += 22;
-        place(new Button(colW, 18, new Button.Label() {
-            public String get() { return v.micTestRunning() ? "Stop microphone test" : "Test microphone"; }
+        }), right, y);
+        y += row;
+        place(toggle(colW, new Button.Label() {
+            public String get() { return v.micTestRunning() ? "Stop Mic Test" : "Test Microphone"; }
         }, new Button.Action() {
             public void run() {
                 if (v.micTestRunning()) {
@@ -202,39 +205,42 @@ public final class SettingsScreen extends BaseScreen {
                 }
             }
         }), left, y);
-        place(Button.of(colW, "Test speakers", new Button.Action() {
+        place(Button.of(colW, "Test Speakers", new Button.Action() {
             public void run() { v.playSpeakerTest(); }
-        }), left + colW + 8, y);
-        y += 24;
-        place(new LevelMeter(full, new LevelMeter.Source() {
+        }), right, y);
+        y += row;
+        place(new LevelMeter(panelW, new LevelMeter.Source() {
             public double levelDb() { return v.inputLevelDb(); }
             public double thresholdDb() { return cfg().voiceActivationThresholdDb; }
         }), left, y);
     }
 
+    private int playersTop;
+
     private void layoutPlayers(int left, int y) {
+        playersTop = y;
         List<VoiceControls.PlayerEntry> players = v.players();
-        int rows = Math.max(1, (panelY + panelH - 32 - y) / 22);
+        int rows = Math.max(1, (panelY + panelH - 36 - y) / row);
         playerScroll = Math.max(0, Math.min(playerScroll, Math.max(0, players.size() - rows)));
-        int nameW = 110;
+        int nameW = 100;
         int muteW = 50;
-        int sliderW = panelW - 16 - nameW - muteW - 8;
+        int sliderW = panelW - nameW - muteW - 4;
         for (int i = playerScroll; i < players.size() && i < playerScroll + rows; i++) {
             final VoiceControls.PlayerEntry p = players.get(i);
             final double[] vol = {p.volume};
             final boolean[] muted = {p.muted};
-            Slider s = new Slider(sliderW, p.name, 0, 2, new Slider.Model() {
+            Slider s = new Slider(sliderW, "Volume", 0, 2, new Slider.Model() {
                 public double get() { return vol[0]; }
                 public void set(double d) { vol[0] = Math.round(d * 20) / 20.0; v.setPlayerVolume(p.uuid, vol[0]); }
                 public String format(double d) { return pct(d) + (p.via.isEmpty() ? "" : " (" + p.via + ")"); }
             });
             place(s, left + nameW, y);
-            place(new Button(muteW, 18, new Button.Label() {
+            place(toggle(muteW, new Button.Label() {
                 public String get() { return muted[0] ? "Unmute" : "Mute"; }
             }, new Button.Action() {
                 public void run() { muted[0] = !muted[0]; v.setPlayerMuted(p.uuid, muted[0]); }
-            }), left + nameW + sliderW + 8, y);
-            y += 22;
+            }), left + nameW + sliderW + 4, y);
+            y += row;
         }
     }
 
@@ -252,21 +258,18 @@ public final class SettingsScreen extends BaseScreen {
         int color = st == TransportStatus.OFFLINE || st == TransportStatus.DISABLED ? Theme.BAD
             : st == TransportStatus.RECONNECTING ? Theme.WARN : Theme.GOOD;
         String s = st.label;
-        c.text(s, panelX + panelW - 8 - c.textWidth(s), panelY + 7, color, false);
+        c.text(s, (c.width() - c.textWidth(s)) / 2, 27, color, true);
         if (tab == Tab.PLAYERS) {
             List<VoiceControls.PlayerEntry> players = v.players();
-            int y = panelY + 48;
+            int y = playersTop;
             if (players.isEmpty()) {
-                c.text("No players nearby.", panelX + 8, y + 5, Theme.TEXT_DIM, false);
+                String none = "No players nearby";
+                c.text(none, (c.width() - c.textWidth(none)) / 2, y + 6, Theme.LABEL_DIM, true);
             }
-            for (int i = playerScroll; i < players.size() && y < panelY + panelH - 32; i++) {
-                c.text(players.get(i).name, panelX + 8, y + 5, Theme.TEXT, false);
-                y += 22;
+            for (int i = playerScroll; i < players.size() && y < panelY + panelH - 36; i++) {
+                c.text(players.get(i).name, panelX, y + 6, Theme.LABEL, true);
+                y += row;
             }
-        }
-        if (tab == Tab.GENERAL) {
-            String hint = String.format(Locale.ROOT, "Changes apply when you press Done.");
-            c.text(hint, panelX + 8, panelY + panelH - 18, Theme.TEXT_DIM, false);
         }
     }
 }
