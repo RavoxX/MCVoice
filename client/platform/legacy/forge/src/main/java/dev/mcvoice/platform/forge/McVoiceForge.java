@@ -55,7 +55,11 @@ public final class McVoiceForge {
     /** Game event hooks. */
     public static final class Events {
         @SubscribeEvent
+        //#if MC >= 1.8.9
         public void onNameTag(RenderLivingEvent.Specials.Post<?> e) {
+        //#else
+        public void onNameTag(RenderLivingEvent.Specials.Post e) {
+        //#endif
             //#if MC >= 1.9
             McNameTags.render(e.getRenderer(), e.getEntity(), e.getX(), e.getY(), e.getZ(), client);
             //#else
