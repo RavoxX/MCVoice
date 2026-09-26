@@ -3,7 +3,7 @@ package dev.mcvoice.client.network.udp;
 /** Constants of the MCVoice v1 UDP format (spec section 7). */
 public final class VoiceProtocol {
     public static final int MAJOR = 1;
-    public static final int MINOR = 0;
+    public static final int MINOR = 1;
     public static final int HEADER_LEN = 22;
     public static final int TAG_LEN = 16;
     public static final int MAX_DATAGRAM = 1200;
@@ -23,7 +23,11 @@ public final class VoiceProtocol {
     public static final int CODEC_OPUS = 1;
     public static final int MODE_NORMAL = 0;
     public static final int MODE_WHISPER = 1;
+    /** Voice-group frame (spec 8.1/9.1): not positional, to/from the sender's group only. */
+    public static final int MODE_GROUP = 2;
     public static final int FLAG_EOS = 0x01;
+    /** On a normal/whisper frame: also deliver to the sender's group. */
+    public static final int FLAG_GROUP = 0x02;
 
     public static final int VOICE_FIXED = 15;
     public static final int RELAY_FIXED = 35;

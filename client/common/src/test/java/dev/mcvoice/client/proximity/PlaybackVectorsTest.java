@@ -45,9 +45,13 @@ class PlaybackVectorsTest {
             for (Object m : Json.list(c, "muted")) {
                 muted.add(UUID.fromString((String) m));
             }
+            Set<UUID> group = new HashSet<UUID>();
+            for (Object m : Json.list(c, "group")) {
+                group.add(UUID.fromString((String) m));
+            }
             PlaybackDecision d = PlaybackValidator.check(s, UUID.fromString(Json.str(f, "sender")), epoch,
                 (int) Json.lng(f, "mode", 0), Json.num(c, "normal_range", 48), Json.num(c, "whisper_range", 8), muted,
-                Json.bool(c, "deafened", false));
+                Json.bool(c, "deafened", false), group);
             assertEquals(Json.str(c, "expect"), d.code, Json.str(c, "name"));
         }
     }
