@@ -23,7 +23,7 @@ public class Button extends Widget {
     }
 
     public static Button of(int w, final String text, Action a) {
-        return new Button(w, 18, new Label() {
+        return new Button(w, 20, new Label() {
             public String get() {
                 return text;
             }
@@ -33,8 +33,8 @@ public class Button extends Widget {
     @Override
     public void render(UiCanvas c, int mx, int my) {
         boolean hover = contains(mx, my);
-        box(c, x, y, w, h, highlighted ? Theme.ACCENT_DIM : (hover ? Theme.WIDGET_HOVER : Theme.WIDGET), hover ? Theme.ACCENT : Theme.PANEL_BORDER);
-        centered(c, ellipsize(c, label.get(), w - 6), x + w / 2, y + (h - c.fontHeight()) / 2 + 1, Theme.TEXT);
+        vanillaButton(c, x, y, w, h, hover || highlighted);
+        label(c, label.get(), highlighted ? Theme.LABEL_SELECTED : Theme.LABEL);
     }
 
     @Override
