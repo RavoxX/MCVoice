@@ -31,6 +31,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "accept"
@@ -65,6 +66,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "reject:out_of_range"
@@ -99,6 +101,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "accept"
@@ -133,6 +136,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "reject:other_world"
@@ -167,6 +171,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "reject:not_tracked"
@@ -201,6 +206,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "reject:not_tracked"
@@ -235,6 +241,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "reject:stale_epoch"
@@ -269,6 +276,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "reject:not_in_world"
@@ -304,6 +312,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "reject:self"
@@ -340,6 +349,7 @@
     "853c80ef-3c37-49fd-aa49-938b674adae6"
    ],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "reject:muted"
@@ -374,6 +384,7 @@
    },
    "muted": [],
    "deafened": true,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "reject:deafened"
@@ -408,6 +419,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "accept"
@@ -442,6 +454,7 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "reject:out_of_range"
@@ -476,9 +489,288 @@
    },
    "muted": [],
    "deafened": false,
+   "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
    "expect": "accept"
+  },
+  {
+   "name": "group_member_not_tracked",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 2
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [
+    "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "accept"
+  },
+  {
+   "name": "group_member_other_world_far",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:the_nether",
+     "pos": [
+      9000,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 2
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [
+    "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "accept"
+  },
+  {
+   "name": "group_frame_old_epoch",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 4,
+    "mode": 2
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "accept"
+  },
+  {
+   "name": "group_frame_not_member",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "world": "minecraft:overworld",
+     "pos": [
+      1,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+    "recipient_epoch": 5,
+    "mode": 2
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [
+    "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:not_in_group"
+  },
+  {
+   "name": "group_frame_no_group",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      1,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 2
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:not_in_group"
+  },
+  {
+   "name": "group_member_muted",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 2
+   },
+   "muted": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "deafened": false,
+   "group": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:muted"
+  },
+  {
+   "name": "group_member_deafened",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 2
+   },
+   "muted": [],
+   "deafened": true,
+   "group": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:deafened"
+  },
+  {
+   "name": "group_frame_self",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ],
+    "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5"
+   },
+   "tracked": [],
+   "frame": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "recipient_epoch": 5,
+    "mode": 2
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [
+    "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:self"
+  },
+  {
+   "name": "positional_frame_group_member_still_needs_entity",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "expect": "reject:not_tracked"
   }
  ]
 }

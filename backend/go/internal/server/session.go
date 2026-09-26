@@ -48,6 +48,12 @@ type Session struct {
 	adminMute bool
 	hasScope  bool
 
+	// Voice groups (spec 6.12), guarded by Hub.mu.
+	groupsCap       bool      // the client advertised the "groups" capability
+	outOfWorldSince time.Time // zero while in a world
+	groupFailWindow time.Time
+	groupFails      int
+
 	// UDP state, guarded by umu.
 	umu         sync.Mutex
 	cur, prev   keySlot

@@ -25,6 +25,7 @@ type Peer struct {
 	InWorld       bool
 	WorldID       string // dimension key the client reported (spec 6.3)
 	Attested      string // companion-plugin attested scope "<network>/<subserver>", empty if none (spec 6.3.1)
+	Group         string // voice group id, empty if none (spec 6.12)
 	Epoch         uint32
 	HasPos        bool
 	X, Y, Z       float64
@@ -84,15 +85,39 @@ func Deliver(cfg *Config, now int64, s, r *Peer, mode byte) bool {
 	return dx*dx+dy*dy+dz*dz <= limit*limit
 }
 
+// GroupApplies reports whether the frame requests group delivery and the sender may use it (spec 8.1).
+func GroupApplies(s *Peer, mode, flags byte) bool {
+	return (mode == protocol.ModeGroup || flags&protocol.FlagGroup != 0) &&
+		s.Authenticated && s.UDPVerified && !s.Muted && s.Group != ""
+}
+
+// DeliverGroup is group delivery to one member: no world, epoch, position or visibility checks (spec 8.1).
+func DeliverGroup(s, r *Peer) bool {
+	return r.UUID != s.UUID && s.Group != "" && r.Group == s.Group && r.Authenticated && r.UDPVerified && !r.Deafened
+}
+
+// DeliverProximity is proximity delivery of a frame that was (or was not) also delivered to the
+// group; group members never get it twice (spec 8.1).
+func DeliverProximity(cfg *Config, now int64, s, r *Peer, mode byte, group bool) bool {
+	return mode != protocol.ModeGroup && !(group && r.Group == s.Group) && Deliver(cfg, now, s, r, mode)
+}
+
+// Routed lists the recipients of one frame: Proximity with its own mode, Group with mode 2.
+type Routed struct {
+	Proximity []*Peer
+	Group     []*Peer
+}
+
 // Route returns the recipients among candidates for a voice packet from s.
-func Route(cfg *Config, now int64, s *Peer, packetEpoch uint32, mode byte, candidates []*Peer) []*Peer {
-	if !SenderEligible(cfg, now, s, packetEpoch) {
-		return nil
-	}
-	var out []*Peer
+func Route(cfg *Config, now int64, s *Peer, packetEpoch uint32, mode, flags byte, candidates []*Peer) Routed {
+	group := GroupApplies(s, mode, flags)
+	proximity := mode != protocol.ModeGroup && SenderEligible(cfg, now, s, packetEpoch)
+	var out Routed
 	for _, r := range candidates {
-		if Deliver(cfg, now, s, r, mode) {
-			out = append(out, r)
+		if group && DeliverGroup(s, r) {
+			out.Group = append(out.Group, r)
+		} else if proximity && DeliverProximity(cfg, now, s, r, mode, group) {
+			out.Proximity = append(out.Proximity, r)
 		}
 	}
 	return out

@@ -1,6 +1,7 @@
 //! Control service + voice relay.
 
 mod control;
+mod groups;
 mod http;
 pub mod session;
 mod tls;
@@ -31,6 +32,9 @@ pub(crate) struct Hub {
     pub by_conn: HashMap<u64, Arc<Session>>,
     pub by_uuid: HashMap<String, u64>,
     pub peers: HashMap<u64, PeerState>,
+    pub(crate) groups: HashMap<String, groups::Group>,
+    /// Messages queued under the lock (group changes), sent after it is released.
+    pub(crate) outbox: Vec<(Arc<Session>, String)>,
 }
 
 impl Hub {
@@ -41,6 +45,7 @@ impl Hub {
     }
 
     fn remove(&mut self, conn: u64) -> Option<Arc<Session>> {
+        self.leave_group(conn, None); // disconnected: out of the group (spec 6.12)
         self.peers.remove(&conn);
         let s = self.by_conn.remove(&conn)?;
         if self.by_uuid.get(&s.ident.uuid) == Some(&conn) {
@@ -172,8 +177,10 @@ impl Server {
             hub.by_uuid.insert(sess.ident.uuid.clone(), sess.conn_id);
             hub.peers.insert(sess.conn_id, ps);
             hub.by_conn.insert(sess.conn_id, sess);
-            old
+            (old, hub.take_outbox())
         };
+        let (old, out) = old;
+        groups::send_all(out);
         if let Some(old) = old {
             self.forget_udp(&old);
             self.metrics.connected_clients.fetch_sub(1, Ordering::Relaxed);
@@ -192,14 +199,16 @@ impl Server {
     }
 
     pub(crate) fn unregister(&self, sess: &Arc<Session>) {
-        let removed = {
+        let (removed, out) = {
             let mut hub = self.hub.write().unwrap();
-            if hub.by_conn.get(&sess.conn_id).is_some_and(|s| Arc::ptr_eq(s, sess)) {
+            let removed = if hub.by_conn.get(&sess.conn_id).is_some_and(|s| Arc::ptr_eq(s, sess)) {
                 hub.remove(sess.conn_id).is_some()
             } else {
                 false
-            }
+            };
+            (removed, hub.take_outbox())
         };
+        groups::send_all(out);
         if removed {
             self.metrics.connected_clients.fetch_sub(1, Ordering::Relaxed);
             self.forget_udp(sess);
@@ -259,6 +268,7 @@ impl Server {
 
     /// Recompute presence for all sessions and send diffs (spec 6.7).
     pub(crate) fn presence_tick(&self) {
+        self.group_tick(Instant::now());
         let mut updates = Vec::new();
         {
             let mut hub = self.hub.write().unwrap();

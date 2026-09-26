@@ -33,6 +33,8 @@ type Server struct {
 	mu     sync.RWMutex
 	byConn map[uint64]*Session
 	byUUID map[string]*Session
+	groups map[string]*group
+	outbox []outMsg // group messages queued under mu, sent by unlockAndFlush
 
 	bansMu    sync.RWMutex
 	banned    map[string]struct{}
@@ -58,6 +60,7 @@ func New(cfg *config.Config, log *slog.Logger) *Server {
 		mojang:          auth.NewMojangVerifier(cfg.MojangSessionURL),
 		byConn:          map[uint64]*Session{},
 		byUUID:          map[string]*Session{},
+		groups:          map[string]*group{},
 		banned:          map[string]struct{}{},
 		muted:           map[string]struct{}{},
 		connectLimiter:  newIPLimiter(cfg.RateConnectPerMin),
@@ -100,7 +103,7 @@ func (s *Server) register(sess *Session) (ok bool) {
 	}
 	s.byConn[sess.connID] = sess
 	s.byUUID[sess.ident.UUID] = sess
-	s.mu.Unlock()
+	s.unlockAndFlush()
 	if old != nil {
 		old.send(errorFrame(protocol.CodeSessionReplaced, "replaced by a newer session", true))
 		old.close(protocol.CodeSessionReplaced)
@@ -115,7 +118,7 @@ func (s *Server) unregister(sess *Session) {
 	if removed {
 		s.removeLocked(sess)
 	}
-	s.mu.Unlock()
+	s.unlockAndFlush()
 	if removed {
 		s.metrics.ConnectedClients.Add(-1)
 		sess.umu.Lock()
@@ -129,6 +132,7 @@ func (s *Server) unregister(sess *Session) {
 
 // removeLocked drops sess from all indexes (caller holds s.mu).
 func (s *Server) removeLocked(sess *Session) {
+	s.leaveGroupLocked(sess, "") // disconnected: out of the group (spec 6.12)
 	delete(s.byConn, sess.connID)
 	if s.byUUID[sess.ident.UUID] == sess {
 		delete(s.byUUID, sess.ident.UUID)
@@ -209,6 +213,7 @@ func (s *Server) reloadBans() {
 
 // presenceTick recomputes presence (spec 6.7) for every session and sends diffs.
 func (s *Server) presenceTick() {
+	s.groupTick(s.now())
 	type upd struct {
 		sess *Session
 		msg  []byte

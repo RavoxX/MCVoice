@@ -1,6 +1,6 @@
-# MCVoice Protocol, version 1.0
+# MCVoice Protocol, version 1.1
 
-Status: **normative** for `OUR_VOICE_PROTOCOL_MAJOR = 1`, `OUR_VOICE_PROTOCOL_MINOR = 0`.
+Status: **normative** for `OUR_VOICE_PROTOCOL_MAJOR = 1`, `OUR_VOICE_PROTOCOL_MINOR = 1`.
 
 Key words MUST, MUST NOT, SHOULD, MAY are used as in RFC 2119.
 
@@ -59,6 +59,7 @@ that is a bug that has to be fixed before release.
 | `key_rotation`      | backend rotates voice keys during the session (§7.6) |
 | `scope_attestation` | backend verifies optional companion-plugin scope attestations (§6.3.1) |
 | `svc_interop`       | client-only; informative, lets the backend count hybrid clients |
+| `groups`            | voice groups (§6.12, §8.1, §9.1); added in 1.1 |
 
 ## 3. Identifiers
 
@@ -132,7 +133,7 @@ Client → backend, MUST be the first message, within 10 s of connecting.
 
 ```json
 {"type":"hello",
- "protocol":{"major":1,"minor":0},
+ "protocol":{"major":1,"minor":1},
  "client":{"name":"mcvoice","version":"0.1.0","minecraft":"1.20.1","loader":"fabric"},
  "capabilities":["opus","whisper","peers_delta","presence","key_rotation"]}
 ```
@@ -141,7 +142,7 @@ Backend → client:
 
 ```json
 {"type":"hello_ok",
- "protocol":{"major":1,"minor":0},
+ "protocol":{"major":1,"minor":1},
  "server":{"name":"mcvoice-backend","version":"0.1.0","implementation":"rust"},
  "capabilities":["opus","whisper","peers_delta","presence","key_rotation"],
  "auth":{"methods":["mojang"],"challenge":"3f7c0e8d4a1b2c3d4e5f60718293a4b5"}}
@@ -313,6 +314,60 @@ retry `HELLO` with back-off and report "UDP blocked" if it never arrives.
 
 `{"type":"bye"}` from either side, then close.
 
+### 6.12 Voice groups (capability `groups`, protocol 1.1)
+
+A voice group is a set of at most **15** sessions that hear each other
+non-positionally, independent of worlds and servers: members may be on
+different Minecraft servers. Groups live only in backend memory.
+
+* **Identifier.** The backend creates the group id: 5 characters from
+  `ABCDEFGHJKLMNPQRSTUVWXYZ23456789`, random, unique among active groups.
+* **Membership requires being in a world.** `group_create`/`group_join` are
+  refused with `not_in_world` unless the session's current scope has
+  `in_world:true`. Membership ends when the control session ends (disconnect,
+  timeout, replacement), on `group_leave`, or when the session has been out of
+  a world (`in_world:false`) for more than **10 s** (grace for respawn,
+  dimension change and proxy server switches). Creating or joining a group
+  first leaves the current one. An empty group is deleted.
+* **Password.** Optional, 1-32 printable characters. The backend keeps only a
+  salted SHA-256 hash, compares in constant time, never logs it and never
+  sends it to anyone. At most 5 wrong passwords per session per minute; more
+  are answered with `rate_limited`.
+* **Privacy.** The group list reveals id, member count, capacity and whether a
+  password is required. Member names and UUIDs are sent to members only.
+
+Client → backend:
+
+```json
+{"type":"group_list","query":"optional"}
+{"type":"group_create","password":"optional"}
+{"type":"group_join","id":"K7M2Q","password":"optional"}
+{"type":"group_leave"}
+```
+
+Backend → client:
+
+```json
+{"type":"group_list","groups":[{"id":"K7M2Q","members":3,"max":15,"password":true}]}
+{"type":"group_joined","group":{"id":"K7M2Q","max":15,"password":true,
+ "members":[{"uuid":"…","name":"Alex"}]}}
+{"type":"group_update","id":"K7M2Q","members":[{"uuid":"…","name":"Alex"}]}
+{"type":"group_left","id":"K7M2Q","reason":"left"}
+```
+
+* `group_list` lists at most 100 groups, most members first, then by id. With
+  `query` (1-5 characters `[A-Za-z0-9]`) only groups whose id contains it,
+  case-insensitively, are listed (search).
+* `group_joined` answers a successful create/join; `group_update` goes to
+  every member whenever the member list changes; `group_left` tells a member it
+  is no longer in the group (`reason`: `left`, `not_in_world`, `replaced` —
+  it left for another group).
+* Errors (non-fatal `error` frames): `group_not_found`, `group_full`,
+  `group_password` (missing or wrong password), `not_in_world`,
+  `rate_limited`. A group message from a client that did not advertise
+  `groups` is answered with `unknown_message`.
+* Ids in `group_join` are matched case-insensitively.
+
 ## 7. Voice datagrams (UDP)
 
 Default port: **24455/udp** (distinct from Simple Voice Chat's default).
@@ -355,8 +410,8 @@ Datagrams of any other type are dropped (counted as invalid).
 | 4 | 2 | sequence (u16, wraps) |
 | 6 | 4 | timestamp (u32, 48 kHz sample clock, wraps) |
 | 10 | 1 | codec (`1` = Opus) |
-| 11 | 1 | mode (`0` normal, `1` whisper) |
-| 12 | 1 | flags (bit 0 = end of transmission; others MUST be 0) |
+| 11 | 1 | mode (`0` normal, `1` whisper, `2` group only — §8.1) |
+| 12 | 1 | flags (bit 0 = end of transmission; bit 1 = also deliver to the sender's group, only with mode `0`/`1`; others MUST be 0) |
 | 13 | 2 | payload_length (u16, ≤ 1000) |
 | 15 | n | Opus payload (exactly payload_length bytes) |
 
@@ -375,7 +430,9 @@ Datagrams of any other type are dropped (counted as invalid).
 | 33 | 2 | payload_length |
 | 35 | n | Opus payload |
 
-The backend copies sequence/timestamp/codec/mode/flags/payload unchanged.
+The backend copies sequence/timestamp/codec/mode/flags/payload unchanged,
+except for group deliveries (§8.1): those are relayed with mode `2` and flag
+bit 1 cleared.
 A frame with `payload_length = 0` and the end-of-transmission flag set is a
 valid "stop talking" marker.
 
@@ -467,6 +524,21 @@ This check is **defence in depth**, not a security boundary: a modified client c
 lie about its position or visible set. The receiving client's own check (§9) is the
 final authority for playback.
 
+### 8.1 Group delivery
+
+A `VOICE` datagram requests group delivery if its mode is `2`, or its flag
+bit 1 is set. Then, if S passes check 1 (authenticated, UDP-verified, not
+muted, not banned) and is a member of group G, the backend relays it with
+mode `2` to every other member R of G that is UDP-verified and not deafened.
+Worlds, epochs, positions and visibility are **not** checked: the members
+chose to hear each other.
+
+A mode-`2` datagram gets no proximity delivery, and is dropped if S is in no
+group. A mode `0`/`1` datagram additionally gets proximity delivery (checks
+2-9), **except** to members of G when group delivery applied, so nobody hears
+a group member twice. A frame from a group member without flag bit 1 (e.g.
+push-to-talk pressed while the group channel is silent) is routed by §8 only.
+
 ## 9. Client playback rule (normative)
 
 > If the speaker does not currently exist as a tracked player entity in my
@@ -487,6 +559,16 @@ at playback-decision time:
 Positions or distance claims from the backend or the remote player are never used
 for this decision. When a check starts failing mid-stream the client fades the
 stream out over ≤ 20 ms instead of cutting it hard.
+
+### 9.1 Group frames
+
+A relayed frame with mode `2` is not positional. The client plays it only if
+the sender is a member of the client's **current** group according to the
+latest `group_joined`/`group_update`, and the sender is not the client
+itself, not locally muted and the client is not deafened. It is mixed
+centred at the per-player volume, without distance attenuation. The local
+entity rule above applies to every positional frame (mode `0`/`1`) and is
+unchanged.
 
 ## 10. Transport identity and deduplication
 

@@ -195,6 +195,11 @@ func (s *Server) HandleControl(w http.ResponseWriter, r *http.Request) {
 	sess.cur = newKeySlot(0, ttl, now)
 	sess.adminMute = s.isAdminMuted(ident.UUID)
 	sess.peer = routing.Peer{UUID: ident.UUID, Authenticated: true, Visible: map[string]struct{}{}, Muted: sess.adminMute}
+	for _, cp := range hello.Capabilities {
+		if cp == "groups" {
+			sess.groupsCap = true
+		}
+	}
 	sess.lastSeen.Store(now.UnixMilli())
 	if !s.register(sess) {
 		c.fail(protocol.CodeServerFull, "server full")
@@ -351,6 +356,11 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 		sess.presence = map[string]struct{}{}
 		sess.peer.WorldID, sess.peer.Attested = "", ""
 		if *m.InWorld {
+			sess.outOfWorldSince = time.Time{}
+		} else if sess.outOfWorldSince.IsZero() {
+			sess.outOfWorldSince = now
+		}
+		if *m.InWorld {
 			// network_id is validated by the parser but never used for routing (spec 6.3)
 			sess.peer.WorldID = *m.WorldID
 			if m.Attestation != nil {
@@ -418,6 +428,14 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 		s.mu.Unlock()
 	case *protocol.Ping:
 		sess.send(marshal(protocol.Pong{Type: "pong", Nonce: *m.Nonce, ServerTime: now.UnixMilli()}))
+	case *protocol.GroupList:
+		s.groupList(sess, m.Query)
+	case *protocol.GroupCreate:
+		s.groupCreate(sess, m)
+	case *protocol.GroupJoin:
+		s.groupJoin(sess, m, now)
+	case *protocol.GroupLeave:
+		s.groupLeave(sess)
 	case *protocol.Bye:
 		return true
 	}

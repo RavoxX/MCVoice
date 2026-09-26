@@ -204,4 +204,10 @@ pub struct PeerState {
     pub self_muted: bool,
     pub admin_muted: bool,
     pub has_scope: bool,
+    /// the client advertised the `groups` capability
+    pub groups_cap: bool,
+    /// set while the session is out of a world (group grace, spec 6.12)
+    pub out_of_world_since: Option<Instant>,
+    pub group_fail_window: Instant,
+    pub group_fails: u32,
 }

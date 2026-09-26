@@ -196,6 +196,10 @@ pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: Strin
         self_muted: false,
         admin_muted,
         has_scope: false,
+        groups_cap: hello.capabilities.as_ref().is_some_and(|c| c.iter().any(|c| c == "groups")),
+        out_of_world_since: None,
+        group_fail_window: Instant::now(),
+        group_fails: 0,
     };
     if !srv.register(sess.clone(), ps) {
         return fail(&mut sink, code::SERVER_FULL, "server full").await;
@@ -353,6 +357,10 @@ pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: Strin
 impl Server {
     fn dispatch(&self, sess: &Arc<Session>, msg: ClientMsg, now: Instant, last_pos: &mut Option<Instant>) {
         match msg {
+            ClientMsg::GroupList(g) => self.group_list(sess, g.query.as_deref()),
+            ClientMsg::GroupCreate(g) => self.group_create(sess, g),
+            ClientMsg::GroupJoin(g) => self.group_join(sess, g, now),
+            ClientMsg::GroupLeave => self.group_leave(sess),
             ClientMsg::Hello(_) | ClientMsg::Auth(_) | ClientMsg::Resume(_) => {
                 sess.send(error_frame(code::BAD_MESSAGE, "already authenticated", false))
             }
@@ -389,6 +397,7 @@ impl Server {
                 // network_id is validated by the parser but never used for routing (spec 6.3)
                 ps.peer.attested = attested.unwrap_or_default();
                 ps.peer.world_id = if in_world { s.world_id.unwrap() } else { String::new() };
+                ps.out_of_world_since = if in_world { None } else { ps.out_of_world_since.or(Some(now)) };
             }
             ClientMsg::Pos(p) => {
                 if last_pos.is_some_and(|t| now.duration_since(t) < Duration::from_millis(90)) {

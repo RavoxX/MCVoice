@@ -29,6 +29,7 @@ type vecSession struct {
 	NetworkID     string     `json:"network_id"` // informational: routing must ignore it
 	WorldID       string     `json:"world_id"`
 	Attested      string     `json:"attested"`
+	Group         string     `json:"group"`
 	Epoch         uint32     `json:"epoch"`
 	Pos           *[]float64 `json:"pos"`
 	PosAtMs       int64      `json:"pos_at_ms"`
@@ -58,8 +59,10 @@ func TestRoutingVectors(t *testing.T) {
 				Sender string `json:"sender"`
 				Epoch  uint32 `json:"epoch"`
 				Mode   byte   `json:"mode"`
+				Flags  byte   `json:"flags"`
 			} `json:"packet"`
-			Expect []string `json:"expect"`
+			Expect      []string `json:"expect"`
+			ExpectGroup []string `json:"expect_group"`
 		} `json:"cases"`
 	}
 	if err := json.Unmarshal(b, &vs); err != nil {
@@ -75,7 +78,7 @@ func TestRoutingVectors(t *testing.T) {
 			var sender *Peer
 			for _, s := range c.Sessions {
 				p := &Peer{UUID: s.UUID, Authenticated: s.Authenticated, UDPVerified: s.UDPVerified, InWorld: s.InWorld,
-					WorldID: s.WorldID, Attested: s.Attested, Epoch: s.Epoch, PosAtMs: s.PosAtMs,
+					WorldID: s.WorldID, Attested: s.Attested, Group: s.Group, Epoch: s.Epoch, PosAtMs: s.PosAtMs,
 					Visible: map[string]struct{}{}, Muted: s.Muted, Deafened: s.Deafened}
 				if s.Pos != nil {
 					p.HasPos, p.X, p.Y, p.Z = true, (*s.Pos)[0], (*s.Pos)[1], (*s.Pos)[2]
@@ -88,19 +91,24 @@ func TestRoutingVectors(t *testing.T) {
 				}
 				peers = append(peers, p)
 			}
-			got := []string{}
-			for _, r := range Route(&cfg, c.NowMs, sender, c.Packet.Epoch, c.Packet.Mode, peers) {
-				got = append(got, r.UUID)
-			}
-			sort.Strings(got)
-			if len(got) != len(c.Expect) {
-				t.Fatalf("got %v want %v", got, c.Expect)
-			}
-			for i := range got {
-				if got[i] != c.Expect[i] {
-					t.Fatalf("got %v want %v", got, c.Expect)
+			routed := Route(&cfg, c.NowMs, sender, c.Packet.Epoch, c.Packet.Mode, c.Packet.Flags, peers)
+			check := func(what string, l []*Peer, want []string) {
+				got := []string{}
+				for _, r := range l {
+					got = append(got, r.UUID)
+				}
+				sort.Strings(got)
+				if len(got) != len(want) {
+					t.Fatalf("%s: got %v want %v", what, got, want)
+				}
+				for i := range got {
+					if got[i] != want[i] {
+						t.Fatalf("%s: got %v want %v", what, got, want)
+					}
 				}
 			}
+			check("proximity", routed.Proximity, c.Expect)
+			check("group", routed.Group, c.ExpectGroup)
 		})
 	}
 }

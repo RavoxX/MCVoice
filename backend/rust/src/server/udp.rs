@@ -185,10 +185,17 @@ impl Server {
 
     fn relay_voice(&self, sender: &Session, v: &Voice<'_>, scratch: &mut Scratch) {
         let now_ms = self.now_ms();
-        let targets: Vec<(Arc<Session>, u32)> = {
+        let group_voice = Voice {
+            mode: MODE_GROUP,
+            flags: v.flags & !FLAG_GROUP,
+            ..*v
+        };
+        let targets: Vec<(Arc<Session>, u32, bool)> = {
             let hub = self.hub.read().unwrap();
             let Some(sp) = hub.peers.get(&sender.conn_id) else { return };
-            if !routing::sender_eligible(&self.rcfg, now_ms, &sp.peer, v.epoch) {
+            let group = routing::group_applies(&sp.peer, v.mode, v.flags);
+            let proximity = v.mode != MODE_GROUP && routing::sender_eligible(&self.rcfg, now_ms, &sp.peer, v.epoch);
+            if !group && !proximity {
                 let reason = if sp.peer.in_world && v.epoch != sp.peer.epoch {
                     "stale_epoch"
                 } else {
@@ -197,24 +204,41 @@ impl Server {
                 self.metrics.drop(reason);
                 return;
             }
-            // candidates are the players the sender's own world tracks (mutual visibility is mandatory)
-            sp.peer
-                .visible
-                .iter()
-                .filter_map(|u| {
-                    let (c, rp) = hub.peer_of(u)?;
-                    if routing::deliver(&self.rcfg, now_ms, &sp.peer, &rp.peer, v.mode) {
-                        Some((hub.by_conn.get(&c)?.clone(), rp.peer.epoch))
-                    } else {
-                        None
+            let mut targets = Vec::new();
+            if group {
+                // spec 8.1: every other member of the sender's group, relayed with mode 2
+                if let Some(g) = hub.groups.get(&sp.peer.group) {
+                    for c in &g.members {
+                        if let (Some(rp), Some(rs)) = (hub.peers.get(c), hub.by_conn.get(c)) {
+                            if routing::deliver_group(&sp.peer, &rp.peer) {
+                                targets.push((rs.clone(), rp.peer.epoch, true));
+                            }
+                        }
                     }
-                })
-                .collect()
+                }
+            }
+            if proximity {
+                // candidates are the players the sender's own world tracks (mutual visibility is mandatory)
+                for u in &sp.peer.visible {
+                    let Some((c, rp)) = hub.peer_of(u) else { continue };
+                    if routing::deliver_proximity(&self.rcfg, now_ms, &sp.peer, &rp.peer, v.mode, group) {
+                        if let Some(rs) = hub.by_conn.get(&c) {
+                            targets.push((rs.clone(), rp.peer.epoch, false));
+                        }
+                    }
+                }
+            }
+            targets
         };
         let now = Instant::now();
-        for (r, epoch) in targets {
+        for (r, epoch, via_group) in targets {
             scratch.relay_plain.clear();
-            write_relay(&mut scratch.relay_plain, &sender.uuid_b, epoch, v);
+            write_relay(
+                &mut scratch.relay_plain,
+                &sender.uuid_b,
+                epoch,
+                if via_group { &group_voice } else { v },
+            );
             let mut out = scratch.buf();
             let mut u = r.udp.lock().unwrap();
             let Some(addr) = u.addr else { continue };

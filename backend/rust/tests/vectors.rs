@@ -170,6 +170,7 @@ fn routing_vectors() {
                 in_world: s["in_world"].as_bool().unwrap(),
                 world_id: s["world_id"].as_str().unwrap().into(),
                 attested: s["attested"].as_str().unwrap().into(),
+                group: s["group"].as_str().unwrap().into(),
                 epoch: s["epoch"].as_u64().unwrap() as u32,
                 pos: s["pos"]
                     .as_array()
@@ -187,25 +188,23 @@ fn routing_vectors() {
             .collect();
         let pkt = &c["packet"];
         let sender = peers.iter().find(|p| p.uuid == pkt["sender"].as_str().unwrap()).unwrap();
-        let mut got: Vec<String> = route(
+        let routed = route(
             &cfg,
             c["now_ms"].as_i64().unwrap(),
             sender,
             pkt["epoch"].as_u64().unwrap() as u32,
             pkt["mode"].as_u64().unwrap() as u8,
+            pkt["flags"].as_u64().unwrap() as u8,
             peers.iter(),
-        )
-        .into_iter()
-        .map(|p| p.uuid.clone())
-        .collect();
-        got.sort();
-        let want: Vec<String> = c["expect"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|x| x.as_str().unwrap().to_string())
-            .collect();
-        assert_eq!(got, want, "{name}");
+        );
+        let ids = |l: &[&Peer]| {
+            let mut v: Vec<String> = l.iter().map(|p| p.uuid.clone()).collect();
+            v.sort();
+            v
+        };
+        let want = |k: &str| -> Vec<String> { c[k].as_array().unwrap().iter().map(|x| x.as_str().unwrap().to_string()).collect() };
+        assert_eq!(ids(&routed.proximity), want("expect"), "{name} (proximity)");
+        assert_eq!(ids(&routed.group), want("expect_group"), "{name} (group)");
     }
 }
 
