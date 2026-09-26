@@ -83,10 +83,13 @@ Backend routing (§8) is a bandwidth filter:
 * positions fresh within 3 s;
 * not muted, banned or deafened.
 
-The **client playback rule (§9)** is the security boundary. The speaker must
-currently be a tracked player entity in the listener's world, within range by
-local positions, and not muted or deafened. It is checked for every frame of
-every transport. See [proximity-security.md](proximity-security.md).
+The **client playback rule (§9)** is the security boundary for positional
+audio. The speaker must currently be a tracked player entity in the
+listener's world, within range by local positions, and not muted or
+deafened. It is checked for every positional frame of every transport. Group
+frames (mode 2, §9.1) are played centred instead, and only if the speaker is a
+member of the listener's current group. See
+[proximity-security.md](proximity-security.md).
 
 ## Versioning
 

@@ -9,11 +9,12 @@ can still be heard on servers that run the Simple Voice Chat plugin.
 
 * Positional 3D audio (equal-power stereo panning, distance attenuation),
   Opus at 48 kHz in 20 ms frames, a jitter buffer and a whisper mode.
-* **The local entity rule.** A speaker is played only while they currently
-  exist as a tracked player entity in the listener's own Minecraft world,
-  within range. This holds on proxy networks (Velocity/BungeeCord) where
-  sub-servers share an address, dimension names and coordinates. See
-  [proximity security](docs/proximity-security.md).
+* **The local entity rule.** Positional voice from a speaker is played only
+  while they currently exist as a tracked player entity in the listener's own
+  Minecraft world, within range. This holds on proxy networks
+  (Velocity/BungeeCord) where sub-servers share an address, dimension names
+  and coordinates. The one exception is voice groups, which members join on
+  purpose. See [proximity security](docs/proximity-security.md).
 * Encrypted voice (AES-128-GCM with replay protection and key rotation) and
   Minecraft account verification through Mojang's session server. Access
   tokens never leave the client towards our backend.

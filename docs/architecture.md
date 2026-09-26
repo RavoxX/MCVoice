@@ -96,7 +96,9 @@ resolved at generation time by `tools/port-version/preprocess.py`. See
    speaker every 20 ms. **Before mixing it re-runs `PlaybackValidator`**
    against the newest snapshot: the speaker must be a tracked player entity in
    the current world, in range, and not muted or deafened. Panning and
-   attenuation use local entity positions only.
+   attenuation use local entity positions only. Voice-group frames (mode 2)
+   instead need the speaker in the current group member list and are mixed
+   centred.
 
 Proximity security is explained in [proximity-security.md](proximity-security.md).
 

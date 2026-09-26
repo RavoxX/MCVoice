@@ -26,9 +26,11 @@ regenerate the vectors.
 
 1. **Local entity rule.** Never play positional audio from a speaker who
    is not a currently tracked player entity in the listener's current local
-   world, in range. `PlaybackValidator` is checked on every frame of every
-   transport. Never rely on server address, dimension name or coordinates
-   alone (proxy sub-servers share all three). See `docs/proximity-security.md`.
+   world, in range. `PlaybackValidator` is checked on every positional frame
+   of every transport. Never rely on server address, dimension name or
+   coordinates alone (proxy sub-servers share all three). The only
+   non-positional audio is voice groups: played centred, and only from members
+   of the listener's current group (spec 9.1). See `docs/proximity-security.md`.
 2. **Never fake success.**
    * A Minecraft version/loader counts as supported only when CI built and
      validated its jar (`versions/build-status.json`).
@@ -283,8 +285,10 @@ git show FETCH_HEAD:<path>`).
   * Fabric wherever Fabric API exists for 1.14.4–26.3.
   * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
     without Legacy Fabric API).
-* **Releases:** v0.1.2 (see the latest `release.yml` run and `release-report.md`)
-  adds voice groups, the macOS microphone fix and vanilla-style screens.
+* **Releases:** v0.1.2 (run 36250351566: 102/102 jars, 62/62 GitHub
+  Releases, 102/102 Maven packages, images `0.1.2`/`latest`) adds voice
+  groups, the macOS microphone fix and vanilla-style screens. The public
+  backend runs image `0.1.2` (protocol 1.1, advertises `groups`).
 * **Earlier release v0.1.0:** every passing version has an `mc/` branch
   and a `v0.1.0-mc<version>` GitHub Release (62 releases). Full run
   36112725820 (`release-report.md` on `v0.1.0`), then 36115472419 for
