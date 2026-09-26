@@ -123,6 +123,27 @@ class AudioPipelineTest {
         assertEquals(0.0, mixEnergy(true, 60), 1e-9, "speaker out of range is silent");
     }
 
+    @Test
+    void speakingIndicatorFollowsPlaybackAndClearsWithStream() {
+        SpatialMixer mixer = new SpatialMixer();
+        OpusCodec.Encoder enc = new OpusCodec.Encoder(32000);
+        byte[] pkt = new byte[1000];
+        assertFalse(mixer.isTalking(SPEAKER));
+        for (int f = 0; f < 20; f++) {
+            int n = enc.encode(sine(300, 12000, f * 960), pkt);
+            mixer.enqueue(SPEAKER, 1, f, 0, 0, pkt, 0, n, f * 20L);
+            mixer.mixFrame(snapWith(true, 5), VALIDATOR, SETTINGS, f * 20L);
+        }
+        assertTrue(mixer.isTalking(SPEAKER));
+        assertFalse(mixer.isTalking(UUID.randomUUID()));
+        mixer.mixFrame(snapWith(false, 5), VALIDATOR, SETTINGS, 400);
+        assertFalse(mixer.isTalking(SPEAKER), "untracked speakers must lose the indicator");
+        mixer.flush(SPEAKER);
+        assertFalse(mixer.isTalking(SPEAKER), "transport changes clear the indicator immediately");
+        mixer.clear();
+        assertFalse(mixer.isTalking(SPEAKER), "world changes clear the indicator");
+    }
+
     /** Regression: a new stream must survive its silent prebuffer polls (was reaped as "idle"). */
     @Test
     void newStreamSurvivesPrebuffering() {
