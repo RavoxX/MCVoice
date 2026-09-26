@@ -81,6 +81,14 @@ public final class ControlClient {
 
         /** The session ended (network loss, kick, ...). Voice must stop until the next onSession. */
         void onSessionLost(String reason);
+
+        /** A voice-group message (group_list, group_joined, group_update, group_left; spec 6.12). */
+        default void onGroupMessage(String type, Map<String, Object> message) {
+        }
+
+        /** A non-fatal backend error answering one of our requests (e.g. group_password). */
+        default void onNotice(String code, String message) {
+        }
     }
 
     public static final class Options {
@@ -108,6 +116,7 @@ public final class ControlClient {
     private volatile long lastPingSentMs;
     private volatile long lastPingNonce;
     private volatile long rttMs = -1;
+    private volatile java.util.Set<String> serverCaps = java.util.Collections.emptySet();
     private Thread thread;
 
     public ControlClient(Options opts, SessionAuthenticator auth, Listener listener) {
@@ -305,6 +314,7 @@ public final class ControlClient {
         caps.add("peers_delta");
         caps.add("presence");
         caps.add("key_rotation");
+        caps.add("groups");
         if (opts.svcInterop) {
             caps.add("svc_interop");
         }
@@ -322,6 +332,14 @@ public final class ControlClient {
         if (proto == null || Json.lng(proto, "major", -1) != VoiceProtocol.MAJOR) {
             throw new FatalException(Status.INCOMPATIBLE, "backend speaks protocol major " + (proto == null ? "?" : Json.lng(proto, "major", -1)));
         }
+        java.util.Set<String> sc = new java.util.HashSet<String>();
+        List<Object> advertised = Json.list(hello, "capabilities");
+        if (advertised != null) {
+            for (Object c : advertised) {
+                sc.add(String.valueOf(c));
+            }
+        }
+        serverCaps = sc;
         Map<String, Object> server = Json.objAt(hello, "server");
         String impl = server == null ? "?" : Json.str(server, "implementation");
         String version = server == null ? "?" : Json.str(server, "version");
@@ -413,12 +431,15 @@ public final class ControlClient {
                 rttMs = System.currentTimeMillis() - lastPingSentMs;
                 listener.onRtt(rttMs);
             }
+        } else if (type.startsWith("group_")) {
+            listener.onGroupMessage(type, m);
         } else if ("error".equals(type)) {
             boolean fatal = Json.bool(m, "fatal", false);
             String code = Json.str(m, "code");
             if (fatal) {
                 throwIfError(m);
             }
+            listener.onNotice(code, Json.str(m, "message"));
             VoiceLog.every(10000, "ctl-err-" + code, dev.mcvoice.client.log.LogSink.Level.DEBUG, Category.CONTROL,
                 "backend notice: " + code + " " + Json.str(m, "message"));
         }
@@ -476,6 +497,39 @@ public final class ControlClient {
 
     public boolean sendState(boolean muted, boolean deafened) {
         return connected() && send(Json.obj().put("type", "state").put("muted", muted).put("deafened", deafened).toString());
+    }
+
+    /** True if the backend of the current session advertised the capability. */
+    public boolean serverSupports(String capability) {
+        return connected() && serverCaps.contains(capability);
+    }
+
+    public boolean sendGroupList(String query) {
+        Json.Obj o = Json.obj().put("type", "group_list");
+        if (query != null && !query.isEmpty()) {
+            o.put("query", query);
+        }
+        return connected() && send(o.toString());
+    }
+
+    public boolean sendGroupCreate(String password) {
+        Json.Obj o = Json.obj().put("type", "group_create");
+        if (password != null && !password.isEmpty()) {
+            o.put("password", password);
+        }
+        return connected() && send(o.toString());
+    }
+
+    public boolean sendGroupJoin(String id, String password) {
+        Json.Obj o = Json.obj().put("type", "group_join").put("id", id);
+        if (password != null && !password.isEmpty()) {
+            o.put("password", password);
+        }
+        return connected() && send(o.toString());
+    }
+
+    public boolean sendGroupLeave() {
+        return connected() && send(Json.obj().put("type", "group_leave").toString());
     }
 
     private static List<Object> strings(Collection<UUID> c) {
