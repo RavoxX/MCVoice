@@ -1,3 +1,5 @@
+Downloading https://services.gradle.org/distributions/gradle-7.3.3-bin.zip
+...........10%...........20%...........30%...........40%...........50%...........60%...........70%...........80%...........90%...........100%
 To honour the JVM settings for this build a single-use Daemon process will be forked. See https://docs.gradle.org/7.3.3/userguide/gradle_daemon.html#sec:disabling_the_daemon.
 Daemon will be stopped at the end of the build 
 
@@ -26,11 +28,11 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790329011760.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790425267623.json
 
-BUILD SUCCESSFUL in 54s
+BUILD SUCCESSFUL in 55s
 8 actionable tasks: 8 executed
-valid: mcvoice-0.1.1-mc1.16.5-forge.jar (329 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.2-mc1.16.5-forge.jar (352 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
