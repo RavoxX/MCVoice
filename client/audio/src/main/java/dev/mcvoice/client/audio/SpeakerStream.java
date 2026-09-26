@@ -24,6 +24,7 @@ final class SpeakerStream {
     }
 
     void flush() {
+        talking = false;
         jitter.reset();
         decoder.reset();
         unwrap.reset();

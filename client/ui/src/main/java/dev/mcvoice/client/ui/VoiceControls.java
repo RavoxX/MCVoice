@@ -76,6 +76,13 @@ public interface VoiceControls {
     /** Ask the backend for the group list; query (id part) may be empty. */
     void requestGroups(String query);
 
+    /** Request the next batch, if available; duplicate requests are coalesced. */
+    void loadMoreGroups();
+
+    boolean groupsLoading();
+
+    boolean hasMoreGroups();
+
     void createGroup(String password);
 
     void joinGroup(String id, String password);
