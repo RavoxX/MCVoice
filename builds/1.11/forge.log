@@ -4,22 +4,22 @@ Daemon will be stopped at the end of the build
 > Configure project :
 Architectury Loom: 0.10.0.5
 :generating dummy intermediary
-:generated dummy intermediary in 816.0 ms
+:generated dummy intermediary in 729.5 ms
 :patching forge
-:patched forge in 15.72 s
+:patched forge in 1.117 s
 :patching jars
-:patched jars in 5.071 s
+:patched jars in 6.583 s
 :access transforming minecraft
-[09:31:58] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
-[09:31:58] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-at-patched.jar, --atFile, /tmp/at-conf3373579563812453814.cfg]
-[09:31:58] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-patched.jar
-[09:31:58] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-at-patched.jar
-[09:31:58] [main/INFO]: Transformer file /tmp/at-conf3373579563812453814.cfg
-[09:31:58] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-at-patched.jar, overwriting
-[09:32:00] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-at-patched.jar
-:access transformed minecraft in 7.889 s
+[15:04:18] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
+[15:04:18] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-at-patched.jar, --atFile, /tmp/at-conf7414911607309197093.cfg]
+[15:04:18] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-patched.jar
+[15:04:18] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-at-patched.jar
+[15:04:18] [main/INFO]: Transformer file /tmp/at-conf7414911607309197093.cfg
+[15:04:18] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-at-patched.jar, overwriting
+[15:04:20] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.11/forge/1.11-13.19.1.2189/merged-at-patched.jar
+:access transformed minecraft in 11.36 s
 :remapping minecraft (TinyRemapper, official -> intermediary)
-:remapped minecraft (TinyRemapper, official -> intermediary) in 1.638 s
+:remapped minecraft (TinyRemapper, official -> intermediary) in 1.474 s
 :remapping minecraft (TinyRemapper, official -> srg)
 
 Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
@@ -31,10 +31,10 @@ Invalid access from method instruction in net/minecraft/client/network/NetHandle
 
 > Configure project :
 Fixing access for 1 classes and 0 members.
-:remapped minecraft (TinyRemapper, official -> srg) in 1.336 s
+:remapped minecraft (TinyRemapper, official -> srg) in 1.327 s
 :remapping minecraft (TinyRemapper, official -> named)
 Fixing access for 1 classes and 0 members.
-:remapped minecraft (TinyRemapper, official -> named) in 1.144 s
+:remapped minecraft (TinyRemapper, official -> named) in 1.070 s
 
 > Task :compileJava
 Note: SpongePowered MIXIN Annotation Processor Version=0.8.5
@@ -59,7 +59,7 @@ Note: Recompile with -Xlint:deprecation for details.
 :remapping sources
 
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790328659631.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790434999907.json
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -69,7 +69,7 @@ For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_
 
 BUILD SUCCESSFUL in 1m 33s
 6 actionable tasks: 6 executed
-valid: mcvoice-0.1.1-mc1.11-forge.jar (327 classes, 13 platform classes, metadata ['mcmod.info'])
+valid: mcvoice-0.1.2-mc1.11-forge.jar (350 classes, 13 platform classes, metadata ['mcmod.info'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$Events
   platform: dev/mcvoice/platform/mc/McAdapter
