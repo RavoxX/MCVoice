@@ -289,10 +289,16 @@ git show FETCH_HEAD:<path>`).
   * Fabric wherever Fabric API exists for 1.14.4–26.3.
   * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
     without Legacy Fabric API).
-* **Releases:** v0.1.2 (run 36250351566: 102/102 jars, 62/62 GitHub
+* **Latest candidate:** v0.1.3-rc.1 (run 36277389029: 102/102 jars,
+  62/62 GitHub Releases, 102/102 Maven packages, both backend images). Adds
+  compact shaded speaking indicators and formatted HUD names across every
+  supported adapter, 20-entry group pages, and per-connection group budgets.
+  The owner tested the rendering changes in Fabric 26.1.2; the full matrix
+  was built and validated in CI. See `docs/release-0.1.3-rc.1.md`.
+* **Stable release:** v0.1.2 (run 36250351566: 102/102 jars, 62/62 GitHub
   Releases, 102/102 Maven packages, images `0.1.2`/`latest`) adds voice
   groups, the macOS microphone fix and vanilla-style screens. The public
-  backend uses protocol 1.1 and advertises `groups`; see the backend-only
+  backend uses protocol 1.1 and advertises `groups`; see the
   deployment below for its current image.
 * **Earlier release v0.1.0:** every passing version has an `mc/` branch
   and a `v0.1.0-mc<version>` GitHub Release (62 releases). Full run
@@ -310,10 +316,11 @@ git show FETCH_HEAD:<path>`).
   sites): only ever add, validate (`nginx -t`, `nft --check`), never restart
   others. Since 0.1.1 the jars default to this backend
   (`mcvoiceBackendUrl` in `client/gradle.properties`).
-  Backend-only routing optimization `948bd584df18` deployed 2026-09-26 as
-  `sha-948bd584df18` after CI `36254844464` and image build `36254844465`
-  passed. Health/readiness and protocol 1.1 `groups` verified; other containers
-  unchanged. Rollback image: `0.1.2`. Measurements and limitations are in
+  Release `0.1.3-rc.1`, revision `53e21a127281`, deployed 2026-09-27 after
+  full release workflow `36277389029` passed. Health/readiness and protocol
+  1.1 `groups` + `group_paging` verified; other containers unchanged. Rollback
+  image: `sha-948bd584df18` (the previous routing optimization deployment).
+  Measurements and limitations of that optimization are in
   `docs/rust-routing-performance.md` (allocation/presence-lock improvements;
   no general end-to-end latency improvement established).
 * **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
@@ -326,10 +333,11 @@ git show FETCH_HEAD:<path>`).
 * **Not implemented** (reasons are in `versions/supported.md`):
   * Forge 1.14.2/1.14.3 (MCP names, 1.14 class names: extend `mcp13`);
   * Legacy Fabric 1.13.2 (no API; needs a Legacy Yarn 1.13 adapter).
-* **Voice groups:** implemented in both backends (conformance 38/38) and the
-  client (end-to-end test against both backends). Never tried by humans in
-  game before release 0.1.2; watch for feedback on the Voice Groups screen
-  and HUD clicks.
+* **Voice groups:** implemented in both backends (conformance 40/40) and the
+  client (end-to-end tests against both backends). Version 0.1.3-rc.1 adds
+  negotiated paging, scroll/search loading, stale-response protection and
+  per-connection request limits. Legacy clients/backends retain their
+  compatible list behavior.
 * **Ideas / next steps:**
   * run `mc-smoke.yml` once approved; add Legacy Fabric when mc-runtime-test supports it;
   * group voice for SVC interop;
