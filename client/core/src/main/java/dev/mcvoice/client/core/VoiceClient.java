@@ -100,7 +100,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     // voice groups (spec 6.12): membership ends with the backend session
     private volatile Group group;
     private volatile Set<UUID> groupMembers = Collections.emptySet();
-    private volatile List<GroupInfo> groupList = Collections.emptyList();
+    private final GroupBrowser groupBrowser = new GroupBrowser();
     private volatile String groupNotice = "";
 
     // HUD
@@ -196,6 +196,14 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
         manageControl(snap, multiplayer, now);
         syncControl(snap, now);
+        final ControlClient groupControl = control;
+        if (groupBrowser.loading() && groupControl != null && groupControl.serverSupports("groups")) {
+            groupBrowser.tick(new GroupBrowser.Sender() {
+                public boolean send(String query, String cursor, long requestId, boolean paged) {
+                    return paged ? groupControl.sendGroupPage(query, cursor, requestId) : groupControl.sendGroupList(query);
+                }
+            }, groupControl.serverSupports("group_paging"), now);
+        }
 
         CloudVoiceChannel c = cloud;
         ControlClient ctl = control;
@@ -250,6 +258,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         ControlClient ctl = control;
         control = null;
         setGroup(null, "");
+        groupBrowser.clear();
         if (ctl != null) {
             VoiceLog.info(Category.CONTROL, "closing backend connection (" + why + ")");
             ctl.stop();
@@ -639,6 +648,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     public void onSessionLost(String reason) {
         session = null;
         setGroup(null, "");
+        groupBrowser.clear();
         udpOk = false;
         closeCloud();
         selector.clearCloudPeers();
@@ -892,16 +902,25 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
     @Override
     public List<GroupInfo> groupList() {
-        return groupList;
+        return groupBrowser.entries();
     }
 
     @Override
     public void requestGroups(String query) {
-        ControlClient ctl = control;
-        if (ctl != null) {
-            ctl.sendGroupList(query);
-        }
+        groupNotice = "";
+        groupBrowser.search(query);
     }
+
+    @Override
+    public void loadMoreGroups() {
+        groupBrowser.more();
+    }
+
+    @Override
+    public boolean groupsLoading() { return groupBrowser.loading(); }
+
+    @Override
+    public boolean hasMoreGroups() { return groupBrowser.hasMore(); }
 
     @Override
     public void createGroup(String password) {
@@ -981,7 +1000,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
                     }
                 }
             }
-            groupList = Collections.unmodifiableList(l);
+            groupBrowser.receive(Json.lng(m, "request_id", -1), Json.str(m, "next_cursor"), l);
         } else if ("group_joined".equals(type)) {
             Map<String, Object> g = Json.objAt(m, "group");
             if (g != null) {
@@ -1015,7 +1034,12 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         } else if ("not_in_world".equals(code)) {
             text = "Join a server first";
         } else if ("rate_limited".equals(code)) {
-            text = "Too many attempts, try again in a minute";
+            if (message != null && (message.contains("group list") || message.equals("slow down"))) {
+                groupBrowser.rateLimited(System.currentTimeMillis());
+            }
+            text = message != null && message.contains("wrong group passwords") ? "Too many passwords, try again in a minute"
+                : message != null && message.contains("group create") ? "Please wait 10 seconds before creating another group"
+                : "Too many requests. Please wait a moment.";
         } else {
             return;
         }

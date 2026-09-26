@@ -292,6 +292,7 @@ pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: Strin
 
     let timeout = Duration::from_secs(srv.cfg.session_timeout_secs);
     let mut ctl_bucket = TokenBucket::new(srv.cfg.rate_control_per_sec, srv.cfg.rate_control_burst);
+    let mut group_limits = super::groups::GroupLimits::new();
     let mut last_pos: Option<Instant> = None;
     let (mut strikes, mut strike_window) = (0u32, Instant::now());
     let mut closed = sess.closed_rx();
@@ -344,7 +345,13 @@ pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: Strin
                 sess.close("bye");
                 break "bye";
             }
-            Ok(m) => srv.dispatch(&sess, m, now, &mut last_pos),
+            Ok(m) => {
+                if let Some(message) = group_limits.check(&m, now) {
+                    sess.send(error_frame(code::RATE_LIMITED, message, false));
+                } else {
+                    srv.dispatch(&sess, m, now, &mut last_pos);
+                }
+            }
         }
     };
     srv.unregister(&sess);
@@ -357,7 +364,7 @@ pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: Strin
 impl Server {
     fn dispatch(&self, sess: &Arc<Session>, msg: ClientMsg, now: Instant, last_pos: &mut Option<Instant>) {
         match msg {
-            ClientMsg::GroupList(g) => self.group_list(sess, g.query.as_deref()),
+            ClientMsg::GroupList(g) => self.group_list(sess, g),
             ClientMsg::GroupCreate(g) => self.group_create(sess, g),
             ClientMsg::GroupJoin(g) => self.group_join(sess, g, now),
             ClientMsg::GroupLeave => self.group_leave(sess),

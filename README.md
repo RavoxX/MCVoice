@@ -24,7 +24,9 @@ can still be heard on servers that run the Simple Voice Chat plugin.
   back to SVC when the cloud is unreachable. See [SVC interop](docs/svc-interop.md).
 * **Voice groups.** Up to 15 players hear each other everywhere, even on
   different servers: search and join active groups, or create one with an
-  optional password (hotkey **G**). Group members hear you while your
+  optional password (hotkey **G**). The menu loads 20 groups at a time and
+  fetches more as you scroll; searching starts a fresh page of matching codes.
+  Group members hear you while your
   microphone is on; nearby players still need push-to-talk, and nobody hears
   you twice.
 * Two interchangeable backends, in **Rust** (Tokio/axum) and **Go**, that
