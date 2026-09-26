@@ -17,6 +17,8 @@ public final class PlaybackValidator {
 
     public static final int MODE_NORMAL = 0;
     public static final int MODE_WHISPER = 1;
+    /** Voice-group frame (spec 9.1): not positional, only from members of my current group. */
+    public static final int MODE_GROUP = 2;
 
     private PlaybackValidator() {
     }
@@ -33,6 +35,29 @@ public final class PlaybackValidator {
      */
     public static PlaybackDecision check(WorldSnapshot s, UUID sender, long recipientEpoch, int mode,
                                          double normalRange, double whisperRange, Set<UUID> muted, boolean deafened) {
+        return check(s, sender, recipientEpoch, mode, normalRange, whisperRange, muted, deafened, null);
+    }
+
+    /**
+     * As above; {@code group} is the member list of my current voice group (null or empty: none).
+     * Group frames skip the world, epoch and distance checks because they are not positional; the
+     * local entity rule still applies to every positional frame, whether or not the sender is in my group.
+     */
+    public static PlaybackDecision check(WorldSnapshot s, UUID sender, long recipientEpoch, int mode,
+                                         double normalRange, double whisperRange, Set<UUID> muted, boolean deafened,
+                                         Set<UUID> group) {
+        if (mode == MODE_GROUP) {
+            if (sender == null || (s != null && sender.equals(s.localUuid))) {
+                return PlaybackDecision.SELF;
+            }
+            if (deafened) {
+                return PlaybackDecision.DEAFENED;
+            }
+            if (muted != null && muted.contains(sender)) {
+                return PlaybackDecision.MUTED;
+            }
+            return group != null && group.contains(sender) ? PlaybackDecision.ACCEPT : PlaybackDecision.NOT_IN_GROUP;
+        }
         if (s == null || !s.inWorld) {
             return PlaybackDecision.NOT_IN_WORLD;
         }

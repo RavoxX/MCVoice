@@ -7,9 +7,16 @@ import dev.mcvoice.client.platform.ui.UiCanvas;
 import dev.mcvoice.client.platform.ui.UiScreen;
 import dev.mcvoice.client.ui.widget.Widget;
 
-/** Shared screen plumbing: widget list, panel, input dispatch. */
+/**
+ * Shared screen plumbing: widget list, input dispatch, and a Minecraft-style frame (dimmed world,
+ * centred white title). Content goes into a centred column of {@link #COLUMN} pixels.
+ */
 public abstract class BaseScreen implements UiScreen {
+    /** Width of Minecraft's two-column option layout (2 x 150 + 10). */
+    protected static final int COLUMN = 310;
+    protected static final int ROW = 24;
     protected final List<Widget> widgets = new ArrayList<Widget>();
+    /** Content area below the title (x, y, width, height). */
     protected int panelX, panelY, panelW, panelH;
     private Widget active;
 
@@ -30,16 +37,15 @@ public abstract class BaseScreen implements UiScreen {
             lastW = c.width();
             lastH = c.height();
             widgets.clear();
-            panelW = Math.min(360, c.width() - 20);
-            panelH = Math.min(260, c.height() - 20);
+            panelW = Math.min(COLUMN, c.width() - 16);
             panelX = (c.width() - panelW) / 2;
-            panelY = (c.height() - panelH) / 2;
+            panelY = 34;
+            panelH = c.height() - panelY - 8;
             layout(c.width(), c.height());
         }
-        c.fill(0, 0, c.width(), c.height(), Theme.BACKDROP);
-        c.fill(panelX - 1, panelY - 1, panelX + panelW + 1, panelY + panelH + 1, Theme.PANEL_BORDER);
-        c.fill(panelX, panelY, panelX + panelW, panelY + panelH, Theme.PANEL);
-        c.text(title(), panelX + 8, panelY + 7, Theme.ACCENT, false);
+        c.fill(0, 0, c.width(), c.height(), Theme.SCREEN_DIM);
+        String t = title();
+        c.text(t, (c.width() - c.textWidth(t)) / 2, 15, Theme.LABEL, true);
         drawContent(c, mouseX, mouseY);
         for (Widget w : widgets) {
             if (w.visible) {
