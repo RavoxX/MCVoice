@@ -19,7 +19,7 @@ public class Slider extends Widget {
     private boolean dragging;
 
     public Slider(int w, String label, double min, double max, Model model) {
-        super(w, 18);
+        super(w, 20);
         this.label = label;
         this.min = min;
         this.max = max;
@@ -29,17 +29,20 @@ public class Slider extends Widget {
     @Override
     public void render(UiCanvas c, int mx, int my) {
         boolean hover = contains(mx, my) || dragging;
-        box(c, x, y, w, h, Theme.WIDGET, hover ? Theme.ACCENT : Theme.PANEL_BORDER);
+        // dark track like Minecraft's option sliders, with a button-style handle
+        c.fill(x, y, x + w, y + h, hover ? Theme.BUTTON_FOCUS : Theme.BUTTON_OUTLINE);
+        c.fill(x + 1, y + 1, x + w - 1, y + h - 1, Theme.SLIDER_TRACK);
         double t = (model.get() - min) / (max - min);
         t = Math.max(0, Math.min(1, t));
-        int fx = x + 1 + (int) ((w - 2) * t);
-        c.fill(x + 1, y + 1, fx, y + h - 1, Theme.ACCENT_DIM);
-        c.fill(Math.max(x + 1, fx - 2), y + 1, Math.min(x + w - 1, fx + 1), y + h - 1, Theme.ACCENT);
-        centered(c, ellipsize(c, label + ": " + model.format(model.get()), w - 6), x + w / 2, y + (h - c.fontHeight()) / 2 + 1, Theme.TEXT);
+        int hx = x + (int) ((w - HANDLE) * t);
+        vanillaButton(c, hx, y, HANDLE, h, hover);
+        label(c, label + ": " + model.format(model.get()), Theme.LABEL);
     }
 
+    private static final int HANDLE = 8;
+
     private void update(int mx) {
-        double t = (mx - x - 1) / (double) Math.max(1, w - 2);
+        double t = (mx - x - HANDLE / 2) / (double) Math.max(1, w - HANDLE);
         t = Math.max(0, Math.min(1, t));
         model.set(min + (max - min) * t);
     }
