@@ -21,6 +21,31 @@ const outOfWorldGrace = 10 * time.Second
 
 const passwordFailsPerMin = 5
 
+// Owned by the control goroutine; rejected work never takes the hub lock.
+type groupLimits struct{ list, create, join tokenBucket }
+
+func newGroupLimits() groupLimits {
+	return groupLimits{newBucket(2, 4), newBucket(0.1, 3), newBucket(1, 6)}
+}
+
+func (l *groupLimits) check(msg any, now time.Time) string {
+	switch msg.(type) {
+	case *protocol.GroupList:
+		if !l.list.allow(now) {
+			return "group list rate limit; try again shortly"
+		}
+	case *protocol.GroupCreate:
+		if !l.create.allow(now) {
+			return "group create rate limit; wait 10 seconds"
+		}
+	case *protocol.GroupJoin:
+		if !l.join.allow(now) {
+			return "group join rate limit; try again shortly"
+		}
+	}
+	return ""
+}
+
 type group struct {
 	id      string
 	salt    []byte
@@ -153,7 +178,7 @@ func (s *Server) groupsAllowed(sess *Session) bool {
 	return sess.groupsCap
 }
 
-func (s *Server) groupList(sess *Session, query *string) {
+func (s *Server) groupList(sess *Session, m *protocol.GroupList) {
 	if !s.groupsAllowed(sess) {
 		return
 	}
@@ -166,26 +191,41 @@ func (s *Server) groupList(sess *Session, query *string) {
 	s.mu.RLock()
 	l := make([]entry, 0, len(s.groups))
 	q := ""
-	if query != nil {
-		q = strings.ToUpper(*query)
+	if m.Query != nil {
+		q = strings.ToUpper(*m.Query)
+	}
+	cursor := ""
+	if m.Cursor != nil {
+		cursor = strings.ToUpper(*m.Cursor)
 	}
 	for _, g := range s.groups {
-		if q != "" && !strings.Contains(g.id, q) {
+		if !strings.Contains(g.id, q) || g.id <= cursor {
 			continue
 		}
 		l = append(l, entry{g.id, len(g.members), protocol.GroupMaxMembers, g.pwHash != nil})
 	}
 	s.mu.RUnlock()
 	sort.Slice(l, func(i, j int) bool {
-		if l[i].Members != l[j].Members {
+		if m.Limit == nil && l[i].Members != l[j].Members {
 			return l[i].Members > l[j].Members
 		}
 		return l[i].ID < l[j].ID
 	})
-	if len(l) > protocol.GroupListMax {
-		l = l[:protocol.GroupListMax]
+	response := map[string]any{"type": "group_list"}
+	limit := protocol.GroupListMax
+	if m.Limit != nil {
+		limit = int(*m.Limit)
+		response["request_id"] = m.RequestID
+		response["next_cursor"] = nil
+		if len(l) > limit {
+			response["next_cursor"] = l[limit-1].ID
+		}
 	}
-	sess.send(marshal(map[string]any{"type": "group_list", "groups": l}))
+	if len(l) > limit {
+		l = l[:limit]
+	}
+	response["groups"] = l
+	sess.send(marshal(response))
 }
 
 func (s *Server) groupCreate(sess *Session, m *protocol.GroupCreate) {
