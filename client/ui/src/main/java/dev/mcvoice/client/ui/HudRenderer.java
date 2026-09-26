@@ -98,11 +98,11 @@ public final class HudRenderer {
             if (ty > c.height() / 2) {
                 break;
             }
-            int w = c.textWidth(t.name) + 16;
+            int w = c.playerNameWidth(t.uuid, t.name) + 16;
             c.fill(4, ty - 2, 4 + w, ty + c.fontHeight() + 1, 0x80101418);
             int mic = t.muted ? MUTED_TALKING : t.group ? GROUP_TALKING : Theme.GOOD;
             micIcon(c, 6, ty - 2, mic, t.muted);
-            c.text(t.name, 17, ty, t.muted ? Theme.TEXT_DIM : Theme.TEXT, true);
+            c.playerName(t.uuid, t.name, 17, ty, Theme.TEXT, true);
             rows.add(new Row(t.uuid, t.name, 4, ty - 2, 4 + w, ty + c.fontHeight() + 1));
             ty += c.fontHeight() + 5;
         }

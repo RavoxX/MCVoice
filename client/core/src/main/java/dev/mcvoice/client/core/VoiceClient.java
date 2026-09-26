@@ -311,6 +311,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         selector.reset();
         selector.clearCloudPeers();
         mixer.clear();
+        mutedTalking.clear();
         scopeDirty = true;
         if (WorldTracker.isNewServerSession(reason) || !snapshot.inWorld) {
             svc.reset(snapshot.inWorld && mc.network().isMultiplayer());
@@ -321,7 +322,27 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     public void invalidateWorld(String reason) {
         tracker.invalidate(reason);
         mixer.clear();
+        mutedTalking.clear();
         selector.reset();
+    }
+
+    /** Platform hook: decorate an already visible player name tag, never reveal hidden entities. */
+    public boolean isSpeaking(UUID player) {
+        WorldSnapshot s = tracker.snapshot();
+        if (!s.inWorld || (!config.cloudEnabled && !config.svcInteropEnabled) || config.deafened) {
+            return false;
+        }
+        if (player.equals(s.localUuid)) {
+            return transmitting();
+        }
+        if (s.player(player) == null) {
+            return false;
+        }
+        if (config.mutedPlayers.contains(player)) {
+            Long at = mutedTalking.get(player);
+            return at != null && System.currentTimeMillis() - at <= 400;
+        }
+        return mixer.isTalking(player);
     }
 
     /** Platform hook: HUD render (render thread; cheap, reads volatile state only). */

@@ -1,8 +1,16 @@
 package dev.mcvoice.platform.mc;
 
+import java.util.UUID;
+
 import dev.mcvoice.client.platform.ui.UiCanvas;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.network.chat.Component;
+//#if MC < 1.19
+import net.minecraft.network.chat.TextComponent;
+//#endif
+import net.minecraft.world.entity.player.Player;
 //#if MC >= 26.1
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 //#elif MC >= 1.20
@@ -101,6 +109,50 @@ public final class McCanvas implements UiCanvas {
     @Override
     public int textWidth(String text) {
         return font.width(text);
+    }
+
+    private Component playerName(UUID uuid, String fallback) {
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.level == null ? null : mc.level.getPlayerByUUID(uuid);
+        if (player != null) {
+            return player.getDisplayName();
+        }
+        PlayerInfo info = mc.getConnection() == null ? null : mc.getConnection().getPlayerInfo(uuid);
+        if (info != null && info.getTabListDisplayName() != null) {
+            return info.getTabListDisplayName();
+        }
+        //#if MC >= 1.19
+        return Component.literal(fallback);
+        //#else
+        return new TextComponent(fallback);
+        //#endif
+    }
+
+    @Override
+    public void playerName(UUID uuid, String fallback, int x, int y, int argb, boolean shadow) {
+        Component name = playerName(uuid, fallback);
+        //#if MC >= 26.1
+        g.text(font, name, x, y, argb, shadow);
+        //#elif MC >= 1.20
+        g.drawString(font, name, x, y, argb, shadow);
+        //#elif MC >= 1.16
+        if (shadow) {
+            font.drawShadow(g, name, (float) x, (float) y, argb);
+        } else {
+            font.draw(g, name, (float) x, (float) y, argb);
+        }
+        //#else
+        text(name.getColoredString(), x, y, argb, shadow);
+        //#endif
+    }
+
+    @Override
+    public int playerNameWidth(UUID uuid, String fallback) {
+        //#if MC >= 1.16
+        return font.width(playerName(uuid, fallback));
+        //#else
+        return font.width(playerName(uuid, fallback).getColoredString());
+        //#endif
     }
 
     @Override

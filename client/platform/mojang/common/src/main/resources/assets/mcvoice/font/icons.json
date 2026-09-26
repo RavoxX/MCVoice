@@ -1,0 +1,11 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "mcvoice:font/microphone.png",
+      "ascent": 8,
+      "height": 10,
+      "chars": ["\uE000"]
+    }
+  ]
+}
