@@ -25,7 +25,7 @@ import net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-//#if MC >= 1.15
+//#if MC >= 1.15.1
 import net.minecraftforge.client.event.RenderNameplateEvent;
 //#endif
 import net.minecraftforge.common.MinecraftForge;
@@ -88,12 +88,30 @@ public final class McVoiceForge {
         //#if MC >= 1.16
         MinecraftForge.EVENT_BUS.addListener((RenderNameplateEvent e) ->
             e.setContent(McNameTags.decorate(e.getEntity(), e.getContent(), client)));
-        //#elif MC >= 1.15
+        //#elif MC >= 1.15.1
         MinecraftForge.EVENT_BUS.addListener(net.minecraftforge.eventbus.api.EventPriority.LOWEST, (RenderNameplateEvent e) -> {
-            if (e.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && e.getEntityRenderer() != null
-                    && dev.mcvoice.platform.mc.LegacyNameTagIcon.canShow(e.getEntityRenderer(), e.getEntity())) {
+            if (e.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return;
+            //#if MC >= 1.15.2
+            Object renderer = e.getEntityRenderer();
+            int light = e.getPackedLight();
+            //#else
+            Minecraft mc = Minecraft.getInstance();
+            Object renderer = mc.getEntityRenderDispatcher().getRenderer(e.getEntity());
+            int light = mc.getEntityRenderDispatcher().getRenderer(e.getEntity()).getPackedLightCoords(e.getEntity(), 1);
+            //#endif
+            if (renderer != null && dev.mcvoice.platform.mc.LegacyNameTagIcon.canShow(renderer, e.getEntity())) {
                 dev.mcvoice.platform.mc.McLegacyNameTags.render(e.getEntity(), e.getContent(), e.getMatrixStack(),
-                    e.getRenderTypeBuffer(), e.getPackedLight(), true, client);
+                    e.getRenderTypeBuffer(), light, true, client);
+            }
+        });
+        //#elif MC >= 1.15
+        MinecraftForge.EVENT_BUS.addListener((net.minecraftforge.client.event.RenderLivingEvent.Specials.Post<?, ?> e) -> {
+            if (dev.mcvoice.platform.mc.LegacyNameTagIcon.canShow(e.getRenderer(), e.getEntity())) {
+                Minecraft mc = Minecraft.getInstance();
+                int light = mc.getEntityRenderDispatcher().getRenderer(e.getEntity())
+                    .getPackedLightCoords(e.getEntity(), e.getPartialRenderTick());
+                dev.mcvoice.platform.mc.McLegacyNameTags.render(e.getEntity(), e.getEntity().getDisplayName().getColoredString(),
+                    e.getMatrixStack(), mc.renderBuffers().bufferSource(), light, true, client);
             }
         });
         //#else

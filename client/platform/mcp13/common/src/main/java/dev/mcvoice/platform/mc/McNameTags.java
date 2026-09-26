@@ -2,7 +2,6 @@ package dev.mcvoice.platform.mc;
 
 import dev.mcvoice.client.core.VoiceClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,7 +18,7 @@ public final class McNameTags {
         if (camera == null) return;
         double dx = entity.posX - camera.posX, dy = entity.posY - camera.posY, dz = entity.posZ - camera.posZ;
         double distance = dx * dx + dy * dy + dz * dz;
-        float range = entity.isSneaking() ? RenderLivingBase.NAME_TAG_RANGE_SNEAK : RenderLivingBase.NAME_TAG_RANGE;
+        float range = entity.isSneaking() ? 32 : 64;
         if (distance >= range * range) return;
         String name = entity.getDisplayName().getFormattedText();
         double height = entity.height + 0.5 - (entity.isSneaking() ? 0.25 : 0);
