@@ -54,12 +54,14 @@ type GroupInfo struct {
 
 // GroupEvent is a received group_list, group_joined, group_update or group_left message.
 type GroupEvent struct {
-	Type    string        `json:"type"`
-	ID      string        `json:"id"`
-	Reason  string        `json:"reason"`
-	Members []GroupMember `json:"members"`
-	Groups  []GroupInfo   `json:"groups"`
-	Group   *struct {
+	RequestID  uint32        `json:"request_id"`
+	NextCursor *string       `json:"next_cursor"`
+	Type       string        `json:"type"`
+	ID         string        `json:"id"`
+	Reason     string        `json:"reason"`
+	Members    []GroupMember `json:"members"`
+	Groups     []GroupInfo   `json:"groups"`
+	Group      *struct {
 		ID       string        `json:"id"`
 		Max      int           `json:"max"`
 		Password bool          `json:"password"`
@@ -533,6 +535,18 @@ func (c *Client) Sync(timeout time.Duration) error {
 			return errors.New("sync: connection closed")
 		}
 	}
+}
+
+// GroupPage requests a cursor-based page from a backend advertising group_paging.
+func (c *Client) GroupPage(query, cursor string, requestID uint32) error {
+	m := map[string]any{"type": "group_list", "limit": 20, "request_id": requestID}
+	if query != "" {
+		m["query"] = query
+	}
+	if cursor != "" {
+		m["cursor"] = cursor
+	}
+	return c.sendJSON(m)
 }
 
 // GroupList requests the group list (spec 6.12).

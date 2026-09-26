@@ -292,6 +292,7 @@ pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: Strin
 
     let timeout = Duration::from_secs(srv.cfg.session_timeout_secs);
     let mut ctl_bucket = TokenBucket::new(srv.cfg.rate_control_per_sec, srv.cfg.rate_control_burst);
+    let mut group_limits = super::groups::GroupLimits::new();
     let mut last_pos: Option<Instant> = None;
     let (mut strikes, mut strike_window) = (0u32, Instant::now());
     let mut closed = sess.closed_rx();
@@ -344,7 +345,13 @@ pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: Strin
                 sess.close("bye");
                 break "bye";
             }
-            Ok(m) => srv.dispatch(&sess, m, now, &mut last_pos),
+            Ok(m) => {
+                if let Some(message) = group_limits.check(&m, now) {
+                    sess.send(error_frame(code::RATE_LIMITED, message, false));
+                } else {
+                    srv.dispatch(&sess, m, now, &mut last_pos);
+                }
+            }
         }
     };
     srv.unregister(&sess);
@@ -357,7 +364,7 @@ pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: Strin
 impl Server {
     fn dispatch(&self, sess: &Arc<Session>, msg: ClientMsg, now: Instant, last_pos: &mut Option<Instant>) {
         match msg {
-            ClientMsg::GroupList(g) => self.group_list(sess, g.query.as_deref()),
+            ClientMsg::GroupList(g) => self.group_list(sess, g),
             ClientMsg::GroupCreate(g) => self.group_create(sess, g),
             ClientMsg::GroupJoin(g) => self.group_join(sess, g, now),
             ClientMsg::GroupLeave => self.group_leave(sess),
@@ -367,14 +374,6 @@ impl Server {
             ClientMsg::Scope(s) => {
                 let epoch = s.epoch.unwrap();
                 let in_world = s.in_world.unwrap();
-                let mut hub = self.hub.write().unwrap();
-                let Some(ps) = hub.peers.get(&sess.conn_id) else { return };
-                if ps.has_scope && epoch <= ps.peer.epoch {
-                    drop(hub);
-                    sess.send(error_frame(code::STALE_EPOCH, "epoch must increase", false));
-                    return;
-                }
-                *last_pos = None; // the first position of a new epoch is always accepted
                 let attested = if in_world {
                     s.attestation.as_deref().and_then(|a| {
                         let r = auth::verify_attestation(&self.cfg.attestation_keys, a, &sess.ident.uuid, unix_now());
@@ -386,7 +385,14 @@ impl Server {
                 } else {
                     None
                 };
-                let ps = hub.peers.get_mut(&sess.conn_id).unwrap();
+                let mut hub = self.hub.write().unwrap();
+                let Some(ps) = hub.peers.get_mut(&sess.conn_id) else { return };
+                if ps.has_scope && epoch <= ps.peer.epoch {
+                    drop(hub);
+                    sess.send(error_frame(code::STALE_EPOCH, "epoch must increase", false));
+                    return;
+                }
+                *last_pos = None; // the first position of a new epoch is always accepted
                 ps.has_scope = true;
                 ps.peer.epoch = epoch;
                 ps.peer.in_world = in_world;
@@ -419,13 +425,15 @@ impl Server {
                 }
             }
             ClientMsg::Peers(p) => {
+                let mut visible = p.full.unwrap().into_iter().filter(|u| *u != sess.ident.uuid).collect();
                 let mut hub = self.hub.write().unwrap();
                 if let Some(ps) = hub.peers.get_mut(&sess.conn_id) {
                     if p.epoch.unwrap() == ps.peer.epoch {
-                        ps.peer.visible = p.full.unwrap().into_iter().filter(|u| *u != sess.ident.uuid).collect();
+                        std::mem::swap(&mut ps.peer.visible, &mut visible);
                         ps.peers_rev = p.rev.unwrap();
                     }
                 }
+                drop(hub); // release the old visibility set outside the global lock
             }
             ClientMsg::PeersDelta(d) => {
                 let mut hub = self.hub.write().unwrap();
