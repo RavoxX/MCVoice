@@ -20,7 +20,7 @@ import (
 	"github.com/RavoxX/MCVoice/backend/go/internal/routing"
 )
 
-const Version = "0.1.2"
+const Version = "0.1.4"
 
 // Server is the combined control service and voice relay.
 type Server struct {
