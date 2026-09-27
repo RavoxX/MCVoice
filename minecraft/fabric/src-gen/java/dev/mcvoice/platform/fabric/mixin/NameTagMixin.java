@@ -19,7 +19,7 @@ import net.minecraft.world.entity.Entity;
 @Mixin(EntityRenderer.class)
 public abstract class NameTagMixin {
 
-    @Inject(method = "getNameTag", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getNameTag", at = @At("RETURN"), cancellable = true, require = 0)
     private void mcvoice$nameTag(Entity entity, CallbackInfoReturnable<Component> cir) {
         cir.setReturnValue(McVoiceFabric.decorateNameTag(entity, cir.getReturnValue()));
     }
