@@ -68,7 +68,9 @@ Download the jar for your Minecraft version and loader from
    HUD and add a green microphone beside visible speaking players' name tags.
    Compact, shaded pixel icons use a 10-pixel grid in the HUD and an 8-pixel
    grid on name tags. Older adapters draw the same pixel artwork directly, preserving vanilla
-   name-tag visibility and range checks.
+   name-tag visibility and range checks. Fabric name-tag hooks are optional: if
+   another mod prevents a hook from applying, its icon can be skipped without
+   a required-injection startup error. Essential HUD and tick hooks stay required.
    These indicators are rendered by MCVoice on the listener's client.
 5. Settings live in `config/mcvoice.json`:
    * backend URL (default: the public backend `wss://mcvoice.ravoxx.dev/v1/control`);
