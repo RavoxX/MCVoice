@@ -326,10 +326,12 @@ git show FETCH_HEAD:<path>`).
 * **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
   1.20.1 and 1.21.4 (compatibility 20, AES-GCM with 12-byte IV). Older
   compatibility versions (19–16) are not verified.
-* **Client runtime smoke test:** `mc-smoke.yml` exists but has **never run**:
-  dispatching it (third-party code in CI) needs the owner's approval. The
-  first run will show whether the log checks need tuning (e.g. no audio
-  device on the runner).
+* **Client runtime smoke test:** the owner approved `mc-smoke.yml` for the
+  0.1.4 release. First run `36307193253` passed Fabric 26.1.2 and both loaders
+  on 1.21.1. It exposed missing Forge 26.1.2 resource-pack metadata and two
+  harness issues on 1.16.5: the thin Maven Fabric API jar and a caught optional
+  mod lookup logged at TRACE. Fixes use the bundled Fabric API release and
+  severity-aware log checks; runtime errors still fail. A rerun is required.
 * **Not implemented** (reasons are in `versions/supported.md`):
   * Forge 1.14.2/1.14.3 (MCP names, 1.14 class names: extend `mcp13`);
   * Legacy Fabric 1.13.2 (no API; needs a Legacy Yarn 1.13 adapter).
@@ -339,7 +341,7 @@ git show FETCH_HEAD:<path>`).
   per-connection request limits. Legacy clients/backends retain their
   compatible list behavior.
 * **Ideas / next steps:**
-  * run `mc-smoke.yml` once approved; add Legacy Fabric when mc-runtime-test supports it;
+  * expand runtime smoke coverage; add Legacy Fabric when mc-runtime-test supports it;
   * group voice for SVC interop;
   * receiving SVC voice from a second real client in CI;
   * shared-state backend scaling (Redis).
