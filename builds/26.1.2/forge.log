@@ -66,9 +66,9 @@ Maven POM
 Metadata
   metadata[forge]
   metadata[forge][variants]
-Minecraft Maven has finished, took 0:01.324
+Minecraft Maven has finished, took 0:01.743
 
-> Task :compileJava FROM-CACHE
+> Task :compileJava
 > Task :processResources
 > Task :classes
 > Task :jar
@@ -80,10 +80,10 @@ Minecraft Maven has finished, took 0:01.324
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790500087601.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790502130943.json
 
-BUILD SUCCESSFUL in 11s
-4 actionable tasks: 3 executed, 1 from cache
+BUILD SUCCESSFUL in 17s
+4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
 valid: mcvoice-0.1.4-mc26.1.2-forge.jar (356 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge

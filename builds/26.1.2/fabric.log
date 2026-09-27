@@ -4,7 +4,7 @@ Daemon will be stopped at the end of the build
 > Configure project :
 Fabric Loom: 1.18.2
 
-> Task :compileJava FROM-CACHE
+> Task :compileJava
 > Task :processResources
 > Task :classes
 > Task :processIncludeJars
@@ -18,10 +18,10 @@ Fabric Loom: 1.18.2
 > Task :validateAccessWidener NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790500071529.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790502106881.json
 
-BUILD SUCCESSFUL in 17s
-5 actionable tasks: 4 executed, 1 from cache
+BUILD SUCCESSFUL in 24s
+5 actionable tasks: 5 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
 valid: mcvoice-0.1.4-mc26.1.2-fabric.jar (357 classes, 19 platform classes, metadata ['fabric.mod.json'])
   platform: dev/mcvoice/platform/fabric/McVoiceFabric
