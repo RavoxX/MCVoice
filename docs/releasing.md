@@ -28,6 +28,13 @@ Run workflow). Nothing is built or uploaded from a developer machine.
    version). The default backend of the jars is `mcvoiceBackendUrl` in
    `client/gradle.properties`.
 
+For runtime validation, dispatch `mc-smoke.yml` with representative Minecraft
+versions after owner approval to run its third-party test code. It checks world
+entry and clean shutdown as well as MCVoice's logs. Fabric API must come from
+its bundled GitHub release: older Maven jars contain only metadata. The log
+checker ignores loader TRACE/DEBUG diagnostics, while MCVoice runtime stack
+traces, error records and HUD failures still fail the check.
+
 ## What the workflow does
 
 | Job | Does | Fails / records when |
