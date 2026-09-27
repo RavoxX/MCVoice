@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 
 @Mixin(EntityRenderer.class)
 public abstract class LegacyNameTagMixin {
-    @Inject(method = "renderNameTag", at = @At("TAIL"))
+    @Inject(method = "renderNameTag", at = @At("TAIL"), require = 0)
     private void mcvoice$nameTag(Entity entity, String name, PoseStack poses, MultiBufferSource buffers,
             int light, CallbackInfo ci) {
         // PlayerRenderer also calls this for the scoreboard line; only decorate the actual name.
@@ -32,7 +32,7 @@ import net.minecraft.world.entity.LivingEntity;
 public abstract class LegacyNameTagMixin {
     @Shadow protected abstract boolean shouldShowName(LivingEntity entity);
 
-    @Inject(method = "renderName(Lnet/minecraft/world/entity/LivingEntity;DDD)V", at = @At("TAIL"))
+    @Inject(method = "renderName(Lnet/minecraft/world/entity/LivingEntity;DDD)V", at = @At("TAIL"), require = 0)
     private void mcvoice$nameTag(LivingEntity entity, double x, double y, double z, CallbackInfo ci) {
         if (shouldShowName(entity)) McVoiceFabric.renderNameTag(entity, x, y, z);
     }
