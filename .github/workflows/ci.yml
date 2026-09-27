@@ -31,6 +31,8 @@ jobs:
         run: python3 protocol/test-vectors/generate.py --check
       - name: Validate version matrix
         run: python3 tools/versions/matrix.py validate
+      - name: Test runtime smoke log checks
+        run: python3 -m unittest discover -s tools/mc-smoke
 
   secrets:
     name: secret scanning
