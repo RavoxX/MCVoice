@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class NameTagMixin {
     @Shadow protected abstract boolean hasLabel(LivingEntity entity);
 
-    @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;DDDFF)V", at = @At("TAIL"))
+    @Inject(method = "render(Lnet/minecraft/entity/LivingEntity;DDDFF)V", at = @At("TAIL"), require = 0)
     private void mcvoice$nameTag(LivingEntity entity, double x, double y, double z, float yaw, float tickDelta, CallbackInfo ci) {
         if (hasLabel(entity)) {
             McVoiceFabric.renderNameTag(entity, x, y, z);
