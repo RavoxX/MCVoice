@@ -28,6 +28,12 @@ class LogChecks(unittest.TestCase):
     def test_error_without_stack_is_detected(self):
         self.assertIn("MCVoice error", self.check(INIT + "[08:51:00] [Render thread/ERROR] [MCVoice/]: failed\n"))
 
+    def test_minecraft_error_with_repository_path_is_not_an_mcvoice_error(self):
+        log = INIT + "[08:51:00] [Render thread/ERROR]: Error while loading the narrator\n"
+        log += "java.lang.UnsatisfiedLinkError: library not found in /home/runner/work/MCVoice/MCVoice/run\n"
+        log += "\tat net.minecraft.client.Narrator.init(Narrator.java:12)\n"
+        self.assertEqual("", self.check(log))
+
     def test_hud_failure_remains_fatal(self):
         self.assertEqual("HUD render failed", self.check(INIT + "[08:51:00] [Render thread/WARN]: HUD render failed: exception\n"))
 

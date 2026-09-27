@@ -33,7 +33,7 @@ def check_log(text, minecraft, loader):
             continue
         if FRAME.search(record):
             return "stack trace through MCVoice: " + record.splitlines()[0][:250]
-        if level in ("ERROR", "FATAL") and ("MCVoice" in record or "dev.mcvoice." in record):
+        if level in ("ERROR", "FATAL") and re.search(r"\[MCVoice(?:/[^\]]*)?\]", record.splitlines()[0]):
             return "MCVoice error: " + record.splitlines()[0][:250]
     return ""
 
