@@ -24,7 +24,7 @@ public abstract class NameTagMixin {
 
 
 
-    @Redirect(method = "render", at = @At(value = "INVOKE",
+    @Redirect(method = "render", require = 0, at = @At(value = "INVOKE",
         target = "Lnet/minecraft/world/entity/Entity;getDisplayName()Lnet/minecraft/network/chat/Component;"))
     private Component mcvoice$nameTag(Entity entity) {
         return McVoiceFabric.decorateNameTag(entity, entity.getDisplayName());
