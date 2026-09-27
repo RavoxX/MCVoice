@@ -54,6 +54,17 @@ def main():
     for r in REQUIRED:
         if r not in names:
             errors.append(f"{r} missing")
+    if a.loader == "forge" and tuple(map(int, a.minecraft.split("."))) >= (1, 21, 6):
+        if "pack.mcmeta" not in names:
+            errors.append("pack.mcmeta missing: Forge cannot load MCVoice resources")
+        else:
+            try:
+                pack = json.loads(z.read("pack.mcmeta"))["pack"]
+                if "description" not in pack or not ("pack_format" in pack or
+                                                      "min_format" in pack and "max_format" in pack):
+                    errors.append("pack.mcmeta lacks a description or format declaration")
+            except (ValueError, KeyError, TypeError) as e:
+                errors.append(f"pack.mcmeta invalid: {e}")
     metas = [m for m in META[a.loader] if m in names]
     if not metas:
         errors.append(f"no loader metadata ({META[a.loader]})")
