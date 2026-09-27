@@ -66,10 +66,21 @@ and `latest`, with OCI revision labels matching the release source:
 - Rust: `sha256:f4573f069d5179d9ff6de104e87012dce63e8c07e293fcb1d86617ec2e5deeeb`.
 - Go: `sha256:2afb2211eee3916d137c71bb3eb8f88815ce321e8bfb5415ac88c38c657e736c`.
 
-Production deployment was attempted on 2026-09-27 but could not begin:
-SSH to `5.83.145.152:22` timed out from the release workstation, as did the
-public HTTPS health endpoint. No remote commands ran and no production files
-or containers were changed. This does not establish a global server outage.
-The last verified deployment remains `0.1.3-rc.1`; its evidence is recorded in
-[the previous release notes](release-0.1.3-rc.1.md). Deployment of `0.1.4` and
-post-deployment health/protocol checks remain outstanding until access returns.
+Deployed Rust `0.1.4` to `5.83.145.152` on 2026-09-27 at 10:01 UTC after
+SSH access returned. The running image digest and revision match the release
+above. Only `MCVOICE_VERSION` in `/opt/mcvoice/.env` was changed; a mode-600
+backup was retained and `/opt/mcvoice/update.sh` recreated the MCVoice container.
+
+Post-deployment checks passed:
+
+- Local readiness and public HTTPS `/health` and `/ready` returned success.
+- Public WebSocket `hello_ok` reported Rust `0.1.4`, protocol 1.1, `groups`
+  and `group_paging`; authentication remains `mojang`.
+- The container had zero restarts and no error/panic entries in its startup
+  logs during the immediate check.
+- Control remains bound to `127.0.0.1:18455` and voice to UDP `24455`.
+- IDs and start times of the other 30 running containers were unchanged.
+
+Rollback uses the previous image tag `0.1.3-rc.1`. No nginx, firewall or other
+service changes were needed. Earlier SSH/HTTPS timeouts delayed the initial
+attempt; that attempt made no production changes.

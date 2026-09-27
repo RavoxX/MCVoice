@@ -298,8 +298,8 @@ git show FETCH_HEAD:<path>`).
   passed). Includes the 0.1.3-rc.1 features, optional cosmetic name-tag
   injections from issue #5, and modern Forge resource-pack metadata. Source
   `d337b49` is in `main`; runtime smoke passed six representative targets.
-  See `docs/release-0.1.4.md`. Production deployment remains pending because
-  SSH and public HTTPS timed out from the release workstation.
+  See `docs/release-0.1.4.md`. Rust `0.1.4` is deployed on the public backend;
+  readiness, public HTTPS and protocol capabilities were verified.
 * **Previous candidate:** v0.1.3-rc.1 (run 36277389029: 102/102 jars,
   62/62 GitHub Releases, 102/102 Maven packages, both backend images). Adds
   compact shaded speaking indicators and formatted HUD names across every
@@ -327,15 +327,15 @@ git show FETCH_HEAD:<path>`).
   sites): only ever add, validate (`nginx -t`, `nft --check`), never restart
   others. Since 0.1.1 the jars default to this backend
   (`mcvoiceBackendUrl` in `client/gradle.properties`).
-  Last verified deployment: `0.1.3-rc.1`, revision `53e21a127281`, deployed
-  2026-09-27 after full release workflow `36277389029` passed. Health/readiness and protocol
-  1.1 `groups` + `group_paging` verified; other containers unchanged. Rollback
-  image: `sha-948bd584df18` (the previous routing optimization deployment).
+  Release `0.1.4`, revision `d337b49a68b8`, deployed 2026-09-27 at 10:01 UTC
+  after full release workflow `36308643678` passed. Local readiness, public
+  HTTPS and protocol 1.1 `groups` + `group_paging` verified; Mojang auth and
+  port bindings unchanged. The other 30 running containers were unchanged.
+  A mode-600 environment backup was retained. Rollback image: `0.1.3-rc.1`.
   Measurements and limitations of that optimization are in
   `docs/rust-routing-performance.md` (allocation/presence-lock improvements;
-  no general end-to-end latency improvement established). The 0.1.4 update
-  could not begin because SSH to port 22 timed out; no production changes
-  were made during that release attempt.
+  no general end-to-end latency improvement established). Initial deployment
+  attempts timed out without changing production; the retry above succeeded.
 * **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
   1.20.1 and 1.21.4 (compatibility 20, AES-GCM with 12-byte IV). Older
   compatibility versions (19–16) are not verified.
