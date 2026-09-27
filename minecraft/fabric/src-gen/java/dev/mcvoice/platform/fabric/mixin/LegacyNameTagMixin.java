@@ -32,7 +32,7 @@ import net.minecraft.world.entity.LivingEntity;
 public abstract class LegacyNameTagMixin {
     @Shadow protected abstract boolean shouldShowName(LivingEntity entity);
 
-    @Inject(method = "renderName(Lnet/minecraft/world/entity/LivingEntity;DDD)V", at = @At("TAIL"))
+    @Inject(method = "renderName(Lnet/minecraft/world/entity/LivingEntity;DDD)V", at = @At("TAIL"), require = 0)
     private void mcvoice$nameTag(LivingEntity entity, double x, double y, double z, CallbackInfo ci) {
         if (shouldShowName(entity)) McVoiceFabric.renderNameTag(entity, x, y, z);
     }
