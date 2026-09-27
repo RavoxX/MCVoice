@@ -105,6 +105,7 @@ jobs:
       MC: ${{ matrix.minecraft }}
       LOADER: ${{ matrix.loader }}
     steps:
+      - uses: actions/checkout@v5
       - uses: actions/download-artifact@v5
         continue-on-error: true
         with:
@@ -123,8 +124,9 @@ jobs:
           cp "$jar" run/mods/
           if [ "$LOADER" = fabric ]; then
             v="${{ matrix.fabric_api }}"
+            # Older Maven artifacts contain metadata only; GitHub releases bundle the API modules.
             curl -sSfL -o "run/mods/fabric-api-$v.jar" \
-              "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/$v/fabric-api-$v.jar"
+              "https://github.com/FabricMC/fabric-api/releases/download/$v/fabric-api-$v.jar"
           fi
           ls -la run/mods
       - uses: actions/setup-java@v5
@@ -144,21 +146,7 @@ jobs:
         name: Check MCVoice in the game log
         if: always() && steps.stage.outcome == 'success'
         run: |
-          set -uo pipefail
-          log=run/logs/latest.log
-          fail=""
-          if [ ! -f "$log" ]; then
-            fail="no game log (run/logs/latest.log)"
-          elif ! grep -q "MCVoice .* initialised (Minecraft $MC, $LOADER" "$log"; then
-            fail="MCVoice did not log its initialisation"
-          elif grep -q "HUD render failed" "$log"; then
-            fail="$(grep -m1 'HUD render failed' "$log" | cut -c1-300)"
-          elif grep -qE '^\s+at dev\.mcvoice\.' "$log"; then
-            fail="stack trace through MCVoice: $(grep -m1 -B3 -E '^\s+at dev\.mcvoice\.' "$log" | head -1 | cut -c1-300)"
-          fi
-          grep -E 'MCVoice|dev\.mcvoice' "$log" 2>/dev/null | head -40 || true
-          echo "fail=$fail" >> "$GITHUB_OUTPUT"
-          [ -z "$fail" ]
+          python3 tools/mc-smoke/check_log.py run/logs/latest.log "$MC" "$LOADER"
       - name: Record result
         if: always()
         env:
