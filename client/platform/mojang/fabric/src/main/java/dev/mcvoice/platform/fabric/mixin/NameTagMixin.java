@@ -19,12 +19,12 @@ import net.minecraft.world.entity.Entity;
 @Mixin(EntityRenderer.class)
 public abstract class NameTagMixin {
     //#if MC >= 1.21.2
-    @Inject(method = "getNameTag", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getNameTag", at = @At("RETURN"), cancellable = true, require = 0)
     private void mcvoice$nameTag(Entity entity, CallbackInfoReturnable<Component> cir) {
         cir.setReturnValue(McVoiceFabric.decorateNameTag(entity, cir.getReturnValue()));
     }
     //#else
-    @Redirect(method = "render", at = @At(value = "INVOKE",
+    @Redirect(method = "render", require = 0, at = @At(value = "INVOKE",
         target = "Lnet/minecraft/world/entity/Entity;getDisplayName()Lnet/minecraft/network/chat/Component;"))
     private Component mcvoice$nameTag(Entity entity) {
         return McVoiceFabric.decorateNameTag(entity, entity.getDisplayName());
