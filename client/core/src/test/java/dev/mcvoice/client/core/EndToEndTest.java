@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import dev.mcvoice.client.proximity.PlaybackDecision;
+import dev.mcvoice.client.config.ClientConfig;
 import dev.mcvoice.client.ui.TransportStatus;
 import dev.mcvoice.client.ui.VoiceControls;
 
@@ -191,6 +192,16 @@ class EndToEndTest {
         long t0 = System.currentTimeMillis();
         waitFor("Bob hears Alice", () -> loudness(b, t0) > 300, 10000);
         waitFor("Alice's speaking indicator", () -> vb.isSpeaking(a.uuid), 2000);
+        waitFor("Alice sees herself in the speaker HUD", () -> va.talkers().stream()
+            .anyMatch(t -> t.uuid.equals(a.uuid) && t.local && t.name.equals("Alice") && !t.group), 2000);
+        assertEquals(1, va.talkers().stream().filter(t -> t.uuid.equals(a.uuid)).count(), "self appears once");
+        assertTrue(va.microphoneIndicatorVisible());
+        a.audio.silent = true;
+        waitFor("silent PTT still transmits but has no voice activity", () -> va.transmitting() && !va.voiceDetected(), 2000);
+        assertTrue(va.microphoneIndicatorVisible(), "held PTT keeps the grey microphone visible");
+        assertTrue(va.talkers().stream().noneMatch(t -> t.uuid.equals(a.uuid)), "silence is not a local talker");
+        a.audio.silent = false;
+        waitFor("Alice resumes speaking", () -> va.voiceDetected(), 2000);
         Thread.sleep(1000);
         double[] e = b.audio.energySince(t0 + 500);
         // Bob faces south (yaw 0); Alice at -X (west) is on Bob's right.
@@ -230,8 +241,39 @@ class EndToEndTest {
         assertEquals(0.0, loudness(b, t4), 1.0, "no voice at 60 blocks (range 48)");
 
         a.ptt = false;
+        waitFor("Alice's own HUD entry ends with push-to-talk", () -> va.talkers().stream()
+            .noneMatch(t -> t.uuid.equals(a.uuid)), 2000);
+        assertFalse(va.microphoneIndicatorVisible(), "idle PTT hides the microphone");
         assertTrue(vb.rejectedCount(PlaybackDecision.NOT_TRACKED) + vb.rejectedCount(PlaybackDecision.STALE_EPOCH)
             + vb.rejectedCount(PlaybackDecision.OUT_OF_RANGE) >= 0);
+    }
+
+    @Test
+    void localVoiceActivationHudRespectsSilenceMuteDeafenAndWorldExit() throws Exception {
+        FakeMinecraft mc = player("LocalHud");
+        mc.audio.silent = true;
+        VoiceClient voice = start(mc);
+        waitFor("local HUD client connected", () -> voice.transportStatus() == TransportStatus.CLOUD, 20000);
+        voice.config().activationMode = ClientConfig.ActivationMode.VOICE_ACTIVATION;
+        waitFor("silent voice activation", () -> !voice.voiceDetected() && !voice.transmitting(), 2000);
+        assertTrue(voice.microphoneIndicatorVisible(), "voice activation shows the grey mic without PTT");
+        assertTrue(voice.talkers().isEmpty());
+        mc.audio.silent = false;
+        waitFor("voice activation lists self", () -> voice.talkers().stream().anyMatch(t -> t.local), 3000);
+        assertTrue(voice.isSpeaking(mc.uuid));
+        voice.setMicMuted(true);
+        assertTrue(voice.talkers().isEmpty(), "mute hides self immediately");
+        assertFalse(voice.isSpeaking(mc.uuid));
+        voice.setMicMuted(false);
+        waitFor("unmute lists self", () -> voice.talkers().stream().anyMatch(t -> t.local), 3000);
+        voice.setDeafened(true);
+        assertTrue(voice.talkers().isEmpty(), "deafen hides self immediately");
+        assertFalse(voice.isSpeaking(mc.uuid));
+        voice.setDeafened(false);
+        waitFor("undeafen lists self", () -> voice.talkers().stream().anyMatch(t -> t.local), 3000);
+        mc.inWorld = false;
+        waitFor("world exit removes self", () -> voice.talkers().isEmpty() && !voice.voiceDetected(), 3000);
+        assertFalse(voice.isSpeaking(mc.uuid));
     }
 
     /**
@@ -276,6 +318,8 @@ class EndToEndTest {
 
         long t0 = System.currentTimeMillis();
         waitFor("Hugo hears Gina through the group", () -> loudness(b, t0) > 300, 10000);
+        waitFor("Gina sees her own group voice in the HUD", () -> va.talkers().stream()
+            .anyMatch(t -> t.uuid.equals(a.uuid) && t.local && t.group), 2000);
         assertFalse(vb.isSpeaking(a.uuid), "remote group members have no local name tag");
         Thread.sleep(800);
         double[] e = b.audio.energySince(t0 + 300);
