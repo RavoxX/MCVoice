@@ -177,6 +177,10 @@ git show FETCH_HEAD:<path>`).
   `CustomizeGuiOverlayEvent.Chat`.
 * EventBus 7 (1.21.6+): mod-bus events use `getBus(context.getModBusGroup())`
   before 1.21.9 and static `BUS` from then on.
+* The EventBus 7 adapter also needs `pack.mcmeta`: without it, Forge 26.1.2
+  shows a loading warning and cannot load the mod's resources. Its format
+  branches are verified against Mojang's client `version.json`; the jar
+  validator requires this metadata.
 
 **Legacy Forge (1.8–1.12.x)**
 * 1.8.9–1.12.1 build with Essential's architectury-loom; 1.8 and 1.8.8 with
@@ -284,18 +288,33 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
+* **HUD editing (unreleased):** the shared Java 8 client includes the local
+  speaker in the HUD during detected transmission. The microphone is hidden
+  during idle push-to-talk, grey for silence in PTT/open-mic modes, and green
+  while speaking. It defaults to 16 px at bottom right. General settings has
+  **Edit HUD**: independent dragging, vertical/horizontal speaker rows,
+  background toggle, 10–32 px microphone sizing, Done/Cancel/Reset. Layout is
+  saved in `hudLayout` in `config/mcvoice.json`, using normalized positions.
+  This changes shared client code; the published 0.1.4 jars remain unchanged.
 * **Passing:** 62 Minecraft versions, 102 jars (`versions/build-status.json`).
   * Every Forge release 1.8–1.12.2, 1.13.2 and 1.14.4–26.3.
   * Fabric wherever Fabric API exists for 1.14.4–26.3.
   * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
     without Legacy Fabric API).
-* **Latest candidate:** v0.1.3-rc.1 (run 36277389029: 102/102 jars,
+* **Stable release:** v0.1.4 (run 36308643678: 102/102 jars, 62/62 GitHub
+  Releases, 102/102 Maven packages, images `0.1.4`/`latest`; all 134 jobs
+  passed). Includes the 0.1.3-rc.1 features, optional cosmetic name-tag
+  injections from issue #5, and modern Forge resource-pack metadata. Source
+  `d337b49` is in `main`; runtime smoke passed six representative targets.
+  See `docs/release-0.1.4.md`. Rust `0.1.4` is deployed on the public backend;
+  readiness, public HTTPS and protocol capabilities were verified.
+* **Previous candidate:** v0.1.3-rc.1 (run 36277389029: 102/102 jars,
   62/62 GitHub Releases, 102/102 Maven packages, both backend images). Adds
   compact shaded speaking indicators and formatted HUD names across every
   supported adapter, 20-entry group pages, and per-connection group budgets.
   The owner tested the rendering changes in Fabric 26.1.2; the full matrix
   was built and validated in CI. See `docs/release-0.1.3-rc.1.md`.
-* **Stable release:** v0.1.2 (run 36250351566: 102/102 jars, 62/62 GitHub
+* **Earlier stable release:** v0.1.2 (run 36250351566: 102/102 jars, 62/62 GitHub
   Releases, 102/102 Maven packages, images `0.1.2`/`latest`) adds voice
   groups, the macOS microphone fix and vanilla-style screens. The public
   backend uses protocol 1.1 and advertises `groups`; see the
@@ -316,22 +335,28 @@ git show FETCH_HEAD:<path>`).
   sites): only ever add, validate (`nginx -t`, `nft --check`), never restart
   others. Since 0.1.1 the jars default to this backend
   (`mcvoiceBackendUrl` in `client/gradle.properties`).
-  Release `0.1.3-rc.1`, revision `53e21a127281`, deployed 2026-09-27 after
-  full release workflow `36277389029` passed. Health/readiness and protocol
-  1.1 `groups` + `group_paging` verified; other containers unchanged. Rollback
-  image: `sha-948bd584df18` (the previous routing optimization deployment).
+  Release `0.1.4`, revision `d337b49a68b8`, deployed 2026-09-27 at 10:01 UTC
+  after full release workflow `36308643678` passed. Local readiness, public
+  HTTPS and protocol 1.1 `groups` + `group_paging` verified; Mojang auth and
+  port bindings unchanged. The other 30 running containers were unchanged.
+  A mode-600 environment backup was retained. Rollback image: `0.1.3-rc.1`.
   Measurements and limitations of that optimization are in
   `docs/rust-routing-performance.md` (allocation/presence-lock improvements;
-  no general end-to-end latency improvement established).
+  no general end-to-end latency improvement established). Initial deployment
+  attempts timed out without changing production; the retry above succeeded.
 * **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
   1.20.1 and 1.21.4 (compatibility 20, AES-GCM with 12-byte IV). Older
   compatibility versions (19–16) are not verified.
-* **Client runtime smoke test:** the owner approved `mc-smoke.yml` for the
-  0.1.4 release. First run `36307193253` passed Fabric 26.1.2 and both loaders
-  on 1.21.1. It exposed missing Forge 26.1.2 resource-pack metadata and two
-  harness issues on 1.16.5: the thin Maven Fabric API jar and a caught optional
-  mod lookup logged at TRACE. Fixes use the bundled Fabric API release and
-  severity-aware log checks; runtime errors still fail. A rerun is required.
+* **Client runtime smoke test:** the owner approved it for 0.1.4. Run
+  `36308348990` passed all six targets: Fabric and Forge on 1.16.5, 1.21.1,
+  and 26.1.2. The tested revision `5948dc7` has the same tree as merged
+  `main` revision `d337b49`. This checks initialisation, world entry, clean
+  exit and MCVoice runtime errors, not visual quality or real voice delivery.
+  Initial runs exposed missing modern Forge `pack.mcmeta` and two harness
+  issues: older Fabric API Maven jars are metadata-only (use the bundled
+  GitHub release), and Forge's caught optional-mod lookup at TRACE is not a
+  runtime error. The severity-aware log checker has regression tests and
+  still fails MCVoice runtime stacks, error records and HUD failures.
 * **Not implemented** (reasons are in `versions/supported.md`):
   * Forge 1.14.2/1.14.3 (MCP names, 1.14 class names: extend `mcp13`);
   * Legacy Fabric 1.13.2 (no API; needs a Legacy Yarn 1.13 adapter).
