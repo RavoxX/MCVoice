@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import dev.mcvoice.client.config.ClientConfig;
+import dev.mcvoice.client.config.HudLayout;
 
 /** What the UI needs from the voice client (implemented by client/core). */
 public interface VoiceControls {
@@ -15,9 +16,22 @@ public interface VoiceControls {
     /** Close our screen without applying anything. */
     void closeScreen();
 
+    void openHudEditor();
+
+    void openSettings();
+
+    /** Save only the HUD layout, without restarting audio or closing the editor. */
+    void saveHudLayout(HudLayout layout);
+
     TransportStatus transportStatus();
 
     boolean transmitting();
+
+    /** Voice activity from the capture processor, independent of push-to-talk. */
+    boolean voiceDetected();
+
+    /** Push-to-talk held, or an open-microphone mode (voice activation / group) enabled. */
+    boolean microphoneIndicatorVisible();
 
     boolean micMuted();
 
@@ -49,7 +63,7 @@ public interface VoiceControls {
 
     void setPlayerMuted(UUID player, boolean muted);
 
-    /** Players talking right now: playing ones, and locally muted ones (shown greyed out). */
+    /** Players talking right now, including the transmitting local player and muted remote players. */
     List<Talker> talkers();
 
     /** Whether the transport label ("Cloud Voice") is shown next to the HUD microphone (5 s after changes). */
@@ -105,12 +119,19 @@ public interface VoiceControls {
         public final boolean muted;
         /** a member of my voice group */
         public final boolean group;
+        /** The local player; this row does not open a player volume/mute menu. */
+        public final boolean local;
 
         public Talker(UUID uuid, String name, boolean muted, boolean group) {
+            this(uuid, name, muted, group, false);
+        }
+
+        public Talker(UUID uuid, String name, boolean muted, boolean group, boolean local) {
             this.uuid = uuid;
             this.name = name;
             this.muted = muted;
             this.group = group;
+            this.local = local;
         }
     }
 
