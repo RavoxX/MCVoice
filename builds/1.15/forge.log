@@ -18,14 +18,14 @@ Executing steps
  > Running 'merge'
  > Running 'rename'
 Stopping at requested step: /home/runner/.gradle/caches/forge_gradle/mcp_repo/de/oceanlabs/mcp/mcp_config/1.15-20191212.203412/joined/rename/output.jar
-[09:21:07] [main/INFO]: Writing debug log file accesstransform.log
-[09:21:07] [main/INFO]: Access Transformer processor running version 8.0.7+8.0.7+master.43473d43
-[09:21:07] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4/forge-1.15-29.0.4-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4_mapped_official_1.15/forge-1.15-29.0.4_mapped_official_1.15.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_5/parent_at.cfg]
-[09:21:07] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4/forge-1.15-29.0.4-injected.jar
-[09:21:07] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4_mapped_official_1.15/forge-1.15-29.0.4_mapped_official_1.15.jar
-[09:21:07] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_5/parent_at.cfg
-[09:21:07] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4_mapped_official_1.15/forge-1.15-29.0.4_mapped_official_1.15.jar, overwriting
-[09:21:09] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4_mapped_official_1.15/forge-1.15-29.0.4_mapped_official_1.15.jar
+[16:48:08] [main/INFO]: Writing debug log file accesstransform.log
+[16:48:08] [main/INFO]: Access Transformer processor running version 8.0.7+8.0.7+master.43473d43
+[16:48:08] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4/forge-1.15-29.0.4-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4_mapped_official_1.15/forge-1.15-29.0.4_mapped_official_1.15.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_5/parent_at.cfg]
+[16:48:08] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4/forge-1.15-29.0.4-injected.jar
+[16:48:08] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4_mapped_official_1.15/forge-1.15-29.0.4_mapped_official_1.15.jar
+[16:48:08] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_5/parent_at.cfg
+[16:48:08] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4_mapped_official_1.15/forge-1.15-29.0.4_mapped_official_1.15.jar, overwriting
+[16:48:09] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.15-29.0.4_mapped_official_1.15/forge-1.15-29.0.4_mapped_official_1.15.jar
 Creating SRG -> MCP TSRG
 Note: /home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
@@ -47,11 +47,11 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790500818502.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791046043235.json
 
-BUILD SUCCESSFUL in 1m 7s
+BUILD SUCCESSFUL in 1m 1s
 8 actionable tasks: 8 executed
-valid: mcvoice-0.1.4-mc1.15-forge.jar (359 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.5-mc1.15-forge.jar (372 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/LegacyNameTagIcon
