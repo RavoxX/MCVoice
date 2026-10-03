@@ -139,16 +139,20 @@ public final class SettingsScreen extends BaseScreen {
             public void run() { cfg().svcInteropEnabled = !cfg().svcInteropEnabled; }
         }), right, y);
         y += row;
-        place(toggle(colW, new Button.Label() {
+        int hudW = (panelW - 8) / 3;
+        place(toggle(hudW, new Button.Label() {
             public String get() { return "Voice HUD: " + (cfg().showHud ? "On" : "Off"); }
         }, new Button.Action() {
             public void run() { cfg().showHud = !cfg().showHud; }
         }), left, y);
-        place(toggle(colW, new Button.Label() {
-            public String get() { return "Debug Overlay: " + (cfg().showDebugOverlay ? "On" : "Off"); }
+        place(toggle(hudW, new Button.Label() {
+            public String get() { return "Debug: " + (cfg().showDebugOverlay ? "On" : "Off"); }
         }, new Button.Action() {
             public void run() { cfg().showDebugOverlay = !cfg().showDebugOverlay; }
-        }), right, y);
+        }), left + hudW + 4, y);
+        place(Button.of(hudW, "Edit HUD", new Button.Action() {
+            public void run() { v.openHudEditor(); }
+        }), left + 2 * (hudW + 4), y);
     }
 
     private static String cycle(List<String> options, String current, int dir) {
