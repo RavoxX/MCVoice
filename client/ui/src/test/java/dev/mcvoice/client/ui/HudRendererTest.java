@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import dev.mcvoice.client.platform.ui.UiCanvas;
+import dev.mcvoice.client.config.ClientConfig;
 
 class HudRendererTest {
     @Test
@@ -20,6 +21,7 @@ class HudRendererTest {
         VoiceControls controls = (VoiceControls) Proxy.newProxyInstance(VoiceControls.class.getClassLoader(),
             new Class<?>[] {VoiceControls.class}, (proxy, method, args) -> {
                 if (method.getName().equals("transportStatus")) return TransportStatus.CLOUD;
+                if (method.getName().equals("config")) return new ClientConfig();
                 if (method.getName().equals("talkers")) {
                     return Collections.singletonList(new VoiceControls.Talker(player, "name", false, false));
                 }
