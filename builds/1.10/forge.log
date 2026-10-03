@@ -16,26 +16,26 @@ Daemon will be stopped at the end of the build
 > Configure project :
 Architectury Loom: 0.10.0.5
 :generating dummy intermediary
-:generated dummy intermediary in 944.1 ms
+:generated dummy intermediary in 980.4 ms
 :patching forge
-:patched forge in 8.181 s
+:patched forge in 17.53 s
 :patching jars
-:patched jars in 7.314 s
+:patched jars in 7.443 s
 :access transforming minecraft
-[09:18:21] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
-[09:18:21] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-at-patched.jar, --atFile, /tmp/at-conf14929054719419473654.cfg]
-[09:18:21] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-patched.jar
-[09:18:21] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-at-patched.jar
-[09:18:21] [main/INFO]: Transformer file /tmp/at-conf14929054719419473654.cfg
-[09:18:21] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-at-patched.jar, overwriting
-[09:18:23] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-at-patched.jar
-:access transformed minecraft in 5.643 s
+[16:45:59] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
+[16:45:59] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-at-patched.jar, --atFile, /tmp/at-conf17947071290094539563.cfg]
+[16:45:59] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-patched.jar
+[16:45:59] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-at-patched.jar
+[16:45:59] [main/INFO]: Transformer file /tmp/at-conf17947071290094539563.cfg
+[16:45:59] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-at-patched.jar, overwriting
+[16:46:01] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.10/forge/1.10-12.18.0.2000-1.10.0/merged-at-patched.jar
+:access transformed minecraft in 10.73 s
 :remapping minecraft (TinyRemapper, official -> intermediary)
-:remapped minecraft (TinyRemapper, official -> intermediary) in 1.980 s
+:remapped minecraft (TinyRemapper, official -> intermediary) in 1.772 s
 :remapping minecraft (TinyRemapper, official -> srg)
-:remapped minecraft (TinyRemapper, official -> srg) in 1.566 s
+:remapped minecraft (TinyRemapper, official -> srg) in 1.549 s
 :remapping minecraft (TinyRemapper, official -> named)
-:remapped minecraft (TinyRemapper, official -> named) in 1.441 s
+:remapped minecraft (TinyRemapper, official -> named) in 1.426 s
 
 > Task :compileJava
 Note: SpongePowered MIXIN Annotation Processor Version=0.8.5
@@ -60,7 +60,7 @@ Note: Recompile with -Xlint:deprecation for details.
 :remapping sources
 
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790500649368.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791045884298.json
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -68,9 +68,9 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 1m 40s
+BUILD SUCCESSFUL in 2m 10s
 6 actionable tasks: 6 executed
-valid: mcvoice-0.1.4-mc1.10-forge.jar (357 classes, 16 platform classes, metadata ['mcmod.info'])
+valid: mcvoice-0.1.5-mc1.10-forge.jar (370 classes, 16 platform classes, metadata ['mcmod.info'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$Events
   platform: dev/mcvoice/platform/mc/LegacyNameTagIcon
