@@ -67,6 +67,7 @@ public final class ClientConfig {
 
     // --- ui / diagnostics
     public boolean showHud = true;
+    public HudLayout hudLayout = new HudLayout();
     public boolean showDebugOverlay = false;
     public boolean debugLogging = false;
     /** Per-frame logging (very verbose). */
@@ -190,6 +191,7 @@ public final class ClientConfig {
             }
         }
         showHud = Json.bool(m, "showHud", showHud);
+        hudLayout = HudLayout.fromJson(Json.objAt(m, "hudLayout"));
         showDebugOverlay = Json.bool(m, "showDebugOverlay", showDebugOverlay);
         debugLogging = Json.bool(m, "debugLogging", debugLogging);
         traceFrames = Json.bool(m, "traceFrames", traceFrames);
@@ -227,6 +229,7 @@ public final class ClientConfig {
         }
         m.put("mutedPlayers", mp);
         m.put("showHud", showHud);
+        m.put("hudLayout", hudLayout.toJson());
         m.put("showDebugOverlay", showDebugOverlay);
         m.put("debugLogging", debugLogging);
         m.put("traceFrames", traceFrames);
