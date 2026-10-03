@@ -45,14 +45,14 @@ Client Extra
 Client Maven POM
   pom[client-extra]
 Sources
-  listLibraries
+  stripClient
   download[26.2][server]
   extractServer
   stripServer
-  stripClient
   merge
   modifyAccess
   stripSides
+  listLibraries
   decompile
   patch
   patch[forge]
@@ -69,7 +69,7 @@ Maven POM
 Metadata
   metadata[forge]
   metadata[forge][variants]
-Minecraft Maven has finished, took 3:11.434
+Minecraft Maven has finished, took 3:18.863
 
 > Task :compileJava
 > Task :processResources
@@ -83,12 +83,12 @@ Minecraft Maven has finished, took 3:11.434
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790502251742.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791047454574.json
 
-BUILD SUCCESSFUL in 3m 32s
+BUILD SUCCESSFUL in 3m 44s
 4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.4-mc26.2-forge.jar (356 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.5-mc26.2-forge.jar (369 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
