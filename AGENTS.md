@@ -288,6 +288,14 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
+* **HUD editing (unreleased):** the shared Java 8 client includes the local
+  speaker in the HUD during detected transmission. The microphone is hidden
+  during idle push-to-talk, grey for silence in PTT/open-mic modes, and green
+  while speaking. It defaults to 16 px at bottom right. General settings has
+  **Edit HUD**: independent dragging, vertical/horizontal speaker rows,
+  background toggle, 10–32 px microphone sizing, Done/Cancel/Reset. Layout is
+  saved in `hudLayout` in `config/mcvoice.json`, using normalized positions.
+  This changes shared client code; the published 0.1.4 jars remain unchanged.
 * **Passing:** 62 Minecraft versions, 102 jars (`versions/build-status.json`).
   * Every Forge release 1.8–1.12.2, 1.13.2 and 1.14.4–26.3.
   * Fabric wherever Fabric API exists for 1.14.4–26.3.
