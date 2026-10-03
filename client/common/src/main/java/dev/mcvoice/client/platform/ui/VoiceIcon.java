@@ -18,14 +18,19 @@ public enum VoiceIcon {
     }
 
     public void draw(UiCanvas canvas, int x, int y, int tint) {
-        drawPixels(canvas, hud, x, y, tint);
+        draw(canvas, x, y, HUD_SIZE, tint);
+    }
+
+    /** Scale the original shaded pixels without smoothing away the Minecraft style. */
+    public void draw(UiCanvas canvas, int x, int y, int size, int tint) {
+        drawPixels(canvas, hud, x, y, size, tint);
     }
 
     public void drawNameTag(UiCanvas canvas, int x, int y, int tint) {
-        drawPixels(canvas, nameTag, x, y, tint);
+        drawPixels(canvas, nameTag, x, y, NAME_TAG_SIZE, tint);
     }
 
-    private static void drawPixels(UiCanvas canvas, String[] pixels, int x, int y, int tint) {
+    private static void drawPixels(UiCanvas canvas, String[] pixels, int x, int y, int size, int tint) {
         for (int row = 0; row < pixels.length; row++) {
             String line = pixels[row];
             for (int col = 0; col < line.length();) {
@@ -36,7 +41,8 @@ public enum VoiceIcon {
                     int light = shade == '3' ? 255 : shade == '2' ? 213 : shade == '1' ? 162 : 108;
                     int color = (tint & 0xFF000000) | (((tint >> 16 & 255) * light / 255) << 16)
                         | (((tint >> 8 & 255) * light / 255) << 8) | ((tint & 255) * light / 255);
-                    canvas.fill(x + col, y + row, x + end, y + row + 1, color);
+                    canvas.fill(x + col * size / line.length(), y + row * size / pixels.length,
+                        x + end * size / line.length(), y + (row + 1) * size / pixels.length, color);
                 }
                 col = end;
             }

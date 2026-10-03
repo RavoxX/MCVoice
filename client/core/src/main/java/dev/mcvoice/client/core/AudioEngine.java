@@ -42,6 +42,7 @@ final class AudioEngine {
     private volatile Thread captureThread, playbackThread;
     private volatile boolean running;
     private volatile boolean transmitting;
+    private volatile boolean voiceDetected;
     private volatile MonitorSource monitor;
     private volatile String inputDevice = "", outputDevice = "";
     private volatile String captureStatus = "stopped", playbackStatus = "stopped";
@@ -105,6 +106,7 @@ final class AudioEngine {
             }
         }
         captureStatus = "stopped";
+        voiceDetected = false;
         playbackStatus = "stopped";
     }
 
@@ -135,6 +137,7 @@ final class AudioEngine {
                     synchronized (processor) {
                         voice = processor.process(pcm, pcm.length);
                     }
+                    voiceDetected = voice;
                     MonitorSource m = monitor;
                     if (m != null) {
                         m.offer(pcm);
@@ -155,6 +158,7 @@ final class AudioEngine {
             } catch (Throwable t) {
                 VoiceLog.warn(Category.AUDIO, "capture failed: " + t);
             } finally {
+                voiceDetected = false;
                 captureLine = null;
                 line.close();
                 if (transmitting) {
@@ -206,6 +210,10 @@ final class AudioEngine {
 
     boolean transmitting() {
         return transmitting;
+    }
+
+    boolean voiceDetected() {
+        return voiceDetected;
     }
 
     double levelDb() {
