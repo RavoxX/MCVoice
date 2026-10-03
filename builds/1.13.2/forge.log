@@ -22,9 +22,9 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791045261104.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791045869272.json
 
-BUILD SUCCESSFUL in 23s
+BUILD SUCCESSFUL in 25s
 8 actionable tasks: 8 executed
 valid: mcvoice-0.1.5-mc1.13.2-forge.jar (369 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
