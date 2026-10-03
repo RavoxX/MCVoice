@@ -17,9 +17,9 @@ Minecraft Mavenizer 0.5.21 by Forge Development LLC
   Disable Gradle:     false
   Stub Jars:          false
 
-Processing Minecraft dependency: net.minecraftforge:forge:26.3-66.0.3
+Processing Minecraft dependency: net.minecraftforge:forge:26.3-66.0.6
 Using Mappings: official-26.3
-Processing Minecraft Forge (userdev): 26.3-66.0.3
+Processing Minecraft Forge (userdev): 26.3-66.0.6
   Cache miss!
   java.lang.Exception: Cache miss! Stacktrace for Information Only
   	at net.minecraftforge.mcmaven.impl.Mavenizer.assertNotCacheOnly(Mavenizer.java:60)
@@ -69,7 +69,7 @@ Maven POM
 Metadata
   metadata[forge]
   metadata[forge][variants]
-Minecraft Maven has finished, took 2:28.512
+Minecraft Maven has finished, took 3:13.890
 
 > Task :compileJava
 > Task :processResources
@@ -83,12 +83,12 @@ Minecraft Maven has finished, took 2:28.512
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790502256860.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791047454402.json
 
-BUILD SUCCESSFUL in 2m 46s
+BUILD SUCCESSFUL in 3m 35s
 4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.4-mc26.3-forge.jar (356 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.5-mc26.3-forge.jar (369 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
