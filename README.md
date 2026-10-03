@@ -61,13 +61,17 @@ Download the jar for your Minecraft version and loader from
    * **G**: voice groups.
 
    Settings and status screens can be bound in Controls.
-4. The HUD shows your microphone bottom left and who is talking top left
-   (muted microphones greyed out). Open the chat and click a name to change that
-   player's volume or mute them.
+4. The HUD shows who is talking top left, including yourself when your microphone
+   detects voice while transmitting. Your microphone appears bottom right while
+   push-to-talk is held or voice activation is enabled (including group open mic):
+   grey without voice activity, green while speaking. Muting or deafening shows
+   a red crossed icon while the indicator is visible. Open the chat and click another
+   player's name to change their volume or mute them.
    The adapters preserve server name colours and prefixes in the
    HUD and add a green microphone beside visible speaking players' name tags.
-   Compact, shaded pixel icons use a 10-pixel grid in the HUD and an 8-pixel
-   grid on name tags. Older adapters draw the same pixel artwork directly, preserving vanilla
+   Compact, shaded pixel icons use a 10-pixel grid in speaker rows and an 8-pixel
+   grid on name tags. The microphone indicator defaults to 16 pixels, using the
+   same shaded artwork. Older adapters draw the same pixel artwork directly, preserving vanilla
    name-tag visibility and range checks. Fabric name-tag hooks are optional: if
    another mod prevents a hook from applying, its icon can be skipped without
    a required-injection startup error. Essential HUD and tick hooks stay required.
@@ -77,7 +81,11 @@ Download the jar for your Minecraft version and loader from
    * activation mode (push-to-talk or voice activation) and its threshold;
    * gain, devices and distances;
    * per-player volume and mute;
-   * HUD and debug options.
+   * HUD and debug options. **Edit HUD** in General settings lets you drag the
+     speaker list and microphone, choose a vertical or horizontal list, toggle
+     its background, and set microphone size (10–32 pixels). Done saves the
+     layout; Cancel or Escape discards edits; Reset restores defaults in the editor.
+     Positions follow changes in window size and GUI scale.
 
 Audio is never recorded or stored by the mod or by the backend.
 
