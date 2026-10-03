@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-24T19:27:16Z",
+  "generated_at": "2026-09-28T10:56:30Z",
   "range": {
     "min": "1.8",
     "max": "26.3",
@@ -1596,7 +1596,7 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "26.3-66.0.3",
+          "version": "26.3-66.0.6",
           "channel": "latest"
         },
         "fabric": {

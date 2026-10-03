@@ -22,6 +22,7 @@ import dev.mcvoice.client.audio.JavaSoundBackend;
 import dev.mcvoice.client.audio.SpatialMixer;
 import dev.mcvoice.client.audio.ToneSource;
 import dev.mcvoice.client.config.ClientConfig;
+import dev.mcvoice.client.config.HudLayout;
 import dev.mcvoice.client.json.Json;
 import dev.mcvoice.client.log.Category;
 import dev.mcvoice.client.log.LogSink;
@@ -47,6 +48,7 @@ import dev.mcvoice.client.ui.DebugScreen;
 import dev.mcvoice.client.ui.GroupScreen;
 import dev.mcvoice.client.ui.PlayerScreen;
 import dev.mcvoice.client.ui.HudRenderer;
+import dev.mcvoice.client.ui.HudEditorScreen;
 import dev.mcvoice.client.ui.SettingsScreen;
 import dev.mcvoice.client.ui.TransportStatus;
 import dev.mcvoice.client.ui.VoiceControls;
@@ -94,8 +96,8 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     private int seq;
     private long timestamp;
     private volatile long sentFrames;
-    private int lastTxMode = VoiceProtocol.MODE_NORMAL;
-    private int lastTxGroupFlag;
+    private volatile int lastTxMode = VoiceProtocol.MODE_NORMAL;
+    private volatile int lastTxGroupFlag;
 
     // voice groups (spec 6.12): membership ends with the backend session
     private volatile Group group;
@@ -342,7 +344,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             return false;
         }
         if (player.equals(s.localUuid)) {
-            return transmitting();
+            return transmitting() && voiceDetected() && !config.muted;
         }
         if (s.player(player) == null) {
             return false;
@@ -687,6 +689,26 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     }
 
     @Override
+    public void openHudEditor() {
+        if (mc.gui() != null) {
+            mc.gui().open(new HudEditorScreen(this));
+        }
+    }
+
+    @Override
+    public void openSettings() {
+        if (mc.gui() != null) {
+            mc.gui().open(new SettingsScreen(this));
+        }
+    }
+
+    @Override
+    public void saveHudLayout(HudLayout layout) {
+        config.hudLayout = layout.copy();
+        config.save();
+    }
+
+    @Override
     public TransportStatus transportStatus() {
         ControlClient ctl = control;
         CloudVoiceChannel c = cloud;
@@ -701,6 +723,16 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     @Override
     public boolean transmitting() {
         return engine.transmitting();
+    }
+
+    @Override
+    public boolean voiceDetected() {
+        return engine.voiceDetected();
+    }
+
+    @Override
+    public boolean microphoneIndicatorVisible() {
+        return pttDown || config.activationMode == ClientConfig.ActivationMode.VOICE_ACTIVATION || group != null;
     }
 
     @Override
@@ -822,9 +854,19 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         Set<UUID> members = groupMembers;
         List<Talker> out = new ArrayList<Talker>();
         List<UUID> seen = new ArrayList<UUID>();
+        if (s.inWorld && s.localUuid != null && transmitting() && voiceDetected() && !config.muted && !config.deafened
+            && (config.cloudEnabled || config.svcInteropEnabled)) {
+            boolean toGroup = members.contains(s.localUuid)
+                && (lastTxMode == VoiceProtocol.MODE_GROUP || (lastTxGroupFlag & VoiceProtocol.FLAG_GROUP) != 0);
+            out.add(new Talker(s.localUuid, mc.session().username(), false, toGroup, true));
+            seen.add(s.localUuid);
+        }
         for (UUID u : mixer.talking()) {
+            if (u.equals(s.localUuid)) {
+                continue;
+            }
             String name = nameOf(u, s);
-            if (name != null && !config.mutedPlayers.contains(u)) {
+            if (name != null && !seen.contains(u) && !config.mutedPlayers.contains(u)) {
                 out.add(new Talker(u, name, false, members.contains(u)));
                 seen.add(u);
             }
@@ -833,6 +875,9 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         for (Map.Entry<UUID, Long> e : mutedTalking.entrySet()) {
             if (now - e.getValue() > 400) {
                 mutedTalking.remove(e.getKey());
+                continue;
+            }
+            if (e.getKey().equals(s.localUuid)) {
                 continue;
             }
             String name = nameOf(e.getKey(), s);
@@ -861,7 +906,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         boolean down = p != null && p[2] != 0;
         if (down && !hudMouseWasDown) {
             for (HudRenderer.Row r : hudRows) {
-                if (r.contains(p[0], p[1])) {
+                if (!r.local && r.contains(p[0], p[1])) {
                     openPlayerMenu(r.uuid, r.name);
                     break;
                 }
