@@ -147,6 +147,7 @@ final class FakeMinecraft implements MinecraftAdapter {
     /** Sine microphone + recording speaker, paced at real time (20 ms per frame). */
     static final class FakeAudio implements AudioAdapter {
         volatile double freq = 440;
+        volatile boolean silent;
         final List<double[]> played = Collections.synchronizedList(new ArrayList<double[]>());
 
         public List<String> inputDevices() { return Collections.singletonList("fake-mic"); }
@@ -169,7 +170,7 @@ final class FakeMinecraft implements MinecraftAdapter {
                         }
                     }
                     for (int i = 0; i < len; i++) {
-                        buf[off + i] = (short) (Math.sin(2 * Math.PI * freq * (n++) / 48000.0) * 12000);
+                        buf[off + i] = silent ? 0 : (short) (Math.sin(2 * Math.PI * freq * (n++) / 48000.0) * 12000);
                     }
                     return open;
                 }
