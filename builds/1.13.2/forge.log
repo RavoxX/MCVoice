@@ -1,6 +1,10 @@
 To honour the JVM settings for this build a single-use Daemon process will be forked. See https://docs.gradle.org/7.3.3/userguide/gradle_daemon.html#sec:disabling_the_daemon.
 Daemon will be stopped at the end of the build 
-> Task :compileJava FROM-CACHE
+
+> Task :compileJava
+Note: /home/runner/work/MCVoice/MCVoice/minecraft/forge/src-gen/java/dev/mcvoice/platform/mc/McAdapter.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
 > Task :processResources
 > Task :classes
 > Task :jar
@@ -18,11 +22,11 @@ Daemon will be stopped at the end of the build
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1790500651328.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791045261104.json
 
-BUILD SUCCESSFUL in 20s
-8 actionable tasks: 7 executed, 1 from cache
-valid: mcvoice-0.1.4-mc1.13.2-forge.jar (356 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
+BUILD SUCCESSFUL in 23s
+8 actionable tasks: 8 executed
+valid: mcvoice-0.1.5-mc1.13.2-forge.jar (369 classes, 15 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/mc/LegacyNameTagIcon
   platform: dev/mcvoice/platform/mc/LegacyNameTagIcon$1
