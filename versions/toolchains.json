@@ -210,9 +210,8 @@
     ]
   },
   "neoforge-moddev": {
-    "latest": "2.0.147",
+    "latest": "2.0.148",
     "recent": [
-      "2.0.118",
       "2.0.119",
       "2.0.120",
       "2.0.121",
@@ -236,10 +235,21 @@
       "2.0.143",
       "2.0.144",
       "2.0.146",
-      "2.0.147"
+      "2.0.147",
+      "2.0.148"
     ]
   },
   "simple-voice-chat": [
+    {
+      "version": "fabric-2.6.24+26.4-snapshot-2",
+      "loaders": [
+        "fabric"
+      ],
+      "game_versions": [
+        "26.4-snapshot-2"
+      ],
+      "published": "2026-09-29T15:29:52.410196Z"
+    },
     {
       "version": "fabric-2.6.24+26.4-snapshot-1",
       "loaders": [
@@ -645,16 +655,6 @@
         "1.20.1"
       ],
       "published": "2026-09-20T07:20:14.340418Z"
-    },
-    {
-      "version": "forge-1.20.1-2.6.24",
-      "loaders": [
-        "forge"
-      ],
-      "game_versions": [
-        "1.20.1"
-      ],
-      "published": "2026-09-20T07:19:11.730059Z"
     }
   ]
 }
