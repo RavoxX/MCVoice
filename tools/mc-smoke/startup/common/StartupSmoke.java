@@ -49,7 +49,7 @@ public final class StartupSmoke {
                     new LevelSettings("MCVoice smoke", GameType.CREATIVE,
                         new LevelSettings.DifficultySettings(Difficulty.PEACEFUL, false, false),
                         true, WorldDataConfiguration.DEFAULT),
-                    new WorldOptions(42L, false, false), WorldPresets::createTestWorldDimensions,
+                    new WorldOptions(42L, false, false), WorldPresets::createNormalWorldDimensions,
                     new TitleScreen());
             }
         }
@@ -103,6 +103,7 @@ public final class StartupSmoke {
             require(keys.get("key.mcvoice.push_to_talk").saveString().equals("key.keyboard.p"), "Saved keyboard binding lost");
             require(keys.get("key.mcvoice.whisper").saveString().equals("key.mouse.4"), "Saved mouse binding lost");
         }
+        LoaderChecks.check(keys, UPGRADE);
         // Options.load calls the same virtual setKey method; cover every MCVoice action.
         for (KeyMapping k : keys.values()) {
             InputConstants.Key original = InputConstants.getKey(k.saveString());
@@ -115,6 +116,7 @@ public final class StartupSmoke {
             k.setKey(InputConstants.getKey("key.mouse.4"));
             require(k.saveString().equals("key.mouse.4"), "Valid mouse key changed");
             k.setKey(original);
+            LoaderChecks.roundTrip(k, original);
         }
         KeyMapping.resetMapping();
         KeyMapping.setAll();
