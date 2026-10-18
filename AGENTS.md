@@ -291,7 +291,8 @@ git show FETCH_HEAD:<path>`).
 * **26.3 settings input follow-up:** `McScreen` now translates SDL buttons and
   navigation scancodes to the shared UI contract. Runtime coverage exercises
   actual settings widgets through Minecraft event objects, plus all mouse
-  phases and text input. Candidate version 0.1.7; see
+  phases and text input. Runtime run `39138274562` passed both loaders and
+  main CI `39138258546` passed all six jobs. Candidate version 0.1.7; see
   `docs/minecraft-26.3-input.md` for scope and validation status.
 * **Minecraft 26.3 startup fix (released as v0.1.6-mc26.3):** native unknown
   defaults plus migration of saved negative MCVoice keyboard values through

@@ -18,7 +18,21 @@ toggle, right-click rejection, Audio/Players/General tabs, slider drag/release,
 Edit HUD, Done, and character/Backspace/Enter text input. Separate assertions
 cover all mouse phases, button mappings and normalized navigation keys.
 These are programmatic event tests inside both running loaders, not a manual
-visual or physical-pointer test. Final results are recorded after execution.
+visual or physical-pointer test.
+
+Runtime run [39138274562](https://github.com/RavoxX/MCVoice/actions/runs/39138274562)
+passed both loaders with candidate version 0.1.7 from source
+`e89b65bcc471a0bd0c992aab77f7cac9066fea2f` (input correction `aa4cac1`). Both
+fresh logs record `MCVOICE_SMOKE settings-input PASS`, followed by successful
+world focus and shutdown. Both saved-options Quick Play launches also passed,
+retaining valid keyboard/mouse bindings and Forge modifiers. The downloaded
+candidate jars independently passed `validate_jar.py`.
+
+Main CI run [39138258546](https://github.com/RavoxX/MCVoice/actions/runs/39138258546)
+passed all six jobs, including the shared client/end-to-end suite and release
+report regression tests. The original runtime attempt was canceled because
+HeadlessMC prompted before re-downloading a cached Minecraft installation;
+setup now reuses the exact pinned installed version without prompting.
 
 MCVoice 0.1.6 was already published when the settings issue was reported.
 The follow-up requires a new version; existing 0.1.6 jars/Maven artifacts are
