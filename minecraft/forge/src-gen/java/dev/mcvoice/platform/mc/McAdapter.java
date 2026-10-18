@@ -80,17 +80,27 @@ public final class McAdapter implements MinecraftAdapter {
         return new KeyMapping("key.mcvoice." + name, code, CATEGORY) {
             @Override
             public void setKey(InputConstants.Key key) {
-                // 0.1.5 can leave key.keyboard.-1 in options.txt. SDL indexes must be non-negative.
-                if (key.getType() == InputConstants.Type.KEYBOARD && key.getValue() < 0) {
-                    key = InputConstants.UNKNOWN;
-                }
-                super.setKey(key);
+                super.setKey(safeKey(key));
             }
+
+            @Override
+            public void setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier modifier, InputConstants.Key key) {
+                // Forge's options loader assigns the field directly through this separate setter.
+                super.setKeyModifierAndCode(modifier, safeKey(key));
+            }
+
         };
 
 
 
     }
+
+
+    private static InputConstants.Key safeKey(InputConstants.Key key) {
+        // 0.1.5 can leave key.keyboard.-1 in options.txt. SDL indexes must be non-negative.
+        return key.getType() == InputConstants.Type.KEYBOARD && key.getValue() < 0 ? InputConstants.UNKNOWN : key;
+    }
+
 
     /** Key mappings the loader must register. */
     public Iterable<KeyMapping> keyMappings() {
