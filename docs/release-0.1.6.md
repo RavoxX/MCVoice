@@ -44,7 +44,7 @@ The general `mc-smoke.yml` run 39133040090 successfully planned **no supported
 26.3 runtime targets**: mc-runtime-test 4.5.1 has no 26.3 mod assets. This is
 not a runtime pass. The local JDK 25 Gradle attempt failed creating a loopback
 connection before compilation; Actions builds are the authoritative results.
-Final workflow, publication and checksum evidence is recorded after release.
+Publication and checksum evidence is recorded after the release workflow.
 
 Pre-release build run [39133635740](https://github.com/RavoxX/MCVoice/actions/runs/39133635740)
 built and validated Fabric and Forge with JDK 25 from generated branch revision
@@ -58,3 +58,32 @@ against both backends, and cross-implementation conformance/load smoke.
 
 The official client inspected has SHA-1
 `e877b6a07acd633fb3bb475002175cec036e7b87`, matching Mojang's version metadata.
+
+Final pre-release build run [39135267447](https://github.com/RavoxX/MCVoice/actions/runs/39135267447)
+passed both loaders from generated revision
+`98c6a2f9bd2febaccd6f728060abb7c3b0ff681e`, including the Forge setter correction
+`bdb7de208e01e8977de6856f60aaf230dc248220`.
+
+Runtime run [39135257384](https://github.com/RavoxX/MCVoice/actions/runs/39135257384)
+passed both loader jobs on that final correction. Downloaded artifacts contain
+the fresh and upgrade logs, input/output options, reused MCVoice configuration,
+pass markers and tested 0.1.6 jars. Both logs show `LevelLoadingScreen` followed
+by in-game focus and clean shutdown, including the Quick Play launch. The
+vanilla negative control reproduced the original exception on both loaders.
+Settings/status saved as `key.keyboard.unknown`; custom P / mouse button 4
+bindings survived, including Forge's Control / Alt modifiers. Independent
+log checks also passed. No test classes entered the production jars.
+
+The first harness attempts were not passes: a missing test-mod `pack.mcmeta`
+blocked Forge behind a warning, multi-word launcher arguments were reparsed,
+and an experimental test-world preset blocked Quick Play behind a backup
+confirmation. The final harness supplies the metadata, passes JVM/game
+arguments through HeadlessMC configuration, and uses a normal world preset.
+
+Runtime coverage is Linux/Xvfb with software graphics and offline local worlds,
+not a Windows or original-modpack reproduction. The original user's profile
+was not supplied; the upgrade fixture retains the first launch's real config
+and world, and injects the old invalid options plus valid custom bindings.
+Online multiplayer, visual quality and real voice/audio delivery were not
+tested. Headless audio-device and offline-account diagnostics are outside this
+input regression; MCVoice runtime logs still have to pass the log checker.
