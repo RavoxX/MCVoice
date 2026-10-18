@@ -69,9 +69,18 @@ jobs:
           hmc.jvmargs=-Djava.awt.headless=true -Xmx3G
           EOF
           curl -fsSL https://github.com/3arthqu4ke/headlessmc/releases/download/2.10.0/headlessmc-launcher-2.10.0.jar -o hmc.jar
-          java -jar hmc.jar --command download 26.3
-          if [ "$LOADER" = fabric ]; then uid=0.19.5; else uid=66.0.10; fi
-          java -jar hmc.jar --command "$LOADER" 26.3 --uid "$uid"
+          # HeadlessMC prompts before downloading an already cached version.
+          if [ ! -f "$HOME/.minecraft/versions/26.3/26.3.json" ]; then
+            timeout 300 java -jar hmc.jar --command download 26.3
+          fi
+          if [ "$LOADER" = fabric ]; then
+            uid=0.19.5; installed="fabric-loader-$uid-26.3"
+          else
+            uid=66.0.10; installed="26.3-forge-$uid"
+          fi
+          if [ ! -f "$HOME/.minecraft/versions/$installed/$installed.json" ]; then
+            timeout 300 java -jar hmc.jar --command "$LOADER" 26.3 --uid "$uid"
+          fi
           printf 'onboardAccessibility:false\npauseOnLostFocus:false\nrenderDistance:2\nsimulationDistance:5\nmaxFps:60\n' > run/options.txt
       - name: Fresh options - main menu, world creation, mouse focus, shutdown
         env:
