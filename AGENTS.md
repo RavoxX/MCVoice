@@ -292,8 +292,11 @@ git show FETCH_HEAD:<path>`).
   navigation scancodes to the shared UI contract. Runtime coverage exercises
   actual settings widgets through Minecraft event objects, plus all mouse
   phases and text input. Runtime run `39138274562` passed both loaders and
-  main CI `39138258546` passed all six jobs. Candidate version 0.1.7; see
-  `docs/minecraft-26.3-input.md` for scope and validation status.
+  main CI `39138258546` passed all six jobs. Released as v0.1.7-mc26.3 through
+  run `39139446951`: both jars and Maven packages published, images skipped.
+  Verification run `39139963444` confirmed authenticated Maven downloads
+  match the release jars; both jars also match the runtime-tested jars byte
+  for byte. See `docs/release-0.1.7.md` and `docs/minecraft-26.3-input.md`.
 * **Minecraft 26.3 startup fix (released as v0.1.6-mc26.3):** native unknown
   defaults plus migration of saved negative MCVoice keyboard values through
   vanilla `setKey` and Forge's separate `setKeyModifierAndCode`. Valid keys
