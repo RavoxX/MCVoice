@@ -35,6 +35,13 @@ its bundled GitHub release: older Maven jars contain only metadata. The log
 checker ignores loader TRACE/DEBUG diagnostics, while MCVoice runtime stack
 traces, error records and HUD failures still fail the check.
 
+For Minecraft 26.3, dispatch `mc-startup.yml` instead: mc-runtime-test 4.5.1
+has no test mod for that version. The dedicated workflow tests both loaders
+with fresh default keys, then reuses the generated world/configuration and
+launches Quick Play with saved invalid MCVoice keys and valid custom binds.
+See `docs/version-porting.md` for the checks and pinned dependencies. Its
+test-only jar is never included in production or publication.
+
 ## What the workflow does
 
 | Job | Does | Fails / records when |
