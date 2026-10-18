@@ -76,7 +76,20 @@ public final class McAdapter implements MinecraftAdapter {
     }
 
     private static KeyMapping key(String name, int code) {
-        return new KeyMapping("key.mcvoice." + name, code, CATEGORY);
+
+        return new KeyMapping("key.mcvoice." + name, code, CATEGORY) {
+            @Override
+            public void setKey(InputConstants.Key key) {
+                // 0.1.5 can leave key.keyboard.-1 in options.txt. SDL indexes must be non-negative.
+                if (key.getType() == InputConstants.Type.KEYBOARD && key.getValue() < 0) {
+                    key = InputConstants.UNKNOWN;
+                }
+                super.setKey(key);
+            }
+        };
+
+
+
     }
 
     /** Key mappings the loader must register. */
