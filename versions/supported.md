@@ -9,37 +9,37 @@ Mojang/Fabric/Legacy Fabric/Forge metadata) and `versions/build-status.json` (CI
   This is *not* support.
 * **N/A** - no loader build exists upstream for this Minecraft version.
 
-Matrix generated at 2026-09-28T10:56:30Z; latest release in Mojang manifest: `26.3`.
+Matrix generated at 2026-10-12T12:01:38Z; latest release in Mojang manifest: `26.3`.
 
 | Minecraft | Java | Forge | Fabric / Legacy Fabric | Forge version | Fabric loader |
 |---|---|---|---|---|---|
-| 1.8 | 8 | PASS | PASS (Legacy Fabric) | 1.8-11.14.4.1563 | 0.19.3 |
-| 1.8.1 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
-| 1.8.2 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
-| 1.8.3 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
-| 1.8.4 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
-| 1.8.5 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
-| 1.8.6 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
-| 1.8.7 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.3 |
-| 1.8.8 | 8 | PASS | PASS (Legacy Fabric) | 1.8.8-11.15.0.1655 | 0.19.3 |
-| 1.8.9 | 8 | PASS | PASS (Legacy Fabric) | 1.8.9-11.15.1.2318-1.8.9 | 0.19.3 |
+| 1.8 | 8 | PASS | PASS (Legacy Fabric) | 1.8-11.14.4.1563 | 0.19.5 |
+| 1.8.1 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.5 |
+| 1.8.2 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.5 |
+| 1.8.3 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.5 |
+| 1.8.4 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.5 |
+| 1.8.5 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.5 |
+| 1.8.6 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.5 |
+| 1.8.7 | 8 | N/A | PASS (Legacy Fabric) | - | 0.19.5 |
+| 1.8.8 | 8 | PASS | PASS (Legacy Fabric) | 1.8.8-11.15.0.1655 | 0.19.5 |
+| 1.8.9 | 8 | PASS | PASS (Legacy Fabric) | 1.8.9-11.15.1.2318-1.8.9 | 0.19.5 |
 | 1.9 | 8 | PASS | N/A | 1.9-12.16.1.1887 | - |
 | 1.9.1 | 8 | N/A | N/A | - | - |
 | 1.9.2 | 8 | N/A | N/A | - | - |
 | 1.9.3 | 8 | N/A | N/A | - | - |
-| 1.9.4 | 8 | PASS | PASS (Legacy Fabric) | 1.9.4-12.17.0.2317-1.9.4 | 0.19.3 |
+| 1.9.4 | 8 | PASS | PASS (Legacy Fabric) | 1.9.4-12.17.0.2317-1.9.4 | 0.19.5 |
 | 1.10 | 8 | PASS | N/A | 1.10-12.18.0.2000-1.10.0 | - |
 | 1.10.1 | 8 | N/A | N/A | - | - |
-| 1.10.2 | 8 | PASS | PASS (Legacy Fabric) | 1.10.2-12.18.3.2511 | 0.19.3 |
+| 1.10.2 | 8 | PASS | PASS (Legacy Fabric) | 1.10.2-12.18.3.2511 | 0.19.5 |
 | 1.11 | 8 | PASS | N/A | 1.11-13.19.1.2189 | - |
 | 1.11.1 | 8 | N/A | N/A | - | - |
-| 1.11.2 | 8 | PASS | PASS (Legacy Fabric) | 1.11.2-13.20.1.2588 | 0.19.3 |
+| 1.11.2 | 8 | PASS | PASS (Legacy Fabric) | 1.11.2-13.20.1.2588 | 0.19.5 |
 | 1.12 | 8 | PASS | N/A | 1.12-14.21.1.2387 | - |
 | 1.12.1 | 8 | PASS | N/A | 1.12.1-14.22.1.2478 | - |
-| 1.12.2 | 8 | PASS | PASS (Legacy Fabric) | 1.12.2-14.23.5.2859 | 0.19.3 |
+| 1.12.2 | 8 | PASS | PASS (Legacy Fabric) | 1.12.2-14.23.5.2859 | 0.19.5 |
 | 1.13 | 8 | N/A | N/A | - | - |
 | 1.13.1 | 8 | N/A | N/A | - | - |
-| 1.13.2 | 8 | PASS | not built (Legacy Fabric) | 1.13.2-25.0.223 | 0.19.3 |
+| 1.13.2 | 8 | PASS | not built (Legacy Fabric) | 1.13.2-25.0.223 | 0.19.5 |
 | 1.14 | 8 | N/A | not built | - | 0.19.5 |
 | 1.14.1 | 8 | N/A | not built | - | 0.19.5 |
 | 1.14.2 | 8 | not built | not built | 1.14.2-26.0.63 | 0.19.5 |
@@ -87,7 +87,7 @@ Matrix generated at 2026-09-28T10:56:30Z; latest release in Mojang manifest: `26
 | 26.1.1 | 25 | PASS | PASS | 26.1.1-63.0.2 | 0.19.5 |
 | 26.1.2 | 25 | PASS | PASS | 26.1.2-64.1.0 | 0.19.5 |
 | 26.2 | 25 | PASS | PASS | 26.2-65.1.0 | 0.19.5 |
-| 26.3 | 25 | PASS | PASS | 26.3-66.0.6 | 0.19.5 |
+| 26.3 | 25 | PASS | PASS | 26.3-66.0.10 | 0.19.5 |
 
 **102** Minecraft/loader combinations currently pass CI.
 
