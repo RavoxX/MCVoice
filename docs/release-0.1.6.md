@@ -39,3 +39,16 @@ The general `mc-smoke.yml` run 39133040090 successfully planned **no supported
 not a runtime pass. The local JDK 25 Gradle attempt failed creating a loopback
 connection before compilation; Actions builds are the authoritative results.
 Final workflow, publication and checksum evidence is recorded after release.
+
+Pre-release build run [39133635740](https://github.com/RavoxX/MCVoice/actions/runs/39133635740)
+built and validated Fabric and Forge with JDK 25 from generated branch revision
+`ebd38a17092f3640378863d1c5ab83c56ef6df02`, containing correction
+`a2642506d88c9fcf04bdd1d639916ce32ba25e0f`. Both downloaded jars also passed
+`validate_jar.py` independently. These CI build artifacts retain the repository
+default version 0.1.5; the release uses the distinct 0.1.6 workflow override.
+Main CI run [39133589871](https://github.com/RavoxX/MCVoice/actions/runs/39133589871)
+passed all six jobs, including shared Java tests, client end-to-end tests
+against both backends, and cross-implementation conformance/load smoke.
+
+The official client inspected has SHA-1
+`e877b6a07acd633fb3bb475002175cec036e7b87`, matching Mojang's version metadata.
