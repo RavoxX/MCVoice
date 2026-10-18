@@ -101,6 +101,9 @@ rejecting negative values. The 26.3 MCVoice mappings override that setter to
 normalize negative keyboard values to `UNKNOWN`. This covers options reloads
 and every MCVoice action, preserves valid keyboard/mouse bindings, and lets
 Minecraft save the canonical `key.keyboard.unknown` on its next options save.
+Forge 66.0.10 replaces that load path with `setKeyModifierAndCode`, assigning
+the key directly; the Forge mapping overrides that setter too. Valid Forge
+modifiers are passed through unchanged. Both paths need runtime coverage.
 Older GLFW adapters retain their native negative unknown sentinel.
 
 `.github/workflows/mc-startup.yml` runs a separate test-only mod against both

@@ -24,6 +24,12 @@ survive the upgrade. Valid keyboard and mouse binds are preserved; normal
 options saves persist the repaired value as `key.keyboard.unknown`. No
 configuration deletion or reset is required.
 
+Forge 66.0.10's patched options loader calls `setKeyModifierAndCode` and
+assigns the key field directly. The final correction also overrides this
+setter, preserving valid Forge modifiers. A real saved-options regression
+exposed this path after fresh-options startup passed; overriding only the
+vanilla setter did not repair saved Forge keys.
+
 ## Verification
 
 The dedicated `mc-startup.yml` workflow provides real-game regression coverage
