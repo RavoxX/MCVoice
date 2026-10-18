@@ -26,9 +26,15 @@ public final class StartupSmoke {
     private static boolean creating;
     private static boolean returning;
     private static boolean done;
+    private static String lastScreen;
 
     public static void tick(Minecraft mc) {
         if (done || !mc.isGameLoadFinished()) return;
+        String screen = mc.gui.screen() == null ? "in-game" : mc.gui.screen().getClass().getName();
+        if (!screen.equals(lastScreen)) {
+            LogUtils.getLogger().info("MCVOICE_SMOKE screen={} upgrade={}", screen, UPGRADE);
+            lastScreen = screen;
+        }
         if (!checked) {
             checkMappings(mc);
             checked = true;
