@@ -59,6 +59,7 @@ jobs:
           hmc.offline=true
           hmc.rethrow.launch.exceptions=true
           hmc.exit.on.failed.command=true
+          hmc.jvmargs=-Djava.awt.headless=true -Xmx3G
           EOF
           curl -fsSL https://github.com/3arthqu4ke/headlessmc/releases/download/2.10.0/headlessmc-launcher-2.10.0.jar -o hmc.jar
           java -jar hmc.jar --command download 26.3
@@ -71,7 +72,7 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE: "true"
         run: |
           set -euo pipefail
-          timeout 600 xvfb-run -a java -Dhmc.check.xvfb=true -jar hmc.jar --command launch ".*$LOADER.*" -regex --jvm "-Djava.awt.headless=true -Xmx3G"
+          timeout 600 xvfb-run -a java -Dhmc.check.xvfb=true -jar hmc.jar --command launch ".*$LOADER.*" -regex
           test -f run/smoke-fresh.pass
           cp run/logs/latest.log evidence/fresh.log
           cp run/options.txt evidence/fresh-options.txt
@@ -95,7 +96,9 @@ jobs:
           p.write_text('\n'.join(lines + [f'{k}:{v}' for k, v in keys.items()]) + '\n')
           PY
           cp run/options.txt evidence/upgrade-input.txt
-          timeout 600 xvfb-run -a java -Dhmc.check.xvfb=true -jar hmc.jar --command launch ".*$LOADER.*" -regex --jvm "-Djava.awt.headless=true -Dmcvoice.smoke.upgrade=true -Xmx3G" --game-args "--quickPlaySingleplayer mcvoice-smoke"
+          # --command joins/reparses argv, losing shell quotes around multi-word values.
+          printf '\nhmc.jvmargs=-Djava.awt.headless=true -Dmcvoice.smoke.upgrade=true -Xmx3G\nhmc.gameargs=--quickPlaySingleplayer mcvoice-smoke\n' >> HeadlessMC/config.properties
+          timeout 600 xvfb-run -a java -Dhmc.check.xvfb=true -jar hmc.jar --command launch ".*$LOADER.*" -regex
           test -f run/smoke-upgrade.pass
           cp run/logs/latest.log evidence/upgrade.log
           cp run/options.txt evidence/upgrade-output.txt
@@ -119,4 +122,5 @@ jobs:
             run/crash-reports/
             run/smoke-*.pass
             minecraft/${{ matrix.loader }}/build/libs/*.jar
+
 
