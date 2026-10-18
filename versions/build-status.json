@@ -824,15 +824,15 @@
     },
     "26.3": {
       "fabric": {
-        "commit": "ebd38a17092f3640378863d1c5ab83c56ef6df02",
+        "commit": "98c6a2f9bd2febaccd6f728060abb7c3b0ff681e",
         "jar": "mcvoice-0.1.5-mc26.3-fabric.jar",
-        "run": "https://github.com/RavoxX/MCVoice/actions/runs/39133635740",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/39135267447",
         "status": "pass"
       },
       "forge": {
-        "commit": "ebd38a17092f3640378863d1c5ab83c56ef6df02",
+        "commit": "98c6a2f9bd2febaccd6f728060abb7c3b0ff681e",
         "jar": "mcvoice-0.1.5-mc26.3-forge.jar",
-        "run": "https://github.com/RavoxX/MCVoice/actions/runs/39133635740",
+        "run": "https://github.com/RavoxX/MCVoice/actions/runs/39135267447",
         "status": "pass"
       }
     }

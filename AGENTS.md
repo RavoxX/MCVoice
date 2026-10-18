@@ -288,6 +288,16 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
+* **Minecraft 26.3 startup fix (0.1.6 release preparation):** native unknown
+  defaults plus migration of saved negative MCVoice keyboard values through
+  vanilla `setKey` and Forge's separate `setKeyModifierAndCode`. Valid keys
+  and Forge modifiers are preserved. Dedicated `mc-startup.yml` run
+  `39135257384` passed Fabric 0.19.5 / API 0.163.0+26.3 and Forge 66.0.10 on
+  Java 25: fresh main menu/world, saved-options Quick Play, mouse re-grab,
+  canonical saved output, clean shutdown, and a vanilla negative control.
+  Its separate test mod never enters production jars. mc-runtime-test 4.5.1
+  has no 26.3 mod assets; its skipped general smoke jobs are not runtime passes.
+  See `docs/release-0.1.6.md`. This release is scoped to 26.3 and no backend images.
 * **HUD editing (unreleased):** the shared Java 8 client includes the local
   speaker in the HUD during detected transmission. The microphone is hidden
   during idle push-to-talk, grey for silence in PTT/open-mic modes, and green
