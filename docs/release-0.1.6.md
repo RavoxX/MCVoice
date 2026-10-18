@@ -5,6 +5,36 @@ Use the `release.yml` version override `0.1.6`, `minecraft: 26.3`,
 `prerelease: false`, `images: false`. Other Minecraft releases and backend
 images are outside this release.
 
+Published release: [v0.1.6-mc26.3](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.6-mc26.3).
+Release workflow [39135943359](https://github.com/RavoxX/MCVoice/actions/runs/39135943359)
+completed successfully with all six CI jobs passing and images skipped.
+Jar/tag source: `13c44c4bf4b43365d795f1a72b7562949d33a346`.
+Workflow/umbrella-tag source: `9518ff05f1ef36b06b3da14d03f363d52deb8f1c`.
+Both Maven packages were newly published as `0.1.6+mc26.3`.
+
+| Loader | SHA-256 |
+|---|---|
+| Fabric | `98b8cd3e67927d260ea72ecd0ec8bb20f185388f452231e59b79e23a95a9b535` |
+| Forge | `b03fa7fa2c81febc09c7baac505903819abc7a49c089aa338c561caac1d3fd31` |
+
+Both downloaded release jars are byte-for-byte identical to the runtime-tested
+0.1.6 jars. Metadata restricts Minecraft to exactly 26.3. No backend images
+were built or deployed, and no 0.1.5 artifacts were replaced.
+
+The original report rendered `0/0` because download-artifact flattened the
+single matching artifact into its destination. The renderer now recognizes
+both flat and nested layouts and has regression coverage. Actions-only report
+recovery [39137283241](https://github.com/RavoxX/MCVoice/actions/runs/39137283241)
+attached the [corrected report](https://github.com/RavoxX/MCVoice/releases/download/v0.1.6/release-report-run39135943359.md)
+to both releases: 2/2 jars, 1/1 Minecraft release, 2/2 Maven publications,
+images not requested. It also authenticated to Maven and verified that both
+downloaded packages match the release jars byte for byte. The recovery did not
+rebuild or republish jars or packages.
+
+A subsequent report identified a separate settings-input problem in 26.3;
+see `docs/minecraft-26.3-input.md`. That follow-up is not included in these
+immutable 0.1.6 artifacts.
+
 ## Startup crash
 
 MCVoice 0.1.5 registered its unbound settings/status actions with `-1`.

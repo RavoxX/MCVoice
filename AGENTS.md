@@ -288,7 +288,7 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **Minecraft 26.3 startup fix (0.1.6 release preparation):** native unknown
+* **Minecraft 26.3 startup fix (released as v0.1.6-mc26.3):** native unknown
   defaults plus migration of saved negative MCVoice keyboard values through
   vanilla `setKey` and Forge's separate `setKeyModifierAndCode`. Valid keys
   and Forge modifiers are preserved. Dedicated `mc-startup.yml` run
@@ -297,6 +297,9 @@ git show FETCH_HEAD:<path>`).
   canonical saved output, clean shutdown, and a vanilla negative control.
   Its separate test mod never enters production jars. mc-runtime-test 4.5.1
   has no 26.3 mod assets; its skipped general smoke jobs are not runtime passes.
+  Release run `39135943359` passed: 2/2 jars and Maven publications, no images.
+  Report recovery `39137283241` fixed the single-artifact layout report and
+  verified authenticated Maven downloads against both published jars.
   See `docs/release-0.1.6.md`. This release is scoped to 26.3 and no backend images.
 * **HUD editing (unreleased):** the shared Java 8 client includes the local
   speaker in the HUD during detected transmission. The microphone is hidden
