@@ -44,6 +44,7 @@ public final class StartupSmoke {
             if (++menuTicks == 60) {
                 require(!UPGRADE, "Quick Play unexpectedly returned to the menu");
                 LogUtils.getLogger().info("MCVOICE_SMOKE main-menu PASS");
+                UiSmoke.run();
                 creating = true;
                 mc.createWorldOpenFlows().createFreshLevel("mcvoice-smoke",
                     new LevelSettings("MCVoice smoke", GameType.CREATIVE,

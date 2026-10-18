@@ -79,6 +79,15 @@ A run over selected versions (not `supported`) attaches its report as
 `release-report-run<run id>.md`, so the full report of the last `supported` run stays.
 Run it with `images: false` unless the backend changed.
 
+For a completed, single-version stable client-only release whose report needs
+recovery, dispatch `release-report.yml` with `run_id`, `version`, and
+`minecraft`. It validates the original successful test/build jobs and recorded
+publication results, checks release SHA-256s, and downloads both Maven jars
+with `packages: read` to compare their bytes. It attaches only the report and
+verification record through Actions; it does not rebuild or replace jars,
+republish Maven versions, or build images. The report renderer supports both
+flat single-artifact downloads and nested multi-artifact downloads.
+
 ## Backend-only deployments
 
 When the client and protocol are unchanged, `backend.yml` also publishes

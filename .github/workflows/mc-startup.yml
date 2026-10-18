@@ -5,6 +5,11 @@ run-name: "mc-startup 26.3"
 # with our own test-only mod, against the production jars for both loaders.
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: Mod version for these non-publishing test builds
+        required: false
+        default: "0.1.6"
 
 permissions:
   contents: read
@@ -17,6 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         loader: [fabric, forge]
+    env:
+      MOD_VERSION: ${{ inputs.version || '0.1.6' }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
@@ -31,8 +38,8 @@ jobs:
           set -euo pipefail
           python3 tools/port-version/port.py 26.3
           echo "apply from: '../../tools/mc-smoke/startup/build.gradle'" >> "minecraft/$LOADER/build.gradle"
-          (cd "minecraft/$LOADER" && ./gradlew build startupSmokeJar --no-daemon -Pmod_version=0.1.6)
-          jar="minecraft/$LOADER/build/libs/mcvoice-0.1.6-mc26.3-$LOADER.jar"
+          (cd "minecraft/$LOADER" && ./gradlew build startupSmokeJar --no-daemon -Pmod_version="$MOD_VERSION")
+          jar="minecraft/$LOADER/build/libs/mcvoice-$MOD_VERSION-mc26.3-$LOADER.jar"
           python3 tools/port-version/validate_jar.py "$jar" --loader "$LOADER" --minecraft 26.3 --java 25
           # No test classes may enter the published jar.
           if unzip -Z1 "$jar" | grep -q '^dev/mcvoice/smoke/'; then exit 1; fi
