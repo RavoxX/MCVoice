@@ -1,0 +1,122 @@
+name: mc-startup
+run-name: "mc-startup 26.3"
+
+# The pinned mc-runtime-test mod has no 26.3 build. Use its pinned launcher
+# with our own test-only mod, against the production jars for both loaders.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  startup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        loader: [fabric, forge]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build and validate production jar and separate test mod
+        env:
+          LOADER: ${{ matrix.loader }}
+        run: |
+          set -euo pipefail
+          python3 tools/port-version/port.py 26.3
+          echo "apply from: '../../tools/mc-smoke/startup/build.gradle'" >> "minecraft/$LOADER/build.gradle"
+          (cd "minecraft/$LOADER" && ./gradlew build startupSmokeJar --no-daemon -Pmod_version=0.1.6)
+          jar="minecraft/$LOADER/build/libs/mcvoice-0.1.6-mc26.3-$LOADER.jar"
+          python3 tools/port-version/validate_jar.py "$jar" --loader "$LOADER" --minecraft 26.3 --java 25
+          # No test classes may enter the published jar.
+          if unzip -Z1 "$jar" | grep -q '^dev/mcvoice/smoke/'; then exit 1; fi
+          mkdir -p run/mods evidence
+          cp "$jar" "minecraft/$LOADER/build/libs/mcvoice-startup-smoke.jar" run/mods/
+          if [ "$LOADER" = fabric ]; then
+            curl -fsSL 'https://github.com/FabricMC/fabric-api/releases/download/0.163.0+26.3/fabric-api-0.163.0+26.3.jar' -o run/mods/fabric-api.jar
+          fi
+      - uses: actions/cache@v4
+        with:
+          path: ~/.minecraft
+          key: startup-26.3-${{ matrix.loader }}-hmc-2.10.0
+      - name: Install pinned launcher and loader
+        env:
+          LOADER: ${{ matrix.loader }}
+        run: |
+          set -euo pipefail
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xvfb x11-xserver-utils libgl1-mesa-dri libvulkan1 mesa-vulkan-drivers
+          mkdir -p HeadlessMC
+          cat > HeadlessMC/config.properties <<EOF
+          hmc.java.versions=$JAVA_HOME/bin/java
+          hmc.gamedir=$PWD/run
+          hmc.mcdir=$HOME/.minecraft
+          hmc.offline=true
+          hmc.rethrow.launch.exceptions=true
+          hmc.exit.on.failed.command=true
+          EOF
+          curl -fsSL https://github.com/3arthqu4ke/headlessmc/releases/download/2.10.0/headlessmc-launcher-2.10.0.jar -o hmc.jar
+          java -jar hmc.jar --command download 26.3
+          if [ "$LOADER" = fabric ]; then uid=0.19.5; else uid=66.0.10; fi
+          java -jar hmc.jar --command "$LOADER" 26.3 --uid "$uid"
+          printf 'onboardAccessibility:false\npauseOnLostFocus:false\nrenderDistance:2\nsimulationDistance:5\nmaxFps:60\n' > run/options.txt
+      - name: Fresh options - main menu, world creation, mouse focus, shutdown
+        env:
+          LOADER: ${{ matrix.loader }}
+          LIBGL_ALWAYS_SOFTWARE: "true"
+        run: |
+          set -euo pipefail
+          timeout 600 xvfb-run -a java -Dhmc.check.xvfb=true -jar hmc.jar --command launch ".*$LOADER.*" -regex --jvm "-Djava.awt.headless=true -Xmx3G"
+          test -f run/smoke-fresh.pass
+          cp run/logs/latest.log evidence/fresh.log
+          cp run/options.txt evidence/fresh-options.txt
+          python3 tools/mc-smoke/check_log.py evidence/fresh.log 26.3 "$LOADER"
+      - name: Upgrade options - invalid keys, preserved bindings and Quick Play on launch
+        env:
+          LOADER: ${{ matrix.loader }}
+          LIBGL_ALWAYS_SOFTWARE: "true"
+        run: |
+          set -euo pipefail
+          test -f run/config/mcvoice.json
+          cp run/config/mcvoice.json evidence/existing-mcvoice.json
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('run/options.txt')
+          keys = {'key_key.mcvoice.open_settings': 'key.keyboard.-1',
+                  'key_key.mcvoice.open_status': 'key.keyboard.-1',
+                  'key_key.mcvoice.push_to_talk': 'key.keyboard.p',
+                  'key_key.mcvoice.whisper': 'key.mouse.4'}
+          lines = [line for line in p.read_text().splitlines() if line.partition(':')[0] not in keys]
+          p.write_text('\n'.join(lines + [f'{k}:{v}' for k, v in keys.items()]) + '\n')
+          PY
+          cp run/options.txt evidence/upgrade-input.txt
+          timeout 600 xvfb-run -a java -Dhmc.check.xvfb=true -jar hmc.jar --command launch ".*$LOADER.*" -regex --jvm "-Djava.awt.headless=true -Dmcvoice.smoke.upgrade=true -Xmx3G" --game-args "--quickPlaySingleplayer mcvoice-smoke"
+          test -f run/smoke-upgrade.pass
+          cp run/logs/latest.log evidence/upgrade.log
+          cp run/options.txt evidence/upgrade-output.txt
+          python3 tools/mc-smoke/check_log.py evidence/upgrade.log 26.3 "$LOADER"
+          python3 - <<'PY'
+          from pathlib import Path
+          options = dict(line.split(':', 1) for line in Path('run/options.txt').read_text().splitlines() if ':' in line)
+          for action in ('open_settings', 'open_status'):
+              assert options[f'key_key.mcvoice.{action}'] == 'key.keyboard.unknown'
+          assert options['key_key.mcvoice.push_to_talk'] == 'key.keyboard.p'
+          assert options['key_key.mcvoice.whisper'] == 'key.mouse.4'
+          PY
+          printf '26.3 %s: fresh main menu/world and upgrade Quick Play PASS\n' "$LOADER" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: startup-26.3-${{ matrix.loader }}
+          path: |
+            evidence/
+            run/logs/
+            run/crash-reports/
+            run/smoke-*.pass
+            minecraft/${{ matrix.loader }}/build/libs/*.jar
+
