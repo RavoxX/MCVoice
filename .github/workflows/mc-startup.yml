@@ -86,12 +86,16 @@ jobs:
           test -f run/config/mcvoice.json
           cp run/config/mcvoice.json evidence/existing-mcvoice.json
           python3 - <<'PY'
+          import os
           from pathlib import Path
           p = Path('run/options.txt')
           keys = {'key_key.mcvoice.open_settings': 'key.keyboard.-1',
                   'key_key.mcvoice.open_status': 'key.keyboard.-1',
                   'key_key.mcvoice.push_to_talk': 'key.keyboard.p',
                   'key_key.mcvoice.whisper': 'key.mouse.4'}
+          if os.environ['LOADER'] == 'forge':
+              keys['key_key.mcvoice.push_to_talk'] += ':CONTROL'
+              keys['key_key.mcvoice.whisper'] += ':ALT'
           lines = [line for line in p.read_text().splitlines() if line.partition(':')[0] not in keys]
           p.write_text('\n'.join(lines + [f'{k}:{v}' for k, v in keys.items()]) + '\n')
           PY
@@ -104,12 +108,14 @@ jobs:
           cp run/options.txt evidence/upgrade-output.txt
           python3 tools/mc-smoke/check_log.py evidence/upgrade.log 26.3 "$LOADER"
           python3 - <<'PY'
+          import os
           from pathlib import Path
           options = dict(line.split(':', 1) for line in Path('run/options.txt').read_text().splitlines() if ':' in line)
           for action in ('open_settings', 'open_status'):
               assert options[f'key_key.mcvoice.{action}'] == 'key.keyboard.unknown'
-          assert options['key_key.mcvoice.push_to_talk'] == 'key.keyboard.p'
-          assert options['key_key.mcvoice.whisper'] == 'key.mouse.4'
+          forge = os.environ['LOADER'] == 'forge'
+          assert options['key_key.mcvoice.push_to_talk'] == 'key.keyboard.p' + (':CONTROL' if forge else '')
+          assert options['key_key.mcvoice.whisper'] == 'key.mouse.4' + (':ALT' if forge else '')
           PY
           printf '26.3 %s: fresh main menu/world and upgrade Quick Play PASS\n' "$LOADER" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v5
@@ -122,5 +128,3 @@ jobs:
             run/crash-reports/
             run/smoke-*.pass
             minecraft/${{ matrix.loader }}/build/libs/*.jar
-
-
