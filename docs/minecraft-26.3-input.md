@@ -35,6 +35,10 @@ HeadlessMC prompted before re-downloading a cached Minecraft installation;
 setup now reuses the exact pinned installed version without prompting.
 
 MCVoice 0.1.6 was already published when the settings issue was reported.
-The follow-up requires a new version; existing 0.1.6 jars/Maven artifacts are
-preserved. Candidate runtime builds may use the `mc-startup.yml` `version`
-input without publishing anything.
+The fix is now published as
+[v0.1.7-mc26.3](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.7-mc26.3)
+for Fabric and Forge, exclusively for Minecraft 26.3. Both release jars match
+the runtime-tested candidate jars byte for byte. Existing 0.1.6 jars/Maven
+artifacts are preserved. See `docs/release-0.1.7.md` for checksums, source and
+publication evidence. Candidate runtime builds may use the `mc-startup.yml`
+`version` input without publishing anything.
