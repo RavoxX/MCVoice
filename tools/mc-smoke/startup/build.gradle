@@ -4,7 +4,7 @@ def smokeLoader = rootDir.name
 sourceSets {
     startupSmoke {
         java.srcDirs = [new File(smokeRoot, 'common'), new File(smokeRoot, smokeLoader)]
-        compileClasspath = sourceSets.main.compileClasspath
+        compileClasspath = sourceSets.main.compileClasspath + sourceSets.main.output
     }
 }
 tasks.register('startupSmokeJar', Jar) {
