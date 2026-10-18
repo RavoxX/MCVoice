@@ -86,6 +86,12 @@ Conditions support `MC <op> version`, `FABRIC`, `FORGE`, `LEGACYFABRIC`,
 compiler line numbers match the source. `tools/port-version/preprocess.py`
 has self-tests.
 
+Unbound key mappings must use the input API's unknown-key value:
+`InputConstants.UNKNOWN.getValue()` in the modern Mojang adapter, or
+`GLFW.GLFW_KEY_UNKNOWN` in its older GLFW branch. Do not hard-code `-1`:
+Minecraft 26.3 uses SDL input, and an invalid key value can reach
+`InputConstants.isKeyDown` when the game grabs the mouse on world entry.
+
 ## Adding a version
 
 1. Check `versions/versions.json`: does the loader exist for this version?

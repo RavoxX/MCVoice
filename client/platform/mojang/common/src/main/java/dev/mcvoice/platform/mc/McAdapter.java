@@ -57,20 +57,22 @@ public final class McAdapter implements MinecraftAdapter {
         this.loader = loader;
         this.configDir = configDir;
         //#if MC >= 1.20
+        int unboundKey = InputConstants.UNKNOWN.getValue();
         keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", InputConstants.KEY_V));
         keys.put(InputAdapter.Action.WHISPER, key("whisper", InputConstants.KEY_B));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", InputConstants.KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", InputConstants.KEY_N));
         keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", InputConstants.KEY_G));
         //#else
+        int unboundKey = GLFW.GLFW_KEY_UNKNOWN;
         keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", GLFW.GLFW_KEY_V));
         keys.put(InputAdapter.Action.WHISPER, key("whisper", GLFW.GLFW_KEY_B));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", GLFW.GLFW_KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", GLFW.GLFW_KEY_N));
         keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", GLFW.GLFW_KEY_G));
         //#endif
-        keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", -1));
-        keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", -1));
+        keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", unboundKey));
+        keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", unboundKey));
     }
 
     private static KeyMapping key(String name, int code) {
