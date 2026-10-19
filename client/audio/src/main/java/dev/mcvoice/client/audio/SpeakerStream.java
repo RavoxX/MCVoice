@@ -16,6 +16,7 @@ final class SpeakerStream {
     long lastFrameMs;
     volatile boolean talking;
     volatile double levelDb = -100;
+    boolean rejected;
 
     SpeakerStream(UUID speaker) {
         this.speaker = speaker;
