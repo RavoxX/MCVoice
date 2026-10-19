@@ -289,6 +289,11 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
+* **0.1.9 release preparation:** user authorized a new stable release for all
+  supported versions, including both backend images. Client/Rust/Go versions
+  are aligned at 0.1.9; publication is pending. The validated follow-up below
+  is included. See `docs/release-0.1.9.md` for exact release results once known.
+
 * **Input/microphone/performance follow-up (client unreleased):** 26.3 text fields
   explicitly own native SDL text input; runtime tests now check SDL activation,
   native KeyboardHandler text dispatch and blur/removal. Whisper independently
