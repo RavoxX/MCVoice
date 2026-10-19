@@ -1,5 +1,11 @@
 # Local Windows builds (26.2 / 26.3)
 
+The same process also built all four **0.1.10** jars from client revision
+`0199cbf`, with version/metadata validation enabled. They are in
+`release-output/local-jars-0.1.10/` with `build-info.json`, SHA-256 checksums and
+per-loader validation output. These local builds do not establish a CI/runtime
+pass; the new release workflow builds its own artifacts.
+
 The four 0.1.9 client jars for Minecraft 26.2 and 26.3 were built locally with
 Temurin 25.0.4.1 and cached Gradle 9.8.1. All four passed `validate_jar.py` with
 Java 25, and none contains the separate runtime test mod. These are actual
