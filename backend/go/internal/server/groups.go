@@ -263,13 +263,11 @@ func (s *Server) groupJoin(sess *Session, m *protocol.GroupJoin, now time.Time) 
 		fail(protocol.CodeNotInWorld, "join a server first")
 		return
 	}
-	if now.Sub(sess.groupFailWindow) > time.Minute {
-		sess.groupFailWindow, sess.groupFails = now, 0
-	}
-	if sess.groupFails >= passwordFailsPerMin {
+	if s.groupFailures.blocked(sess.ident.UUID, now) {
 		fail(protocol.CodeRateLimited, "too many wrong group passwords")
 		return
 	}
+
 	g := s.groups[id]
 	already := sess.peer.Group == id
 	switch {
@@ -281,7 +279,7 @@ func (s *Server) groupJoin(sess *Session, m *protocol.GroupJoin, now time.Time) 
 		fail(protocol.CodeGroupFull, "group is full")
 		return
 	case !g.passwordOK(m.Password):
-		sess.groupFails++
+		s.groupFailures.allow(sess.ident.UUID, now)
 		fail(protocol.CodeGroupPassword, "wrong or missing password")
 		return
 	}
