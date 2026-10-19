@@ -35,6 +35,8 @@ jobs:
         run: python3 -m unittest discover -s tools/release
       - name: Test runtime smoke log checks
         run: python3 -m unittest discover -s tools/mc-smoke
+      - name: Test publication and download boundaries
+        run: python3 -m unittest discover -s tools/ci
 
   secrets:
     name: secret scanning
