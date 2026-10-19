@@ -54,7 +54,13 @@ func (s *Server) ServeUDP(ctx context.Context) {
 	wg.Wait()
 }
 
+type udpScratch struct {
+	targets    []target
+	out, plain []byte
+}
+
 func (s *Server) udpWorker(ctx context.Context) {
+	scratch := udpScratch{out: make([]byte, 0, 2048), plain: make([]byte, 0, 2048)}
 	buf := make([]byte, protocol.MaxDatagram+1)
 	pt := make([]byte, 0, protocol.MaxDatagram)
 	for {
@@ -67,15 +73,15 @@ func (s *Server) udpWorker(ctx context.Context) {
 		}
 		s.metrics.PacketsReceived.Inc()
 		s.metrics.BytesReceived.Add(uint64(n))
-		s.handleDatagram(buf[:n], from, pt[:0])
+		s.handleDatagram(buf[:n], from, pt[:0], &scratch)
 	}
 }
 
 func (s *Server) invalid(reason string) { s.metrics.InvalidPackets.With(reason).Inc() }
 func (s *Server) dropped(reason string) { s.metrics.PacketsDropped.With(reason).Inc() }
 
-func (s *Server) handleDatagram(dg []byte, from netip.AddrPort, pt []byte) {
-	start := time.Now()
+func (s *Server) handleDatagram(dg []byte, from netip.AddrPort, pt []byte, scratch *udpScratch) {
+	start := s.now()
 	h, err := protocol.ParseHeader(dg, protocol.DirC2S)
 	if err != nil {
 		s.invalid(protocol.ClassOf(err))
@@ -88,7 +94,7 @@ func (s *Server) handleDatagram(dg []byte, from netip.AddrPort, pt []byte) {
 		s.invalid("unknown_session")
 		return
 	}
-	now := s.now()
+	now := start
 
 	sess.umu.Lock()
 	key := sess.keyFor(h.KeyID, now)
@@ -127,7 +133,10 @@ func (s *Server) handleDatagram(dg []byte, from netip.AddrPort, pt []byte) {
 			return
 		}
 		first := !sess.hasAddr
-		sess.addr, sess.hasAddr = from, true
+		if first || newTop {
+			sess.addr = from
+		}
+		sess.hasAddr = true
 		sendOK := !sess.udpOKSent
 		sess.udpOKSent = true
 		sess.umu.Unlock()
@@ -172,7 +181,7 @@ func (s *Server) handleDatagram(dg []byte, from netip.AddrPort, pt []byte) {
 		v, _ := protocol.ParseVoice(pt)
 		s.trackJitter(sess, v.Timestamp, now)
 		sess.umu.Unlock()
-		s.relayVoice(sess, v, now)
+		s.relayVoice(sess, v, now, scratch)
 		s.metrics.RelayLatency.Observe(time.Since(start).Seconds())
 	}
 }
@@ -199,6 +208,12 @@ func (s *Server) reply(sess *Session, t byte, ct uint64) {
 	bp := bufPool.Get().(*[]byte)
 	sess.umu.Lock()
 	k := sess.sendKey(s.now())
+	if k.sendCounter == ^uint64(0) {
+		sess.umu.Unlock()
+		bufPool.Put(bp)
+		sess.close("key_exhausted")
+		return
+	}
 	k.sendCounter++
 	out := k.aead.Seal((*bp)[:0], protocol.DirS2C, protocol.Header{Type: t, KeyID: k.id, ConnectionID: sess.connID, Counter: k.sendCounter}, p[:])
 	addr := sess.addr
@@ -221,12 +236,9 @@ type target struct {
 	group bool // relayed with mode 2 (spec 8.1)
 }
 
-var targetPool = sync.Pool{New: func() any { t := make([]target, 0, 16); return &t }}
-
-func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time) {
-	nowMs := now.UnixMilli()
-	tp := targetPool.Get().(*[]target)
-	targets := (*tp)[:0]
+func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time, scratch *udpScratch) {
+	nowMs := now.Sub(s.epoch).Milliseconds()
+	targets := scratch.targets[:0]
 
 	s.mu.RLock()
 	group := routing.GroupApplies(&sender.peer, v.Mode, v.Flags)
@@ -238,8 +250,7 @@ func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time) {
 		}
 		s.mu.RUnlock()
 		s.dropped(reason)
-		*tp = targets
-		targetPool.Put(tp)
+		scratch.targets = targets[:0]
 		return
 	}
 	if group {
@@ -263,36 +274,35 @@ func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time) {
 	s.mu.RUnlock()
 
 	if len(targets) > 0 {
-		bp := bufPool.Get().(*[]byte)
-		ptb := bufPool.Get().(*[]byte)
 		for _, t := range targets {
 			rv := v
 			if t.group {
 				rv.Mode, rv.Flags = protocol.ModeGroup, v.Flags&^protocol.FlagGroup
 			}
-			plain := protocol.AppendRelay((*ptb)[:0], sender.uuidB, t.epoch, rv)
+			plain := protocol.AppendRelay(scratch.plain[:0], sender.uuidB, t.epoch, rv)
 			t.sess.umu.Lock()
 			if !t.sess.hasAddr {
 				t.sess.umu.Unlock()
 				continue
 			}
 			k := t.sess.sendKey(now)
+			if k.sendCounter == ^uint64(0) {
+				t.sess.umu.Unlock()
+				t.sess.close("key_exhausted")
+				continue
+			}
 			k.sendCounter++
-			out := k.aead.Seal((*bp)[:0], protocol.DirS2C,
-				protocol.Header{Type: protocol.TypeVoiceRelay, KeyID: k.id, ConnectionID: t.sess.connID, Counter: k.sendCounter}, plain)
-			addr := t.sess.addr
+			cipher, header, addr := k.aead, protocol.Header{Type: protocol.TypeVoiceRelay, KeyID: k.id, ConnectionID: t.sess.connID, Counter: k.sendCounter}, t.sess.addr
 			t.sess.umu.Unlock()
+			out := cipher.Seal(scratch.out[:0], protocol.DirS2C, header, plain)
 			s.write(out, addr)
-			*bp, *ptb = out, plain
+			scratch.out, scratch.plain = out, plain
 		}
-		bufPool.Put(bp)
-		bufPool.Put(ptb)
 	}
 	for i := range targets {
 		targets[i] = target{}
 	}
-	*tp = targets[:0]
-	targetPool.Put(tp)
+	scratch.targets = targets[:0]
 }
 
 func itoa(n int) string {
