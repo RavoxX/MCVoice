@@ -288,6 +288,16 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
+* **Group roster and player settings (0.1.8, validation pending):** enabled by
+  default via `showGroupHud`; right-edge member heads, white speaking outline
+  and styled name, independent dragging/head size/background in Edit HUD.
+  Player settings share one snapshot/page for names and controls, search voice
+  users, and use confirmed cloud/group/SVC presence instead of tracked entities
+  or stale transport selections. SVC compatibility 20 `state`/`states` metadata
+  was independently observed in real-server run `39251350550`. The 26.3 startup
+  harness now covers SDL roster controls/search and actual GUI-extractor head
+  rendering. Release and runtime results will be recorded after validation.
+
 * **26.3 settings input follow-up:** `McScreen` now translates SDL buttons and
   navigation scancodes to the shared UI contract. Runtime coverage exercises
   actual settings widgets through Minecraft event objects, plus all mouse

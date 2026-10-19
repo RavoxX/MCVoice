@@ -10,6 +10,10 @@ import dev.mcvoice.client.config.ClientConfig;
 import dev.mcvoice.client.platform.ui.UiCanvas;
 import dev.mcvoice.client.platform.ui.UiScreen;
 import dev.mcvoice.client.ui.SettingsScreen;
+import dev.mcvoice.client.ui.HudEditorScreen;
+import dev.mcvoice.client.config.HudLayout;
+import dev.mcvoice.client.ui.HudRenderer;
+import java.util.UUID;
 import dev.mcvoice.client.ui.TransportStatus;
 import dev.mcvoice.client.ui.VoiceControls;
 import dev.mcvoice.client.ui.widget.TextField;
@@ -25,6 +29,8 @@ final class UiSmoke {
         testSettings();
         testInputCodes();
         testTextField();
+        testGroupHudEditor();
+        testPlayerSearch();
         LogUtils.getLogger().info("MCVOICE_SMOKE settings-input PASS");
     }
 
@@ -60,6 +66,8 @@ final class UiSmoke {
         require(config.cloudEnabled == original, "Right click activated a left-click button");
         click(screen, toggle);
         require(config.cloudEnabled != original, "SDL left click did not activate a settings button");
+        click(screen, canvas.find("Group HUD: On"));
+        require(!config.showGroupHud, "SDL group HUD toggle did not change settings");
         canvas.draw(settings);
         Text range = canvas.find("Voice Range: ");
         screen.mouseClicked(mouse(range.x + 1, range.y + 1, InputConstants.MOUSE_BUTTON_LEFT), false);
@@ -114,6 +122,59 @@ final class UiSmoke {
             screen.keyPressed(new KeyEvent(pair[0], 0, 0));
             require(received[0] == pair[1], "SDL navigation key translation failed");
         }
+    }
+
+    private static void testGroupHudEditor() {
+        ClientConfig config = new ClientConfig();
+        int[] saved = {0};
+        VoiceControls controls = (VoiceControls) Proxy.newProxyInstance(VoiceControls.class.getClassLoader(),
+            new Class<?>[] {VoiceControls.class}, (proxy, method, args) -> {
+                if (method.getName().equals("config")) return config;
+                if (method.getName().equals("saveHudLayout")) { config.hudLayout = ((HudLayout) args[0]).copy(); saved[0]++; }
+                return null;
+            });
+        HudEditorScreen editor = new HudEditorScreen(controls);
+        McScreen screen = new McScreen(editor);
+        Canvas canvas = new Canvas(); canvas.draw(editor);
+        HudRenderer.Bounds bounds = HudRenderer.preview(canvas, config.hudLayout).group;
+        int x = bounds.x + bounds.width - 3, y = bounds.y + 3;
+        screen.mouseClicked(mouse(x, y, InputConstants.MOUSE_BUTTON_LEFT), false);
+        screen.mouseDragged(mouse(x - 30, y - 25, InputConstants.MOUSE_BUTTON_LEFT), -30, -25);
+        screen.mouseReleased(mouse(x - 30, y - 25, InputConstants.MOUSE_BUTTON_LEFT));
+        click(screen, canvas.find("Group Background: Off"));
+        Text size = canvas.find("Group Head Size: ");
+        screen.mouseClicked(mouse(size.x + 1, size.y + 1, InputConstants.MOUSE_BUTTON_LEFT), false);
+        screen.mouseDragged(mouse(1000, size.y + 1, InputConstants.MOUSE_BUTTON_LEFT), 1000, 0);
+        screen.mouseReleased(mouse(1000, size.y + 1, InputConstants.MOUSE_BUTTON_LEFT));
+        click(screen, canvas.find("Done"));
+        require(saved[0] == 1 && config.hudLayout.groupHeadSize == 32 && config.hudLayout.groupBackground,
+            "SDL group HUD editor did not save size/background");
+        require(config.hudLayout.groupX < 1 && config.hudLayout.groupY < 0.5, "SDL group roster drag failed");
+    }
+
+    private static void testPlayerSearch() {
+        UUID alice = new UUID(0, 1), bob = new UUID(0, 2);
+        VoiceControls controls = (VoiceControls) Proxy.newProxyInstance(VoiceControls.class.getClassLoader(),
+            new Class<?>[] {VoiceControls.class}, (proxy, method, args) -> {
+                return switch (method.getName()) {
+                    case "config" -> new ClientConfig();
+                    case "transportStatus" -> TransportStatus.CLOUD;
+                    case "pushToTalkKey" -> "V";
+                    case "players" -> List.of(new VoiceControls.PlayerEntry(alice, "Alice", 1, false, "cloud"),
+                        new VoiceControls.PlayerEntry(bob, "Bob", 1, false, "SVC"));
+                    default -> false;
+                };
+            });
+        SettingsScreen settings = new SettingsScreen(controls);
+        McScreen screen = new McScreen(settings);
+        Canvas canvas = new Canvas(); canvas.draw(settings);
+        click(screen, canvas.find("Players")); canvas.draw(settings);
+        click(screen, canvas.find("Search online voice players"));
+        for (char ch : "ali".toCharArray()) { screen.charTyped(new CharacterEvent(ch)); canvas.draw(settings); }
+        canvas.find("Alice");
+        require(canvas.texts.stream().noneMatch(t -> t.value.equals("Bob")), "SDL player search did not filter results");
+        screen.keyPressed(new KeyEvent(InputConstants.KEY_BACKSPACE, 0, 0)); canvas.draw(settings);
+        canvas.find("Alice");
     }
 
     private static void testTextField() {

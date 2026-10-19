@@ -92,6 +92,7 @@ jobs:
           test -f run/smoke-fresh.pass
           cp run/logs/latest.log evidence/fresh.log
           cp run/options.txt evidence/fresh-options.txt
+          cp run/screenshots/group-hud.png evidence/group-hud.png
           python3 tools/mc-smoke/check_log.py evidence/fresh.log 26.3 "$LOADER"
       - name: Upgrade options - invalid keys, preserved bindings and Quick Play on launch
         env:

@@ -87,18 +87,23 @@ public final class HudRenderer {
 
     public static final class Frame {
         public final List<Row> rows;
-        public final Bounds speakers, status;
+        public final Bounds speakers, status, group;
 
-        Frame(List<Row> rows, Bounds speakers, Bounds status) {
+        Frame(List<Row> rows, Bounds speakers, Bounds status, Bounds group) {
             this.rows = rows;
             this.speakers = speakers;
             this.status = status;
+            this.group = group;
         }
     }
 
     private static final List<VoiceControls.Talker> PREVIEW = Arrays.asList(
         new VoiceControls.Talker(new UUID(0, 1), "Your name", false, false, true),
         new VoiceControls.Talker(new UUID(0, 2), "Nearby player", false, true));
+    private static final VoiceControls.Group GROUP_PREVIEW = new VoiceControls.Group("HUD", false, 15, Arrays.asList(
+        new VoiceControls.Member(new UUID(0, 2), "Group member"),
+        new VoiceControls.Member(new UUID(0, 3), "Quiet member"),
+        new VoiceControls.Member(new UUID(0, 4), "Another member")));
 
     /** Draw the HUD; returns the talker rows (for clicks). */
     public static List<Row> render(UiCanvas c, VoiceControls v, boolean showDebug) {
@@ -106,21 +111,31 @@ public final class HudRenderer {
         if (status == TransportStatus.DISABLED) {
             return Collections.emptyList();
         }
-        return draw(c, v.config().hudLayout, v.talkers(), status, v.micMuted(), v.deafened(),
+        VoiceControls.Group group = v.config().showGroupHud ? v.group() : null;
+        return draw(c, v.config().hudLayout, v.talkers(), group, status, v.micMuted(), v.deafened(),
             v.transmitting() && v.voiceDetected(), v.microphoneIndicatorVisible(), v.transportLabelVisible(),
             showDebug ? v.debugLines() : Collections.<String>emptyList()).rows;
     }
 
     /** A stable preview is available even while disconnected or nobody is talking. */
     public static Frame preview(UiCanvas c, HudLayout layout) {
-        return draw(c, layout, PREVIEW, TransportStatus.CLOUD, false, false, true, true, false,
+        return draw(c, layout, PREVIEW, GROUP_PREVIEW, TransportStatus.CLOUD, false, false, true, true, false,
             Collections.<String>emptyList());
     }
 
     private static Frame draw(UiCanvas c, HudLayout layout, List<VoiceControls.Talker> talkers,
+                              VoiceControls.Group group,
                               TransportStatus st, boolean muted, boolean deafened, boolean talking,
                               boolean indicatorVisible, boolean labelVisible, List<String> debug) {
         List<Row> rows = new ArrayList<Row>();
+        Bounds groupBounds = drawGroup(c, layout, group, talkers, rows);
+        if (group != null) {
+            List<VoiceControls.Talker> proximity = new ArrayList<VoiceControls.Talker>();
+            for (VoiceControls.Talker t : talkers) {
+                if (!memberOf(group, t.uuid)) proximity.add(t);
+            }
+            talkers = proximity;
+        }
         int size = layout.microphoneSize;
         int statusWidth = size;
         int statusHeight = Math.max(size, labelVisible ? c.fontHeight() + 1 : 0);
@@ -200,6 +215,55 @@ public final class HudRenderer {
             c.text(line, x + 2, dy, Theme.TEXT_DIM, true);
             dy += c.fontHeight() + 1;
         }
-        return new Frame(rows, new Bounds(x, y, width, height), new Bounds(sx, sy, statusWidth, statusHeight));
+        return new Frame(rows, new Bounds(x, y, width, height), new Bounds(sx, sy, statusWidth, statusHeight), groupBounds);
+    }
+
+    private static boolean memberOf(VoiceControls.Group group, UUID uuid) {
+        for (VoiceControls.Member member : group.members) {
+            if (member.uuid.equals(uuid)) return true;
+        }
+        return false;
+    }
+
+    private static Bounds drawGroup(UiCanvas c, HudLayout layout, VoiceControls.Group group,
+                                    List<VoiceControls.Talker> talkers, List<Row> rows) {
+        if (group == null || group.members.isEmpty()) return new Bounds(0, 0, 0, 0);
+        int count = Math.min(15, group.members.size());
+        int size = layout.groupHeadSize;
+        size = Math.min(size, Math.max(1, (c.height() - 8) / count - 4));
+        int cell = size + 4;
+        int maxName = 0;
+        for (int i = 0; i < count; i++) {
+            VoiceControls.Member member = group.members.get(i);
+            maxName = Math.max(maxName, c.playerNameWidth(member.uuid, member.name));
+        }
+        int nameSpace = Math.min(maxName + 4, Math.max(0, c.width() - cell - 8));
+        int width = nameSpace + cell;
+        int height = count * cell;
+        int x = HudLayout.coordinate(layout.groupX, c.width(), width, 4);
+        int y = HudLayout.coordinate(layout.groupY, c.height(), height, 4);
+        for (int i = 0; i < count; i++) {
+            VoiceControls.Member member = group.members.get(i);
+            VoiceControls.Talker speaking = null;
+            for (VoiceControls.Talker t : talkers) {
+                if (t.uuid.equals(member.uuid) && t.group) { speaking = t; break; }
+            }
+            int hx = x + nameSpace + 2;
+            int hy = y + i * cell + 2;
+            if (layout.groupBackground) c.fill(hx - 2, hy - 2, hx + size + 2, hy + size + 2, 0x80101418);
+            c.playerHead(member.uuid, hx, hy, size);
+            if (speaking != null) {
+                c.fill(hx - 1, hy - 1, hx + size + 1, hy, 0xFFFFFFFF);
+                c.fill(hx - 1, hy + size, hx + size + 1, hy + size + 1, 0xFFFFFFFF);
+                c.fill(hx - 1, hy, hx, hy + size, 0xFFFFFFFF);
+                c.fill(hx + size, hy, hx + size + 1, hy + size, 0xFFFFFFFF);
+                int nameWidth = Math.min(c.playerNameWidth(member.uuid, member.name), Math.max(0, nameSpace - 4));
+                c.playerName(member.uuid, member.name, hx - 6 - nameWidth,
+                    hy + (size - c.fontHeight()) / 2, speaking.muted ? MUTED_TALKING : 0xFFFFFFFF, true, nameWidth);
+            }
+            rows.add(new Row(member.uuid, member.name, speaking != null && speaking.local,
+                speaking != null ? x : hx - 2, hy - 2, hx + size + 2, hy + size + 2));
+        }
+        return new Bounds(x, y, width, height);
     }
 }
