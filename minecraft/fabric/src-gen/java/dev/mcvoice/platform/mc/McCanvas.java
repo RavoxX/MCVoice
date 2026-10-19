@@ -12,6 +12,22 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+
+
+
+
+
+import net.minecraft.resources.ResourceLocation;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+
+
+
+
+
+
+
 
 
 
@@ -110,6 +126,45 @@ public final class McCanvas implements UiCanvas {
     @Override
     public int textWidth(String text) {
         return font.width(text);
+    }
+
+    @Override
+    public void playerHead(UUID uuid, int x, int y, int size) {
+        Minecraft mc = Minecraft.getInstance();
+        PlayerInfo info = mc.getConnection() == null ? null : mc.getConnection().getPlayerInfo(uuid);
+
+
+
+
+
+
+
+        ResourceLocation skin = info == null ? DefaultPlayerSkin.getDefaultSkin(uuid) : info.getSkinLocation();
+
+
+
+
+
+        mc.getTextureManager().bind(skin);
+
+        RenderSystem.color4f(1, 1, 1, 1);
+
+
+
+
+
+        RenderSystem.enableBlend();
+
+
+
+
+
+
+
+        GuiComponent.blit(x, y, size, size, 8f, 8f, 8, 8, 64, 64);
+        GuiComponent.blit(x, y, size, size, 40f, 8f, 8, 8, 64, 64);
+
+
     }
 
     private Component playerName(UUID uuid, String fallback) {
