@@ -1,6 +1,6 @@
 bot: joined (play state)
-handshake: WAITING
 bot: server registered voicechat:leave_group,voicechat:request_secret,voicechat:create_group,voicechat:set_group,voicechat:update_state
+handshake: WAITING
 handshake: REQUESTED (compatibility 20)
 [INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
 bot: -> voicechat:request_secret (4 bytes)
@@ -13,10 +13,5 @@ secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000,
 bot: -> voicechat:update_state (1 bytes)
 bot: <- voicechat:state (33 bytes)
 bot: state observation voicechat:state 0001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
-[INFO][SVC] SVC voice server authenticated us (GCM_IV12)
-udp: AUTHENTICATED (GCM_IV12)
-[INFO][SVC] SVC voice connection established with 127.0.0.1:24454
-udp: CONNECTED
-bot: <- voicechat:state (33 bytes)
-bot: state observation voicechat:state 0000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
-bot: probe exited with 0
+udp: FAILED (no authentication ack from 127.0.0.1:24454 (UDP blocked, or unsupported encryption))
+bot: probe exited with 1
