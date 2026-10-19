@@ -53,4 +53,27 @@ class SpatialMixerTest {
         byte[] b = new byte[1000]; int n = new OpusCodec.Encoder(24000).encode(pcm,b);
         assertTrue(n > 0); return Arrays.copyOf(b,n);
     }
+
+    @Test void enqueueAlreadyWaitingOnAStreamCannotReviveItAfterClear() throws Exception {
+        SpatialMixer mixer = new SpatialMixer();
+        UUID id = UUID.randomUUID(); byte[] packet = packet();
+        mixer.enqueueExtended(id, 0, 2, 0, packet, 0, packet.length, 0);
+        java.lang.reflect.Field field = SpatialMixer.class.getDeclaredField("streams");
+        field.setAccessible(true);
+        Object stream = ((Map<?, ?>) field.get(mixer)).get(id);
+        Thread network = new Thread(() -> mixer.enqueueExtended(id, 1, 2, 0, packet, 0, packet.length, 20));
+        boolean blocked;
+        synchronized (stream) {
+            network.start();
+            long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(2);
+            while (network.getState() != Thread.State.BLOCKED && network.isAlive() && System.nanoTime() < deadline) Thread.yield();
+            blocked = network.getState() == Thread.State.BLOCKED;
+            mixer.clear();
+        }
+        network.join(2000);
+        assertTrue(blocked, "test did not arrange an enqueue waiting on the old stream");
+        assertFalse(network.isAlive());
+        assertEquals(0, mixer.streamCount());
+        mixer.mixFrame(WorldSnapshot.EMPTY, (s,u,m) -> { fail("cleared stream was revived"); return PlaybackDecision.ACCEPT; }, SETTINGS, 40);
+    }
 }

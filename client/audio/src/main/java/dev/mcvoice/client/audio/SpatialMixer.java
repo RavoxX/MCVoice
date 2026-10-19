@@ -19,8 +19,8 @@ import dev.mcvoice.client.proximity.WorldSnapshot;
  * <p>Every frame is re-validated against the newest {@link WorldSnapshot}
  * through the {@link Validator} (the mandatory local entity check); positions
  * for panning/attenuation come from the same snapshot, never from the network.
- * Gain changes are ramped across the frame so entering/leaving range, muting
- * or a failed check fade in/out within 20 ms instead of popping.
+ * Accepted gain changes are ramped across the frame; a rejected playback
+ * check silences the speaker immediately, before decoding or mixing.
  */
 public final class SpatialMixer {
     public interface Validator {
@@ -61,6 +61,7 @@ public final class SpatialMixer {
             }
         }
         synchronized (s) {
+            if (streams.get(speaker) != s) return; // clear/reaping won the race; next frame creates current state
             if (s.senderEpoch != senderEpoch) {
                 // the speaker changed world session: its sequence numbers restart
                 s.jitter.reset();
@@ -84,6 +85,7 @@ public final class SpatialMixer {
             }
         }
         synchronized (s) {
+            if (streams.get(speaker) != s) return;
             s.jitter.insert(seq, data, off, len, mode, flags, nowMs);
             if (!active.containsKey(speaker)) active.put(speaker, s);
         }
@@ -119,6 +121,10 @@ public final class SpatialMixer {
         while (it.hasNext()) {
             SpeakerStream s = it.next();
             synchronized (s) {
+                if (streams.get(s.speaker) != s) {
+                    active.remove(s.speaker, s);
+                    continue;
+                }
                 JitterBuffer.Result r = s.jitter.poll();
                 if (r == JitterBuffer.Result.EMPTY) {
                     s.talking = false;

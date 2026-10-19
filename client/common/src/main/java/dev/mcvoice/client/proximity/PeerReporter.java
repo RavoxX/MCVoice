@@ -39,7 +39,6 @@ public final class PeerReporter {
     private Set<UUID> reported = new HashSet<UUID>();
     private long epoch = -1;
     private long rev;
-    private long lastSendMs;
     private long lastCheckMs;
     private long lastFullMs;
     private boolean needFull = true;
@@ -73,7 +72,7 @@ public final class PeerReporter {
         }
         if (fullDue) {
             needFull = false;
-            lastFullMs = lastSendMs = nowMs;
+            lastFullMs = nowMs;
             long base = rev;
             rev++;
             reported = visible;
@@ -94,7 +93,6 @@ public final class PeerReporter {
         if (add.isEmpty() && remove.isEmpty()) {
             return null;
         }
-        lastSendMs = nowMs;
         long base = rev;
         rev++;
         reported = visible;

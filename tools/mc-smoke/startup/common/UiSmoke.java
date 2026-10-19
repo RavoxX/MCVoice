@@ -202,8 +202,8 @@ final class UiSmoke {
             });
         McScreen screen = new McScreen(ui);
         Minecraft mc = Minecraft.getInstance();
-        net.minecraft.client.gui.screens.Screen previous = mc.screen;
-        mc.setScreen(screen);
+        net.minecraft.client.gui.screens.Screen previous = mc.gui.screen();
+        mc.gui.setScreen(screen);
         screen.mouseClicked(mouse(10, 10, InputConstants.MOUSE_BUTTON_LEFT), false);
         require(SDLKeyboard.SDL_TextInputActive(mc.getWindow().handle()), "Focused field did not start native SDL text input");
         mc.keyboardHandler.textInput(mc.getWindow().handle(), "a");
@@ -214,7 +214,7 @@ final class UiSmoke {
         require(!field.focused(), "SDL Enter did not finish text input");
         require(!SDLKeyboard.SDL_TextInputActive(mc.getWindow().handle()), "Blur did not stop SDL text input");
         screen.mouseClicked(mouse(10, 10, InputConstants.MOUSE_BUTTON_LEFT), false);
-        mc.setScreen(previous);
+        mc.gui.setScreen(previous);
         require(!SDLKeyboard.SDL_TextInputActive(mc.getWindow().handle()), "Closing a focused field did not stop SDL text input");
     }
 
