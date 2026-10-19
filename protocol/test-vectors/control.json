@@ -258,6 +258,11 @@
    "error": "bad_message"
   },
   {
+   "name": "group_join_password_max",
+   "json": "{\"type\":\"group_join\",\"id\":\"K7M2Q\",\"password\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}",
+   "error": null
+  },
+  {
    "name": "group_join",
    "json": "{\"type\":\"group_join\",\"id\":\"K7M2Q\",\"password\":\"hunter 2!\"}",
    "error": null
