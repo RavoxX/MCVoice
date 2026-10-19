@@ -18,7 +18,7 @@ use crate::protocol::control::{
 
 /// Out of a world for longer than this ends the membership (respawn, dimension or server switch are shorter).
 pub(crate) const OUT_OF_WORLD_GRACE: Duration = Duration::from_secs(10);
-const PASSWORD_FAILS_PER_MIN: u32 = 5;
+pub(super) const PASSWORD_FAILS_PER_MIN: u32 = 5;
 
 /// Owned only by the connection's control task; rejected work never reaches the hub.
 pub(crate) struct GroupLimits {
@@ -259,11 +259,7 @@ impl Server {
             sess.send(error_frame(code::NOT_IN_WORLD, "join a server first", false));
             return;
         }
-        if now.duration_since(ps.group_fail_window) > Duration::from_secs(60) {
-            ps.group_fail_window = now;
-            ps.group_fails = 0;
-        }
-        if ps.group_fails >= PASSWORD_FAILS_PER_MIN {
+        if self.group_failures.blocked(&sess.ident.uuid, now) {
             drop(hub);
             sess.send(error_frame(code::RATE_LIMITED, "too many wrong group passwords", false));
             return;
@@ -278,9 +274,7 @@ impl Server {
         };
         if let Some((c, msg)) = err {
             if c == code::GROUP_PASSWORD {
-                if let Some(ps) = hub.peers.get_mut(&sess.conn_id) {
-                    ps.group_fails += 1;
-                }
+                self.group_failures.allow(&sess.ident.uuid, now);
             }
             drop(hub);
             sess.send(error_frame(c, msg, false));
