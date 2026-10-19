@@ -213,7 +213,25 @@ func scGroupPassword(e *Env) error {
 	if err := c[0].GroupJoin(id, "s3cret pw"); err != nil {
 		return err
 	}
-	return expectError(c[0], "rate_limited")
+	if err := expectError(c[0], "rate_limited"); err != nil {
+		return err
+	}
+	token := c[0].Session.ResumeToken
+	c[0].Close()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	resumed, err := voiceclient.Dial(ctx, voiceclient.Options{ControlURL: e.T.ControlURL, ResumeToken: token, Username: "resume"})
+	if err != nil {
+		return err
+	}
+	e.clients = append(e.clients, resumed)
+	if err := inWorld(resumed, at(0, 64, 0)); err != nil {
+		return err
+	}
+	if err := resumed.GroupJoin(id, "s3cret pw"); err != nil {
+		return err
+	}
+	return expectError(resumed, "rate_limited")
 }
 
 func scGroupFull(e *Env) error {
