@@ -11,7 +11,8 @@ data:
   CONTROL_PORT: "8080"
   VOICE_UDP_PORT: "24455"
   PUBLIC_HOSTNAME: voice.example.org
-  TRUST_PROXY_HEADERS: "true"
+  TRUST_PROXY_HEADERS: "false"
+  TRUSTED_PROXY_CIDRS: "" # set ingress source CIDRs before enabling forwarded headers
   LOG_LEVEL: info
   LOG_FORMAT: json
 ---
@@ -21,6 +22,7 @@ metadata:
   name: mcvoice-backend
   labels: {app: mcvoice-backend}
 spec:
+  strategy: {type: Recreate}
   replicas: 1   # one relay per voice host; scale by adding relays (docs/backend-deployment.md)
   selector:
     matchLabels: {app: mcvoice-backend}
@@ -32,12 +34,15 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/path: /metrics
     spec:
+      automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
         seccompProfile: {type: RuntimeDefault}
       containers:
         - name: backend
-          image: ghcr.io/ravoxx/mcvoice/voice-backend-rust:0.1.0
+          image: ghcr.io/ravoxx/mcvoice/voice-backend-rust:0.1.10
           envFrom:
             - configMapRef: {name: mcvoice-config}
             - secretRef: {name: mcvoice-secrets}
