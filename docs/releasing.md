@@ -48,9 +48,9 @@ test-only jar is never included in production or publication.
 |---|---|---|
 | `plan` | Picks the versions: `supported` = all loaders pass in `build-status.json`, or an explicit list; checks that each `mc/<version>` branch exists | a branch is missing |
 | `test` | Full `ci.yml`: vectors, both backends (lint, unit, fuzz), conformance for both, load smoke, client core and end-to-end tests against both backends, secret scan | any failure blocks the builds |
-| `build` | `mc-build.yml` on each `mc/<version>` branch with `-Pmod_version=<version>`: build, validate jar, `gradle publish` to GitHub Packages | per loader: `status`, `reason`, `maven` (`published`, `exists: …` when the version is already in GitHub Packages, or `failed: <exact error>` after one retry) |
+| `build` | Read-only `mc-build.yml` builds/validates jars on `mc/<version>`. A separate publisher uploads prebuilt jars/sources with a minimal Maven-only build and verifies downloaded jar bytes | per loader: `status`, `reason`, `maven`, verified `maven_sha256`; missing publication results are explicit failures |
 | `github-release` | Per version: `checksums-sha256.txt`, creates or updates release `v<version>-mc<minecraft>` with the jars | skipped unless **every** loader of that version built; the `gh` error text is recorded on failure |
-| `images` | `backend.yml` with the version: build, container smoke test, push to GHCR | job result |
+| `images` | Read-only image build/container test, then a separate publisher loads and pushes the tested image without running it | job result |
 | `report` | `tools/release/report.py` → `release-report.md` (job summary, artifact, attached to `v<version>`) | always runs |
 
 The report lists only recorded facts. If GitHub refuses an action (for
