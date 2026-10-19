@@ -1,0 +1,16 @@
+modLoader="javafml"
+loaderVersion="[66,)"
+license="MIT"
+clientSideOnly=true
+
+[[mods]]
+modId="mcvoice_startup_smoke"
+version="1.0.0"
+displayName="MCVoice startup regression test (CI only)"
+
+[[dependencies.mcvoice_startup_smoke]]
+modId="mcvoice"
+mandatory=true
+versionRange="[0,)"
+ordering="AFTER"
+side="CLIENT"
