@@ -8,6 +8,10 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.Window;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.util.DefaultSkinHelper;
+import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.platform.GlStateManager;
 
 /** UiCanvas over legacy immediate-mode GUI drawing (Yarn names: DrawableHelper + TextRenderer). */
 public final class McCanvas implements UiCanvas {
@@ -50,6 +54,18 @@ public final class McCanvas implements UiCanvas {
     @Override
     public int textWidth(String text) {
         return font.getStringWidth(text);
+    }
+
+    @Override
+    public void playerHead(UUID uuid, int x, int y, int size) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        PlayerListEntry info = mc.getNetworkHandler() == null ? null : mc.getNetworkHandler().getPlayerListEntry(uuid);
+        Identifier skin = info == null ? DefaultSkinHelper.getTexture(uuid) : info.getSkinTexture();
+        mc.getTextureManager().bindTexture(skin);
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableBlend();
+        DrawableHelper.drawTexture(x, y, 8f, 8f, 8, 8, size, size, 64f, 64f);
+        DrawableHelper.drawTexture(x, y, 40f, 8f, 8, 8, size, size, 64f, 64f);
     }
 
     private String playerName(UUID uuid, String fallback) {
