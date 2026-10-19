@@ -37,6 +37,14 @@ Fabric and Forge, including native SDL activation and KeyboardHandler text
 dispatch. These builds used candidate version `0.1.9-test` before the release
 version bump; the release builds perform their own tests and jar validation.
 
+The first main secret scan flagged six source-file SHA-256 checksums in the
+benchmark manifest. Each was reproduced from its referenced source (accounting
+for checkout line endings). The manifest now uses separate `source`/`sha256`
+fields; six exact immutable historical finding fingerprints are documented in
+`.gitleaksignore`. There is no file/rule exclusion, scan bypass or history rewrite.
+Gitleaks 8.24.3 reports no findings for both the historical release range and the
+new manifest locally; CI must pass before publication.
+
 The previously user-authorized public-backend deployment is the local Rust
 0.1.5 artifact documented in [the deployment record](deployment-2026-10-19.md).
 Publishing 0.1.9 images does not automatically replace that pinned service.
