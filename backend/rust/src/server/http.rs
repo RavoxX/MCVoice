@@ -40,16 +40,10 @@ async fn control(
     headers: HeaderMap,
     ws: WebSocketUpgrade,
 ) -> Response {
-    let ip = if srv.cfg.trust_proxy_headers {
-        headers
-            .get("x-forwarded-for")
-            .and_then(|v| v.to_str().ok())
-            .and_then(|v| v.split(',').next())
-            .map(|s| s.trim().to_string())
-            .unwrap_or_else(|| peer.ip().to_string())
-    } else {
-        peer.ip().to_string()
+    let Ok(permit) = srv.pending_auth.clone().try_acquire_owned() else {
+        return (StatusCode::SERVICE_UNAVAILABLE, "authentication busy").into_response();
     };
+    let ip = client_ip(&srv.cfg, peer.ip(), headers.get("x-forwarded-for").and_then(|v| v.to_str().ok())).to_string();
     if srv.shutdown.load(Relaxed) {
         return (StatusCode::SERVICE_UNAVAILABLE, "shutting down").into_response();
     }
@@ -64,7 +58,7 @@ async fn control(
         .unwrap_or_default();
     ws.max_message_size(MAX_CONTROL_FRAME + 1024)
         .max_frame_size(MAX_CONTROL_FRAME + 1024)
-        .on_upgrade(move |socket| handle_socket(srv, socket, ip, host))
+        .on_upgrade(move |socket| handle_socket(srv, socket, ip, host, permit))
 }
 
 fn json(status: StatusCode, body: &'static str) -> Response {
@@ -105,6 +99,9 @@ pub async fn run(srv: Arc<Server>, shutdown: impl std::future::Future<Output = (
     }
     srv.reload_bans();
     let udp = Arc::new(UdpSocket::bind((srv.cfg.voice_bind_address.as_str(), srv.cfg.voice_udp_port)).await?);
+    let socket = socket2::SockRef::from(udp.as_ref());
+    socket.set_recv_buffer_size(4 << 20)?;
+    socket.set_send_buffer_size(4 << 20)?;
     let _ = srv.udp.set(udp.clone());
     let tcp = TcpListener::bind((srv.cfg.control_bind_address.as_str(), srv.cfg.control_port)).await?;
     let ctl_addr = tcp.local_addr()?;
@@ -159,4 +156,49 @@ pub async fn run(srv: Arc<Server>, shutdown: impl std::future::Future<Output = (
         t.abort();
     }
     result
+}
+
+fn client_ip(cfg: &crate::config::Config, peer: std::net::IpAddr, xff: Option<&str>) -> std::net::IpAddr {
+    let peer = peer.to_canonical();
+    let trusted = |ip: std::net::IpAddr| cfg.trusted_proxy_cidrs.iter().any(|p| p.contains(&ip));
+    if !cfg.trust_proxy_headers || !trusted(peer) {
+        return peer;
+    }
+    let Some(xff) = xff.filter(|h| h.len() <= 2048) else { return peer };
+    if xff.split(',').count() > 32 {
+        return peer;
+    }
+    let mut current = peer;
+    for part in xff.rsplit(',') {
+        if !trusted(current) {
+            break;
+        }
+        let Ok(ip) = part.trim().parse::<std::net::IpAddr>() else {
+            return peer;
+        };
+        current = ip.to_canonical();
+    }
+    current
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn forwarded_header_requires_proxy_and_walks_from_the_right() {
+        let mut cfg = crate::config::Config::from_env().unwrap();
+        cfg.trust_proxy_headers = true;
+        cfg.trusted_proxy_cidrs = vec!["127.0.0.0/8".parse().unwrap(), "10.0.0.0/8".parse().unwrap()];
+        for (peer, header, want) in [
+            ("203.0.113.2", "1.2.3.4", "203.0.113.2"),
+            ("127.0.0.1", "1.2.3.4, 198.51.100.2", "198.51.100.2"),
+            ("127.0.0.1", "198.51.100.2, 10.1.2.3", "198.51.100.2"),
+            ("127.0.0.1", ", bad", "127.0.0.1"),
+            ("127.0.0.1", " ", "127.0.0.1"),
+            ("127.0.0.1", "::ffff:198.51.100.2", "198.51.100.2"),
+            ("127.0.0.1", "2001:db8::1", "2001:db8::1"),
+        ] {
+            assert_eq!(client_ip(&cfg, peer.parse().unwrap(), Some(header)).to_string(), want);
+        }
+    }
 }

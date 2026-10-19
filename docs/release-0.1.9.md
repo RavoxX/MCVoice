@@ -1,8 +1,11 @@
 # MCVoice 0.1.9
 
-Stable release preparation for all 62 supported Minecraft versions (102 client
-jars), plus the Rust and Go backend images. Publication is pending; exact
-workflow results will be recorded after the release completes.
+Stable release [39269460274](https://github.com/RavoxX/MCVoice/actions/runs/39269460274)
+completed successfully: 102/102 validated client jars, 62/62 GitHub Releases,
+102/102 Maven publications and both Rust/Go images (`0.1.9`, `latest`). The
+workflow report records publication success. A separate local Maven download
+attempt returned HTTP 401, so independent Maven byte verification is not claimed
+for this release.
 
 ## Changes
 
