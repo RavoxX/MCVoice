@@ -16,6 +16,12 @@ installed, and verifies blur/removal stop SDL input. Player-search fields also
 assert native activation. These checks still do not simulate a physical keyboard
 or an IME. Earlier versions retain their existing character-input path.
 
+Non-publishing runtime run
+[39264685676](https://github.com/RavoxX/MCVoice/actions/runs/39264685676) passed
+both Fabric and Forge from `cbf430c`. The production wrapper and harness also
+compile locally against the real 26.3 APIs; screen access in the probe uses
+`Minecraft.gui.screen()/setScreen`, which differs from earlier versions.
+
 ## Published mouse/key event correction
 
 Minecraft 26.3's SDL mouse events use left button 1, right button 3, and

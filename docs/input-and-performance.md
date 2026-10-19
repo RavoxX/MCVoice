@@ -74,7 +74,83 @@ groups. The portable `compare-rust.py` also runs Go on Windows, using the same
 load generator, seeds, four workers, 30% talkers, 1-second visibility refresh,
 5-second ramp and no churn. Only loopback endpoints are supported by the runner.
 
-Measurements and validation evidence are recorded below after final checks.
+Measurements below are medians of three runs on Windows amd64, Ryzen 7 5800X3D,
+JDK 17 (512 MiB heap), Go 1.24.2 and Rust 1.88.0. Client candidate `cbf430c`
+includes a follow-up guard against reviving cleared mixer streams; backend code
+is unchanged from `01d1e52`. Before/after phases were separate; implementation
+order alternated within each phase, and other local builds/tests were idle.
+The [raw samples and source hashes](benchmarks/2026-10-19-input-performance.json)
+include every run, including saturation and slower samples.
+
+| Client microbenchmark | Before µs/op | After µs/op | Before → after bytes/op |
+|---|---:|---:|---:|
+| Tracking 100 stationary players | 5.57 | 2.50 | 15,854 → 169 |
+| Tracking 1,000 stationary players | 34.91 | 17.89 | 121,648 → 161 |
+| 8 rejected speakers, enqueue + mix | 374.37 | 11.18 | 221,611 → 104 |
+| 32 rejected speakers, enqueue + mix | 1,361.11 | 13.80 | 866,888 → 104 |
+| 8 audible group speakers | 361.71 | 388.22 | 216,776 → 221,051 |
+| 32 audible group speakers | 1,432.80 | 1,301.63 | 866,888 → 866,888 |
+
+The eight-audible-speaker case measured about 7.3% slower; the 32-speaker case
+about 9.2% faster. These short codec-heavy samples overlap and do not establish
+a general audible-speaker speedup. The clear gains are unchanged tracking and
+avoiding decode/mix work for rejected traffic. Moving players still require new
+immutable entries/maps; these tracking numbers describe stationary populations.
+
+| Stable Go presence sweep | Before µs | After µs | Before → after allocations |
+|---|---:|---:|---:|
+| 100 sessions | 146.83 | 75.65 | 500 / 71,201 bytes → 0 / 0 bytes |
+| 1,000 sessions | 1,905.58 | 1,124.61 | 5,000 / 712,015 bytes → 0 / 0 bytes |
+
+| Loopback relay, 200 clients / visibility group | p95 ms before → after | Delivery before → after | Outgoing packets/s before → after |
+|---|---:|---:|---:|
+| Go / 10 | 12.503 → 12.501 | 100% → 100% | 26,996 → 26,929 |
+| Rust / 10 | 1.506 → 1.501 | 100% → 100% | 26,976 → 26,942 |
+| Go / 50 | 7,157 → 7,060 | 28.04% → 28.49% | 40,591 → 41,787 |
+| Rust / 50 | 12.000 → 11.499 | 100% → 100% | 145,223 → 146,496 |
+
+Actual send rates ranged from about 2,940 to 3,000 frames/s (target 3,000).
+Backend CPU percentages (100% = one core) were Go 64.70 → 62.80 / 93.19 → 94.28,
+Rust 35.30 → 35.45 / 154.29 → 154.38 for groups 10 / 50. Windows CPU is sampled
+before process termination; Unix includes shutdown. RSS was unavailable on the
+Windows runner. There is no material general CPU or end-to-end latency gain
+established. Go's dense case remains saturated and unsuitable for that offered
+load on this machine; a small throughput change does not fix its backlog/loss.
+
+## Validation
+
+All shared production and test sources compile with `javac --release 8`.
+The complete client suite passes 98/98 with **each** real backend, including
+whisper-key-only nearby/far delivery, independent group PTT/open-mic delivery,
+blocked control writes, bounded FIFO/order/connection separation, a blocked
+audio close and coalesced restart, immutable tracking/removal, immediate rejected
+audio silence, concealment mode, and a deterministic clear/enqueue race.
+The existing proxy switch, hybrid/SVC dedup, mute, group-membership and playback
+security tests remain enabled. Protocol vectors and the version matrix validate.
+Go vet and `go test -race ./...` pass. Rust release tests and Clippy with
+`-D warnings` pass. The independently built Linux Rust candidate passes all 15
+Rust tests, Clippy and 40/40 black-box conformance scenarios, including Mojang
+authentication and resume. Its first test invocation lacked the vector path;
+the corrected harness supplies `MCVOICE_TEST_VECTORS` and passes the full suite.
+
+Minecraft 26.3 production `McScreen` and the test harness compile against the
+actual cached native APIs. Runtime run
+[39264685676](https://github.com/RavoxX/MCVoice/actions/runs/39264685676) passes
+Fabric and Forge, including native SDL activation and real KeyboardHandler text
+dispatch. This is a non-publishing candidate build (`0.1.9-test`), not a new
+all-version release or physical keyboard/IME validation. The shared core stays
+Java 8; native SDL calls are confined to the 26.3 platform branch.
+CI run [39264680302](https://github.com/RavoxX/MCVoice/actions/runs/39264680302)
+passed all six jobs on the same source. Both downloaded 26.3 candidate jars pass
+the jar validator independently; test-mod classes are absent from production jars.
+
+| Runtime-tested candidate | SHA-256 |
+|---|---|
+| `mcvoice-0.1.9-test-mc26.3-fabric.jar` | `979eaf9b47f196bf95dd453f2508a06dde603ab84a6ae3be1e4a3e29e76ae6fd` |
+| `mcvoice-0.1.9-test-mc26.3-forge.jar` | `202fa4f912c733d223297a956ca869997d9665c1d983ed971d81d84b6ce1af95` |
+
+The Rust backend was [deployed separately](deployment-2026-10-19.md) at the
+user's request after validation. Client jars remain non-release candidates.
 
 ## Practical path toward 100,000 concurrent users
 
@@ -91,6 +167,8 @@ state, 50-Hz voice, recipient encryption and UDP fanout impose CPU, memory and
 bandwidth costs. One Rust worker still sends its outgoing fanout sequentially.
 There is no coordinated ownership, revocation or group state across instances.
 Increasing connection, visibility or queue limits does not solve these costs.
+The default session ceiling remains 10,000 per process; it is a limit, not a
+validated capacity, and has not been raised for the 100k target.
 
 1. Establish per-shard SLOs for p95/p99 relay latency, delivery, control-update
    age, reconnects, memory per session and maximum lock hold/wait. Test quiet
