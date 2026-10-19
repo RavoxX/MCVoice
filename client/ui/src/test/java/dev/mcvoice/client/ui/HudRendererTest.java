@@ -22,6 +22,7 @@ class HudRendererTest {
             new Class<?>[] {VoiceControls.class}, (proxy, method, args) -> {
                 if (method.getName().equals("transportStatus")) return TransportStatus.CLOUD;
                 if (method.getName().equals("config")) return new ClientConfig();
+                if (method.getName().equals("group")) return null;
                 if (method.getName().equals("talkers")) {
                     return Collections.singletonList(new VoiceControls.Talker(player, "name", false, false));
                 }
