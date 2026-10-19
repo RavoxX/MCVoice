@@ -52,4 +52,17 @@ class PeerReporterTest {
         assertNull(r.next(snap(1, p(A, 1)), 96, 100));
         assertNotNull(r.next(snap(1, p(A, 1)), 96, 300));
     }
+
+    @Test void rateLimitedTicksDoNotEnumerateEntitiesAndResyncStillBypassesGate() {
+        PeerReporter r = new PeerReporter();
+        r.next(snap(1), 96, 0);
+        Map<UUID, TrackedPlayer> trap = new HashMap<UUID, TrackedPlayer>() {
+            @Override public java.util.Collection<TrackedPlayer> values() { throw new AssertionError("enumerated"); }
+        };
+        WorldSnapshot s = new WorldSnapshot(true, 1, "world", A, 0, 0, 0, 0, 0, trap, 0);
+        assertNull(r.next(s, 96, 249));
+        r.resync();
+        assertNotNull(r.next(snap(1, p(A, 1)), 96, 249).full);
+        assertNull(r.next(s, 96, 250));
+    }
 }

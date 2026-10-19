@@ -103,6 +103,11 @@ public interface VoiceControls {
 
     void leaveGroup();
 
+    default void setGroupActivationMode(ClientConfig.ActivationMode mode) {
+        config().groupActivationMode = mode;
+        applyConfig();
+    }
+
     /** Last group-related message for the user (e.g. "Wrong password"), empty if none. */
     String groupNotice();
 
