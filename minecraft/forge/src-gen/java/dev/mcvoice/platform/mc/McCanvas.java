@@ -12,6 +12,22 @@ import net.minecraft.network.chat.Component;
 
 
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+
+import net.minecraft.client.gui.components.PlayerFaceExtractor;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
@@ -110,6 +126,45 @@ public final class McCanvas implements UiCanvas {
     @Override
     public int textWidth(String text) {
         return font.width(text);
+    }
+
+    @Override
+    public void playerHead(UUID uuid, int x, int y, int size) {
+        Minecraft mc = Minecraft.getInstance();
+        PlayerInfo info = mc.getConnection() == null ? null : mc.getConnection().getPlayerInfo(uuid);
+
+        PlayerFaceExtractor.extractRenderState(g, info == null ? DefaultPlayerSkin.get(uuid) : info.getSkin(), x, y, size);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     private Component playerName(UUID uuid, String fallback) {
