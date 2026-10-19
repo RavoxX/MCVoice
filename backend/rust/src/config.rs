@@ -36,6 +36,7 @@ pub struct Config {
     pub rate_connect_per_min: u32,
     pub rate_auth_fail_per_min: u32,
     pub trust_proxy_headers: bool,
+    pub trusted_proxy_cidrs: Vec<ipnet::IpNet>,
     pub udp_workers: usize,
     pub bans_file: String,
     pub attestation_keys: HashMap<String, Vec<u8>>,
@@ -120,11 +121,37 @@ impl Config {
             rate_connect_per_min: e.parse("RATE_LIMIT_CONNECT_PER_MIN", 30, "an integer"),
             rate_auth_fail_per_min: e.parse("RATE_LIMIT_AUTH_FAIL_PER_MIN", 10, "an integer"),
             trust_proxy_headers: e.b("TRUST_PROXY_HEADERS", false),
+            trusted_proxy_cidrs: Vec::new(),
             udp_workers: e.parse("UDP_WORKERS", 0, "an integer"),
             bans_file: e.s("BANS_FILE", ""),
             attestation_keys: HashMap::new(),
             warnings: Vec::new(),
         };
+        for part in e.s("TRUSTED_PROXY_CIDRS", "").split(',').map(str::trim).filter(|s| !s.is_empty()) {
+            match part.parse::<ipnet::IpNet>() {
+                Ok(net) => {
+                    let normalized = match net {
+                        ipnet::IpNet::V6(v6) => {
+                            if let Some(v4) = v6.addr().to_ipv4_mapped() {
+                                if v6.prefix_len() < 96 {
+                                    errs.push("mapped proxy CIDR must be /96 or narrower".into());
+                                    continue;
+                                }
+                                ipnet::IpNet::V4(ipnet::Ipv4Net::new(v4, v6.prefix_len() - 96).unwrap())
+                            } else {
+                                net
+                            }
+                        }
+                        _ => net,
+                    };
+                    c.trusted_proxy_cidrs.push(normalized);
+                }
+                Err(_) => errs.push("invalid TRUSTED_PROXY_CIDRS".into()),
+            }
+        }
+        if c.trust_proxy_headers && c.trusted_proxy_cidrs.is_empty() {
+            errs.push("TRUST_PROXY_HEADERS requires TRUSTED_PROXY_CIDRS".into());
+        }
         match c.auth_mode.as_str() {
             "mojang" => {}
             "offline" => warnings.push("AUTH_MODE=offline: player identities are NOT verified; development use only".into()),
