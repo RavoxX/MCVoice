@@ -4,6 +4,8 @@ import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.UUID;
 
 import dev.mcvoice.client.log.Category;
@@ -56,6 +58,38 @@ public final class WorldTracker {
     private int entityId = Integer.MIN_VALUE;
     private boolean inWorld;
     private volatile String pendingInvalidation;
+    private String rawDimension;
+    private String normalizedDimension;
+    private String scanDimension;
+    private long scan;
+    private boolean playersChanged;
+    private final Map<UUID, Entry> tracked = new HashMap<UUID, Entry>();
+    private Map<UUID, TrackedPlayer> publishedPlayers = Collections.emptyMap();
+
+    private static final class Entry {
+        TrackedPlayer player;
+        long seen;
+        Entry(TrackedPlayer player) { this.player = player; }
+    }
+
+    private final WorldAdapter.PlayerVisitor visitor = new WorldAdapter.PlayerVisitor() {
+        public void visit(UUID uuid, String name, double x, double eyeY, double z) {
+            if (uuid == null || uuid.equals(local.uuid)) return;
+            Entry e = tracked.get(uuid);
+            if (e == null) {
+                e = new Entry(new TrackedPlayer(uuid, name, scanDimension, x, eyeY, z));
+                tracked.put(uuid, e);
+                playersChanged = true;
+            } else {
+                TrackedPlayer p = e.player;
+                if (!Objects.equals(p.name, name) || !p.world.equals(scanDimension) || p.x != x || p.y != eyeY || p.z != z) {
+                    e.player = new TrackedPlayer(uuid, name, scanDimension, x, eyeY, z);
+                    playersChanged = true;
+                }
+            }
+            e.seen = scan;
+        }
+    };
 
     public WorldTracker(MinecraftAdapter mc, Listener listener) {
         this.mc = mc;
@@ -93,13 +127,20 @@ public final class WorldTracker {
                 inWorld = false;
                 epoch++;
                 worldRef = new WeakReference<Object>(null);
+                tracked.clear();
+                publishedPlayers = Collections.emptyMap();
                 snapshot = WorldSnapshot.EMPTY;
                 VoiceLog.info(Category.WORLD, "left world (" + (reason != null ? reason : "no world") + "), epoch " + epoch);
                 listener.onNewEpoch(snapshot, reason != null ? reason : REASON_LEFT);
             }
             return;
         }
-        String dim = NetworkIds.worldId(world.dimensionId());
+        String raw = world.dimensionId();
+        if (normalizedDimension == null || !Objects.equals(raw, rawDimension)) {
+            rawDimension = raw;
+            normalizedDimension = NetworkIds.worldId(raw);
+        }
+        String dim = normalizedDimension;
         Object identity = world.identity();
         if (reason == null) {
             // Order matters: a JoinGame (login / proxy sub-server switch) changes the
@@ -119,17 +160,23 @@ public final class WorldTracker {
             }
         }
 
-        final Map<UUID, TrackedPlayer> players = new HashMap<UUID, TrackedPlayer>();
-        final UUID self = local.uuid;
-        final String worldName = dim;
-        world.forEachPlayer(new WorldAdapter.PlayerVisitor() {
-            @Override
-            public void visit(UUID uuid, String name, double x, double eyeY, double z) {
-                if (uuid != null && !uuid.equals(self)) {
-                    players.put(uuid, new TrackedPlayer(uuid, name, worldName, x, eyeY, z));
-                }
+        playersChanged = reason != null;
+        if (reason != null) tracked.clear();
+        scan++;
+        scanDimension = dim;
+        world.forEachPlayer(visitor); // enumerate every tick; never delay removals for performance
+        Iterator<Entry> entries = tracked.values().iterator();
+        while (entries.hasNext()) {
+            if (entries.next().seen != scan) {
+                entries.remove();
+                playersChanged = true;
             }
-        });
+        }
+        if (playersChanged) {
+            Map<UUID, TrackedPlayer> next = new HashMap<UUID, TrackedPlayer>(tracked.size());
+            for (Entry e : tracked.values()) next.put(e.player.uuid, e.player);
+            publishedPlayers = Collections.unmodifiableMap(next);
+        }
 
         if (reason != null) {
             epoch++;
@@ -140,18 +187,18 @@ public final class WorldTracker {
             address = addr;
             entityId = local.entityId;
             // Tracked peers are cleared: the new epoch starts with only what the world contains now.
-            WorldSnapshot s = build(players);
+            WorldSnapshot s = build(publishedPlayers);
             snapshot = s;
             VoiceLog.info(Category.WORLD, "new world session epoch " + epoch + " (" + reason + ", " + dim + ")");
             listener.onNewEpoch(s, reason);
         } else {
-            snapshot = build(players);
+            snapshot = build(publishedPlayers);
         }
     }
 
     private WorldSnapshot build(Map<UUID, TrackedPlayer> players) {
         return new WorldSnapshot(true, epoch, dimension, local.uuid, local.x, local.y, local.z, local.yaw, local.pitch,
-            Collections.unmodifiableMap(players), System.currentTimeMillis());
+            players, System.currentTimeMillis());
     }
 
     public long epoch() {
