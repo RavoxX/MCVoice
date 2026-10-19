@@ -7,9 +7,9 @@
 Only facts found in the artifacts are reported: a jar, release or package that
 is not recorded as successful is listed as failed or missing, with the reason.
 """
-import glob
 import json
 import os
+from pathlib import Path
 import re
 import sys
 
@@ -25,13 +25,15 @@ def main():
     repo = env("GITHUB_REPOSITORY", "RavoxX/MCVoice")
     owner_repo = repo.lower()
     builds = {}
-    for f in glob.glob(os.path.join(root, "mc-*-status", "*.json")):
-        r = json.load(open(f))
-        builds.setdefault(r["minecraft"], {})[r["loader"]] = r
     releases = {}
-    for f in glob.glob(os.path.join(root, "release-result-*", "*.json")):
-        r = json.load(open(f))
-        releases[r["minecraft"]] = r
+    # download-artifact flattens a single matching artifact into the destination,
+    # even with merge-multiple=false. Multiple matches retain named directories.
+    for f in sorted(Path(root).rglob("*.json")):
+        r = json.loads(f.read_text(encoding="utf-8"))
+        if "minecraft" in r and "loader" in r and "status" in r:
+            builds.setdefault(r["minecraft"], {})[r["loader"]] = r
+        elif "minecraft" in r and "tag" in r and "release" in r:
+            releases[r["minecraft"]] = r
     versions = sorted(set(builds) | set(releases), key=vkey)
 
     out = []
