@@ -22,20 +22,6 @@ const (
 	authTimeout  = 30 * time.Second
 )
 
-func (s *Server) clientIP(r *http.Request) string {
-	if s.cfg.TrustProxyHeaders {
-		if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-			first, _, _ := strings.Cut(xff, ",")
-			return strings.TrimSpace(first)
-		}
-	}
-	host, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		return r.RemoteAddr
-	}
-	return host
-}
-
 func (s *Server) voiceHost(r *http.Request) string {
 	if s.cfg.PublicHostname != "" {
 		return s.cfg.PublicHostname
@@ -84,6 +70,18 @@ func (c *ctlConn) fail(code, msg string) {
 
 // HandleControl serves GET /v1/control.
 func (s *Server) HandleControl(w http.ResponseWriter, r *http.Request) {
+	pending := true
+	select {
+	case s.pendingAuth <- struct{}{}:
+		defer func() {
+			if pending {
+				<-s.pendingAuth
+			}
+		}()
+	default:
+		http.Error(w, "authentication busy", http.StatusServiceUnavailable)
+		return
+	}
 	ip := s.clientIP(r)
 	now := s.now()
 	if s.shutdown.Load() {
@@ -201,10 +199,12 @@ func (s *Server) HandleControl(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	sess.lastSeen.Store(now.UnixMilli())
-	if !s.register(sess) {
-		c.fail(protocol.CodeServerFull, "server full")
+	if code := s.register(sess); code != "" {
+		c.fail(code, "session admission rejected")
 		return
 	}
+	<-s.pendingAuth
+	pending = false
 	defer s.unregister(sess)
 	log = log.With("session", sess.id)
 	log.Info("session started", "player", ident.UUID, "client", hello.Client.Version, "minecraft", hello.Client.Minecraft, "loader", hello.Client.Loader)
@@ -223,8 +223,20 @@ func (s *Server) HandleControl(w http.ResponseWriter, r *http.Request) {
 		for {
 			select {
 			case <-sess.done:
-				cancel()
-				return
+				// Fatal messages precede the close marker. Drain the bounded queue before cancellation.
+				for {
+					select {
+					case b := <-sess.out:
+						if c.write(b) != nil {
+							cancel()
+							return
+						}
+					default:
+						_ = c.ws.Close(websocket.StatusPolicyViolation, sess.closeCode)
+						cancel()
+						return
+					}
+				}
 			case <-ctx.Done():
 				return
 			case b := <-sess.out:
@@ -345,6 +357,14 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 	case *protocol.Hello, *protocol.Auth, *protocol.Resume:
 		sess.send(errorFrame(protocol.CodeBadMessage, "already authenticated", false))
 	case *protocol.Scope:
+		attested := ""
+		if *m.InWorld && m.Attestation != nil {
+			if a, ok := auth.VerifyAttestation(s.cfg.AttestationKeys, *m.Attestation, sess.ident.UUID, now); ok {
+				attested = a.Network + "/" + a.Subserver
+			} else {
+				log.Debug("ignored invalid scope attestation")
+			}
+		}
 		s.mu.Lock()
 		if sess.hasScope && *m.Epoch <= sess.peer.Epoch {
 			s.mu.Unlock()
@@ -368,38 +388,32 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 		if *m.InWorld {
 			// network_id is validated by the parser but never used for routing (spec 6.3)
 			sess.peer.WorldID = *m.WorldID
-			if m.Attestation != nil {
-				if a, ok := auth.VerifyAttestation(s.cfg.AttestationKeys, *m.Attestation, sess.ident.UUID, now); ok {
-					sess.peer.Attested = a.Network + "/" + a.Subserver
-				} else {
-					log.Debug("ignored invalid scope attestation")
-				}
-			}
+			sess.peer.Attested = attested
 		}
 		s.mu.Unlock()
 	case *protocol.Pos:
 		if now.Sub(sess.lastPos) < 90*time.Millisecond {
 			return false // above position_hz_max, dropped silently
 		}
-		sess.lastPos = now
 		s.mu.Lock()
 		if *m.Epoch == sess.peer.Epoch && sess.peer.InWorld {
+			sess.lastPos = now
 			sess.peer.HasPos, sess.peer.X, sess.peer.Y, sess.peer.Z = true, *m.X, *m.Y, *m.Z
-			sess.peer.PosAtMs = now.UnixMilli()
+			sess.peer.PosAtMs = now.Sub(s.epoch).Milliseconds()
 		}
 		s.mu.Unlock()
 		if s.cfg.LogPositions {
 			log.Debug("position", "epoch", *m.Epoch, "x", *m.X, "y", *m.Y, "z", *m.Z)
 		}
 	case *protocol.Peers:
+		v := make(map[string]struct{}, len(m.Full))
+		for _, u := range m.Full {
+			if u != sess.ident.UUID {
+				v[u] = struct{}{}
+			}
+		}
 		s.mu.Lock()
 		if *m.Epoch == sess.peer.Epoch {
-			v := make(map[string]struct{}, len(m.Full))
-			for _, u := range m.Full {
-				if u != sess.ident.UUID {
-					v[u] = struct{}{}
-				}
-			}
 			sess.peer.Visible, sess.peersRev = v, *m.Rev
 		}
 		s.mu.Unlock()
@@ -415,14 +429,24 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 			sess.send(marshal(protocol.PeersResync{Type: "peers_resync", Epoch: ep}))
 			return false
 		}
+		v := make(map[string]struct{}, len(sess.peer.Visible)+len(m.Add))
+		for u := range sess.peer.Visible {
+			v[u] = struct{}{}
+		}
 		for _, u := range m.Remove {
-			delete(sess.peer.Visible, u)
+			delete(v, u)
 		}
 		for _, u := range m.Add {
-			if u != sess.ident.UUID && len(sess.peer.Visible) < protocol.MaxPeerList {
-				sess.peer.Visible[u] = struct{}{}
+			if u != sess.ident.UUID {
+				v[u] = struct{}{}
 			}
 		}
+		if len(v) > protocol.MaxPeerList {
+			s.mu.Unlock()
+			sess.send(errorFrame(protocol.CodeBadMessage, "peer set too large", false))
+			return false
+		}
+		sess.peer.Visible = v
 		sess.peersRev = *m.Rev
 		s.mu.Unlock()
 	case *protocol.State:
