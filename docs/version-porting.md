@@ -86,6 +86,37 @@ Conditions support `MC <op> version`, `FABRIC`, `FORGE`, `LEGACYFABRIC`,
 compiler line numbers match the source. `tools/port-version/preprocess.py`
 has self-tests.
 
+Unbound key mappings must use the input API's unknown-key value:
+`InputConstants.UNKNOWN.getValue()` in the modern Mojang adapter, or
+`GLFW.GLFW_KEY_UNKNOWN` in its older GLFW branch. Do not hard-code `-1`:
+Minecraft 26.3 uses SDL input, and an invalid key value can reach
+`InputConstants.isKeyDown` when the game grabs the mouse, including automatic
+world entry during launch. In the official 26.3 client, `UNKNOWN` is keyboard
+value `0`; `isKeyDown(int)` directly indexes `SDL_GetKeyboardState()` without
+bounds checking. `KeyMapping.setAll()` skips `0`, but polls `-1`.
+
+Changing defaults is insufficient for upgrades: `InputConstants.getKey` accepts
+`key.keyboard.-1`, and `Options` loads it through `KeyMapping.setKey` without
+rejecting negative values. The 26.3 MCVoice mappings override that setter to
+normalize negative keyboard values to `UNKNOWN`. This covers options reloads
+and every MCVoice action, preserves valid keyboard/mouse bindings, and lets
+Minecraft save the canonical `key.keyboard.unknown` on its next options save.
+Forge 66.0.10 replaces that load path with `setKeyModifierAndCode`, assigning
+the key directly; the Forge mapping overrides that setter too. Valid Forge
+modifiers are passed through unchanged. Both paths need runtime coverage.
+Older GLFW adapters retain their native negative unknown sentinel.
+
+`.github/workflows/mc-startup.yml` runs a separate test-only mod against both
+26.3 production jars. It includes a negative control using vanilla's mapping,
+fresh-options main-menu/world startup, and a second launch using Quick Play
+with persisted negative settings/status keys and custom keyboard/mouse binds.
+The second launch retains the first launch's MCVoice configuration and world.
+It asserts bindings before world focus, exercises `setAll` and mouse re-grab,
+then verifies clean shutdown and canonical saved bindings. The pinned general
+`mc-smoke` runtime mod 4.5.1 has no 26.3 assets; its skipped jobs do not verify
+26.3. The dedicated test uses HeadlessMC 2.10.0 with real game assets and SDL,
+Fabric Loader 0.19.5 / API 0.163.0+26.3, Forge 66.0.10, and Java 25.
+
 ## Adding a version
 
 1. Check `versions/versions.json`: does the loader exist for this version?

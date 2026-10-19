@@ -76,15 +76,24 @@ Download the jar for your Minecraft version and loader from
    another mod prevents a hook from applying, its icon can be skipped without
    a required-injection startup error. Essential HUD and tick hooks stay required.
    These indicators are rendered by MCVoice on the listener's client.
+   In a voice group, every member's head appears at the right edge, including
+   quiet members. A speaking member gets a white outline and their name to the
+   left. Unknown skins use Minecraft's default skin. **Group HUD** in General
+   settings is on by default; turn it off to hide the roster.
 5. Settings live in `config/mcvoice.json`:
    * backend URL (default: the public backend `wss://mcvoice.ravoxx.dev/v1/control`);
    * activation mode (push-to-talk or voice activation) and its threshold;
    * gain, devices and distances;
-   * per-player volume and mute;
+   * per-player volume and mute. The **Players** tab searches online voice users
+     by name and keeps formatted names aligned with their controls. It lists
+     confirmed MCVoice peers in the local world, current group members, and
+     connected SVC users reported by the server, including quiet users;
    * HUD and debug options. **Edit HUD** in General settings lets you drag the
      speaker list and microphone, choose a vertical or horizontal list, toggle
      its background, and set microphone size (10–32 pixels). Done saves the
-     layout; Cancel or Escape discards edits; Reset restores defaults in the editor.
+     layout. The group roster can be dragged independently, with its own
+     background toggle and head size (10–32 pixels, fitted down for large groups
+     on small screens). Cancel or Escape discards edits; Reset restores defaults in the editor.
      Positions follow changes in window size and GUI scale.
 
 Audio is never recorded or stored by the mod or by the backend.

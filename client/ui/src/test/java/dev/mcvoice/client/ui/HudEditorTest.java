@@ -26,6 +26,7 @@ class HudEditorTest {
             new Class<?>[] {VoiceControls.class}, (proxy, method, args) -> {
                 switch (method.getName()) {
                 case "config": return config;
+                case "group": return null;
                 case "transportStatus": return TransportStatus.CLOUD;
                 case "talkers": return talkers;
                 case "microphoneIndicatorVisible": return visible;
@@ -203,6 +204,31 @@ class HudEditorTest {
         assertEquals(16, c.config.hudLayout.microphoneSize);
         assertFalse(c.config.hudLayout.horizontal);
         assertEquals(1, c.saves);
+    }
+
+    @Test
+    void groupRosterDragsIndependentlyAndItsSizeAndBackgroundAreSaved() {
+        Controls c = new Controls();
+        HudEditorScreen screen = new HudEditorScreen(c.voice);
+        Canvas canvas = new Canvas();
+        screen.render(canvas, 0, 0, 0);
+        HudRenderer.Bounds group = HudRenderer.preview(canvas, c.config.hudLayout).group;
+        screen.mouseClicked(group.x + group.width - 3, group.y + 3, 0);
+        screen.mouseDragged(group.x + group.width - 43, group.y - 27, 0);
+        screen.mouseReleased(0, 0, 0);
+        Widget groupSize = screen.widgets.get(3);
+        screen.mouseClicked(groupSize.x + 4, groupSize.y + 4, 0);
+        screen.mouseDragged(groupSize.x + groupSize.w - 4, groupSize.y + 4, 0);
+        screen.mouseReleased(0, 0, 0);
+        canvas.click(screen, "Group Background: Off");
+        assertEquals(18, c.config.hudLayout.groupHeadSize);
+        canvas.click(screen, "Done");
+        assertEquals(32, c.config.hudLayout.groupHeadSize);
+        assertTrue(c.config.hudLayout.groupBackground);
+        assertTrue(c.config.hudLayout.groupX < 1);
+        assertTrue(c.config.hudLayout.groupY < 0.5);
+        assertEquals(0, c.config.hudLayout.speakersX);
+        assertEquals(1, c.config.hudLayout.statusX);
     }
 
     @Test
