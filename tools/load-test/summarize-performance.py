@@ -43,8 +43,8 @@ result["environment"] = {
     "peer_refresh": "1s", "churn": False,
     "limitations": "Loopback, generator and backend share host. Before and after are separate measurement phases; implementation order alternates within each phase. Client JVMs run sequentially. No 100k capacity claim."
 }
-result["client_source_sha256"] = {str(file).replace('\\', '/'): hashlib.sha256(file.read_bytes()).hexdigest()
-    for file in sorted(Path('client').glob('**/src/main/java/**/*.java'))}
+result["client_source_sha256"] = [{"source": str(file).replace('\\', '/'), "sha256": hashlib.sha256(file.read_bytes()).hexdigest()}
+    for file in sorted(Path('client').glob('**/src/main/java/**/*.java'))]
 args.out.parent.mkdir(parents=True, exist_ok=True)
 args.out.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
 for case in [r["case"] for r in result["client_runs"]["before"][0]]:
