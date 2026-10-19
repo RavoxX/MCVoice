@@ -65,7 +65,7 @@ client.on('custom_payload', (packet) => {
   }
   if (channel.startsWith('voicechat:')) {
     console.error(`bot: <- ${channel} (${data.length} bytes)`);
-    if (channel === 'voicechat:player_state' || channel === 'voicechat:player_states') {
+    if (['voicechat:state', 'voicechat:states', 'voicechat:player_state', 'voicechat:player_states'].includes(channel)) {
       // Only synthetic CI player metadata, never secrets or audio packets.
       console.error(`bot: state observation ${channel} ${data.toString('hex')}`);
     }
