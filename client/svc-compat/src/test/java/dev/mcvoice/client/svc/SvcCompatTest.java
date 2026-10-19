@@ -184,6 +184,14 @@ class SvcCompatTest {
             assertEquals(SvcCompat.Status.CONNECTED, c.status(), c.detail());
             assertEquals(mode.name(), c.cipherMode());
             assertTrue(a.sent.contains("voicechat:update_state"));
+            byte[] online = SvcBuf.writer().writeBoolean(false).writeBoolean(false).writeUuid(OTHER)
+                .writeString("QuietVoiceUser").writeBoolean(false).toByteArray();
+            c.onPayload("voicechat:state", online);
+            assertEquals("QuietVoiceUser", c.onlinePlayers().get(OTHER), "quiet users do not need to send audio to appear");
+            byte[] disconnected = SvcBuf.writer().writeBoolean(false).writeBoolean(true).writeUuid(OTHER)
+                .writeString("QuietVoiceUser").writeBoolean(false).toByteArray();
+            c.onPayload("voicechat:state", disconnected);
+            assertTrue(c.onlinePlayers().isEmpty(), "voice disconnect removes presence immediately");
 
             c.sendMic(new byte[] {1, 2, 3}, 0, 3, false);
             waitFor(() -> !server.micFrames.isEmpty(), 3000);
@@ -195,6 +203,8 @@ class SvcCompatTest {
             waitFor(() -> !heard.isEmpty(), 3000);
             assertEquals(Collections.singletonList(OTHER), new ArrayList<UUID>(heard));
             c.reset(false);
+            c.onPayload("voicechat:state", online);
+            assertTrue(c.onlinePlayers().isEmpty(), "late states cannot revive a closed session");
         } finally {
             server.close();
         }

@@ -11,6 +11,8 @@ public final class SvcChannelNames {
     /** Server -> client channels our client must be able to receive. */
     public static final String[] CLIENTBOUND = {
         "voicechat:secret",
+        "voicechat:state",
+        "voicechat:states",
         "voicechat:player_state",
         "voicechat:player_states",
         "voicechat:joined_group",
