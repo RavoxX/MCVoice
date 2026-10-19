@@ -6,6 +6,7 @@ import java.util.List;
 import dev.mcvoice.client.platform.ui.UiCanvas;
 import dev.mcvoice.client.platform.ui.UiScreen;
 import dev.mcvoice.client.ui.widget.Widget;
+import dev.mcvoice.client.ui.widget.TextField;
 
 /**
  * Shared screen plumbing: widget list, input dispatch, and a Minecraft-style frame (dimmed world,
@@ -101,6 +102,14 @@ public abstract class BaseScreen implements UiScreen {
                 w.typed(c);
             }
         }
+    }
+
+    @Override
+    public boolean textInputFocused() {
+        for (Widget w : widgets) {
+            if (w.visible && w instanceof TextField && ((TextField) w).focused()) return true;
+        }
+        return false;
     }
 
     @Override
