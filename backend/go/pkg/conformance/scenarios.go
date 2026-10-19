@@ -894,6 +894,58 @@ func scPeersDelta(e *Env) error {
 	if a.Resyncs() != before+1 {
 		return errorf("expected peers_resync for wrong base")
 	}
+	ids := make([]string, 512)
+	for i := range ids {
+		ids[i] = randomUUID()
+	}
+	send := func(m map[string]any) error {
+		b, err := json.Marshal(m)
+		if err != nil {
+			return err
+		}
+		return a.SendRaw(b)
+	}
+	if err := send(map[string]any{"type": "peers", "epoch": a.Epoch(), "rev": 1000, "full": ids}); err != nil {
+		return err
+	}
+	if err := a.PeersDeltaWithBase(1000, 1001, []string{randomUUID()}); err != nil {
+		return err
+	}
+	if err := expectError(a, "bad_message"); err != nil {
+		return err
+	}
+	resyncs := a.Resyncs()
+	if err := a.PeersDeltaWithBase(1000, 1001, []string{}); err != nil {
+		return err
+	}
+	if err := a.Sync(time.Second); err != nil {
+		return err
+	}
+	if a.Resyncs() != resyncs {
+		return errorf("overflow advanced revision")
+	}
+	epoch, err := a.Scope(true, Net1, Overworld)
+	if err != nil {
+		return err
+	}
+	if err := send(map[string]any{"type": "pos", "epoch": epoch - 1, "x": 0, "y": 64, "z": 0}); err != nil {
+		return err
+	}
+	if err := a.Pos(0, 64, 0); err != nil {
+		return err
+	}
+	if err := a.Peers([]string{b.Session.PlayerUUID}); err != nil {
+		return err
+	}
+	if err := a.Sync(time.Second); err != nil {
+		return err
+	}
+	if err := talk(a, 1, 0); err != nil {
+		return err
+	}
+	if _, err := expectFrom(b, a.Session.PlayerUUID, 2*time.Second); err != nil {
+		return errorf("stale position consumed new epoch budget: %v", err)
+	}
 	return nil
 }
 
