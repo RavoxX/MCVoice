@@ -57,6 +57,7 @@ public final class McAdapter implements MinecraftAdapter {
         this.loader = loader;
         this.configDir = configDir;
 
+        int unboundKey = InputConstants.UNKNOWN.getValue();
         keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", InputConstants.KEY_V));
         keys.put(InputAdapter.Action.WHISPER, key("whisper", InputConstants.KEY_B));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", InputConstants.KEY_M));
@@ -69,13 +70,37 @@ public final class McAdapter implements MinecraftAdapter {
 
 
 
-        keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", -1));
-        keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", -1));
+
+        keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", unboundKey));
+        keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", unboundKey));
     }
 
     private static KeyMapping key(String name, int code) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         return new KeyMapping("key.mcvoice." + name, code, CATEGORY);
+
     }
+
+
+
+
+
+
+
 
     /** Key mappings the loader must register. */
     public Iterable<KeyMapping> keyMappings() {
