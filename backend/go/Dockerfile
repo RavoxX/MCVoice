@@ -7,7 +7,7 @@ RUN go mod download
 COPY cmd ./cmd
 COPY internal ./internal
 COPY pkg ./pkg
-ARG VERSION=0.1.5
+ARG VERSION=0.1.10
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/mcvoice-backend ./cmd/mcvoice-backend
 
 FROM gcr.io/distroless/static-debian12:nonroot
@@ -16,6 +16,6 @@ LABEL org.opencontainers.image.title="mcvoice-backend-go" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.source="https://github.com/RavoxX/MCVoice"
 COPY --from=build /out/mcvoice-backend /mcvoice-backend
-USER nonroot:nonroot
+USER 65532:65532
 EXPOSE 8080/tcp 24455/udp
 ENTRYPOINT ["/mcvoice-backend"]
