@@ -34,11 +34,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+      packages: read
     env:
       IMAGE: ghcr.io/${{ github.repository }}/voice-backend-${{ matrix.impl }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: docker/setup-buildx-action@v3
       - name: Compute tags
         id: tags
@@ -58,8 +60,11 @@ jobs:
           context: backend/${{ matrix.impl }}
           load: true
           tags: mcvoice-backend-${{ matrix.impl }}:test
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ inputs.version || 'edge' }}
           cache-from: type=gha,scope=${{ matrix.impl }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.impl }}
+          cache-to: ${{ github.event_name != 'pull_request' && format('type=gha,mode=max,scope={0}', matrix.impl) || '' }}
       - name: Smoke test container
         run: |
           docker run -d --name be -p 18080:8080 -p 24455:24455/udp -e AUTH_MODE=offline -e PUBLIC_HOSTNAME=127.0.0.1 \
@@ -72,21 +77,50 @@ jobs:
           docker create --name inspect mcvoice-backend-${{ matrix.impl }}:test >/dev/null
           docker export inspect | tar -t | grep -E '(^|/)\.env|\.go$|\.rs$' && { echo "::error::image contains sources or env files"; exit 1; } || true
           docker logs be | tail -5
-      - name: Log in to GHCR
+      - name: Export tested image
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
+        run: docker save mcvoice-backend-${{ matrix.impl }}:test -o backend-image.tar
+      - uses: actions/upload-artifact@v5
+        if: github.event_name != 'pull_request'
+        with:
+          name: backend-image-${{ matrix.impl }}
+          path: backend-image.tar
+          retention-days: 3
+
+  publish:
+    needs: image
+    if: github.event_name != 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        impl: [rust, go]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: backend-image-${{ matrix.impl }}
+      - name: Load tested image (never execute it in this job)
+        run: docker load -i backend-image.tar
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push
-        if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@v6
-        with:
-          context: backend/${{ matrix.impl }}
-          push: true
-          tags: ${{ steps.tags.outputs.tags }}
-          labels: |
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.version=${{ inputs.version || 'edge' }}
-          cache-from: type=gha,scope=${{ matrix.impl }}
+      - name: Publish tested image
+        env:
+          VERSION: ${{ inputs.version }}
+          LATEST: ${{ inputs.latest }}
+          IMPL: ${{ matrix.impl }}
+        run: |
+          set -euo pipefail
+          image="ghcr.io/${GITHUB_REPOSITORY,,}/voice-backend-$IMPL"
+          if [ -n "$VERSION" ]; then
+            docker tag "mcvoice-backend-$IMPL:test" "$image:$VERSION"
+            docker push "$image:$VERSION"
+            if [ "$LATEST" = true ]; then docker tag "mcvoice-backend-$IMPL:test" "$image:latest"; docker push "$image:latest"; fi
+          else
+            for tag in edge "sha-${GITHUB_SHA::12}"; do docker tag "mcvoice-backend-$IMPL:test" "$image:$tag"; docker push "$image:$tag"; done
+          fi
