@@ -30,6 +30,15 @@ transports.
 MOTD text, server names and brands are never used. Servers without SVC never
 receive a single SVC plugin message from us.
 
+Player settings use compatibility 20's `voicechat:states` snapshot and
+`voicechat:state` updates to list connected, enabled voice users, even while
+silent. The format was independently observed against the real server in run
+`39251350550`: big-endian count for snapshots, then disabled/disconnected flags,
+UUID, VarInt-length name, and an optional group UUID. State is cleared on
+disconnect/reset; old audio packets are never treated as current presence.
+Malformed state packets cannot partially replace the current list. The real-server
+probe checks that its synthetic player becomes visible after voice authentication.
+
 ## Voice session (UDP)
 
 `transport/SvcUdpClient`: authenticate, then connection check, then connected.
