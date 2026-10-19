@@ -16,6 +16,7 @@ import dev.mcvoice.client.platform.SvcChannelNames;
 import dev.mcvoice.client.svc.handshake.SvcHandshake;
 import dev.mcvoice.client.svc.protocol.SecretInfo;
 import dev.mcvoice.client.svc.protocol.SvcProtocol;
+import dev.mcvoice.client.svc.protocol.SvcPlayerStates;
 import dev.mcvoice.client.svc.transport.SvcUdpClient;
 
 /**
@@ -115,7 +116,13 @@ public final class SvcProbe {
                 System.err.println("handshake: " + handshakeState.get());
             }
         });
-        adapter.setReceiver(hs::onPayload);
+        final SvcPlayerStates states = new SvcPlayerStates();
+        adapter.setReceiver((channel, payload) -> {
+            if (SvcPlayerStates.channel(channel)) {
+                try { states.receive(channel, payload); }
+                catch (Exception e) { throw new AssertionError("Real server player states did not parse", e); }
+            } else hs.onPayload(channel, payload);
+        });
         out.println("REGISTER " + String.join(",", SvcChannelNames.CLIENTBOUND));
 
         Thread reader = new Thread(() -> {
@@ -159,7 +166,7 @@ public final class SvcProbe {
                 }
                 u.sendMic(silence, 0, silence.length, false);
                 if (System.currentTimeMillis() - connectedSince > 5000) {
-                    ok = u.state() == SvcUdpClient.State.CONNECTED;
+                    ok = u.state() == SvcUdpClient.State.CONNECTED && states.online().containsValue("mcvoice_probe");
                     break;
                 }
             } else if (u != null && (u.state() == SvcUdpClient.State.FAILED || u.state() == SvcUdpClient.State.CLOSED)) {
@@ -174,6 +181,7 @@ public final class SvcProbe {
         SvcUdpClient u = udp.get();
         String json = "{\"ok\":" + ok
             + ",\"compatibility_version\":" + compat[0]
+            + ",\"online_voice_players\":" + states.online().size()
             + ",\"handshake\":\"" + esc(handshakeState.get()) + "\""
             + ",\"udp\":\"" + esc(udpState.get()) + "\""
             + ",\"cipher\":\"" + (u == null || u.cipherMode() == null ? "-" : u.cipherMode()) + "\""
