@@ -51,7 +51,11 @@ public final class McScreen extends Screen {
 
 
 
+        syncTextInput();
     }
+
+
+
 
 
 
@@ -132,6 +136,12 @@ public final class McScreen extends Screen {
 
     }
 
+    private void syncTextInput() {
+
+
+
+    }
+
     private static int uiKey(int key) {
 
 
@@ -171,6 +181,9 @@ public final class McScreen extends Screen {
     @Override
     public void removed() {
         ui.onClose();
+
+
+
         super.removed();
     }
 
