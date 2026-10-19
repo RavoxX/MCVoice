@@ -13,6 +13,11 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Locale;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocket;
@@ -32,6 +37,12 @@ public final class WebSocketClient {
 
     public static final int MAX_MESSAGE = 1 << 20;
 
+    private static final ScheduledExecutorService WRITE_TIMEOUT = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread t = new Thread(r, "MCVoice-WebSocketTimeout"); t.setDaemon(true); return t;
+    });
+    private final ArrayBlockingQueue<byte[]> replies = new ArrayBlockingQueue<byte[]>(8);
+    private final Thread replyThread;
+
     private final Socket socket;
     private final Socket rawSocket;
     private final InputStream in;
@@ -46,6 +57,23 @@ public final class WebSocketClient {
         this.rawSocket = rawSocket;
         this.in = in;
         this.out = out;
+        replyThread = new Thread(() -> {
+            try {
+                while (!rawSocket.isClosed()) {
+                    byte[] frame = replies.take();
+                    int op = frame[0] & 0xFF;
+                    byte[] payload = java.util.Arrays.copyOfRange(frame, 1, frame.length);
+                    sendFrame(op, payload);
+                    if (op == 8) break;
+                }
+            } catch (IOException e) {
+                abort();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, "MCVoice-WebSocketReplies");
+        replyThread.setDaemon(true);
+        replyThread.start();
     }
 
     /** Connect and perform the opening handshake. */
@@ -65,6 +93,7 @@ public final class WebSocketClient {
         }
         int port = uri.getPort() > 0 ? uri.getPort() : (tls ? 443 : 80);
         Socket raw = new Socket();
+        try {
         raw.connect(new InetSocketAddress(host, port), timeoutMs);
         raw.setTcpNoDelay(true);
         raw.setSoTimeout(timeoutMs);
@@ -128,6 +157,10 @@ public final class WebSocketClient {
         }
         s.setSoTimeout(0);
         return new WebSocketClient(s, raw, in, out);
+        } catch (IOException | RuntimeException e) {
+            try { raw.close(); } catch (IOException ignored) { }
+            throw e;
+        }
     }
 
     static String expectedAccept(String key) {
@@ -198,9 +231,22 @@ public final class WebSocketClient {
         for (int i = 0; i < len; i++) {
             f.write(payload[i] ^ mask[i & 3]);
         }
-        synchronized (writeLock) {
-            out.write(f.toByteArray());
-            out.flush();
+        ScheduledFuture<?> deadline = WRITE_TIMEOUT.schedule(() -> abort(), 20, TimeUnit.SECONDS);
+        try {
+            synchronized (writeLock) {
+                out.write(f.toByteArray());
+                out.flush();
+            }
+        } finally { deadline.cancel(false); }
+    }
+
+    private void reply(int opcode, byte[] payload) throws IOException {
+        byte[] frame = new byte[payload.length + 1];
+        frame[0] = (byte) opcode;
+        System.arraycopy(payload, 0, frame, 1, payload.length);
+        if (!replies.offer(frame)) {
+            abort();
+            throw new IOException("WebSocket control reply queue full");
         }
     }
 
@@ -213,7 +259,7 @@ public final class WebSocketClient {
         while (true) {
             int b0 = in.read();
             if (b0 < 0) {
-                closed = true;
+                abort();
                 return null;
             }
             int b1 = readByte();
@@ -237,10 +283,12 @@ public final class WebSocketClient {
             if (len < 0 || len > MAX_MESSAGE) {
                 throw new IOException("frame too large");
             }
+            if ((opcode & 8) != 0 && (!fin || len > 125)) throw new IOException("invalid control frame");
+            if (opcode == 8 && len == 1) throw new IOException("invalid close payload");
             byte[] payload = readFully((int) len);
             switch (opcode) {
                 case 0x9: // ping
-                    sendFrame(0xA, payload);
+                    reply(0xA, payload);
                     continue;
                 case 0xA: // pong
                     continue;
@@ -251,7 +299,7 @@ public final class WebSocketClient {
                         closeReason = new String(payload, 2, payload.length - 2, UTF8);
                     }
                     try {
-                        sendFrame(0x8, payload.length >= 2 ? new byte[] {payload[0], payload[1]} : new byte[0]);
+                        reply(0x8, payload.length >= 2 ? new byte[] {payload[0], payload[1]} : new byte[0]);
                     } catch (IOException ignored) {
                         // peer may already be gone
                     }
@@ -324,6 +372,8 @@ public final class WebSocketClient {
     /** Send a close frame and close the socket. */
     public void abort() {
         closed = true;
+        replies.clear();
+        replyThread.interrupt();
         try {
             // Bypass TLS close_notify and writeLock: a stalled writer must not stall disconnect.
             rawSocket.close();
@@ -345,6 +395,8 @@ public final class WebSocketClient {
             }
         }
         closed = true;
+        replies.clear();
+        replyThread.interrupt();
         try {
             socket.close();
         } catch (IOException ignored) {
