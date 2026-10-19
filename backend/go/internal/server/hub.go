@@ -216,49 +216,74 @@ func (s *Server) presenceTick() {
 	s.groupTick(s.now())
 	type upd struct {
 		sess *Session
-		msg  []byte
+		msg  protocol.PresenceMsg
 	}
 	var updates []upd
-	s.mu.Lock()
+	s.mu.RLock()
 	for _, r := range s.byConn {
-		next := map[string]struct{}{}
-		if r.peer.InWorld {
-			for u := range r.peer.Visible {
-				if o := s.byUUID[u]; o != nil && o.peer.InWorld && o.peer.UDPVerified &&
-					routing.CompatibleScopes(&o.peer, &r.peer) && routing.MutuallyVisible(&o.peer, &r.peer) {
-					next[u] = struct{}{}
-				}
-			}
-		}
-		var add, remove []string
-		for u := range next {
-			if _, ok := r.presence[u]; !ok {
-				add = append(add, u)
-			}
-		}
-		for u := range r.presence {
-			if _, ok := next[u]; !ok {
-				remove = append(remove, u)
-			}
-		}
+		add, remove := s.presenceDelta(r)
 		if len(add) == 0 && len(remove) == 0 {
 			continue
 		}
-		sort.Strings(add)
-		sort.Strings(remove)
-		r.presence = next
-		if add == nil {
-			add = []string{}
-		}
-		if remove == nil {
-			remove = []string{}
-		}
-		updates = append(updates, upd{r, marshal(protocol.PresenceMsg{Type: "presence", Epoch: r.peer.Epoch, Add: add, Remove: remove})})
+		updates = append(updates, upd{r, protocol.PresenceMsg{Type: "presence", Epoch: r.peer.Epoch, Add: add, Remove: remove}})
 	}
-	s.mu.Unlock()
+	s.mu.RUnlock()
+	if len(updates) > 0 {
+		s.mu.Lock()
+		n := 0
+		for _, u := range updates {
+			if s.byConn[u.sess.connID] != u.sess {
+				continue
+			}
+			// Revalidate after taking the write lock; never commit an old routing snapshot.
+			add, remove := s.presenceDelta(u.sess)
+			if len(add) == 0 && len(remove) == 0 {
+				continue
+			}
+			for _, id := range remove {
+				delete(u.sess.presence, id)
+			}
+			for _, id := range add {
+				u.sess.presence[id] = struct{}{}
+			}
+			u.msg.Epoch, u.msg.Add, u.msg.Remove = u.sess.peer.Epoch, add, remove
+			updates[n] = u
+			n++
+		}
+		updates = updates[:n]
+		s.mu.Unlock()
+	}
 	for _, u := range updates {
-		u.sess.send(u.msg)
+		sort.Strings(u.msg.Add)
+		sort.Strings(u.msg.Remove)
+		if u.msg.Add == nil {
+			u.msg.Add = []string{}
+		}
+		if u.msg.Remove == nil {
+			u.msg.Remove = []string{}
+		}
+		u.sess.send(marshal(u.msg))
 	}
+}
+
+// Caller holds mu. Stable presence allocates nothing and leaves packet readers unblocked.
+func (s *Server) presenceDelta(r *Session) (add, remove []string) {
+	present := func(u string) bool {
+		o := s.byUUID[u]
+		return r.peer.InWorld && o != nil && o.peer.InWorld && o.peer.UDPVerified &&
+			routing.CompatibleScopes(&o.peer, &r.peer) && routing.MutuallyVisible(&o.peer, &r.peer)
+	}
+	for u := range r.peer.Visible {
+		if _, ok := r.presence[u]; !ok && present(u) {
+			add = append(add, u)
+		}
+	}
+	for u := range r.presence {
+		if !present(u) {
+			remove = append(remove, u)
+		}
+	}
+	return
 }
 
 // updateJitterGauge averages per-session jitter estimates of recently active streams.
@@ -266,19 +291,27 @@ func (s *Server) updateJitterGauge() {
 	now := s.now()
 	var sum float64
 	var n int
+	busy := false
 	s.mu.RLock()
+	sessions := make([]*Session, 0, len(s.byConn))
 	for _, sess := range s.byConn {
-		sess.umu.Lock()
+		sessions = append(sessions, sess)
+	}
+	s.mu.RUnlock()
+	for _, sess := range sessions {
+		if !sess.umu.TryLock() {
+			busy = true
+			continue // diagnostics must not queue behind packet encryption
+		}
 		if now.Sub(sess.lastVoice) < 5*time.Second && sess.haveTransit {
 			sum += sess.jitter
 			n++
 		}
 		sess.umu.Unlock()
 	}
-	s.mu.RUnlock()
 	if n > 0 {
 		s.metrics.VoiceJitter.Set(sum / float64(n))
-	} else {
+	} else if !busy {
 		s.metrics.VoiceJitter.Set(0)
 	}
 }

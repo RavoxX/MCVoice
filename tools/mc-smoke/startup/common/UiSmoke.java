@@ -22,6 +22,8 @@ import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.Minecraft;
+import org.lwjgl.sdl.SDLKeyboard;
 
 /** Exercise real McScreen event forwarding and shared widgets inside the running game. */
 final class UiSmoke {
@@ -96,6 +98,7 @@ final class UiSmoke {
         UiScreen ui = (UiScreen) Proxy.newProxyInstance(UiScreen.class.getClassLoader(), new Class<?>[] {UiScreen.class},
             (proxy, method, args) -> {
                 if (method.getName().equals("title")) return "Input probe";
+                if (method.getName().equals("textInputFocused")) return false;
                 if (method.getName().equals("keyPressed")) { received[0] = (Integer) args[0]; return true; }
                 if (method.getName().startsWith("mouse") && args.length == 3) received[0] = (Integer) args[2];
                 return null;
@@ -170,8 +173,11 @@ final class UiSmoke {
         Canvas canvas = new Canvas(); canvas.draw(settings);
         click(screen, canvas.find("Players")); canvas.draw(settings);
         click(screen, canvas.find("Search online voice players"));
+        require(SDLKeyboard.SDL_TextInputActive(Minecraft.getInstance().getWindow().handle()), "SDL text input was not enabled for player search");
         for (char ch : "ali".toCharArray()) { screen.charTyped(new CharacterEvent(ch)); canvas.draw(settings); }
         canvas.find("Alice");
+        screen.removed();
+        require(!SDLKeyboard.SDL_TextInputActive(Minecraft.getInstance().getWindow().handle()), "SDL text input stayed active after screen removal");
         require(canvas.texts.stream().noneMatch(t -> t.value.equals("Bob")), "SDL player search did not filter results");
         screen.keyPressed(new KeyEvent(InputConstants.KEY_BACKSPACE, 0, 0)); canvas.draw(settings);
         canvas.find("Alice");
@@ -187,6 +193,7 @@ final class UiSmoke {
             (proxy, method, args) -> {
                 switch (method.getName()) {
                 case "title": return "Text input probe";
+                case "textInputFocused": return field.focused();
                 case "mouseClicked": field.click((Integer) args[0], (Integer) args[1], (Integer) args[2]); return null;
                 case "charTyped": field.typed((Character) args[0]); return null;
                 case "keyPressed": return field.key((Integer) args[0]);
@@ -194,13 +201,21 @@ final class UiSmoke {
                 }
             });
         McScreen screen = new McScreen(ui);
+        Minecraft mc = Minecraft.getInstance();
+        net.minecraft.client.gui.screens.Screen previous = mc.screen;
+        mc.setScreen(screen);
         screen.mouseClicked(mouse(10, 10, InputConstants.MOUSE_BUTTON_LEFT), false);
-        screen.charTyped(new CharacterEvent('a'));
-        require(value[0].equals("a"), "Character event did not reach focused text field");
+        require(SDLKeyboard.SDL_TextInputActive(mc.getWindow().handle()), "Focused field did not start native SDL text input");
+        mc.keyboardHandler.textInput(mc.getWindow().handle(), "a");
+        require(value[0].equals("a"), "Minecraft native text-input dispatch did not reach focused field");
         screen.keyPressed(new KeyEvent(InputConstants.KEY_BACKSPACE, 0, 0));
         require(value[0].isEmpty(), "SDL Backspace did not edit text");
         screen.keyPressed(new KeyEvent(InputConstants.KEY_RETURN, 0, 0));
         require(!field.focused(), "SDL Enter did not finish text input");
+        require(!SDLKeyboard.SDL_TextInputActive(mc.getWindow().handle()), "Blur did not stop SDL text input");
+        screen.mouseClicked(mouse(10, 10, InputConstants.MOUSE_BUTTON_LEFT), false);
+        mc.setScreen(previous);
+        require(!SDLKeyboard.SDL_TextInputActive(mc.getWindow().handle()), "Closing a focused field did not stop SDL text input");
     }
 
     private static void click(McScreen screen, Text text) {

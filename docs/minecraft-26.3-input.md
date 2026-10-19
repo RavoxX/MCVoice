@@ -1,5 +1,23 @@
 # Minecraft 26.3 settings input (follow-up to 0.1.6)
 
+## Native text-input follow-up (unreleased)
+
+The earlier event-forwarding tests did not verify that SDL text input was
+actually enabled. Unlike GLFW, 26.3 requires an explicit `TextInputManager`
+owner before the operating system emits text events. Shared text fields are
+self-drawn and never focus a vanilla EditBox, so the service remained stopped.
+`UiScreen.textInputFocused()` now bridges real field focus to
+`Minecraft.textInputManager()` after clicks, navigation and layout changes.
+Removing a screen stops only that screen's text-input ownership.
+
+The runtime harness now checks `SDL_TextInputActive` when a field receives
+focus, dispatches through `KeyboardHandler.textInput` with the actual screen
+installed, and verifies blur/removal stop SDL input. Player-search fields also
+assert native activation. These checks still do not simulate a physical keyboard
+or an IME. Earlier versions retain their existing character-input path.
+
+## Published mouse/key event correction
+
 Minecraft 26.3's SDL mouse events use left button 1, right button 3, and
 middle button 2. MCVoice's shared `UiScreen` contract uses left 0, right 1,
 and middle 2. `McScreen` forwarded the native value, so the shared buttons

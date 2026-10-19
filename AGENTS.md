@@ -289,6 +289,19 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
+* **Input/microphone/performance follow-up (unreleased):** 26.3 text fields
+  explicitly own native SDL text input; runtime tests now check SDL activation,
+  native KeyboardHandler text dispatch and blur/removal. Whisper independently
+  opens proximity capture; groups have an independent PTT/voice-activation mode
+  (open-mic default preserved). Control writes use a bounded connection FIFO;
+  audio lifecycle waits moved off game ticks without overlapping generations.
+  Tracking shares unchanged immutable entries, reporting scans are rate-gated,
+  and rejected/idle speaker decoding work is avoided. Both backends use shared
+  hub access for stable presence and revalidate changed diffs at commit. See
+  `docs/input-and-performance.md` for tests, benchmarks and the 100k-user scaling
+  target/remaining limits. Deployment of the backend is user-authorized after
+  validation; no new client release is authorized by this follow-up.
+
 * **Group roster and player settings (released as v0.1.8):** enabled by
   default via `showGroupHud`; right-edge member heads, white speaking outline
   and styled name, independent dragging/head size/background in Edit HUD.

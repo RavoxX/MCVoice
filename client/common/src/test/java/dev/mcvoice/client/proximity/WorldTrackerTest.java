@@ -32,6 +32,8 @@ class WorldTrackerTest {
         final UUID self = UUID.randomUUID();
         final UUID other = UUID.randomUUID();
         boolean otherTracked = true;
+        double otherX = 1;
+        String otherName = "o";
 
         public String minecraftVersion() { return "t"; }
         public String loader() { return "t"; }
@@ -48,7 +50,7 @@ class WorldTrackerTest {
                 public Object identity() { return world; }
                 public void forEachPlayer(PlayerVisitor v) {
                     v.visit(self, "me", 0, 64, 0);
-                    if (otherTracked) v.visit(other, "o", 1, 64, 0);
+                    if (otherTracked) v.visit(other, otherName, otherX, 64, 0);
                 }
             };
         }
@@ -109,5 +111,31 @@ class WorldTrackerTest {
         mc.otherTracked = false;
         t.tick();
         assertFalse(t.snapshot().players.containsKey(mc.other));
+    }
+
+    @Test
+    void unchangedEntriesAreSharedButPublishedSnapshotsNeverChange() {
+        Mc mc = new Mc();
+        WorldTracker t = new WorldTracker(mc, (s, reason) -> { });
+        t.tick();
+        WorldSnapshot first = t.snapshot();
+        t.tick();
+        org.junit.jupiter.api.Assertions.assertSame(first.players, t.snapshot().players);
+        mc.otherX = 9;
+        mc.otherName = "changed";
+        t.tick();
+        assertEquals(9, t.snapshot().player(mc.other).x);
+        assertEquals("changed", t.snapshot().player(mc.other).name);
+        assertEquals(1, first.player(mc.other).x);
+        assertEquals("o", first.player(mc.other).name);
+        mc.otherTracked = false;
+        t.tick();
+        assertFalse(t.snapshot().players.containsKey(mc.other));
+        assertTrue(first.players.containsKey(mc.other));
+        mc.otherTracked = true;
+        t.invalidate("server_transfer");
+        assertFalse(t.snapshot().inWorld);
+        t.tick();
+        org.junit.jupiter.api.Assertions.assertNotSame(first.player(mc.other), t.snapshot().player(mc.other));
     }
 }

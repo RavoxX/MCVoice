@@ -40,6 +40,7 @@ public final class PeerReporter {
     private long epoch = -1;
     private long rev;
     private long lastSendMs;
+    private long lastCheckMs;
     private long lastFullMs;
     private boolean needFull = true;
 
@@ -58,6 +59,9 @@ public final class PeerReporter {
             needFull = true;
             reported = new HashSet<UUID>();
         }
+        boolean fullDue = needFull || nowMs - lastFullMs >= FULL_INTERVAL_MS;
+        if (!fullDue && nowMs - lastCheckMs < MIN_INTERVAL_MS) return null;
+        lastCheckMs = nowMs;
         Set<UUID> visible = new HashSet<UUID>();
         for (TrackedPlayer p : s.players.values()) {
             if (visible.size() >= MAX_LIST) {
@@ -66,10 +70,6 @@ public final class PeerReporter {
             if (s.distanceTo(p) <= maxRange) {
                 visible.add(p.uuid);
             }
-        }
-        boolean fullDue = needFull || nowMs - lastFullMs >= FULL_INTERVAL_MS;
-        if (!fullDue && nowMs - lastSendMs < MIN_INTERVAL_MS) {
-            return null;
         }
         if (fullDue) {
             needFull = false;
