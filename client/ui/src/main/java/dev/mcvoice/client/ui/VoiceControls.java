@@ -13,6 +13,9 @@ public interface VoiceControls {
     /** Persist and apply configuration changes (restarts audio/network parts if needed). */
     void applyConfig();
 
+    /** Apply processing controls live without saving, changing devices or closing the screen. */
+    default void previewAudioConfig() { }
+
     /** Close our screen without applying anything. */
     void closeScreen();
 
