@@ -482,4 +482,14 @@ class EndToEndTest {
             svcServer.close();
         }
     }
+
+    @Test void multiplayerWithoutServerListAddressCanStillUseCloudVoice() throws Exception {
+        FakeMinecraft a=player("RealmA"),b=player("RealmB");
+        a.serverAddress=null;b.serverAddress=null;a.x=0;b.x=3;a.track(b);b.track(a);
+        VoiceClient va=start(a),vb=start(b);
+        waitFor("null-address cloud peers",()->va.transportStatus()==TransportStatus.CLOUD && vb.transportStatus()==TransportStatus.CLOUD,15000);
+        a.ptt=true;long since=System.currentTimeMillis();
+        waitFor("null-address proximity audio",()->loudness(b,since)>300,10000);
+        a.ptt=false;
+    }
 }
