@@ -4,7 +4,10 @@ import argparse
 import json
 import os
 from pathlib import Path
-import resource
+try:
+    import resource
+except ImportError:
+    resource = None
 import signal
 import subprocess
 import time
@@ -21,8 +24,9 @@ def main():
     p.add_argument("--repeats", type=int, default=3)
     p.add_argument("--workers", type=int, default=4)
     args = p.parse_args()
-    soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-    resource.setrlimit(resource.RLIMIT_NOFILE, (min(8192, hard) if hard != resource.RLIM_INFINITY else 8192, hard))
+    if resource is not None:
+        soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+        resource.setrlimit(resource.RLIMIT_NOFILE, (min(8192, hard) if hard != resource.RLIM_INFINITY else 8192, hard))
     args.out.mkdir(parents=True, exist_ok=True)
     env = dict(os.environ, AUTH_MODE="offline", CONTROL_BIND_ADDRESS="127.0.0.1", CONTROL_PORT="18880",
                VOICE_BIND_ADDRESS="127.0.0.1", VOICE_UDP_PORT="24456", PUBLIC_VOICE_PORT="24456",
@@ -59,15 +63,29 @@ def main():
                         with urllib.request.urlopen("http://127.0.0.1:18880/metrics", timeout=3) as response:
                             stem.with_suffix(".metrics").write_bytes(response.read())
                     finally:
-                        srv.send_signal(signal.SIGTERM)
-                        _, status, usage = os.wait4(srv.pid, 0)
-                        srv.returncode = os.waitstatus_to_exitcode(status)
+                        if os.name == "nt":
+                            import ctypes
+                            from ctypes import wintypes
+                            times = [wintypes.FILETIME() for _ in range(4)]
+                            get_times = ctypes.windll.kernel32.GetProcessTimes
+                            get_times.argtypes = [wintypes.HANDLE] + [ctypes.POINTER(wintypes.FILETIME)] * 4
+                            if not get_times(wintypes.HANDLE(int(srv._handle)), *(ctypes.byref(t) for t in times)):
+                                raise ctypes.WinError()
+                            cpu = sum((t.dwHighDateTime << 32) + t.dwLowDateTime for t in times[2:]) / 10000000
+                            rss = None
+                            srv.terminate()
+                            srv.wait(timeout=10)
+                        else:
+                            srv.send_signal(signal.SIGTERM)
+                            _, status, usage = os.wait4(srv.pid, 0)
+                            srv.returncode = os.waitstatus_to_exitcode(status)
+                            cpu = usage.ru_utime + usage.ru_stime
+                            rss = usage.ru_maxrss
                         wall = time.monotonic() - started
-                        cpu = usage.ru_utime + usage.ru_stime
                         stem.with_suffix(".cpu.json").write_text(json.dumps({
                             "backend_cpu_seconds": cpu, "backend_wall_seconds": wall,
                             "backend_cpu_percent": 100 * cpu / wall,
-                            "max_rss_native_units": usage.ru_maxrss,
+                            "max_rss_native_units": rss,
                             "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
                             "command": command, "workers": args.workers,
                         }, indent=2) + "\n")
