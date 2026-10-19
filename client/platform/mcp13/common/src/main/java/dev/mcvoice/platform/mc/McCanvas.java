@@ -7,6 +7,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 
 /** UiCanvas over the game's GUI drawing (Gui statics, MCP names). */
 public final class McCanvas implements UiCanvas {
@@ -43,6 +47,18 @@ public final class McCanvas implements UiCanvas {
     @Override
     public int textWidth(String text) {
         return font.getStringWidth(text);
+    }
+
+    @Override
+    public void playerHead(UUID uuid, int x, int y, int size) {
+        Minecraft mc = Minecraft.getInstance();
+        NetworkPlayerInfo info = mc.getConnection() == null ? null : mc.getConnection().getPlayerInfo(uuid);
+        ResourceLocation skin = info == null ? DefaultPlayerSkin.getDefaultSkin(uuid) : info.getLocationSkin();
+        mc.getTextureManager().bindTexture(skin);
+        GlStateManager.color4f(1, 1, 1, 1);
+        GlStateManager.enableBlend();
+        Gui.drawScaledCustomSizeModalRect(x, y, 8f, 8f, 8, 8, size, size, 64f, 64f);
+        Gui.drawScaledCustomSizeModalRect(x, y, 40f, 8f, 8, 8, size, size, 64f, 64f);
     }
 
     private String playerName(UUID uuid, String fallback) {
