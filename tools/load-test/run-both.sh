@@ -10,6 +10,9 @@ mkdir -p "$OUT"
 (cd "$ROOT/backend/go" && go build -o "$OUT/backend-go" ./cmd/mcvoice-backend)
 (cd "$ROOT/backend/rust" && cargo build --release -q && cp target/release/mcvoice-backend "$OUT/backend-rust")
 go build -o "$OUT/loadtest" .
+PID=""
+cleanup() { if [ -n "$PID" ]; then kill "$PID" 2>/dev/null || true; wait "$PID" 2>/dev/null || true; fi; }
+trap cleanup EXIT
 for impl in go rust; do
   PORT=$((18080 + RANDOM % 1000)); UDP=$((24000 + RANDOM % 1000))
   AUTH_MODE=offline CONTROL_PORT=$PORT VOICE_UDP_PORT=$UDP PUBLIC_HOSTNAME=127.0.0.1 LOG_LEVEL=warn \
@@ -18,7 +21,8 @@ for impl in go rust; do
   echo "== $impl"
   "$OUT/loadtest" -url "ws://127.0.0.1:$PORT/v1/control" -clients "$CLIENTS" -duration "$DURATION" -json "$OUT/$impl.json" | tail -25
   curl -s "http://127.0.0.1:$PORT/metrics" | grep -E '^mcvoice_(packets|bytes|invalid|connected|active)' > "$OUT/$impl.metrics" || true
-  kill $PID; wait $PID 2>/dev/null || true
+  kill "$PID"; wait "$PID" 2>/dev/null || true
+  PID=""
 done
 python3 - "$OUT" <<'PY'
 import json,sys,os

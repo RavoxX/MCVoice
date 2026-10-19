@@ -20,15 +20,18 @@ import (
 	"github.com/RavoxX/MCVoice/backend/go/internal/routing"
 )
 
-const Version = "0.1.9"
+const Version = "0.1.10"
 
 // Server is the combined control service and voice relay.
 type Server struct {
-	cfg     *config.Config
-	rcfg    routing.Config
-	log     *slog.Logger
-	metrics *metrics.Registry
-	mojang  *auth.MojangVerifier
+	epoch         time.Time
+	pendingAuth   chan struct{}
+	groupFailures *ipLimiter
+	cfg           *config.Config
+	rcfg          routing.Config
+	log           *slog.Logger
+	metrics       *metrics.Registry
+	mojang        *auth.MojangVerifier
 
 	mu     sync.RWMutex
 	byConn map[uint64]*Session
@@ -52,6 +55,7 @@ type Server struct {
 
 func New(cfg *config.Config, log *slog.Logger) *Server {
 	return &Server{
+		epoch: time.Now(), pendingAuth: make(chan struct{}, 256), groupFailures: newIPLimiter(passwordFailsPerMin),
 		cfg: cfg,
 		rcfg: routing.Config{NormalRange: cfg.NormalRange, WhisperRange: cfg.WhisperRange, MaxRange: cfg.MaxRange,
 			DistanceSlack: cfg.DistanceSlack, PositionStaleMs: 3000},
@@ -91,11 +95,20 @@ func errorFrame(code, msg string, fatal bool) []byte {
 }
 
 // register adds a session, replacing any older session for the same player.
-func (s *Server) register(sess *Session) (ok bool) {
+func (s *Server) register(sess *Session) string {
 	s.mu.Lock()
-	if len(s.byConn) >= s.cfg.MaxSessions {
+	s.bansMu.RLock()
+	if _, banned := s.banned[sess.ident.UUID]; banned {
+		s.bansMu.RUnlock()
 		s.mu.Unlock()
-		return false
+		return protocol.CodeBanned
+	}
+	_, sess.adminMute = s.muted[sess.ident.UUID]
+	sess.peer.Muted = sess.selfMuted || sess.adminMute
+	s.bansMu.RUnlock()
+	if len(s.byConn) >= s.cfg.MaxSessions && s.byUUID[sess.ident.UUID] == nil {
+		s.mu.Unlock()
+		return protocol.CodeServerFull
 	}
 	old := s.byUUID[sess.ident.UUID]
 	if old != nil {
@@ -105,11 +118,18 @@ func (s *Server) register(sess *Session) (ok bool) {
 	s.byUUID[sess.ident.UUID] = sess
 	s.unlockAndFlush()
 	if old != nil {
+		s.metrics.ConnectedClients.Add(-1)
+		old.umu.Lock()
+		if old.hasAddr {
+			s.metrics.ActiveVoiceSessions.Add(-1)
+			old.hasAddr = false
+		}
+		old.umu.Unlock()
 		old.send(errorFrame(protocol.CodeSessionReplaced, "replaced by a newer session", true))
 		old.close(protocol.CodeSessionReplaced)
 	}
 	s.metrics.ConnectedClients.Add(1)
-	return true
+	return ""
 }
 
 func (s *Server) unregister(sess *Session) {
@@ -189,17 +209,18 @@ func (s *Server) reloadBans() {
 			muted[u] = struct{}{}
 		}
 	}
+	s.mu.Lock()
 	s.bansMu.Lock()
 	s.banned, s.muted, s.bansMtime = banned, muted, st.ModTime()
 	s.bansMu.Unlock()
 	s.log.Info("bans loaded", "category", "moderation", "banned", len(banned), "muted", len(muted))
 
-	s.mu.Lock()
 	var kick []*Session
 	for _, sess := range s.byConn {
 		_, m := muted[sess.ident.UUID]
-		sess.adminMute = m
-		sess.peer.Muted = sess.selfMuted || m
+		_, b := banned[sess.ident.UUID]
+		sess.adminMute = m || b
+		sess.peer.Muted = sess.selfMuted || sess.adminMute
 		if _, b := banned[sess.ident.UUID]; b {
 			kick = append(kick, sess)
 		}
@@ -221,11 +242,10 @@ func (s *Server) presenceTick() {
 	var updates []upd
 	s.mu.RLock()
 	for _, r := range s.byConn {
-		add, remove := s.presenceDelta(r)
-		if len(add) == 0 && len(remove) == 0 {
+		if !s.hasPresenceDelta(r) {
 			continue
 		}
-		updates = append(updates, upd{r, protocol.PresenceMsg{Type: "presence", Epoch: r.peer.Epoch, Add: add, Remove: remove}})
+		updates = append(updates, upd{r, protocol.PresenceMsg{Type: "presence", Epoch: r.peer.Epoch}})
 	}
 	s.mu.RUnlock()
 	if len(updates) > 0 {
@@ -264,6 +284,25 @@ func (s *Server) presenceTick() {
 		}
 		u.sess.send(marshal(u.msg))
 	}
+}
+
+// Caller holds mu. Detect changes without allocating lists discarded by revalidation.
+func (s *Server) hasPresenceDelta(r *Session) bool {
+	present := func(u string) bool {
+		o := s.byUUID[u]
+		return r.peer.InWorld && o != nil && o.peer.InWorld && o.peer.UDPVerified && routing.CompatibleScopes(&o.peer, &r.peer) && routing.MutuallyVisible(&o.peer, &r.peer)
+	}
+	for u := range r.peer.Visible {
+		if _, ok := r.presence[u]; !ok && present(u) {
+			return true
+		}
+	}
+	for u := range r.presence {
+		if !present(u) {
+			return true
+		}
+	}
+	return false
 }
 
 // Caller holds mu. Stable presence allocates nothing and leaves packet readers unblocked.
