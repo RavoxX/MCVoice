@@ -51,12 +51,14 @@ public final class McScreen extends Screen {
 
 
 
+        syncTextInput();
     }
 
 
     @Override
     public boolean mouseClicked(MouseButtonEvent e, boolean doubleClick) {
         ui.mouseClicked((int) e.x(), (int) e.y(), uiButton(e.button()));
+        syncTextInput();
         return true;
     }
 
@@ -74,7 +76,9 @@ public final class McScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent e) {
-        if (ui.keyPressed(uiKey(e.key()))) {
+        boolean handled = ui.keyPressed(uiKey(e.key()));
+        syncTextInput();
+        if (handled) {
             return true;
         }
         return super.keyPressed(e); // ESC closes
@@ -132,6 +136,12 @@ public final class McScreen extends Screen {
 
     }
 
+    private void syncTextInput() {
+
+
+
+    }
+
     private static int uiKey(int key) {
 
 
@@ -171,6 +181,9 @@ public final class McScreen extends Screen {
     @Override
     public void removed() {
         ui.onClose();
+
+
+
         super.removed();
     }
 
