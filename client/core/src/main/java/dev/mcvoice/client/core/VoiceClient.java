@@ -371,7 +371,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     public void shutdown() {
         stopControl("shutdown");
         svc.reset(false);
-        engine.stop();
+        engine.shutdown();
         net.shutdownNow();
         config.save();
     }
@@ -420,20 +420,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         private final byte[] empty = new byte[0];
 
         public int transmitMask(boolean voiceDetected) {
-            if (config.muted || config.deafened) {
-                return 0;
-            }
-            int mask = 0;
-            // nearby players: push-to-talk or voice activation, as configured
-            if (tracker.snapshot().inWorld
-                && (config.activationMode == ClientConfig.ActivationMode.PUSH_TO_TALK ? pttDown : voiceDetected)) {
-                mask |= TX_PROXIMITY;
-            }
-            // my group: open microphone while unmuted (push-to-talk does not apply), gated by voice activity
-            if (group != null && voiceDetected) {
-                mask |= TX_GROUP;
-            }
-            return mask;
+            return TransmissionPolicy.mask(config, tracker.snapshot().inWorld, group != null, pttDown, whisperDown, voiceDetected);
         }
 
         public boolean whisper() {
@@ -732,7 +719,14 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
     @Override
     public boolean microphoneIndicatorVisible() {
-        return pttDown || config.activationMode == ClientConfig.ActivationMode.VOICE_ACTIVATION || group != null;
+        return pttDown || whisperDown || config.activationMode == ClientConfig.ActivationMode.VOICE_ACTIVATION
+            || (group != null && config.groupActivationMode == ClientConfig.ActivationMode.VOICE_ACTIVATION);
+    }
+
+    @Override
+    public void setGroupActivationMode(ClientConfig.ActivationMode mode) {
+        config.groupActivationMode = mode;
+        config.save();
     }
 
     @Override
