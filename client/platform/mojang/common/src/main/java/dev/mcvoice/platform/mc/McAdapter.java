@@ -57,25 +57,50 @@ public final class McAdapter implements MinecraftAdapter {
         this.loader = loader;
         this.configDir = configDir;
         //#if MC >= 1.20
+        int unboundKey = InputConstants.UNKNOWN.getValue();
         keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", InputConstants.KEY_V));
         keys.put(InputAdapter.Action.WHISPER, key("whisper", InputConstants.KEY_B));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", InputConstants.KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", InputConstants.KEY_N));
         keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", InputConstants.KEY_G));
         //#else
+        int unboundKey = GLFW.GLFW_KEY_UNKNOWN;
         keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", GLFW.GLFW_KEY_V));
         keys.put(InputAdapter.Action.WHISPER, key("whisper", GLFW.GLFW_KEY_B));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", GLFW.GLFW_KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", GLFW.GLFW_KEY_N));
         keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", GLFW.GLFW_KEY_G));
         //#endif
-        keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", -1));
-        keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", -1));
+        keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", unboundKey));
+        keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", unboundKey));
     }
 
     private static KeyMapping key(String name, int code) {
+        //#if MC >= 26.3
+        return new KeyMapping("key.mcvoice." + name, code, CATEGORY) {
+            @Override
+            public void setKey(InputConstants.Key key) {
+                super.setKey(safeKey(key));
+            }
+            //#if FORGE
+            @Override
+            public void setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier modifier, InputConstants.Key key) {
+                // Forge's options loader assigns the field directly through this separate setter.
+                super.setKeyModifierAndCode(modifier, safeKey(key));
+            }
+            //#endif
+        };
+        //#else
         return new KeyMapping("key.mcvoice." + name, code, CATEGORY);
+        //#endif
     }
+
+    //#if MC >= 26.3
+    private static InputConstants.Key safeKey(InputConstants.Key key) {
+        // 0.1.5 can leave key.keyboard.-1 in options.txt. SDL indexes must be non-negative.
+        return key.getType() == InputConstants.Type.KEYBOARD && key.getValue() < 0 ? InputConstants.UNKNOWN : key;
+    }
+    //#endif
 
     /** Key mappings the loader must register. */
     public Iterable<KeyMapping> keyMappings() {
