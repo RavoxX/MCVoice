@@ -177,7 +177,7 @@ public final class JavaSoundBackend implements AudioAdapter {
         private boolean awaitBytes(int bytes) {
             long start = System.nanoTime();
             while (line.available() < bytes) {
-                if (!line.isOpen() || System.nanoTime() - start > CAPTURE_STALL_NS) {
+                if (Thread.currentThread().isInterrupted() || !line.isOpen() || System.nanoTime() - start > CAPTURE_STALL_NS) {
                     return false;
                 }
                 java.util.concurrent.locks.LockSupport.parkNanos(2_000_000L);
