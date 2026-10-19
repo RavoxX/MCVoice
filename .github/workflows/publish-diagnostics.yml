@@ -1,0 +1,56 @@
+name: publish diagnostics data
+on:
+  workflow_call:
+    inputs:
+      artifact:
+        type: string
+        required: true
+      supplement:
+        type: string
+        default: ''
+      publication_result:
+        type: string
+        default: ''
+      category:
+        type: string
+        required: true
+      minecraft:
+        type: string
+        required: true
+      final_artifact:
+        type: string
+        default: ''
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          name: ${{ inputs.artifact }}
+          path: diagnostic-data
+      - uses: actions/download-artifact@v5
+        if: inputs.supplement != ''
+        continue-on-error: true
+        with:
+          name: ${{ inputs.supplement }}
+          path: publication-data
+      - name: Merge publication results without losing build status
+        if: inputs.publication_result != ''
+        env:
+          PUBLICATION_RESULT: ${{ inputs.publication_result }}
+        run: python3 tools/ci/merge_publication.py diagnostic-data publication-data "$PUBLICATION_RESULT"
+      - uses: actions/upload-artifact@v5
+        if: inputs.final_artifact != ''
+        with:
+          name: ${{ inputs.final_artifact }}
+          path: diagnostic-data/
+      - name: Publish data only
+        env:
+          CATEGORY: ${{ inputs.category }}
+          MC: ${{ inputs.minecraft }}
+        run: python3 tools/ci/publish_diagnostics.py diagnostic-data "$CATEGORY" "$MC"
