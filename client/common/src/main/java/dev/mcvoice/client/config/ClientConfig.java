@@ -67,6 +67,7 @@ public final class ClientConfig {
 
     // --- ui / diagnostics
     public boolean showHud = true;
+    public boolean showGroupHud = true;
     public HudLayout hudLayout = new HudLayout();
     public boolean showDebugOverlay = false;
     public boolean debugLogging = false;
@@ -191,6 +192,7 @@ public final class ClientConfig {
             }
         }
         showHud = Json.bool(m, "showHud", showHud);
+        showGroupHud = Json.bool(m, "showGroupHud", showGroupHud);
         hudLayout = HudLayout.fromJson(Json.objAt(m, "hudLayout"));
         showDebugOverlay = Json.bool(m, "showDebugOverlay", showDebugOverlay);
         debugLogging = Json.bool(m, "debugLogging", debugLogging);
@@ -229,6 +231,7 @@ public final class ClientConfig {
         }
         m.put("mutedPlayers", mp);
         m.put("showHud", showHud);
+        m.put("showGroupHud", showGroupHud);
         m.put("hudLayout", hudLayout.toJson());
         m.put("showDebugOverlay", showDebugOverlay);
         m.put("debugLogging", debugLogging);
