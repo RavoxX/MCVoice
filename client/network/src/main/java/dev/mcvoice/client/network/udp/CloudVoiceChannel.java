@@ -100,6 +100,15 @@ public final class CloudVoiceChannel {
     public void rotateKey(int keyId, byte[] raw) {
         synchronized (sendLock) {
             Key old = current;
+            if (keyId < 0 || keyId > 255) throw new IllegalArgumentException("invalid voice key id");
+            int id = keyId;
+            if (old.id == id && java.security.MessageDigest.isEqual(old.spec.getEncoded(), raw)) return;
+            Key prior = previous;
+            if (prior != null && prior.id == id && java.security.MessageDigest.isEqual(prior.spec.getEncoded(), raw)) return;
+            if (id != ((old.id + 1) & 0xFF) || java.security.MessageDigest.isEqual(old.spec.getEncoded(), raw)
+                || (prior != null && java.security.MessageDigest.isEqual(prior.spec.getEncoded(), raw))) {
+                throw new IllegalArgumentException("invalid voice key rotation");
+            }
             old.retireAtMs = System.currentTimeMillis() + KEY_GRACE_MS;
             previous = old;
             current = new Key(keyId, raw);
@@ -109,6 +118,7 @@ public final class CloudVoiceChannel {
     private void send(int type, byte[] plain, int len) {
         synchronized (sendLock) {
             Key k = current;
+            if (k.sendCounter == -1L) { close(); return; }
             k.sendCounter++;
             int n = sendCipher.seal(k.spec, VoiceProtocol.DIR_C2S, type, k.id, connectionId, k.sendCounter, plain, 0, len, sendBuf);
             sendPacket.setData(sendBuf, 0, n);

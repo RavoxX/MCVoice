@@ -8,6 +8,7 @@ entry point + core classes present, vendored Opus relocated, no class file
 newer than the target Java, no sources/secrets bundled. Exit 1 on failure.
 """
 import argparse
+import ntpath
 import json
 import re
 import sys
@@ -43,10 +44,12 @@ def main():
     ap.add_argument("--version", default=None)
     a = ap.parse_args()
     errors = []
-    name = a.jar.rsplit("/", 1)[-1]
+    name = ntpath.basename(a.jar)
     pat = rf"^mcvoice-\d+\.\d+\.\d+(-[0-9A-Za-z.]+)?-mc{re.escape(a.minecraft)}-{a.loader}\.jar$"
     if not re.match(pat, name):
         errors.append(f"jar name {name!r} does not match {pat}")
+    if a.version and name != f"mcvoice-{a.version}-mc{a.minecraft}-{a.loader}.jar":
+        errors.append("jar version does not match --version")
     z = zipfile.ZipFile(a.jar)
     names = set(z.namelist())
     if ENTRY[a.loader] not in names:
@@ -72,6 +75,15 @@ def main():
         text = z.read(m).decode("utf-8", "replace")
         if "${" in text:
             errors.append(f"{m} contains unexpanded placeholders")
+        if a.version:
+            if m.endswith('.toml'):
+                declared = re.search(r'^\s*version\s*=\s*"([^"]+)"', text, re.M)
+                versions = [declared.group(1)] if declared else []
+            else:
+                data = json.loads(text)
+                versions = [row.get('version') for row in data if row.get('modid') == 'mcvoice'] if isinstance(data, list) else [data.get('version')]
+            if versions != [a.version]:
+                errors.append(f"{m} version does not match --version")
         if m == "fabric.mod.json":
             try:
                 j = json.loads(text)
