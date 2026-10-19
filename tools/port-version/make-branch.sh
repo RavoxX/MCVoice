@@ -42,7 +42,7 @@ for mc in "${versions[@]}"; do
   wt=$(mktemp -d)
   if git rev-parse -q --verify "refs/remotes/origin/$branch" >/dev/null; then
     git worktree add -q -B "$branch" "$wt" "origin/$branch"
-    (cd "$wt" && git merge -q --no-edit -X theirs "$base" -m "Merge main into $branch")
+    (cd "$wt" && git merge -q --no-edit -X theirs "$base" -m "Merge main into $branch${MCVOICE_SKIP_CI:+ [skip ci]}")
   else
     git worktree add -q -B "$branch" "$wt" "$base"
   fi
