@@ -20,6 +20,19 @@ Minecraft Mavenizer 0.5.21 by Forge Development LLC
 Processing Minecraft dependency: net.minecraftforge:forge:26.1.2-64.1.0
 Using Mappings: official-26.1.2
 Processing Minecraft Forge (userdev): 26.1.2-64.1.0
+  Cache miss!
+  java.lang.Exception: Cache miss! Stacktrace for Information Only
+  	at net.minecraftforge.mcmaven.impl.Mavenizer.assertNotCacheOnly(Mavenizer.java:60)
+  	at net.minecraftforge.mcmaven.impl.cache.MavenCache.download(MavenCache.java:271)
+  	at net.minecraftforge.mcmaven.impl.cache.MavenCache.download(MavenCache.java:101)
+  	at net.minecraftforge.mcmaven.impl.repo.forge.Patcher.<init>(Patcher.java:94)
+  	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.processV3(ForgeRepo.java:257)
+  	at net.minecraftforge.mcmaven.impl.repo.forge.ForgeRepo.process(ForgeRepo.java:144)
+  	at net.minecraftforge.mcmaven.impl.MinecraftMaven.createForge(MinecraftMaven.java:240)
+  	at net.minecraftforge.mcmaven.impl.MinecraftMaven.run(MinecraftMaven.java:119)
+  	at net.minecraftforge.mcmaven.cli.MavenTask.run(MavenTask.java:218)
+  	at net.minecraftforge.mcmaven.cli.Main.run(Main.java:70)
+  	at net.minecraftforge.mcmaven.cli.Main.main(Main.java:23)
 Mappings Zip
   srg2names[official-26.1.2][Empty]
 Mappings POM
@@ -28,33 +41,18 @@ Client Extra
   downloadLauncherManifest
   downloadVersionJson[26.1.2]
   download[26.1.2][client]
-    Cache miss!
-    java.lang.Exception: Cache miss! Stacktrace for Information Only
-    	at net.minecraftforge.mcmaven.impl.Mavenizer.assertNotCacheOnly(Mavenizer.java:60)
-    	at net.minecraftforge.mcmaven.impl.Mavenizer.checkCache(Mavenizer.java:94)
-    	at net.minecraftforge.mcmaven.impl.repo.mcpconfig.MinecraftTasks.downloadVersionFile(MinecraftTasks.java:153)
-    	at net.minecraftforge.mcmaven.impl.repo.mcpconfig.MinecraftTasks.lambda$versionFile$1(MinecraftTasks.java:141)
-    	at net.minecraftforge.mcmaven.impl.util.Task$Simple.execute(Task.java:145)
-    	at net.minecraftforge.mcmaven.impl.util.Task$Simple.execute(Task.java:131)
-    	at net.minecraftforge.mcmaven.impl.repo.Repo$PendingArtifact.get(Repo.java:243)
-    	at net.minecraftforge.mcmaven.impl.MinecraftMaven.finalize(MinecraftMaven.java:408)
-    	at net.minecraftforge.mcmaven.impl.MinecraftMaven.createForge(MinecraftMaven.java:241)
-    	at net.minecraftforge.mcmaven.impl.MinecraftMaven.run(MinecraftMaven.java:119)
-    	at net.minecraftforge.mcmaven.cli.MavenTask.run(MavenTask.java:218)
-    	at net.minecraftforge.mcmaven.cli.Main.run(Main.java:70)
-    	at net.minecraftforge.mcmaven.cli.Main.main(Main.java:23)
   extra[client]
 Client Maven POM
   pom[client-extra]
 Sources
-  listLibraries
+  stripClient
   download[26.1.2][server]
   extractServer
   stripServer
-  stripClient
   merge
   modifyAccess
   stripSides
+  listLibraries
   decompile
   patch
   patch[forge]
@@ -71,7 +69,7 @@ Maven POM
 Metadata
   metadata[forge]
   metadata[forge][variants]
-Minecraft Maven has finished, took 0:02.728
+Minecraft Maven has finished, took 3:02.611
 
 > Task :compileJava
 > Task :processResources
@@ -85,12 +83,12 @@ Minecraft Maven has finished, took 0:02.728
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791047400293.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792413008466.json
 
-BUILD SUCCESSFUL in 15s
+BUILD SUCCESSFUL in 3m 24s
 4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.5-mc26.1.2-forge.jar (369 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.8-mc26.1.2-forge.jar (376 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
