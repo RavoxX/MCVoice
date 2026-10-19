@@ -27,5 +27,8 @@ public interface UiScreen {
 
     void charTyped(char c);
 
+    /** Whether the platform should accept native text/IME input for this screen. */
+    default boolean textInputFocused() { return false; }
+
     void onClose();
 }

@@ -253,6 +253,31 @@ class EndToEndTest {
     }
 
     @Test
+    void whisperKeyAloneTransmitsOnlyWithinWhisperRange() throws Exception {
+        FakeMinecraft a = player("Whisperer"), b = player("Listener");
+        b.x = 3;
+        a.track(b); b.track(a);
+        VoiceClient va = start(a), vb = start(b);
+        try {
+            waitFor("whisper clients connected", () -> va.transportStatus() == TransportStatus.CLOUD
+                && vb.transportStatus() == TransportStatus.CLOUD, 20000);
+            Thread.sleep(1500);
+            a.whisper = true;
+            long near = System.currentTimeMillis();
+            waitFor("whisper key alone is audible nearby", () -> loudness(b, near) > 300, 8000);
+            assertFalse(a.ptt);
+            b.x = 20; a.track(b); b.track(a);
+            Thread.sleep(700);
+            long far = System.currentTimeMillis();
+            Thread.sleep(600);
+            assertEquals(0.0, loudness(b, far), 1.0, "whisper must not reach a player within normal range only");
+            a.whisper = false; a.ptt = true;
+            long normal = System.currentTimeMillis();
+            waitFor("normal PTT still reaches the listener", () -> loudness(b, normal) > 300, 8000);
+        } finally { a.whisper = false; a.ptt = false; }
+    }
+
+    @Test
     void localVoiceActivationHudRespectsSilenceMuteDeafenAndWorldExit() throws Exception {
         FakeMinecraft mc = player("LocalHud");
         mc.audio.silent = true;
@@ -329,6 +354,20 @@ class EndToEndTest {
         Thread.sleep(800);
         double[] e = b.audio.energySince(t0 + 300);
         assertTrue(e[0] > e[1] * 0.8 && e[1] > e[0] * 0.8, "group audio is centred, L=" + e[0] + " R=" + e[1]);
+
+        va.setGroupActivationMode(ClientConfig.ActivationMode.PUSH_TO_TALK);
+        waitFor("group PTT stops without a held key", () -> !va.transmitting(), 3000);
+        Thread.sleep(400);
+        long pttQuiet = System.currentTimeMillis();
+        Thread.sleep(500);
+        assertEquals(0.0, loudness(b, pttQuiet), 1.0);
+        a.ptt = true;
+        long pttHeld = System.currentTimeMillis();
+        waitFor("group PTT reaches a remote member", () -> loudness(b, pttHeld) > 300, 5000);
+        a.ptt = false;
+        waitFor("group PTT release stops capture", () -> !va.transmitting(), 3000);
+        va.setGroupActivationMode(ClientConfig.ActivationMode.VOICE_ACTIVATION);
+        waitFor("group open mic resumes", () -> va.transmitting(), 3000);
 
         vb.setPlayerMuted(a.uuid, true);
         Thread.sleep(400);
