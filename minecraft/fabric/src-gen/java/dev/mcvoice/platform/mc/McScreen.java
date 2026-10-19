@@ -4,6 +4,9 @@ import dev.mcvoice.client.platform.ui.UiScreen;
 
 
 
+
+
+
 import net.minecraft.client.gui.GuiGraphics;
 
 
@@ -117,6 +120,39 @@ public final class McScreen extends Screen {
         return true;
     }
 
+
+    private static int uiButton(int button) {
+
+
+
+
+
+
+        return button;
+
+    }
+
+    private static int uiKey(int key) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return key;
+
+    }
 
 
     @Override
