@@ -365,3 +365,17 @@ fn saturated_limiter_records_known_budgets_and_denies_unknowns() {
     assert!(limiter.blocked("third", now));
     assert!(limiter.allow("unknown", now + Duration::from_secs(60)));
 }
+
+#[test]
+fn reply_counter_exhaustion_closes_without_nonce_wrap() {
+    let srv = Server::new(Config::from_env().unwrap());
+    let (sess, _) = player(&srv, 1);
+    {
+        let mut udp = sess.udp.lock().unwrap();
+        udp.addr = Some(SocketAddr::from(([127, 0, 0, 1], 31001)));
+        udp.cur.send_counter = u64::MAX;
+    }
+    srv.reply(&sess, TYPE_PONG, 0, &mut Scratch::new());
+    assert_eq!(sess.close_code(), "key_exhausted");
+    assert_eq!(sess.udp.lock().unwrap().cur.send_counter, u64::MAX);
+}

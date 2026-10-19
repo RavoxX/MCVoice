@@ -133,3 +133,13 @@ func TestPendingAdmissionIsReleasedOnUpgradeFailure(t *testing.T) {
 		t.Fatal("failed upgrades leaked admission slots")
 	}
 }
+
+func TestReplyCounterExhaustionClosesWithoutNonceWrap(t *testing.T) {
+	s := hardeningServer()
+	p := admissionPlayer(1, "00000000-0000-4000-8000-000000000001")
+	p.cur.sendCounter = ^uint64(0)
+	s.reply(p, protocol.TypePong, 0)
+	if p.closeCode != "key_exhausted" || p.cur.sendCounter != ^uint64(0) {
+		t.Fatal("reply counter wrapped or session remained open")
+	}
+}
