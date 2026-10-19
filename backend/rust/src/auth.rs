@@ -44,7 +44,7 @@ impl MojangVerifier {
     }
 
     pub async fn verify(&self, username: &str, server_id: &str) -> Result<Identity, AuthError> {
-        let resp = self
+        let mut resp = self
             .client
             .get(&self.url)
             .query(&[("username", username), ("serverId", server_id)])
@@ -61,9 +61,15 @@ impl MojangVerifier {
             id: String,
             name: String,
         }
-        let body = resp.bytes().await.map_err(|e| AuthError::Unavailable(e.to_string()))?;
-        if body.len() > 64 * 1024 {
+        if resp.content_length().is_some_and(|n| n > 64 * 1024) {
             return Err(AuthError::Rejected);
+        }
+        let mut body = Vec::new();
+        while let Some(chunk) = resp.chunk().await.map_err(|e| AuthError::Unavailable(e.to_string()))? {
+            if chunk.len() > 64 * 1024 - body.len() {
+                return Err(AuthError::Rejected);
+            }
+            body.extend_from_slice(&chunk);
         }
         let p: Profile = serde_json::from_slice(&body).map_err(|_| AuthError::Rejected)?;
         let uuid = dash_uuid(&p.id);
@@ -196,5 +202,37 @@ mod tests {
         let mut bad = t.clone();
         bad.push('x');
         assert!(verify_resume(b"0123456789abcdef0123456789abcdef", &bad, 1001).is_none());
+    }
+}
+
+#[cfg(test)]
+mod body_limit_tests {
+    use super::*;
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
+    #[tokio::test]
+    async fn profile_body_is_bounded_even_without_content_length() {
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
+        let server = tokio::spawn(async move {
+            let (mut stream, _) = listener.accept().await.unwrap();
+            let mut request = [0; 4096];
+            let _ = stream.read(&mut request).await;
+            stream
+                .write_all(b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n")
+                .await
+                .unwrap();
+            for n in [32768, 32768, 1] {
+                let mut chunk = format!("{n:x}\r\n").into_bytes();
+                chunk.extend(std::iter::repeat(b'x').take(n));
+                chunk.extend_from_slice(b"\r\n");
+                if stream.write_all(&chunk).await.is_err() {
+                    return;
+                }
+            }
+            let _ = stream.write_all(b"0\r\n\r\n").await;
+        });
+        let verifier = MojangVerifier::new(&format!("http://{addr}"));
+        assert!(matches!(verifier.verify("test", "test").await, Err(AuthError::Rejected)));
+        server.await.unwrap();
     }
 }
