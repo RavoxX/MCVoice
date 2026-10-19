@@ -1,0 +1,1194 @@
+{
+  "baseline_revision": "0fef0da9c9e4b05189c15c62d2843217a4175c04",
+  "candidate_production_revision": "b45168110f67c9e24102f52f305f73aa4c4c8c8d",
+  "environment": "Windows x64, AMD Ryzen 7 5800X3D; client and backend on loopback",
+  "method": "Three repetitions; alternating before/after order for UDP and client cases. UDP: 5s ramp, 10s measurement, 200 clients, 30% talkers, 50Hz, 4 workers, visibility populations 10/50, refresh 1s, no churn. CPU includes ramp/drain/shutdown. No production traffic or voice recording.",
+  "caveats": [
+    "Single host/load generator; no network clock synchronization needed but not representative of WAN delivery.",
+    "No 100k capacity claim; dense Go forwarding remains saturated.",
+    "No general audible mixing or latency speedup established.",
+    "Presence first measurement was discarded because a compiler overlapped; retained runs had no concurrent builds/tests."
+  ],
+  "binaries": [
+    {
+      "implementation": "go",
+      "phase": "before",
+      "sha256": "87629cacde83bfa9106005ffd51f276d53ba1d5da07fe0fee2258b7ba0f0493e"
+    },
+    {
+      "implementation": "go",
+      "phase": "after",
+      "sha256": "d40c3fbb092622a4092a4c8dabd339e35a17aa7edf72be36b1b95a769db0036e"
+    },
+    {
+      "implementation": "rust",
+      "phase": "before",
+      "sha256": "bff809579a7d8c3fc3fe223b1cb88698491f5a871b1c329a65dfb8f4e5575ac2"
+    },
+    {
+      "implementation": "rust",
+      "phase": "after",
+      "sha256": "7bdee017f611a133b516306922bb7e3a8174f47e5942e96e0b10a50651650f6d"
+    }
+  ],
+  "backend_runs": [
+    {
+      "implementation": "go",
+      "phase": "before",
+      "repeat": 1,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0045126,
+        "frames_sent": 29940,
+        "group_size": 10,
+        "latency_ms_p50": 7.0309,
+        "latency_ms_p95": 14.007,
+        "latency_ms_p99": 19.9997,
+        "latency_sample_every": 16,
+        "latency_samples": 16841,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26933.845832729523,
+        "relays_expected": 269460,
+        "relays_received": 269460,
+        "seed": 100,
+        "sent_pps": 2992.649536969947,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 10.78125,
+        "backend_wall_seconds": 17.04699999999866,
+        "backend_cpu_percent": 63.244265853234275,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "before",
+      "repeat": 2,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0009789,
+        "frames_sent": 29940,
+        "group_size": 10,
+        "latency_ms_p50": 7.4979,
+        "latency_ms_p95": 14.9989,
+        "latency_ms_p99": 24.0568,
+        "latency_sample_every": 16,
+        "latency_samples": 16841,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26943.362514243483,
+        "relays_expected": 269460,
+        "relays_received": 269460,
+        "seed": 101,
+        "sent_pps": 2993.7069460270536,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 10.109375,
+        "backend_wall_seconds": 16.98400000000038,
+        "backend_cpu_percent": 59.52293334903306,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "before",
+      "repeat": 3,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0150286,
+        "frames_sent": 30000,
+        "group_size": 10,
+        "latency_ms_p50": 6.9993,
+        "latency_ms_p95": 13.0011,
+        "latency_ms_p99": 17.0034,
+        "latency_sample_every": 16,
+        "latency_samples": 16875,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26959.483670371144,
+        "relays_expected": 270000,
+        "relays_received": 270000,
+        "seed": 102,
+        "sent_pps": 2995.498185596794,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 10.8125,
+        "backend_wall_seconds": 16.968999999997322,
+        "backend_cpu_percent": 63.7191348930503,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "after",
+      "repeat": 1,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0015048,
+        "frames_sent": 29940,
+        "group_size": 10,
+        "latency_ms_p50": 7.4969,
+        "latency_ms_p95": 14.0122,
+        "latency_ms_p99": 22.5972,
+        "latency_sample_every": 16,
+        "latency_samples": 16841,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26941.94577599963,
+        "relays_expected": 269460,
+        "relays_received": 269460,
+        "seed": 100,
+        "sent_pps": 2993.5495306666253,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 9.625,
+        "backend_wall_seconds": 16.968000000000757,
+        "backend_cpu_percent": 56.724422442241696,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "after",
+      "repeat": 2,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0015153,
+        "frames_sent": 30000,
+        "group_size": 10,
+        "latency_ms_p50": 7.0001,
+        "latency_ms_p95": 13.4976,
+        "latency_ms_p99": 15.5054,
+        "latency_sample_every": 16,
+        "latency_samples": 16875,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26995.90930986228,
+        "relays_expected": 270000,
+        "relays_received": 270000,
+        "seed": 101,
+        "sent_pps": 2999.5454788735865,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 10.109375,
+        "backend_wall_seconds": 16.985000000000582,
+        "backend_cpu_percent": 59.51942890785784,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "after",
+      "repeat": 3,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0190341,
+        "frames_sent": 30000,
+        "group_size": 10,
+        "latency_ms_p50": 7.001,
+        "latency_ms_p95": 13.5067,
+        "latency_ms_p99": 20.5849,
+        "latency_sample_every": 16,
+        "latency_samples": 16875,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26948.705564341773,
+        "relays_expected": 270000,
+        "relays_received": 270000,
+        "seed": 102,
+        "sent_pps": 2994.300618260197,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 10.3125,
+        "backend_wall_seconds": 16.98400000000038,
+        "backend_cpu_percent": 60.718911917097095,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "before",
+      "repeat": 1,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 0.27126770547898515,
+        "dimension_changes": 0,
+        "duration_s": 10.0339539,
+        "frames_sent": 29940,
+        "group_size": 50,
+        "latency_ms_p50": 3731.1282,
+        "latency_ms_p95": 7263.1592,
+        "latency_ms_p99": 7548.7058,
+        "latency_sample_every": 16,
+        "latency_samples": 24872,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 39661.932271783706,
+        "relays_expected": 1467060,
+        "relays_received": 397966,
+        "seed": 100,
+        "sent_pps": 2983.868602386144,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 14.171875,
+        "backend_wall_seconds": 17.0470000000023,
+        "backend_cpu_percent": 83.13412917227717,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "before",
+      "repeat": 2,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 0.2828897959183673,
+        "dimension_changes": 0,
+        "duration_s": 10.0014607,
+        "frames_sent": 30000,
+        "group_size": 50,
+        "latency_ms_p50": 3776.1852,
+        "latency_ms_p95": 7058.9978,
+        "latency_ms_p99": 7365.5205,
+        "latency_sample_every": 16,
+        "latency_samples": 25990,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 41578.7265954062,
+        "relays_expected": 1470000,
+        "relays_received": 415848,
+        "seed": 101,
+        "sent_pps": 2999.561853999986,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 14.484375,
+        "backend_wall_seconds": 17.01600000000326,
+        "backend_cpu_percent": 85.12209097318538,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "before",
+      "repeat": 3,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 0.290325850340136,
+        "dimension_changes": 0,
+        "duration_s": 10.0156181,
+        "frames_sent": 30000,
+        "group_size": 50,
+        "latency_ms_p50": 3702.5508,
+        "latency_ms_p95": 7047.7928,
+        "latency_ms_p99": 7333.992,
+        "latency_sample_every": 16,
+        "latency_samples": 26673,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 42611.34916875475,
+        "relays_expected": 1470000,
+        "relays_received": 426779,
+        "seed": 102,
+        "sent_pps": 2995.3218763403133,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 15.21875,
+        "backend_wall_seconds": 17.0,
+        "backend_cpu_percent": 89.5220588235294,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "after",
+      "repeat": 1,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 0.2708961250496174,
+        "dimension_changes": 0,
+        "duration_s": 10.0149128,
+        "frames_sent": 29820,
+        "group_size": 50,
+        "latency_ms_p50": 3846.0296,
+        "latency_ms_p95": 7238.8745,
+        "latency_ms_p99": 7509.0806,
+        "latency_sample_every": 16,
+        "latency_samples": 24739,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 39523.85885975962,
+        "relays_expected": 1461180,
+        "relays_received": 395828,
+        "seed": 100,
+        "sent_pps": 2977.5596248826055,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 14.15625,
+        "backend_wall_seconds": 17.01599999999962,
+        "backend_cpu_percent": 83.19375881523457,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "after",
+      "repeat": 2,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 0.2876612244897959,
+        "dimension_changes": 0,
+        "duration_s": 10.001116,
+        "frames_sent": 30000,
+        "group_size": 50,
+        "latency_ms_p50": 3751.7157,
+        "latency_ms_p95": 7040.6465,
+        "latency_ms_p99": 7336.9446,
+        "latency_sample_every": 16,
+        "latency_samples": 26428,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 42281.481386677246,
+        "relays_expected": 1470000,
+        "relays_received": 422862,
+        "seed": 101,
+        "sent_pps": 2999.6652373595107,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 14.0625,
+        "backend_wall_seconds": 16.96799999999712,
+        "backend_cpu_percent": 82.8765912305657,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "go",
+      "phase": "after",
+      "repeat": 3,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 0.2819795918367347,
+        "dimension_changes": 0,
+        "duration_s": 10.0019099,
+        "frames_sent": 30000,
+        "group_size": 50,
+        "latency_ms_p50": 3744.8889,
+        "latency_ms_p95": 7099.7514,
+        "latency_ms_p99": 7404.7056,
+        "latency_sample_every": 16,
+        "latency_samples": 25906,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 41443.08478523687,
+        "relays_expected": 1470000,
+        "relays_received": 414510,
+        "seed": 102,
+        "sent_pps": 2999.427139410644,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 14.453125,
+        "backend_wall_seconds": 16.968999999997322,
+        "backend_cpu_percent": 85.17369909836927,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "before",
+      "repeat": 1,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0015591,
+        "frames_sent": 29940,
+        "group_size": 10,
+        "latency_ms_p50": 0.9995,
+        "latency_ms_p95": 2,
+        "latency_ms_p99": 2.5015,
+        "latency_sample_every": 16,
+        "latency_samples": 16841,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26941.799504039325,
+        "relays_expected": 269460,
+        "relays_received": 269460,
+        "seed": 100,
+        "sent_pps": 2993.533278226592,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 5.890625,
+        "backend_wall_seconds": 17.04699999999866,
+        "backend_cpu_percent": 34.55520032850626,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "before",
+      "repeat": 2,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.001105,
+        "frames_sent": 30000,
+        "group_size": 10,
+        "latency_ms_p50": 0.9995,
+        "latency_ms_p95": 1.9985,
+        "latency_ms_p99": 2.3888,
+        "latency_sample_every": 16,
+        "latency_samples": 16875,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26997.01682964032,
+        "relays_expected": 270000,
+        "relays_received": 270000,
+        "seed": 101,
+        "sent_pps": 2999.6685366267025,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 7.265625,
+        "backend_wall_seconds": 17.0,
+        "backend_cpu_percent": 42.7389705882353,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "before",
+      "repeat": 3,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0143213,
+        "frames_sent": 30000,
+        "group_size": 10,
+        "latency_ms_p50": 0.9996,
+        "latency_ms_p95": 2.0116,
+        "latency_ms_p99": 3.0194,
+        "latency_sample_every": 16,
+        "latency_samples": 16875,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26961.38778770759,
+        "relays_expected": 270000,
+        "relays_received": 270000,
+        "seed": 102,
+        "sent_pps": 2995.709754189732,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 6.03125,
+        "backend_wall_seconds": 16.985000000000582,
+        "backend_cpu_percent": 35.509272887841,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "after",
+      "repeat": 1,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0148534,
+        "frames_sent": 30000,
+        "group_size": 10,
+        "latency_ms_p50": 0.9992,
+        "latency_ms_p95": 1.9982,
+        "latency_ms_p99": 2.5012,
+        "latency_sample_every": 16,
+        "latency_samples": 16875,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26959.95529999471,
+        "relays_expected": 270000,
+        "relays_received": 270000,
+        "seed": 100,
+        "sent_pps": 2995.550588888301,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 6.078125,
+        "backend_wall_seconds": 17.01599999999962,
+        "backend_cpu_percent": 35.72005759285458,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "after",
+      "repeat": 2,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0275888,
+        "frames_sent": 30000,
+        "group_size": 10,
+        "latency_ms_p50": 0.9995,
+        "latency_ms_p95": 2.0052,
+        "latency_ms_p99": 3.012,
+        "latency_sample_every": 16,
+        "latency_samples": 16875,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26925.715182896212,
+        "relays_expected": 270000,
+        "relays_received": 270000,
+        "seed": 101,
+        "sent_pps": 2991.7461314329125,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 6.078125,
+        "backend_wall_seconds": 17.014999999999418,
+        "backend_cpu_percent": 35.722156920365606,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "after",
+      "repeat": 3,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0254542,
+        "frames_sent": 29940,
+        "group_size": 10,
+        "latency_ms_p50": 0.9996,
+        "latency_ms_p95": 2.0001,
+        "latency_ms_p99": 2.6552,
+        "latency_sample_every": 16,
+        "latency_samples": 16841,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 26877.58525693529,
+        "relays_expected": 269460,
+        "relays_received": 269460,
+        "seed": 102,
+        "sent_pps": 2986.3983618816987,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 6.71875,
+        "backend_wall_seconds": 17.0,
+        "backend_cpu_percent": 39.52205882352941,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "before",
+      "repeat": 1,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.035686,
+        "frames_sent": 30060,
+        "group_size": 50,
+        "latency_ms_p50": 6.5006,
+        "latency_ms_p95": 12.5262,
+        "latency_ms_p99": 14.5165,
+        "latency_sample_every": 16,
+        "latency_samples": 92058,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 146770.23573674983,
+        "relays_expected": 1472940,
+        "relays_received": 1472940,
+        "seed": 100,
+        "sent_pps": 2995.310933403058,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 26.046875,
+        "backend_wall_seconds": 17.0,
+        "backend_cpu_percent": 153.21691176470588,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "before",
+      "repeat": 2,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0298297,
+        "frames_sent": 30060,
+        "group_size": 50,
+        "latency_ms_p50": 6.5297,
+        "latency_ms_p95": 13.519,
+        "latency_ms_p99": 15.5991,
+        "latency_sample_every": 16,
+        "latency_samples": 92058,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 146855.93315707045,
+        "relays_expected": 1472940,
+        "relays_received": 1472940,
+        "seed": 101,
+        "sent_pps": 2997.0598603483763,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 25.96875,
+        "backend_wall_seconds": 17.0,
+        "backend_cpu_percent": 152.75735294117646,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "before",
+      "repeat": 3,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0136095,
+        "frames_sent": 30000,
+        "group_size": 50,
+        "latency_ms_p50": 6.5179,
+        "latency_ms_p95": 13.5179,
+        "latency_ms_p99": 15.2201,
+        "latency_sample_every": 16,
+        "latency_samples": 91875,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 146800.21225113684,
+        "relays_expected": 1470000,
+        "relays_received": 1470000,
+        "seed": 102,
+        "sent_pps": 2995.9226990027923,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 25.28125,
+        "backend_wall_seconds": 17.0,
+        "backend_cpu_percent": 148.71323529411765,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "after",
+      "repeat": 1,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0014598,
+        "frames_sent": 29940,
+        "group_size": 50,
+        "latency_ms_p50": 6.5042,
+        "latency_ms_p95": 12.5963,
+        "latency_ms_p99": 14.9978,
+        "latency_sample_every": 16,
+        "latency_samples": 91691,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 146684.58698399208,
+        "relays_expected": 1467060,
+        "relays_received": 1467060,
+        "seed": 100,
+        "sent_pps": 2993.562999673308,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 25.921875,
+        "backend_wall_seconds": 17.0,
+        "backend_cpu_percent": 152.4816176470588,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "after",
+      "repeat": 2,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0316315,
+        "frames_sent": 30060,
+        "group_size": 50,
+        "latency_ms_p50": 7.0033,
+        "latency_ms_p95": 14.5822,
+        "latency_ms_p99": 18.0814,
+        "latency_sample_every": 16,
+        "latency_samples": 92058,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 146829.556089655,
+        "relays_expected": 1472940,
+        "relays_received": 1472940,
+        "seed": 101,
+        "sent_pps": 2996.521552850102,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 25.59375,
+        "backend_wall_seconds": 17.014999999999418,
+        "backend_cpu_percent": 150.4187481633904,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    },
+    {
+      "implementation": "rust",
+      "phase": "after",
+      "repeat": 3,
+      "result": {
+        "clients": 200,
+        "connect_failures": 0,
+        "connected": 200,
+        "cross_scope_deliveries": 0,
+        "delivery_ratio": 1,
+        "dimension_changes": 0,
+        "duration_s": 10.0016772,
+        "frames_sent": 29940,
+        "group_size": 50,
+        "latency_ms_p50": 6.5165,
+        "latency_ms_p95": 13.562,
+        "latency_ms_p99": 16.6547,
+        "latency_sample_every": 16,
+        "latency_samples": 91691,
+        "peer_refresh_s": 1,
+        "reconnects": 0,
+        "relayed_pps": 146681.39859582752,
+        "relays_expected": 1467060,
+        "relays_received": 1467060,
+        "seed": 102,
+        "sent_pps": 2993.497930527092,
+        "server_switches": 0,
+        "talkers": 60,
+        "voice_hz": 50
+      },
+      "cpu": {
+        "backend_cpu_seconds": 26.3125,
+        "backend_wall_seconds": 17.0,
+        "backend_cpu_percent": 154.77941176470588,
+        "max_rss_native_units": null,
+        "note": "CPU includes ramp, measurement, drain and shutdown; 100% = one core",
+        "workers": 4
+      }
+    }
+  ],
+  "client_runs": [
+    {
+      "phase": "before",
+      "repeat": 1,
+      "results": [
+        {
+          "case": "tracking-100",
+          "ns_per_op": 3803,
+          "bytes_per_op": 188
+        },
+        {
+          "case": "tracking-1000",
+          "ns_per_op": 22274,
+          "bytes_per_op": 162
+        },
+        {
+          "case": "mix-rejected-8",
+          "ns_per_op": 13218,
+          "bytes_per_op": 104
+        },
+        {
+          "case": "mix-rejected-32",
+          "ns_per_op": 17864,
+          "bytes_per_op": 102
+        },
+        {
+          "case": "mix-accepted-8",
+          "ns_per_op": 491421,
+          "bytes_per_op": 218834
+        },
+        {
+          "case": "mix-accepted-32",
+          "ns_per_op": 1862768,
+          "bytes_per_op": 867400
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "repeat": 2,
+      "results": [
+        {
+          "case": "tracking-100",
+          "ns_per_op": 3612,
+          "bytes_per_op": 188
+        },
+        {
+          "case": "tracking-1000",
+          "ns_per_op": 22053,
+          "bytes_per_op": 162
+        },
+        {
+          "case": "mix-rejected-8",
+          "ns_per_op": 14131,
+          "bytes_per_op": 104
+        },
+        {
+          "case": "mix-rejected-32",
+          "ns_per_op": 21206,
+          "bytes_per_op": 103
+        },
+        {
+          "case": "mix-accepted-8",
+          "ns_per_op": 493789,
+          "bytes_per_op": 219000
+        },
+        {
+          "case": "mix-accepted-32",
+          "ns_per_op": 1864191,
+          "bytes_per_op": 866888
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "repeat": 3,
+      "results": [
+        {
+          "case": "tracking-100",
+          "ns_per_op": 3502,
+          "bytes_per_op": 190
+        },
+        {
+          "case": "tracking-1000",
+          "ns_per_op": 21914,
+          "bytes_per_op": 162
+        },
+        {
+          "case": "mix-rejected-8",
+          "ns_per_op": 12652,
+          "bytes_per_op": 104
+        },
+        {
+          "case": "mix-rejected-32",
+          "ns_per_op": 18428,
+          "bytes_per_op": 104
+        },
+        {
+          "case": "mix-accepted-8",
+          "ns_per_op": 511397,
+          "bytes_per_op": 218582
+        },
+        {
+          "case": "mix-accepted-32",
+          "ns_per_op": 1935503,
+          "bytes_per_op": 867400
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "repeat": 1,
+      "results": [
+        {
+          "case": "tracking-100",
+          "ns_per_op": 3352,
+          "bytes_per_op": 191
+        },
+        {
+          "case": "tracking-1000",
+          "ns_per_op": 21717,
+          "bytes_per_op": 162
+        },
+        {
+          "case": "mix-rejected-8",
+          "ns_per_op": 21129,
+          "bytes_per_op": 104
+        },
+        {
+          "case": "mix-rejected-32",
+          "ns_per_op": 18055,
+          "bytes_per_op": 96
+        },
+        {
+          "case": "mix-accepted-8",
+          "ns_per_op": 451336,
+          "bytes_per_op": 218460
+        },
+        {
+          "case": "mix-accepted-32",
+          "ns_per_op": 1881834,
+          "bytes_per_op": 866888
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "repeat": 2,
+      "results": [
+        {
+          "case": "tracking-100",
+          "ns_per_op": 3323,
+          "bytes_per_op": 190
+        },
+        {
+          "case": "tracking-1000",
+          "ns_per_op": 22844,
+          "bytes_per_op": 162
+        },
+        {
+          "case": "mix-rejected-8",
+          "ns_per_op": 15916,
+          "bytes_per_op": 104
+        },
+        {
+          "case": "mix-rejected-32",
+          "ns_per_op": 14123,
+          "bytes_per_op": 94
+        },
+        {
+          "case": "mix-accepted-8",
+          "ns_per_op": 533571,
+          "bytes_per_op": 219108
+        },
+        {
+          "case": "mix-accepted-32",
+          "ns_per_op": 1875866,
+          "bytes_per_op": 867400
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "repeat": 3,
+      "results": [
+        {
+          "case": "tracking-100",
+          "ns_per_op": 2763,
+          "bytes_per_op": 158
+        },
+        {
+          "case": "tracking-1000",
+          "ns_per_op": 25466,
+          "bytes_per_op": 162
+        },
+        {
+          "case": "mix-rejected-8",
+          "ns_per_op": 20581,
+          "bytes_per_op": 104
+        },
+        {
+          "case": "mix-rejected-32",
+          "ns_per_op": 13755,
+          "bytes_per_op": 90
+        },
+        {
+          "case": "mix-accepted-8",
+          "ns_per_op": 525551,
+          "bytes_per_op": 217493
+        },
+        {
+          "case": "mix-accepted-32",
+          "ns_per_op": 1930276,
+          "bytes_per_op": 867400
+        }
+      ]
+    }
+  ],
+  "presence_raw": {
+    "before": "goos: windows\ngoarch: amd64\npkg: github.com/RavoxX/MCVoice/backend/go/internal/server\ncpu: AMD Ryzen 7 5800X3D 8-Core Processor           \nBenchmarkPresenceStable/100-16  \t   12378\t     85163 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceStable/100-16  \t   13442\t    102099 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceStable/100-16  \t   10000\t    109001 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceStable/1000-16 \t     969\t   1334132 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceStable/1000-16 \t     912\t   1292855 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceStable/1000-16 \t     940\t   1290590 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceChanging/100-16         \t    2535\t    441590 ns/op\t  173208 B/op\t    1208 allocs/op\nBenchmarkPresenceChanging/100-16         \t    2636\t    498390 ns/op\t  173211 B/op\t    1208 allocs/op\nBenchmarkPresenceChanging/100-16         \t    2124\t    571082 ns/op\t  173217 B/op\t    1208 allocs/op\nBenchmarkPresenceChanging/1000-16        \t     224\t   5292764 ns/op\t 1673344 B/op\t   12024 allocs/op\nBenchmarkPresenceChanging/1000-16        \t     218\t   6023022 ns/op\t 1673479 B/op\t   12025 allocs/op\nBenchmarkPresenceChanging/1000-16        \t     212\t   4954724 ns/op\t 1673621 B/op\t   12025 allocs/op\nPASS\nok  \tgithub.com/RavoxX/MCVoice/backend/go/internal/server\t19.530s\n",
+    "after": "goos: windows\ngoarch: amd64\npkg: github.com/RavoxX/MCVoice/backend/go/internal/server\ncpu: AMD Ryzen 7 5800X3D 8-Core Processor           \nBenchmarkPresenceStable/100-16  \t   12459\t     87550 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceStable/100-16  \t   13622\t     97401 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceStable/100-16  \t   10000\t    100975 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceStable/1000-16 \t     987\t   1247637 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceStable/1000-16 \t     958\t   1292440 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceStable/1000-16 \t     975\t   1410780 ns/op\t       0 B/op\t       0 allocs/op\nBenchmarkPresenceChanging/100-16         \t    3134\t    442219 ns/op\t  123549 B/op\t     708 allocs/op\nBenchmarkPresenceChanging/100-16         \t    3712\t    386803 ns/op\t  123541 B/op\t     708 allocs/op\nBenchmarkPresenceChanging/100-16         \t    3217\t    370250 ns/op\t  123552 B/op\t     708 allocs/op\nBenchmarkPresenceChanging/1000-16        \t     283\t   3971773 ns/op\t 1176152 B/op\t    7021 allocs/op\nBenchmarkPresenceChanging/1000-16        \t     306\t   3800652 ns/op\t 1175892 B/op\t    7021 allocs/op\nBenchmarkPresenceChanging/1000-16        \t     308\t   3826393 ns/op\t 1175900 B/op\t    7021 allocs/op\nPASS\nok  \tgithub.com/RavoxX/MCVoice/backend/go/internal/server\t19.515s\n"
+  }
+}
