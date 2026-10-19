@@ -33,6 +33,7 @@ public final class WebSocketClient {
     public static final int MAX_MESSAGE = 1 << 20;
 
     private final Socket socket;
+    private final Socket rawSocket;
     private final InputStream in;
     private final OutputStream out;
     private final Object writeLock = new Object();
@@ -40,8 +41,9 @@ public final class WebSocketClient {
     private int closeCode = -1;
     private String closeReason = "";
 
-    private WebSocketClient(Socket socket, InputStream in, OutputStream out) {
+    private WebSocketClient(Socket socket, Socket rawSocket, InputStream in, OutputStream out) {
         this.socket = socket;
+        this.rawSocket = rawSocket;
         this.in = in;
         this.out = out;
     }
@@ -125,7 +127,7 @@ public final class WebSocketClient {
             throw new IOException("invalid WebSocket handshake response");
         }
         s.setSoTimeout(0);
-        return new WebSocketClient(s, in, out);
+        return new WebSocketClient(s, raw, in, out);
     }
 
     static String expectedAccept(String key) {
@@ -320,6 +322,15 @@ public final class WebSocketClient {
     }
 
     /** Send a close frame and close the socket. */
+    public void abort() {
+        closed = true;
+        try {
+            // Bypass TLS close_notify and writeLock: a stalled writer must not stall disconnect.
+            rawSocket.close();
+        } catch (IOException ignored) { }
+    }
+
+    /** Send a close frame and close the socket. Only call from network workers. */
     public void close(int code, String reason) {
         if (!socket.isClosed()) {
             try {
