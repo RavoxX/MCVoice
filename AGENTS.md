@@ -289,16 +289,26 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **0.1.10 hardening candidate:** replay/rotation, trusted proxy identity,
+* **Stable 0.1.10 released:** replay/rotation, trusted proxy identity,
   reconnect password budgets, admission/moderation, concurrent config, group
   transport isolation and protocol edge cases have regression coverage. CI
   test/build permissions are separated from publication. Explicit proxy CIDRs
-  are now required when proxy trust is enabled. Release/deployment pending;
-  see `docs/hardening-0.1.10.md` for decisions and remaining scaling limits.
+  are now required when proxy trust is enabled, including repeated XFF fields.
+  Final `c10a847` passes local 112-test suites against both backends; CI
+  `39284820030` and 26.3 runtime `39284987176` completed successfully.
+  Real SVC `39284820339` passes after supporting its authenticated 256-byte ACK
+  without relaxing CBC rejection tests. Release `39285852532` passed all 260
+  jobs: 102/102 jars, 62/62 GitHub Releases, 102/102 Maven packages, both images.
+  All release asset digests match byte-verified Maven jars; both 26.3 jars match
+  the runtime-tested artifacts byte for byte. See `docs/release-0.1.10.md`.
+  Rust 0.1.10 deployed at
+  2026-10-19 16:36:35 UTC after image publication and isolated staging;
+  local/public protocol/readiness checks and all 30 unrelated containers pass.
+  See `docs/hardening-0.1.10.md` for decisions and remaining scaling limits.
 * **0.1.9 released:** run `39269460274` passed: 102/102 jars, 62/62 GitHub
   Releases, 102/102 Maven publications, both backend images. Independent local
   Maven reads returned HTTP 401, so no separate byte-verification claim is made.
-  Production still uses the earlier local 0.1.5 image until the new deployment.
+  Superseded in production by the 0.1.10 deployment below.
 
 * **Input/microphone/performance follow-up (released in 0.1.9):** 26.3 text fields
   explicitly own native SDL text input; runtime tests now check SDL activation,
@@ -366,7 +376,7 @@ git show FETCH_HEAD:<path>`).
   * Fabric wherever Fabric API exists for 1.14.4–26.3.
   * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
     without Legacy Fabric API).
-* **Previous all-version stable release:** v0.1.4 (run 36308643678: 102/102 jars, 62/62 GitHub
+* **Earlier all-version stable release:** v0.1.4 (run 36308643678: 102/102 jars, 62/62 GitHub
   Releases, 102/102 Maven packages, images `0.1.4`/`latest`; all 134 jobs
   passed). Includes the 0.1.3-rc.1 features, optional cosmetic name-tag
   injections from issue #5, and modern Forge resource-pack metadata. Source
@@ -390,12 +400,15 @@ git show FETCH_HEAD:<path>`).
   1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
   (`release-report-run36115472419.md`). Maven: every jar is in GitHub
   Packages; re-runs record `exists`. Backend images `0.1.0`/`latest` pushed.
-* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.5,
-  locally built `ghcr.io/ravoxx/mcvoice/voice-backend-rust:local-01d1e52`, pinned
-  in `/opt/mcvoice/docker-compose.override.yml` on 5.83.145.152). The image was
-  not published. Remove/archive this override before a future registry update;
-  the original `MCVOICE_VERSION` in `.env` remains 0.1.4. See
-  `docs/deployment-2026-10-19.md` for exact digests and rollback. Host nginx
+* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.10,
+  source `c10a847`, image selected by `MCVOICE_VERSION=0.1.10` in
+  `/opt/mcvoice/.env` on 5.83.145.152). Published digest
+  `sha256:7e85c1c5f40484a71314db82a20a0e817938e8a1ed316903486054f6c955fe4f`.
+  Deployed 2026-10-19 16:36:35 UTC; the former local-image override is archived,
+  exact gateway `172.24.0.1/32` is trusted, Mojang auth/ports are preserved.
+  Local/public readiness/protocol checks pass; all 30 unrelated containers
+  unchanged. Rollback image is `local-01d1e52`; mode-600 environment backup
+  retained. See `docs/deployment-0.1.10.md` for digests and rollback. Host nginx
   vhost `mcvoice.ravoxx.dev` → `127.0.0.1:18455`, certbot `dns-cloudflare`
   certificate, DNS not proxied. UDP 24455 is opened in the host's
   `vpn_hardening` nftables firewall via `/etc/vpn-hardening/firewall-base.nft`
