@@ -251,9 +251,10 @@ git show FETCH_HEAD:<path>`).
   GLFW on the compile classpath) and `GLFW.GLFW_KEY_*` below.
 
 **Validation**
-* `validate_jar.py` prints the platform classes of each jar. Every total is
-  about 327 classes, because Java 8 targets add synthetic classes where newer
-  targets use nestmates. The platform list is what matters.
+* `validate_jar.py` prints the platform classes of each jar. Totals vary with
+  client changes and target Java: 0.1.8 on 26.3 has 378 Fabric / 377 Forge
+  classes; Java 8 targets add synthetic classes where newer targets use
+  nestmates. The platform list is what matters.
 
 ## Contributing conventions
 
@@ -288,15 +289,19 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **Group roster and player settings (0.1.8, validation pending):** enabled by
+* **Group roster and player settings (released as v0.1.8):** enabled by
   default via `showGroupHud`; right-edge member heads, white speaking outline
   and styled name, independent dragging/head size/background in Edit HUD.
   Player settings share one snapshot/page for names and controls, search voice
   users, and use confirmed cloud/group/SVC presence instead of tracked entities
   or stale transport selections. SVC compatibility 20 `state`/`states` metadata
   was independently observed in real-server run `39251350550`. The 26.3 startup
-  harness now covers SDL roster controls/search and actual GUI-extractor head
-  rendering. Release and runtime results will be recorded after validation.
+  harness covers SDL roster controls/search and actual GUI-extractor head
+  rendering. Main CI `39252773119` passed all six jobs; 26.3 runtime
+  `39252773053` passed both loaders. Release `39253618498` passed: 102/102
+  validated jars, 62/62 GitHub Releases, 102/102 Maven publications, images
+  skipped. The published 26.3 GitHub asset digests match the runtime-tested jars
+  byte for byte. See `docs/release-0.1.8.md`. The public backend is unchanged.
 
 * **26.3 settings input follow-up:** `McScreen` now translates SDL buttons and
   navigation scancodes to the shared UI contract. Runtime coverage exercises
@@ -320,7 +325,7 @@ git show FETCH_HEAD:<path>`).
   Report recovery `39137283241` fixed the single-artifact layout report and
   verified authenticated Maven downloads against both published jars.
   See `docs/release-0.1.6.md`. This release is scoped to 26.3 and no backend images.
-* **HUD editing (unreleased):** the shared Java 8 client includes the local
+* **HUD editing (released in 0.1.8):** the shared Java 8 client includes the local
   speaker in the HUD during detected transmission. The microphone is hidden
   during idle push-to-talk, grey for silence in PTT/open-mic modes, and green
   while speaking. It defaults to 16 px at bottom right. General settings has
@@ -333,7 +338,7 @@ git show FETCH_HEAD:<path>`).
   * Fabric wherever Fabric API exists for 1.14.4–26.3.
   * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
     without Legacy Fabric API).
-* **Stable release:** v0.1.4 (run 36308643678: 102/102 jars, 62/62 GitHub
+* **Previous all-version stable release:** v0.1.4 (run 36308643678: 102/102 jars, 62/62 GitHub
   Releases, 102/102 Maven packages, images `0.1.4`/`latest`; all 134 jobs
   passed). Includes the 0.1.3-rc.1 features, optional cosmetic name-tag
   injections from issue #5, and modern Forge resource-pack metadata. Source
