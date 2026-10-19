@@ -2,6 +2,9 @@ package dev.mcvoice.platform.mc;
 
 import dev.mcvoice.client.platform.ui.UiScreen;
 
+
+
+
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 
@@ -53,25 +56,25 @@ public final class McScreen extends Screen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent e, boolean doubleClick) {
-        ui.mouseClicked((int) e.x(), (int) e.y(), e.button());
+        ui.mouseClicked((int) e.x(), (int) e.y(), uiButton(e.button()));
         return true;
     }
 
     @Override
     public boolean mouseReleased(MouseButtonEvent e) {
-        ui.mouseReleased((int) e.x(), (int) e.y(), e.button());
+        ui.mouseReleased((int) e.x(), (int) e.y(), uiButton(e.button()));
         return true;
     }
 
     @Override
     public boolean mouseDragged(MouseButtonEvent e, double dx, double dy) {
-        ui.mouseDragged((int) e.x(), (int) e.y(), e.button());
+        ui.mouseDragged((int) e.x(), (int) e.y(), uiButton(e.button()));
         return true;
     }
 
     @Override
     public boolean keyPressed(KeyEvent e) {
-        if (ui.keyPressed(e.key())) {
+        if (ui.keyPressed(uiKey(e.key()))) {
             return true;
         }
         return super.keyPressed(e); // ESC closes
@@ -117,6 +120,39 @@ public final class McScreen extends Screen {
 
 
 
+
+    private static int uiButton(int button) {
+
+
+
+
+
+
+        return button;
+
+    }
+
+    private static int uiKey(int key) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return key;
+
+    }
 
 
     @Override
