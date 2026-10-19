@@ -121,8 +121,14 @@ jobs:
           tag="v$VERSION-mc$MC"
           jars=$(ls dist/*.jar 2>/dev/null || true)
           failed=$(python3 -c "import json,glob;print(' '.join(json.load(open(f))['loader'] for f in glob.glob('status/*.json') if json.load(open(f))['status']!='pass'))" 2>/dev/null || true)
+          expected=$(cat status/expected-loaders.txt 2>/dev/null || true)
+          complete=1
+          if [ -z "$expected" ]; then complete=0; fi
+          for loader in $expected; do
+            if ! test -f "status/$loader.json" || ! test -f "dist/mcvoice-$VERSION-mc$MC-$loader.jar"; then complete=0; fi
+          done
           record() { python3 -c "import json,sys;json.dump({'minecraft':'$MC','tag':'$tag','release':sys.argv[1],'detail':sys.argv[2]},open('out/release-$MC.json','w'))" "$1" "$2"; }
-          if [ -z "$jars" ] || [ -n "$failed" ] || ! compgen -G 'status/*.json' >/dev/null; then
+          if [ -z "$jars" ] || [ -n "$failed" ] || [ "$complete" != 1 ]; then
             record skipped "build did not pass for: ${failed:-all loaders}"; exit 0
           fi
           (cd dist && sha256sum *.jar > checksums-sha256.txt)

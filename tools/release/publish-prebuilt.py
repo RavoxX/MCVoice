@@ -40,7 +40,7 @@ def verify_maven(artifact, version, file):
     try:
         response = urllib.request.build_opener(NoRedirect()).open(req, timeout=60)
     except urllib.error.HTTPError as error:
-        if error.code != 302:
+        if error.code not in (301, 302, 303, 307, 308):
             raise
         # Never forward the package credential to signed artifact storage.
         response = urllib.request.urlopen(error.headers['Location'], timeout=60)
@@ -89,7 +89,8 @@ def main():
             try:
                 row['maven_sha256'] = verify_maven('voice-client-' + loader, env['VERSION_TAG'], work / 'mod.jar')
             except (OSError, ValueError) as error:
-                result = f'failed: Maven read-back verification: {type(error).__name__}'
+                detail = f'HTTP {error.code}' if isinstance(error, urllib.error.HTTPError) else str(error)
+                result = f'failed: Maven read-back verification: {detail}'
         row['maven'] = result
         file.write_text(json.dumps(row))
         print(loader, result)

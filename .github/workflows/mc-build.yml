@@ -93,6 +93,7 @@ jobs:
         run: |
           set -uo pipefail
           mkdir -p ../dist ../status
+          printf '%s\n' '${{ steps.info.outputs.loaders }}' > ../status/expected-loaders.txt
           extra=""
           version=$(sed -n 's/^mod_version=//p' ../client/gradle.properties | tr -d '\r')
           if [ -n "$MOD_VERSION_OVERRIDE" ]; then extra="-Pmod_version=$MOD_VERSION_OVERRIDE"; fi
