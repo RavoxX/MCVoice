@@ -55,6 +55,7 @@ public final class SvcUdpClient {
     private volatile long lastRxMs;
     private volatile long sequence;
     private volatile long sent, received, rejected;
+    private volatile String authenticationReply = "";
     private Thread rx, handshake;
 
     public SvcUdpClient(SecretInfo secret, InetSocketAddress server, SvcProtocol protocol, Listener listener) throws IOException {
@@ -127,7 +128,7 @@ public final class SvcUdpClient {
                 Thread.sleep(400);
                 if (System.currentTimeMillis() - start > 10000) {
                     setState(State.FAILED, "no authentication ack from " + serverAddress()
-                        + " (UDP blocked, or unsupported encryption)");
+                        + (authenticationReply.isEmpty() ? " (UDP blocked, or unsupported encryption)" : " (" + authenticationReply + ")"));
                     return;
                 }
             }
@@ -186,7 +187,13 @@ public final class SvcUdpClient {
         }
         for (SvcCipher.Mode m : SvcCipher.Mode.values()) {
             byte[] p = cipher.decrypt(m, enc, 0, enc.length);
-            if (state == State.CONNECTING && p != null && p.length == 1 && p[0] == 0x06) {
+            if (m == SvcCipher.Mode.GCM_IV12 && p != null) {
+                authenticationReply = "authenticated packet type " + (p.length == 0 ? -1 : p[0] & 0xFF) + ", length " + p.length;
+            }
+            // Real Bukkit 2.6.24 ACKs occupy a 256-byte buffer.
+            // Only authenticated GCM may use that form; CBC padding proves no identity.
+            if (state == State.CONNECTING && p != null && p.length > 0 && p[0] == 0x06
+                    && (p.length == 1 || (m == SvcCipher.Mode.GCM_IV12 && p.length == 256))) {
                 mode = m;
                 return p;
             }
