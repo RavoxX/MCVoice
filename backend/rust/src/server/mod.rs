@@ -38,6 +38,18 @@ pub(crate) struct Hub {
 }
 
 impl Hub {
+    fn has_presence_delta(&self, r: &PeerState) -> bool {
+        let present = |u: &str| {
+            r.peer.in_world
+                && self.peer_of(u).is_some_and(|(_, o)| {
+                    o.peer.in_world
+                        && o.peer.udp_verified
+                        && routing::compatible_scopes(&o.peer, &r.peer)
+                        && routing::mutually_visible(&o.peer, &r.peer)
+                })
+        };
+        r.peer.visible.iter().any(|u| !r.presence.contains(u) && present(u)) || r.presence.iter().any(|u| !present(u))
+    }
     fn presence_delta(&self, r: &PeerState) -> (Vec<String>, Vec<String>) {
         let present = |u: &str| {
             r.peer.in_world
@@ -84,21 +96,22 @@ struct Bans {
 
 pub(crate) struct IpLimiter {
     per_min: u32,
-    inner: Mutex<(Instant, HashMap<String, u32>)>,
+    inner: Mutex<(Instant, HashMap<String, u32>, u32)>,
 }
 
 impl IpLimiter {
     fn new(per_min: u32) -> Self {
         IpLimiter {
             per_min,
-            inner: Mutex::new((Instant::now(), HashMap::new())),
+            inner: Mutex::new((Instant::now(), HashMap::new(), 0)),
         }
     }
 
-    fn roll(&self, g: &mut (Instant, HashMap<String, u32>), now: Instant) {
+    fn roll(&self, g: &mut (Instant, HashMap<String, u32>, u32), now: Instant) {
         if now.duration_since(g.0).as_secs() >= 60 {
             g.0 = now;
             g.1.clear();
+            g.2 = 0;
         }
     }
 
@@ -109,7 +122,11 @@ impl IpLimiter {
         let mut g = self.inner.lock().unwrap();
         self.roll(&mut g, now);
         if g.1.len() >= 100_000 && !g.1.contains_key(key) {
-            return false; // fail closed under key flooding
+            if g.2 >= self.per_min {
+                return false;
+            }
+            g.2 += 1;
+            return true; // bounded aggregate budget, without evicting live identities
         }
         let n = g.1.entry(key.to_string()).or_insert(0);
         if *n >= self.per_min {
@@ -125,7 +142,8 @@ impl IpLimiter {
         }
         let mut g = self.inner.lock().unwrap();
         self.roll(&mut g, now);
-        g.1.get(key).is_some_and(|n| *n >= self.per_min)
+        g.1.get(key)
+            .map_or(g.1.len() >= 100_000 && g.2 >= self.per_min, |n| *n >= self.per_min)
     }
 }
 
@@ -136,6 +154,8 @@ pub struct Server {
     mojang: MojangVerifier,
     pub(crate) hub: RwLock<Hub>,
     bans: RwLock<Bans>,
+    pub(crate) pending_auth: Arc<tokio::sync::Semaphore>,
+    pub(crate) group_failures: IpLimiter,
     pub(crate) connect_limiter: IpLimiter,
     pub(crate) auth_fail_limiter: IpLimiter,
     pub(crate) udp: OnceLock<Arc<UdpSocket>>,
@@ -155,6 +175,8 @@ impl Server {
         };
         Arc::new(Server {
             mojang: MojangVerifier::new(&cfg.mojang_session_url),
+            pending_auth: Arc::new(tokio::sync::Semaphore::new(256)),
+            group_failures: IpLimiter::new(groups::PASSWORD_FAILS_PER_MIN),
             connect_limiter: IpLimiter::new(cfg.rate_connect_per_min),
             auth_fail_limiter: IpLimiter::new(cfg.rate_auth_fail_per_min),
             rcfg,
@@ -187,11 +209,17 @@ impl Server {
     }
 
     /// Register a session, replacing an older one for the same player.
-    pub(crate) fn register(&self, sess: Arc<Session>, ps: PeerState) -> bool {
+    pub(crate) fn register(&self, sess: Arc<Session>, mut ps: PeerState) -> Result<(), &'static str> {
         let old = {
             let mut hub = self.hub.write().unwrap();
-            if hub.by_conn.len() >= self.cfg.max_sessions {
-                return false;
+            let bans = self.bans.read().unwrap();
+            if bans.banned.contains(&sess.ident.uuid) {
+                return Err(code::BANNED);
+            }
+            ps.admin_muted = bans.muted.contains(&sess.ident.uuid);
+            ps.peer.muted = ps.self_muted || ps.admin_muted;
+            if hub.by_conn.len() >= self.cfg.max_sessions && !hub.by_uuid.contains_key(&sess.ident.uuid) {
+                return Err(code::SERVER_FULL);
             }
             let old = hub.by_uuid.get(&sess.ident.uuid).copied().and_then(|c| hub.remove(c));
             hub.by_uuid.insert(sess.ident.uuid.clone(), sess.conn_id);
@@ -208,7 +236,7 @@ impl Server {
             old.close(code::SESSION_REPLACED);
         }
         self.metrics.connected_clients.fetch_add(1, Ordering::Relaxed);
-        true
+        Ok(())
     }
 
     fn forget_udp(&self, sess: &Session) {
@@ -268,10 +296,15 @@ impl Server {
         let mut kick = Vec::new();
         {
             let mut hub = self.hub.write().unwrap();
+            *self.bans.write().unwrap() = Bans {
+                banned: banned.clone(),
+                muted: muted.clone(),
+                mtime,
+            };
             let Hub { by_conn, peers, .. } = &mut *hub;
             for (conn, s) in by_conn.iter() {
                 if let Some(ps) = peers.get_mut(conn) {
-                    ps.admin_muted = muted.contains(&s.ident.uuid);
+                    ps.admin_muted = muted.contains(&s.ident.uuid) || banned.contains(&s.ident.uuid);
                     ps.peer.muted = ps.self_muted || ps.admin_muted;
                 }
                 if banned.contains(&s.ident.uuid) {
@@ -279,7 +312,6 @@ impl Server {
                 }
             }
         }
-        *self.bans.write().unwrap() = Bans { banned, muted, mtime };
         for s in kick {
             s.send(error_frame(code::BANNED, "banned", true));
             s.close(code::BANNED);
@@ -294,8 +326,7 @@ impl Server {
             let hub = self.hub.read().unwrap();
             for (conn, r) in &hub.peers {
                 // Unchanged presence needs no owned UUIDs or temporary set.
-                let (add, remove) = hub.presence_delta(r);
-                if add.is_empty() && remove.is_empty() {
+                if !hub.has_presence_delta(r) {
                     continue;
                 }
                 if let Some(s) = hub.by_conn.get(conn) {
@@ -304,8 +335,8 @@ impl Server {
                         PresenceMsg {
                             t: "presence",
                             epoch: r.peer.epoch,
-                            add,
-                            remove,
+                            add: Vec::new(),
+                            remove: Vec::new(),
                         },
                     ));
                 }

@@ -260,6 +260,7 @@ def control_vectors():
         ("group_create_password_too_long", {"type": "group_create", "password": "x" * 33}, "bad_message"),
         ("group_create_password_control_char", {"type": "group_create", "password": "a\nb"}, "bad_message"),
         ("group_create_password_non_ascii", {"type": "group_create", "password": "pässwort"}, "bad_message"),
+        ("group_join_password_max", {"type": "group_join", "id": "K7M2Q", "password": "x" * 32}, None),
         ("group_join", {"type": "group_join", "id": "K7M2Q", "password": "hunter 2!"}, None),
         ("group_join_lowercase", {"type": "group_join", "id": "k7m2q"}, None),
         ("group_join_short_id", {"type": "group_join", "id": "K7M2"}, "bad_message"),
