@@ -3,6 +3,8 @@ package dev.mcvoice.client.svc;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.UUID;
+import java.util.Map;
+import java.util.Collections;
 
 import dev.mcvoice.client.log.Category;
 import dev.mcvoice.client.log.VoiceLog;
@@ -10,6 +12,8 @@ import dev.mcvoice.client.platform.SimpleVoiceChatAdapter;
 import dev.mcvoice.client.svc.handshake.SvcHandshake;
 import dev.mcvoice.client.svc.protocol.SecretInfo;
 import dev.mcvoice.client.svc.protocol.SvcProtocol;
+import dev.mcvoice.client.svc.protocol.SvcPlayerStates;
+import dev.mcvoice.client.svc.protocol.SvcFormatException;
 import dev.mcvoice.client.svc.transport.SvcUdpClient;
 
 /**
@@ -40,6 +44,7 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
     private volatile Status status = Status.DISABLED;
     private volatile String detail = "";
     private volatile int compatVersion = -1;
+    private final SvcPlayerStates playerStates = new SvcPlayerStates();
 
     public SvcCompat(SimpleVoiceChatAdapter adapter, ServerAddress serverAddress) {
         this.adapter = adapter;
@@ -57,12 +62,14 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
     public void setEnabled(boolean enabled) {
         handshake.setEnabled(enabled);
         if (!enabled) {
+            playerStates.clear();
             closeUdp();
         }
     }
 
     /** Call when a new Minecraft server session starts or ends. */
     public void reset(boolean inMultiplayerWorld) {
+        playerStates.clear();
         closeUdp();
         secret = null;
         compatVersion = -1;
@@ -90,7 +97,16 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
     @Override
     public void onPayload(String channel, byte[] payload) {
         try {
+            if (SvcPlayerStates.channel(channel)) {
+                SvcHandshake.State state = handshake.state();
+                if (handshake.compatibilityVersion() == 20 && (state == SvcHandshake.State.REQUESTED || state == SvcHandshake.State.SECRET_RECEIVED)) {
+                    playerStates.receive(channel, payload);
+                }
+                return;
+            }
             handshake.onPayload(channel, payload);
+        } catch (SvcFormatException e) {
+            VoiceLog.warn(Category.SVC, "ignored malformed SVC player states: " + e.getMessage());
         } catch (RuntimeException e) {
             VoiceLog.warn(Category.SVC, "SVC payload handling failed", e);
         }
@@ -117,6 +133,7 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
                 status = Status.INCOMPATIBLE;
                 break;
             case FAILED:
+                playerStates.clear();
                 status = Status.FAILED;
                 break;
             default:
@@ -191,6 +208,7 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
             case FAILED:
                 status = Status.FAILED;
                 detail = d;
+                playerStates.clear();
                 VoiceLog.warn(Category.SVC, "SVC voice connection failed: " + d + " (compatibility " + compatVersion + ")");
                 break;
             default:
@@ -224,6 +242,11 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
 
     public boolean connected() {
         return status == Status.CONNECTED;
+    }
+
+    /** Confirmed online, enabled voice users; never infer presence from old audio. */
+    public Map<UUID, String> onlinePlayers() {
+        return connected() ? playerStates.online() : Collections.<UUID, String>emptyMap();
     }
 
     public Status status() {

@@ -1,0 +1,15 @@
+// Applied only by mc-startup.yml; these sources never enter the production jar.
+def smokeRoot = new File(rootDir, '../../tools/mc-smoke/startup')
+def smokeLoader = rootDir.name
+sourceSets {
+    startupSmoke {
+        java.srcDirs = [new File(smokeRoot, 'common'), new File(smokeRoot, smokeLoader)]
+        compileClasspath = sourceSets.main.compileClasspath + sourceSets.main.output
+    }
+}
+tasks.register('startupSmokeJar', Jar) {
+    dependsOn tasks.named('startupSmokeClasses')
+    archiveFileName = 'mcvoice-startup-smoke.jar'
+    from sourceSets.startupSmoke.output
+    from new File(smokeRoot, "${smokeLoader}/resources")
+}

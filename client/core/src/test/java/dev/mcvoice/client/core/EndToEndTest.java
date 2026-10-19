@@ -186,6 +186,10 @@ class EndToEndTest {
         waitFor("both clients on cloud voice", () -> va.transportStatus() == TransportStatus.CLOUD
             && vb.transportStatus() == TransportStatus.CLOUD, 20000);
         Thread.sleep(1500); // presence + peer reports settle
+        FakeMinecraft vanilla = player("VanillaOnly");
+        a.track(vanilla);
+        waitFor("quiet cloud user appears in player settings", () -> va.players().stream().anyMatch(p -> p.uuid.equals(b.uuid)), 5000);
+        assertFalse(va.players().stream().anyMatch(p -> p.uuid.equals(vanilla.uuid)), "tracked entities alone do not prove voice presence");
 
         // --- nearby: Bob hears Alice, positioned to Bob's right-hand side? Alice is west of Bob.
         a.ptt = true;
@@ -315,6 +319,7 @@ class EndToEndTest {
         }, 5000);
         vb.joinGroup(id, "");
         waitFor("both in the group", () -> vb.group() != null && va.group() != null && va.group().members.size() == 2, 5000);
+        assertTrue(va.players().stream().anyMatch(p -> p.uuid.equals(b.uuid) && p.via.equals("group")), "remote group members remain searchable without a local entity");
 
         long t0 = System.currentTimeMillis();
         waitFor("Hugo hears Gina through the group", () -> loudness(b, t0) > 300, 10000);
