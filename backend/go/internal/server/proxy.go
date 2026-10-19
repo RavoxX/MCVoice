@@ -25,10 +25,18 @@ func (s *Server) clientIP(r *http.Request) string {
 		}
 		return false
 	}
-	xff := r.Header.Get("X-Forwarded-For")
-	if !s.cfg.TrustProxyHeaders || !trusted(peer) || len(xff) > 2048 {
+	if !s.cfg.TrustProxyHeaders || !trusted(peer) {
 		return peer.String()
 	}
+	values := r.Header.Values("X-Forwarded-For")
+	total := 0
+	for _, value := range values {
+		total += len(value) + 1
+		if total > 2049 {
+			return peer.String()
+		}
+	}
+	xff := strings.Join(values, ",")
 	hops := strings.Split(xff, ",")
 	if len(hops) > 32 {
 		return peer.String()
