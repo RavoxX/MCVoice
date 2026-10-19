@@ -180,7 +180,19 @@ public final class GroupScreen extends BaseScreen {
             return;
         }
         int colW = (panelW - 10) / 2;
-        int y = panelY + 30;
+        add(new Button(panelW, 20, new Button.Label() {
+            public String get() {
+                return v.config().groupActivationMode == dev.mcvoice.client.config.ClientConfig.ActivationMode.PUSH_TO_TALK
+                    ? "Group Mic: Push to Talk (" + v.pushToTalkKey() + ")" : "Group Mic: Voice Activation";
+            }
+        }, new Button.Action() {
+            public void run() {
+                v.setGroupActivationMode(v.config().groupActivationMode == dev.mcvoice.client.config.ClientConfig.ActivationMode.PUSH_TO_TALK
+                    ? dev.mcvoice.client.config.ClientConfig.ActivationMode.VOICE_ACTIVATION
+                    : dev.mcvoice.client.config.ClientConfig.ActivationMode.PUSH_TO_TALK);
+            }
+        }), panelX, panelY + 28);
+        int y = panelY + 52;
         int bottom = height - 27 - 4 - 20 - 4;
         int rows = Math.max(1, (bottom - y) / 22);
         for (int i = 0; i < g.members.size() && i < rows * 2; i++) {
@@ -235,7 +247,9 @@ public final class GroupScreen extends BaseScreen {
             if (g != null) {
                 String head = "Group " + g.id + "  -  " + g.members.size() + "/" + g.max + (g.password ? "  -  Password" : "  -  Open");
                 c.text(head, cx - c.textWidth(head) / 2, panelY + 4, Theme.LABEL, true);
-                String hint = "Everyone here hears you while your microphone is on.";
+                String hint = v.config().groupActivationMode == dev.mcvoice.client.config.ClientConfig.ActivationMode.PUSH_TO_TALK
+                    ? "Hold " + v.pushToTalkKey() + " to speak to your group and nearby players."
+                    : "Your group hears you while your microphone is on.";
                 c.text(hint, cx - c.textWidth(hint) / 2, panelY + 16, Theme.LABEL_DIM, true);
             }
         }
