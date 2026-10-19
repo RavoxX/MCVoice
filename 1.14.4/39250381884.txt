@@ -1,0 +1,179 @@
+::group::net.minecraft.client.gui.components.PlayerFaceRenderer
+NOT FOUND in mappings: net.minecraft.client.gui.components.PlayerFaceRenderer
+::endgroup::
+::group::net.minecraft.client.gui.components.PlayerFaceExtractor
+NOT FOUND in mappings: net.minecraft.client.gui.components.PlayerFaceExtractor
+::endgroup::
+::group::net.minecraft.client.multiplayer.PlayerInfo
+net.minecraft.client.multiplayer.PlayerInfo
+    com.mojang.authlib.GameProfile profile
+    java.util.Map textureLocations
+    net.minecraft.world.level.GameType gameMode
+    int latency
+    boolean pendingTextures
+    java.lang.String skinModel
+    net.minecraft.network.chat.Component tabListDisplayName
+    int lastHealth
+    int displayHealth
+    long lastHealthTime
+    long healthBlinkTime
+    long renderVisibilityId
+    void <init>(com.mojang.authlib.GameProfile)
+    void <init>(net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket$PlayerUpdate)
+    com.mojang.authlib.GameProfile getProfile()
+    net.minecraft.world.level.GameType getGameMode()
+    void setGameMode(net.minecraft.world.level.GameType)
+    int getLatency()
+    void setLatency(int)
+    boolean isCapeLoaded()
+    boolean isSkinLoaded()
+    java.lang.String getModelName()
+    net.minecraft.resources.ResourceLocation getSkinLocation()
+    net.minecraft.resources.ResourceLocation getCapeLocation()
+    net.minecraft.resources.ResourceLocation getElytraLocation()
+    net.minecraft.world.scores.PlayerTeam getTeam()
+    void registerTextures()
+    void setTabListDisplayName(net.minecraft.network.chat.Component)
+    net.minecraft.network.chat.Component getTabListDisplayName()
+    int getLastHealth()
+    void setLastHealth(int)
+    int getDisplayHealth()
+    void setDisplayHealth(int)
+    long getLastHealthTime()
+    void setLastHealthTime(long)
+    long getHealthBlinkTime()
+    void setHealthBlinkTime(long)
+    long getRenderVisibilityId()
+    void setRenderVisibilityId(long)
+    void lambda$registerTextures$0(com.mojang.authlib.minecraft.MinecraftProfileTexture$Type,net.minecraft.resources.ResourceLocation,com.mojang.authlib.minecraft.MinecraftProfileTexture)
+::endgroup::
+::group::net.minecraft.client.resources.DefaultPlayerSkin
+net.minecraft.client.resources.DefaultPlayerSkin
+    net.minecraft.resources.ResourceLocation STEVE_SKIN_LOCATION
+    net.minecraft.resources.ResourceLocation ALEX_SKIN_LOCATION
+    void <init>()
+    net.minecraft.resources.ResourceLocation getDefaultSkin()
+    net.minecraft.resources.ResourceLocation getDefaultSkin(java.util.UUID)
+    java.lang.String getSkinModelName(java.util.UUID)
+    boolean isAlexDefault(java.util.UUID)
+    void <clinit>()
+::endgroup::
+::group::net.minecraft.client.gui.GuiComponent
+net.minecraft.client.gui.GuiComponent
+    net.minecraft.resources.ResourceLocation BACKGROUND_LOCATION
+    net.minecraft.resources.ResourceLocation STATS_ICON_LOCATION
+    net.minecraft.resources.ResourceLocation GUI_ICONS_LOCATION
+    int blitOffset
+    void <init>()
+    void hLine(int,int,int,int)
+    void vLine(int,int,int,int)
+    void fill(int,int,int,int,int)
+    void fillGradient(int,int,int,int,int,int)
+    void drawCenteredString(net.minecraft.client.gui.Font,java.lang.String,int,int,int)
+    void drawRightAlignedString(net.minecraft.client.gui.Font,java.lang.String,int,int,int)
+    void drawString(net.minecraft.client.gui.Font,java.lang.String,int,int,int)
+    void blit(int,int,int,int,int,net.minecraft.client.renderer.texture.TextureAtlasSprite)
+    void blit(int,int,int,int,int,int)
+    void blit(int,int,int,float,float,int,int,int,int)
+    void blit(int,int,int,int,float,float,int,int,int,int)
+    void blit(int,int,float,float,int,int,int,int)
+    void innerBlit(int,int,int,int,int,int,int,float,float,int,int)
+    void innerBlit(int,int,int,int,int,float,float,float,float)
+    void <clinit>()
+::endgroup::
+::group::net.minecraft.client.gui.GuiGraphics
+NOT FOUND in mappings: net.minecraft.client.gui.GuiGraphics
+::endgroup::
+::group::net.minecraft.client.renderer.GameRenderer
+net.minecraft.client.renderer.GameRenderer
+    org.apache.logging.log4j.Logger LOGGER
+    net.minecraft.resources.ResourceLocation RAIN_LOCATION
+    net.minecraft.resources.ResourceLocation SNOW_LOCATION
+    net.minecraft.client.Minecraft minecraft
+    net.minecraft.server.packs.resources.ResourceManager resourceManager
+    java.util.Random random
+    float renderDistance
+    net.minecraft.client.renderer.ItemInHandRenderer itemInHandRenderer
+    net.minecraft.client.gui.MapRenderer mapRenderer
+    int tick
+    float fov
+    float oldFov
+    float darkenWorldAmount
+    float darkenWorldAmountO
+    boolean renderHand
+    boolean renderBlockOutline
+    long lastScreenshotAttempt
+    long lastActiveTime
+    net.minecraft.client.renderer.LightTexture lightTexture
+    int rainSoundTime
+    float[] rainSizeX
+    float[] rainSizeZ
+    net.minecraft.client.renderer.FogRenderer fog
+    boolean panoramicMode
+    double zoom
+    double zoom_x
+    double zoom_y
+    net.minecraft.world.item.ItemStack itemActivationItem
+    int itemActivationTicks
+    float itemActivationOffX
+    float itemActivationOffY
+    net.minecraft.client.renderer.PostChain postEffect
+    net.minecraft.resources.ResourceLocation[] EFFECTS
+    int EFFECT_NONE
+    int effectIndex
+    boolean effectActive
+    int frameId
+    net.minecraft.client.Camera mainCamera
+    void <init>(net.minecraft.client.Minecraft,net.minecraft.server.packs.resources.ResourceManager)
+    void close()
+    void setRenderHand(boolean)
+    void setRenderBlockOutline(boolean)
+    void setPanoramicMode(boolean)
+    boolean postEffectActive()
+    void shutdownEffect()
+    void togglePostEffect()
+    void checkEntityPostEffect(net.minecraft.world.entity.Entity)
+    void cycleEffect()
+    void loadEffect(net.minecraft.resources.ResourceLocation)
+    void onResourceManagerReload(net.minecraft.server.packs.resources.ResourceManager)
+    void tick()
+    net.minecraft.client.renderer.PostChain currentEffect()
+    void resize(int,int)
+    void pick(float)
+    void tickFov()
+    double getFov(net.minecraft.client.Camera,float,boolean)
+    void bobHurt(float)
+    void bobView(float)
+    void zoomRegion(double,double,double)
+    void unZoomRegion()
+    void setupCamera(float)
+    void renderItemInHand(net.minecraft.client.Camera,float)
+    void turnOffLightLayer()
+    void turnOnLightLayer()
+    float getNightVisionScale(net.minecraft.world.entity.LivingEntity,float)
+    void render(float,long,boolean)
+    void takeAutoScreenshot()
+    boolean shouldRenderBlockOutline()
+    void renderLevel(float,long)
+    void render(float,long)
+    void prepareAndRenderClouds(net.minecraft.client.Camera,net.minecraft.client.renderer.LevelRenderer,float,double,double,double)
+    void tickRain()
+    void renderSnowAndRain(float)
+    void resetFogColor(boolean)
+    void resetData()
+    net.minecraft.client.gui.MapRenderer getMapRenderer()
+    void renderNameTagInWorld(net.minecraft.client.gui.Font,java.lang.String,float,float,float,int,float,float,boolean)
+    void displayItemActivation(net.minecraft.world.item.ItemStack)
+    void renderItemActivationAnimation(int,int,float)
+    net.minecraft.client.Minecraft getMinecraft()
+    float getDarkenWorldAmount(float)
+    float getRenderDistance()
+    net.minecraft.client.Camera getMainCamera()
+    void lambda$takeAutoScreenshot$5(com.mojang.blaze3d.platform.NativeImage)
+    java.lang.String lambda$render$4()
+    java.lang.String lambda$render$3(int,int)
+    java.lang.String lambda$render$2()
+    java.lang.String lambda$render$1()
+    boolean lambda$pick$0(net.minecraft.world.entity.Entity)
+    void <clinit>()
+::endgroup::
