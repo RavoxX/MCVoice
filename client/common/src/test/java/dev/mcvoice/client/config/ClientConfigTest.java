@@ -41,4 +41,14 @@ class ClientConfigTest {
     void savedBackendUrlWins() throws Exception {
         assertEquals("wss://voice.example.org/v1/control", load("{\"backendUrl\":\" wss://voice.example.org/v1/control \"}").backendUrl);
     }
+
+    @Test void groupMicrophoneModeDefaultsMigratesAndPersistsIndependently() throws Exception {
+        assertEquals(ClientConfig.ActivationMode.VOICE_ACTIVATION, load("{}").groupActivationMode);
+        ClientConfig c = load("{\"activationMode\":\"VOICE_ACTIVATION\",\"groupActivationMode\":\"PUSH_TO_TALK\"}");
+        assertEquals(ClientConfig.ActivationMode.VOICE_ACTIVATION, c.activationMode);
+        assertEquals(ClientConfig.ActivationMode.PUSH_TO_TALK, c.groupActivationMode);
+        c.save();
+        assertEquals(ClientConfig.ActivationMode.PUSH_TO_TALK, ClientConfig.load(dir.toFile()).groupActivationMode);
+        assertEquals(ClientConfig.ActivationMode.VOICE_ACTIVATION, load("{\"groupActivationMode\":\"invalid\"}").groupActivationMode);
+    }
 }

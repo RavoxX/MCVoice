@@ -19,8 +19,8 @@ import dev.mcvoice.client.proximity.WorldSnapshot;
  * <p>Every frame is re-validated against the newest {@link WorldSnapshot}
  * through the {@link Validator} (the mandatory local entity check); positions
  * for panning/attenuation come from the same snapshot, never from the network.
- * Gain changes are ramped across the frame so entering/leaving range, muting
- * or a failed check fade in/out within 20 ms instead of popping.
+ * Accepted gain changes are ramped across the frame; a rejected playback
+ * check silences the speaker immediately, before decoding or mixing.
  */
 public final class SpatialMixer {
     public interface Validator {
@@ -42,6 +42,8 @@ public final class SpatialMixer {
     }
 
     private final Map<UUID, SpeakerStream> streams = new ConcurrentHashMap<UUID, SpeakerStream>();
+    private final Map<UUID, SpeakerStream> active = new ConcurrentHashMap<UUID, SpeakerStream>();
+    private long lastReapMs;
     private final List<ExtraSource> extras = new ArrayList<ExtraSource>();
     private final int[] mix = new int[OpusCodec.FRAME_SAMPLES * 2];
     private final short[] out = new short[OpusCodec.FRAME_SAMPLES * 2];
@@ -59,6 +61,7 @@ public final class SpatialMixer {
             }
         }
         synchronized (s) {
+            if (streams.get(speaker) != s) return; // clear/reaping won the race; next frame creates current state
             if (s.senderEpoch != senderEpoch) {
                 // the speaker changed world session: its sequence numbers restart
                 s.jitter.reset();
@@ -67,6 +70,7 @@ public final class SpatialMixer {
             }
             long ext = s.unwrap.unwrap(seq16);
             s.jitter.insert(ext, data, off, len, mode, flags, nowMs);
+            if (!active.containsKey(speaker)) active.put(speaker, s);
         }
     }
 
@@ -81,7 +85,9 @@ public final class SpatialMixer {
             }
         }
         synchronized (s) {
+            if (streams.get(speaker) != s) return;
             s.jitter.insert(seq, data, off, len, mode, flags, nowMs);
+            if (!active.containsKey(speaker)) active.put(speaker, s);
         }
     }
 
@@ -93,11 +99,13 @@ public final class SpatialMixer {
                 s.flush();
                 s.gainL = 0;
                 s.gainR = 0;
+                active.remove(speaker, s);
             }
         }
     }
 
     public void clear() {
+        active.clear();
         streams.clear();
     }
 
@@ -109,38 +117,49 @@ public final class SpatialMixer {
     public short[] mixFrame(WorldSnapshot snap, Validator validator, Settings settings, long nowMs) {
         java.util.Arrays.fill(mix, 0);
         double master = settings.masterVolume();
-        Iterator<SpeakerStream> it = streams.values().iterator();
+        Iterator<SpeakerStream> it = active.values().iterator();
         while (it.hasNext()) {
             SpeakerStream s = it.next();
             synchronized (s) {
+                if (streams.get(s.speaker) != s) {
+                    active.remove(s.speaker, s);
+                    continue;
+                }
                 JitterBuffer.Result r = s.jitter.poll();
                 if (r == JitterBuffer.Result.EMPTY) {
                     s.talking = false;
-                    if (nowMs - s.lastFrameMs > 60000) {
-                        it.remove(); // idle for a minute: free the decoder
-                    }
+                    if (!s.jitter.active()) active.remove(s.speaker, s);
                     s.gainL = 0;
                     s.gainR = 0;
                     continue;
                 }
-                int mode = r == JitterBuffer.Result.FRAME ? s.jitter.outMode : 0;
+                int mode = s.jitter.outMode; // concealment must keep the previous frame's channel
+                PlaybackDecision d = validator.check(snap, s.speaker, mode);
+                s.talking = d.accepted();
+                s.lastFrameMs = nowMs;
+                if (!d.accepted()) {
+                    // Drain rejected traffic without decoding or mixing stale PCM into a fade.
+                    if (!s.rejected) s.decoder.reset();
+                    s.rejected = true;
+                    s.gainL = s.gainR = 0;
+                    s.levelDb = -100;
+                    continue;
+                }
+                s.rejected = false;
                 if (r == JitterBuffer.Result.FRAME) {
                     s.decoder.decode(s.jitter.outData, 0, s.jitter.outLen, s.pcm);
                     decodedFrames++;
-                    s.lastFrameMs = nowMs;
                 } else {
                     s.decoder.decode(null, 0, 0, s.pcm);
                     concealedFrames++;
                 }
                 double tl = 0, tr = 0;
-                PlaybackDecision d = validator.check(snap, s.speaker, mode);
-                s.talking = d.accepted();
-                if (d.accepted() && mode == PlaybackValidator.MODE_GROUP) {
+                if (mode == PlaybackValidator.MODE_GROUP) {
                     // voice group: not positional, centred at the player's volume (spec 9.1)
                     Spatializer.gains(0, master * settings.volumeOf(s.speaker), 1, g);
                     tl = g[0];
                     tr = g[1];
-                } else if (d.accepted()) {
+                } else {
                     TrackedPlayer p = snap.player(s.speaker);
                     double dist = snap.distanceTo(p);
                     double att = Spatializer.attenuation(dist, settings.range(mode));
@@ -153,18 +172,35 @@ public final class SpatialMixer {
                 double sum = 0;
                 double l0 = s.gainL, r0 = s.gainR;
                 int n = OpusCodec.FRAME_SAMPLES;
-                for (int i = 0; i < n; i++) {
-                    double f = (double) i / n;
-                    double gl = l0 + (tl - l0) * f;
-                    double gr = r0 + (tr - r0) * f;
-                    int v = s.pcm[i];
-                    sum += (double) v * v;
-                    mix[2 * i] += (int) (v * gl);
-                    mix[2 * i + 1] += (int) (v * gr);
+                if (l0 == tl && r0 == tr) {
+                    for (int i = 0; i < n; i++) {
+                        int v = s.pcm[i];
+                        sum += (double) v * v;
+                        mix[2 * i] += (int) (v * tl);
+                        mix[2 * i + 1] += (int) (v * tr);
+                    }
+                } else {
+                    for (int i = 0; i < n; i++) {
+                        double f = (double) i / n;
+                        double gl = l0 + (tl - l0) * f;
+                        double gr = r0 + (tr - r0) * f;
+                        int v = s.pcm[i];
+                        sum += (double) v * v;
+                        mix[2 * i] += (int) (v * gl);
+                        mix[2 * i + 1] += (int) (v * gr);
+                    }
                 }
                 s.levelDb = sum < 1 ? -100 : 20 * Math.log10(Math.sqrt(sum / n) / 32768.0);
                 s.gainL = tl;
                 s.gainR = tr;
+            }
+        }
+        if (nowMs - lastReapMs >= 1000) {
+            lastReapMs = nowMs;
+            for (SpeakerStream s : streams.values()) {
+                synchronized (s) {
+                    if (!s.jitter.active() && nowMs - s.lastFrameMs > 60000) streams.remove(s.speaker, s);
+                }
             }
         }
         synchronized (this) {

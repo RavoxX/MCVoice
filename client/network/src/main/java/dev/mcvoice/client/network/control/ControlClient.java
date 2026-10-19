@@ -109,6 +109,7 @@ public final class ControlClient {
     private final Listener listener;
     private final Random random = new Random();
     private volatile WebSocketClient ws;
+    private volatile ControlWriter writer;
     private volatile boolean running;
     private volatile Status status = Status.DISABLED;
     private volatile String statusDetail = "";
@@ -192,15 +193,16 @@ public final class ControlClient {
         if (running) {
             return;
         }
-        String err = checkUrl(opts.url, opts.allowInsecure);
-        if (err != null) {
-            setStatus(Status.DISABLED, err);
-            return;
-        }
         running = true;
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                String err = checkUrl(opts.url, opts.allowInsecure);
+                if (err != null) {
+                    running = false;
+                    setStatus(Status.DISABLED, err);
+                    return;
+                }
                 loop();
             }
         }, "MCVoice-Control");
@@ -210,15 +212,7 @@ public final class ControlClient {
 
     public synchronized void stop() {
         running = false;
-        WebSocketClient w = ws;
-        if (w != null) {
-            try {
-                w.sendText("{\"type\":\"bye\"}");
-            } catch (IOException ignored) {
-                // closing anyway
-            }
-            w.close(1000, "bye");
-        }
+        closeConnection();
         if (thread != null) {
             thread.interrupt();
             thread = null;
@@ -241,11 +235,8 @@ public final class ControlClient {
                 return;
             } catch (Exception e) {
                 reason = e.getClass().getSimpleName() + ": " + e.getMessage();
-            }
-            WebSocketClient w = ws;
-            ws = null;
-            if (w != null) {
-                w.close(1000, "reconnect");
+            } finally {
+                closeConnection();
             }
             boolean wasConnected = status == Status.CONNECTED;
             if (wasConnected) {
@@ -268,6 +259,15 @@ public final class ControlClient {
                 return;
             }
         }
+    }
+
+    private void closeConnection() {
+        ControlWriter old = writer;
+        writer = null;
+        if (old != null) old.close();
+        WebSocketClient w = ws;
+        ws = null;
+        if (w != null) w.abort();
     }
 
     static final class FatalException extends Exception {
@@ -308,6 +308,7 @@ public final class ControlClient {
         setStatus(status == Status.DISABLED || status == Status.STOPPED ? Status.CONNECTING : Status.RECONNECTING, "");
         WebSocketClient w = WebSocketClient.connect(new URI(opts.url.trim()), 10000, "MCVoice/" + opts.clientVersion);
         ws = w;
+        if (!running) { w.abort(); return "stopped"; }
         List<Object> caps = new ArrayList<Object>();
         caps.add("opus");
         caps.add("whisper");
@@ -384,6 +385,11 @@ public final class ControlClient {
         }
         resumeToken = Json.str(session, "resume_token");
         Session s = new Session(session, impl, version);
+        if (!running) return "stopped";
+        writer = new ControlWriter(new ControlWriter.Output() {
+            public void write(String message) throws IOException { w.sendText(message); }
+            public void abort() { w.abort(); }
+        });
         setStatus(Status.CONNECTED, impl + " " + version);
         listener.onSession(s);
 
@@ -462,17 +468,8 @@ public final class ControlClient {
 
     /** Send a raw control frame; returns false if not connected. */
     public boolean send(String json) {
-        WebSocketClient w = ws;
-        if (w == null || w.isClosed()) {
-            return false;
-        }
-        try {
-            w.sendText(json);
-            return true;
-        } catch (IOException e) {
-            w.close(1000, "write failed");
-            return false;
-        }
+        ControlWriter w = writer;
+        return w != null && w.offer(json);
     }
 
     public boolean sendScope(long epoch, boolean inWorld, String networkId, String worldId) {
