@@ -190,7 +190,10 @@ public final class SvcUdpClient {
             if (m == SvcCipher.Mode.GCM_IV12 && p != null) {
                 authenticationReply = "authenticated packet type " + (p.length == 0 ? -1 : p[0] & 0xFF) + ", length " + p.length;
             }
-            if (state == State.CONNECTING && p != null && p.length == 1 && p[0] == 0x06) {
+            // Real Bukkit 2.6.24 ACKs occupy a 256-byte buffer.
+            // Only authenticated GCM may use that form; CBC padding proves no identity.
+            if (state == State.CONNECTING && p != null && p.length > 0 && p[0] == 0x06
+                    && (p.length == 1 || (m == SvcCipher.Mode.GCM_IV12 && p.length == 256))) {
                 mode = m;
                 return p;
             }
