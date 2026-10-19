@@ -47,6 +47,27 @@ func BenchmarkPresenceStable(b *testing.B) {
 	}
 }
 
+func BenchmarkPresenceChanging(b *testing.B) {
+	for _, n := range []int{100, 1000} {
+		b.Run(fmt.Sprint(n), func(b *testing.B) {
+			s := presenceFixture(n)
+			b.ReportAllocs()
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				b.StopTimer()
+				for _, p := range s.byConn {
+					p.peer.InWorld = i%2 != 0
+					for len(p.out) > 0 {
+						<-p.out
+					}
+				}
+				b.StartTimer()
+				s.presenceTick()
+			}
+		})
+	}
+}
+
 func TestPresenceRemovalUsesEveryRoutingCheck(t *testing.T) {
 	for _, change := range []string{"world", "visible", "verified", "in-world"} {
 		t.Run(change, func(t *testing.T) {
