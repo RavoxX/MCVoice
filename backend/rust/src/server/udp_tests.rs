@@ -245,6 +245,26 @@ async fn blocked_recipient_does_not_hold_hub_and_keeps_captured_epoch() {
 }
 
 #[tokio::test]
+async fn stable_presence_sweep_needs_no_exclusive_hub_access() {
+    let srv = Server::new(Config::from_env().unwrap());
+    let (a, _rx) = player(&srv, 1);
+    let (b, _rx2) = player(&srv, 2);
+    visible(&srv, &a, &b);
+    srv.presence_tick(&mut Vec::new());
+    let hub = srv.hub.read().unwrap();
+    let (tx, rx) = std::sync::mpsc::channel();
+    let other = srv.clone();
+    let worker = std::thread::spawn(move || {
+        other.presence_tick(&mut Vec::new());
+        tx.send(()).unwrap();
+    });
+    let finished = rx.recv_timeout(Duration::from_secs(2));
+    drop(hub); // always release before joining, even on regression
+    worker.join().unwrap();
+    assert!(finished.is_ok(), "stable presence sweep waited for the exclusive Hub lock");
+}
+
+#[tokio::test]
 async fn jitter_sweep_releases_hub_before_waiting_for_udp() {
     let srv = Server::new(Config::from_env().unwrap());
     let (session, _rx) = player(&srv, 1);
