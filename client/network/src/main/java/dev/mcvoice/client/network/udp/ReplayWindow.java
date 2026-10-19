@@ -13,7 +13,7 @@ public final class ReplayWindow {
         if (Long.compareUnsigned(c, top) > 0) {
             return true;
         }
-        if (top - c >= SIZE) {
+        if (Long.compareUnsigned(top - c, SIZE) >= 0) {
             return false;
         }
         int idx = (int) Long.remainderUnsigned(c, SIZE);
