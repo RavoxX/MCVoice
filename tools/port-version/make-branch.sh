@@ -34,6 +34,9 @@ PY
 done
 [ ${#versions[@]} -gt 0 ] || { echo "usage: $0 <mc-version>... | --all-supported [--push]" >&2; exit 2; }
 
+wt=""
+cleanup() { if [ -n "$wt" ]; then git worktree remove --force "$wt" 2>/dev/null || true; fi; }
+trap cleanup EXIT
 base=$(git rev-parse HEAD)
 git fetch -q origin 'refs/heads/mc/*:refs/remotes/origin/mc/*' 2>/dev/null || true
 
@@ -60,4 +63,5 @@ for mc in "${versions[@]}"; do
     if [ "$push" = 1 ]; then git push -q -u origin "$branch"; fi
   )
   git worktree remove --force "$wt"
+  wt=""
 done
