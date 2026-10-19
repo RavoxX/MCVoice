@@ -12,6 +12,22 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 //#endif
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+//#if MC >= 26.1
+import net.minecraft.client.gui.components.PlayerFaceExtractor;
+//#elif MC >= 1.20
+import net.minecraft.client.gui.components.PlayerFaceRenderer;
+//#else
+import net.minecraft.resources.ResourceLocation;
+//#if MC >= 1.15
+import com.mojang.blaze3d.systems.RenderSystem;
+//#else
+import com.mojang.blaze3d.platform.GlStateManager;
+//#endif
+//#if MC >= 1.17
+import net.minecraft.client.renderer.GameRenderer;
+//#endif
+//#endif
 //#if MC >= 26.1
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 //#elif MC >= 1.20
@@ -110,6 +126,45 @@ public final class McCanvas implements UiCanvas {
     @Override
     public int textWidth(String text) {
         return font.width(text);
+    }
+
+    @Override
+    public void playerHead(UUID uuid, int x, int y, int size) {
+        Minecraft mc = Minecraft.getInstance();
+        PlayerInfo info = mc.getConnection() == null ? null : mc.getConnection().getPlayerInfo(uuid);
+        //#if MC >= 26.1
+        PlayerFaceExtractor.extractRenderState(g, info == null ? DefaultPlayerSkin.get(uuid) : info.getSkin(), x, y, size);
+        //#elif MC >= 1.20.2
+        PlayerFaceRenderer.draw(g, info == null ? DefaultPlayerSkin.get(uuid) : info.getSkin(), x, y, size);
+        //#elif MC >= 1.20
+        PlayerFaceRenderer.draw(g, info == null ? DefaultPlayerSkin.getDefaultSkin(uuid) : info.getSkinLocation(), x, y, size);
+        //#else
+        ResourceLocation skin = info == null ? DefaultPlayerSkin.getDefaultSkin(uuid) : info.getSkinLocation();
+        //#if MC >= 1.17
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, skin);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        //#else
+        mc.getTextureManager().bind(skin);
+        //#if MC >= 1.15
+        RenderSystem.color4f(1, 1, 1, 1);
+        //#else
+        GlStateManager.color4f(1, 1, 1, 1);
+        //#endif
+        //#endif
+        //#if MC >= 1.15
+        RenderSystem.enableBlend();
+        //#else
+        GlStateManager.enableBlend();
+        //#endif
+        //#if MC >= 1.16
+        GuiComponent.blit(g, x, y, size, size, 8f, 8f, 8, 8, 64, 64);
+        GuiComponent.blit(g, x, y, size, size, 40f, 8f, 8, 8, 64, 64);
+        //#else
+        GuiComponent.blit(x, y, size, size, 8f, 8f, 8, 8, 64, 64);
+        GuiComponent.blit(x, y, size, size, 40f, 8f, 8, 8, 64, 64);
+        //#endif
+        //#endif
     }
 
     private Component playerName(UUID uuid, String fallback) {
