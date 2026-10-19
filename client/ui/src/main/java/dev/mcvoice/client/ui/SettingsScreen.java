@@ -1,12 +1,16 @@
 package dev.mcvoice.client.ui;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
 
 import dev.mcvoice.client.config.ClientConfig;
 import dev.mcvoice.client.platform.ui.UiCanvas;
 import dev.mcvoice.client.ui.widget.Button;
 import dev.mcvoice.client.ui.widget.LevelMeter;
 import dev.mcvoice.client.ui.widget.Slider;
+import dev.mcvoice.client.ui.widget.TextField;
 
 /** Voice settings: General, Audio and Players tabs. */
 public final class SettingsScreen extends BaseScreen {
@@ -15,6 +19,36 @@ public final class SettingsScreen extends BaseScreen {
     private final VoiceControls v;
     private Tab tab = Tab.GENERAL;
     private int playerScroll;
+    private String playerSearch = "";
+    private boolean playerSearchChanged;
+    private TextField searchField;
+    private List<VoiceControls.PlayerEntry> playerResults = Collections.emptyList();
+    private List<VoiceControls.PlayerEntry> playerPage = Collections.emptyList();
+
+    @Override
+    public void render(UiCanvas c, int mouseX, int mouseY, float partialTicks) {
+        boolean refocus = false;
+        if (tab == Tab.PLAYERS) {
+            List<VoiceControls.PlayerEntry> next = new ArrayList<VoiceControls.PlayerEntry>();
+            String query = playerSearch.trim().toLowerCase(Locale.ROOT);
+            for (VoiceControls.PlayerEntry p : v.players()) {
+                if (!p.via.isEmpty() && p.name.toLowerCase(Locale.ROOT).contains(query)) next.add(p);
+            }
+            boolean changed = playerSearchChanged || next.size() != playerResults.size();
+            for (int i = 0; !changed && i < next.size(); i++) {
+                changed = !next.get(i).uuid.equals(playerResults.get(i).uuid) || !next.get(i).name.equals(playerResults.get(i).name)
+                    || !next.get(i).via.equals(playerResults.get(i).via);
+            }
+            if (changed) {
+                refocus = searchField != null && searchField.focused();
+                playerResults = next;
+                playerSearchChanged = false;
+                relayout();
+            }
+        }
+        super.render(c, mouseX, mouseY, partialTicks);
+        if (refocus && searchField != null) searchField.click(searchField.x + 1, searchField.y + 1, 0);
+    }
 
     public SettingsScreen(VoiceControls controls) {
         this.v = controls;
@@ -43,7 +77,7 @@ public final class SettingsScreen extends BaseScreen {
 
     @Override
     protected void layout(int width, int height) {
-        row = height < 250 ? 21 : ROW;
+        row = height < 250 ? 20 : ROW;
         colW = (panelW - 10) / 2;
         int left = panelX;
         int y = panelY + 12;
@@ -63,7 +97,7 @@ public final class SettingsScreen extends BaseScreen {
             b.y = y;
             widgets.add(b);
         }
-        y += row + 8;
+        y += row + (height < 250 ? 4 : 8);
         if (tab == Tab.GENERAL) {
             layoutGeneral(left, y);
         } else if (tab == Tab.AUDIO) {
@@ -139,20 +173,26 @@ public final class SettingsScreen extends BaseScreen {
             public void run() { cfg().svcInteropEnabled = !cfg().svcInteropEnabled; }
         }), right, y);
         y += row;
-        int hudW = (panelW - 8) / 3;
+        int hudW = (panelW - 4) / 2;
         place(toggle(hudW, new Button.Label() {
             public String get() { return "Voice HUD: " + (cfg().showHud ? "On" : "Off"); }
         }, new Button.Action() {
             public void run() { cfg().showHud = !cfg().showHud; }
         }), left, y);
         place(toggle(hudW, new Button.Label() {
+            public String get() { return "Group HUD: " + (cfg().showGroupHud ? "On" : "Off"); }
+        }, new Button.Action() {
+            public void run() { cfg().showGroupHud = !cfg().showGroupHud; }
+        }), left + hudW + 4, y);
+        y += row;
+        place(toggle(hudW, new Button.Label() {
             public String get() { return "Debug: " + (cfg().showDebugOverlay ? "On" : "Off"); }
         }, new Button.Action() {
             public void run() { cfg().showDebugOverlay = !cfg().showDebugOverlay; }
-        }), left + hudW + 4, y);
+        }), left, y);
         place(Button.of(hudW, "Edit HUD", new Button.Action() {
             public void run() { v.openHudEditor(); }
-        }), left + 2 * (hudW + 4), y);
+        }), left + hudW + 4, y);
     }
 
     private static String cycle(List<String> options, String current, int dir) {
@@ -222,15 +262,20 @@ public final class SettingsScreen extends BaseScreen {
     private int playersTop;
 
     private void layoutPlayers(int left, int y) {
+        searchField = new TextField(panelW, "Search online voice players", 64, TextField.PRINTABLE_ASCII, false, new TextField.Model() {
+            public String get() { return playerSearch; }
+            public void set(String value) { playerSearch = value; playerScroll = 0; playerSearchChanged = true; }
+        });
+        place(searchField, left, y);
+        y += row + 4;
         playersTop = y;
-        List<VoiceControls.PlayerEntry> players = v.players();
-        int rows = Math.max(1, (panelY + panelH - 36 - y) / row);
+        List<VoiceControls.PlayerEntry> players = playerResults;
+        int rows = Math.max(0, (heightBottom() - y) / (row * 2));
         playerScroll = Math.max(0, Math.min(playerScroll, Math.max(0, players.size() - rows)));
-        int nameW = 100;
+        playerPage = new ArrayList<VoiceControls.PlayerEntry>(players.subList(playerScroll, Math.min(players.size(), playerScroll + rows)));
         int muteW = 50;
-        int sliderW = panelW - nameW - muteW - 4;
-        for (int i = playerScroll; i < players.size() && i < playerScroll + rows; i++) {
-            final VoiceControls.PlayerEntry p = players.get(i);
+        int sliderW = panelW - muteW - 4;
+        for (final VoiceControls.PlayerEntry p : playerPage) {
             final double[] vol = {p.volume};
             final boolean[] muted = {p.muted};
             Slider s = new Slider(sliderW, "Volume", 0, 2, new Slider.Model() {
@@ -238,19 +283,24 @@ public final class SettingsScreen extends BaseScreen {
                 public void set(double d) { vol[0] = Math.round(d * 20) / 20.0; v.setPlayerVolume(p.uuid, vol[0]); }
                 public String format(double d) { return pct(d) + (p.via.isEmpty() ? "" : " (" + p.via + ")"); }
             });
-            place(s, left + nameW, y);
+            place(s, left, y + row);
             place(toggle(muteW, new Button.Label() {
                 public String get() { return muted[0] ? "Unmute" : "Mute"; }
             }, new Button.Action() {
                 public void run() { muted[0] = !muted[0]; v.setPlayerMuted(p.uuid, muted[0]); }
-            }), left + nameW + sliderW + 4, y);
-            y += row;
+            }), left + sliderW + 4, y + row);
+            y += row * 2;
         }
+    }
+
+    private int heightBottom() {
+        return panelY + panelH - 27;
     }
 
     @Override
     public void mouseScrolled(int x, int y, double amount) {
         if (tab == Tab.PLAYERS) {
+            if (amount == 0) return;
             playerScroll += amount > 0 ? -1 : 1;
             relayout();
         }
@@ -264,15 +314,14 @@ public final class SettingsScreen extends BaseScreen {
         String s = st.label;
         c.text(s, (c.width() - c.textWidth(s)) / 2, 27, color, true);
         if (tab == Tab.PLAYERS) {
-            List<VoiceControls.PlayerEntry> players = v.players();
             int y = playersTop;
-            if (players.isEmpty()) {
-                String none = "No players nearby";
+            if (playerPage.isEmpty()) {
+                String none = playerSearch.isEmpty() ? "No online voice players" : "No matching voice players";
                 c.text(none, (c.width() - c.textWidth(none)) / 2, y + 6, Theme.LABEL_DIM, true);
             }
-            for (int i = playerScroll; i < players.size() && y < panelY + panelH - 36; i++) {
-                c.text(players.get(i).name, panelX, y + 6, Theme.LABEL, true);
-                y += row;
+            for (VoiceControls.PlayerEntry p : playerPage) {
+                c.playerName(p.uuid, p.name, panelX, y + 6, Theme.LABEL, true, panelW);
+                y += row * 2;
             }
         }
     }
