@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"net/netip"
 	"os"
 	"strconv"
 	"strings"
@@ -46,6 +47,7 @@ type Config struct {
 	RateControlBurst    float64
 	RateConnectPerMin   int
 	RateAuthFailPerMin  int
+	TrustedProxyCIDRs   []netip.Prefix
 	TrustProxyHeaders   bool
 	UDPWorkers          int
 	BansFile            string
@@ -148,6 +150,27 @@ func Load() (*Config, error) {
 		DatabaseURL:        env("DATABASE_URL", ""),
 		RedisURL:           env("REDIS_URL", ""),
 		AttestationKeys:    map[string][]byte{},
+	}
+	for _, part := range strings.Split(env("TRUSTED_PROXY_CIDRS", ""), ",") {
+		if strings.TrimSpace(part) == "" {
+			continue
+		}
+		prefix, err := netip.ParsePrefix(strings.TrimSpace(part))
+		if err != nil {
+			errs = append(errs, "invalid TRUSTED_PROXY_CIDRS")
+			continue
+		}
+		if prefix.Addr().Is4In6() {
+			if prefix.Bits() < 96 {
+				errs = append(errs, "mapped proxy CIDR must be /96 or narrower")
+				continue
+			}
+			prefix = netip.PrefixFrom(prefix.Addr().Unmap(), prefix.Bits()-96)
+		}
+		c.TrustedProxyCIDRs = append(c.TrustedProxyCIDRs, prefix.Masked())
+	}
+	if c.TrustProxyHeaders && len(c.TrustedProxyCIDRs) == 0 {
+		errs = append(errs, "TRUST_PROXY_HEADERS requires TRUSTED_PROXY_CIDRS")
 	}
 	c.PublicVoicePort = envInt("PUBLIC_VOICE_PORT", c.VoiceUDPPort, &errs)
 

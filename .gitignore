@@ -45,3 +45,4 @@ client/**/build/
 
 # Node tooling (tools/svc-interop)
 node_modules/
+__pycache__/
