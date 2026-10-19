@@ -43,6 +43,19 @@ func TestForwardedIPRequiresTrustedPeerAndWalksChain(t *testing.T) {
 			t.Fatalf("%+v: got %q", tc, got)
 		}
 	}
+	r := httptest.NewRequest("GET", "/", nil)
+	r.RemoteAddr = "127.0.0.1:123"
+	r.Header.Add("X-Forwarded-For", "1.2.3.4")
+	r.Header.Add("X-Forwarded-For", "198.51.100.2")
+	if got := s.clientIP(r); got != "198.51.100.2" {
+		t.Fatal("repeated headers lost the proxy-appended peer", got)
+	}
+	r.Header.Del("X-Forwarded-For")
+	r.Header.Add("X-Forwarded-For", "")
+	r.Header.Add("X-Forwarded-For", "10.1.2.3")
+	if got := s.clientIP(r); got != "127.0.0.1" {
+		t.Fatal("empty header field disappeared from the trusted chain", got)
+	}
 }
 
 func TestLimiterSaturationPreservesKnownBudgetAndBlocksUnknown(t *testing.T) {
