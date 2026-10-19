@@ -37,6 +37,7 @@ final class FakeMinecraft implements MinecraftAdapter {
     volatile double x, y = 65.6, z;
     volatile float yaw;
     volatile boolean ptt;
+    volatile boolean whisper;
     final Map<UUID, double[]> tracked = new ConcurrentHashMap<UUID, double[]>();
     final Map<UUID, String> names = new ConcurrentHashMap<UUID, String>();
     final FakeAudio audio = new FakeAudio();
@@ -120,7 +121,7 @@ final class FakeMinecraft implements MinecraftAdapter {
 
     public InputAdapter input() {
         return new InputAdapter() {
-            public boolean isDown(Action a) { return a == Action.PUSH_TO_TALK && ptt; }
+            public boolean isDown(Action a) { return a == Action.PUSH_TO_TALK ? ptt : a == Action.WHISPER && whisper; }
             public boolean consumePress(Action a) { return false; }
             public String keyName(Action a) { return "V"; }
         };
