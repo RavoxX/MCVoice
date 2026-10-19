@@ -43,7 +43,7 @@ async fn control(
     let Ok(permit) = srv.pending_auth.clone().try_acquire_owned() else {
         return (StatusCode::SERVICE_UNAVAILABLE, "authentication busy").into_response();
     };
-    let ip = client_ip(&srv.cfg, peer.ip(), headers.get("x-forwarded-for").and_then(|v| v.to_str().ok())).to_string();
+    let ip = client_ip(&srv.cfg, peer.ip(), &headers).to_string();
     if srv.shutdown.load(Relaxed) {
         return (StatusCode::SERVICE_UNAVAILABLE, "shutting down").into_response();
     }
@@ -158,13 +158,25 @@ pub async fn run(srv: Arc<Server>, shutdown: impl std::future::Future<Output = (
     result
 }
 
-fn client_ip(cfg: &crate::config::Config, peer: std::net::IpAddr, xff: Option<&str>) -> std::net::IpAddr {
+fn client_ip(cfg: &crate::config::Config, peer: std::net::IpAddr, headers: &HeaderMap) -> std::net::IpAddr {
     let peer = peer.to_canonical();
     let trusted = |ip: std::net::IpAddr| cfg.trusted_proxy_cidrs.iter().any(|p| p.contains(&ip));
     if !cfg.trust_proxy_headers || !trusted(peer) {
         return peer;
     }
-    let Some(xff) = xff.filter(|h| h.len() <= 2048) else { return peer };
+    let mut xff = String::new();
+    let mut first = true;
+    for value in headers.get_all("x-forwarded-for") {
+        let Ok(value) = value.to_str() else { return peer };
+        if xff.len() + value.len() + usize::from(!first) > 2048 {
+            return peer;
+        }
+        if !first {
+            xff.push(',');
+        }
+        first = false;
+        xff.push_str(value);
+    }
     if xff.split(',').count() > 32 {
         return peer;
     }
@@ -198,7 +210,17 @@ mod tests {
             ("127.0.0.1", "::ffff:198.51.100.2", "198.51.100.2"),
             ("127.0.0.1", "2001:db8::1", "2001:db8::1"),
         ] {
-            assert_eq!(client_ip(&cfg, peer.parse().unwrap(), Some(header)).to_string(), want);
+            let mut headers = HeaderMap::new();
+            headers.insert("x-forwarded-for", header.parse().unwrap());
+            assert_eq!(client_ip(&cfg, peer.parse().unwrap(), &headers).to_string(), want);
         }
+        let mut headers = HeaderMap::new();
+        headers.append("x-forwarded-for", "1.2.3.4".parse().unwrap());
+        headers.append("x-forwarded-for", "198.51.100.2".parse().unwrap());
+        assert_eq!(client_ip(&cfg, "127.0.0.1".parse().unwrap(), &headers).to_string(), "198.51.100.2");
+        headers.remove("x-forwarded-for");
+        headers.append("x-forwarded-for", "".parse().unwrap());
+        headers.append("x-forwarded-for", "10.1.2.3".parse().unwrap());
+        assert_eq!(client_ip(&cfg, "127.0.0.1".parse().unwrap(), &headers).to_string(), "127.0.0.1");
     }
 }
