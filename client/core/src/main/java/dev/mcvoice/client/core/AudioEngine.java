@@ -47,6 +47,13 @@ final class AudioEngine {
     private volatile String inputDevice = "", outputDevice = "";
     private volatile String captureStatus = "stopped", playbackStatus = "stopped";
     private volatile AudioAdapter.CaptureLine captureLine;
+    private volatile AudioAdapter.PlaybackLine playbackLine;
+    private final Object lifecycle = new Object();
+    private Thread lifecycleThread;
+    private volatile boolean requested;
+    private boolean disposed;
+    private long revision;
+    private String requestedInput = "", requestedOutput = "";
     private final FrameSink sink;
     private final MixSource mix;
     private final SpatialMixer mixer;
@@ -64,13 +71,76 @@ final class AudioEngine {
         }
     }
 
-    synchronized void start(String input, String output) {
-        if (running && input.equals(inputDevice) && output.equals(outputDevice)) {
-            return;
+    void start(String input, String output) {
+        synchronized (lifecycle) {
+            if (disposed || (requested && input.equals(requestedInput) && output.equals(requestedOutput))) return;
+            requested = true;
+            requestedInput = input;
+            requestedOutput = output;
+            requestChanged();
         }
-        stop();
-        inputDevice = input;
-        outputDevice = output;
+    }
+
+    // Called with lifecycle held; native close/join never runs under this lock.
+    private void requestChanged() {
+        running = false; // immediately gate old loops, even if a device is stuck closing
+        voiceDetected = false;
+        revision++;
+        if (lifecycleThread == null) {
+            lifecycleThread = new Thread(() -> lifecycleLoop(), "MCVoice-AudioLifecycle");
+            lifecycleThread.setDaemon(true);
+            lifecycleThread.start();
+        }
+        lifecycle.notifyAll();
+    }
+
+    private void lifecycleLoop() {
+        long applied = -1;
+        while (true) {
+            synchronized (lifecycle) {
+                while (revision == applied) {
+                    try { lifecycle.wait(); } catch (InterruptedException e) { Thread.currentThread().interrupt(); return; }
+                }
+            }
+            running = false;
+            Thread c = captureThread, p = playbackThread;
+            if (c != null) c.interrupt();
+            if (p != null) p.interrupt();
+            AudioAdapter.CaptureLine in = captureLine;
+            AudioAdapter.PlaybackLine out = playbackLine;
+            try { if (in != null) in.close(); } catch (RuntimeException e) { VoiceLog.warn(Category.AUDIO, "capture close failed", e); }
+            try { if (out != null) out.close(); } catch (RuntimeException e) { VoiceLog.warn(Category.AUDIO, "playback close failed", e); }
+            // Never overlap generations: encoder and mixer are single-owner state.
+            join(c);
+            join(p);
+            captureThread = playbackThread = null;
+            captureLine = null;
+            playbackLine = null;
+            transmitting = voiceDetected = false;
+            synchronized (lifecycle) {
+                applied = revision; // coalesce rapid device changes to the newest request
+                if (disposed) return;
+                if (requested) {
+                    inputDevice = requestedInput;
+                    outputDevice = requestedOutput;
+                    startThreads();
+                } else {
+                    captureStatus = playbackStatus = "stopped";
+                }
+            }
+        }
+    }
+
+    private static void join(Thread t) {
+        if (t == null) return;
+        boolean interrupted = false;
+        while (t.isAlive()) {
+            try { t.join(); } catch (InterruptedException e) { interrupted = true; }
+        }
+        if (interrupted) Thread.currentThread().interrupt();
+    }
+
+    private void startThreads() {
         running = true;
         captureThread = new Thread(new Runnable() {
             public void run() {
@@ -90,28 +160,25 @@ final class AudioEngine {
         playbackThread.start();
     }
 
-    synchronized void stop() {
-        running = false;
-        Thread c = captureThread, p = playbackThread;
-        captureThread = null;
-        playbackThread = null;
-        for (Thread t : new Thread[] {c, p}) {
-            if (t != null) {
-                t.interrupt();
-                try {
-                    t.join(1000);
-                } catch (InterruptedException ignored) {
-                    Thread.currentThread().interrupt();
-                }
-            }
+    void stop() {
+        synchronized (lifecycle) {
+            if (!requested) return;
+            requested = false;
+            captureStatus = playbackStatus = "stopping";
+            requestChanged();
         }
-        captureStatus = "stopped";
-        voiceDetected = false;
-        playbackStatus = "stopped";
+    }
+
+    void shutdown() {
+        synchronized (lifecycle) {
+            disposed = true;
+            requested = false;
+            requestChanged();
+        }
     }
 
     boolean running() {
-        return running;
+        return requested;
     }
 
     private void captureLoop() {
@@ -133,6 +200,7 @@ final class AudioEngine {
             }
             try {
                 while (running && line.read(pcm, 0, pcm.length)) {
+                    if (!running) break;
                     boolean voice;
                     synchronized (processor) {
                         voice = processor.process(pcm, pcm.length);
@@ -146,7 +214,7 @@ final class AudioEngine {
                     boolean tx = mask != 0;
                     if (tx) {
                         int n = encoder.encode(pcm, packet);
-                        if (n > 0) {
+                        if (n > 0 && running) {
                             sink.onEncoded(packet, n, mask, sink.whisper());
                         }
                     } else if (transmitting) {
@@ -177,6 +245,7 @@ final class AudioEngine {
             AudioAdapter.PlaybackLine line;
             try {
                 line = audio.openPlayback(outputDevice);
+                playbackLine = line;
                 playbackStatus = "ok: " + line.deviceName();
             } catch (Throwable e) {
                 playbackStatus = "speaker unavailable: " + e.getMessage();
@@ -195,6 +264,7 @@ final class AudioEngine {
                 VoiceLog.warn(Category.AUDIO, "playback failed: " + t);
             } finally {
                 line.close();
+                playbackLine = null;
             }
         }
     }
