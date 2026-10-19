@@ -801,14 +801,30 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     @Override
     public List<PlayerEntry> players() {
         WorldSnapshot s = tracker.snapshot();
+        if (!s.inWorld) return Collections.emptyList();
         List<PlayerEntry> out = new ArrayList<PlayerEntry>();
+        Map<UUID, String> svcPlayers = config.svcInteropEnabled ? svc.onlinePlayers() : Collections.<UUID, String>emptyMap();
+        Set<UUID> seen = new java.util.HashSet<UUID>();
         for (TrackedPlayer p : s.players.values()) {
-            if (s.distanceTo(p) > Math.max(normalRange(), 48)) {
-                continue;
-            }
-            TransportSelector.State st = selector.stateOf(p.uuid);
-            String via = st == TransportSelector.State.CLOUD ? "cloud" : st == TransportSelector.State.NONE ? (selector.isCloudPeer(p.uuid) ? "cloud" : "") : "SVC";
+            boolean cloudPeer = config.cloudEnabled && session != null && selector.isCloudPeer(p.uuid);
+            boolean svcPeer = svcPlayers.containsKey(p.uuid);
+            if (!cloudPeer && !svcPeer) continue;
+            String via = cloudPeer ? "cloud" : "SVC";
             out.add(new PlayerEntry(p.uuid, p.name, config.volumeOf(p.uuid), config.mutedPlayers.contains(p.uuid), via));
+            seen.add(p.uuid);
+        }
+        for (Map.Entry<UUID, String> p : svcPlayers.entrySet()) {
+            if (!p.getKey().equals(s.localUuid) && seen.add(p.getKey())) {
+                out.add(new PlayerEntry(p.getKey(), p.getValue(), config.volumeOf(p.getKey()), config.mutedPlayers.contains(p.getKey()), "SVC"));
+            }
+        }
+        Group current = group;
+        if (config.cloudEnabled && session != null && current != null) {
+            for (Member member : current.members) {
+                if (!member.uuid.equals(s.localUuid) && seen.add(member.uuid)) {
+                    out.add(new PlayerEntry(member.uuid, member.name, config.volumeOf(member.uuid), config.mutedPlayers.contains(member.uuid), "group"));
+                }
+            }
         }
         Collections.sort(out, new Comparator<PlayerEntry>() {
             public int compare(PlayerEntry a, PlayerEntry b) {
@@ -917,6 +933,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
     @Override
     public void openPlayerMenu(UUID player, String name) {
+        if (player.equals(mc.session().uuid())) return;
         if (mc.gui() != null) {
             mc.gui().open(new PlayerScreen(this, player, name));
         }
