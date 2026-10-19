@@ -86,4 +86,15 @@ class DedupScenarioTest {
         sel.accept(B, TransportKind.CLOUD, 1040);
         assertEquals(2, switches[0]);
     }
+
+    @Test void suppressedFrameStillNotifiesTransportChangeExactlyOnce() {
+        TransportSelector sel=new TransportSelector(); int[] switches={0};
+        sel.setListener((u,a,b)->switches[0]++);
+        assertTrue(sel.accept(B,TransportKind.SVC,1000));
+        sel.setCloudPeer(B,true);sel.setCloudLinkHealthy(true);
+        assertFalse(sel.accept(B,TransportKind.SVC,1020));
+        assertEquals(1,switches[0]);
+        assertTrue(sel.accept(B,TransportKind.CLOUD,1040));
+        assertEquals(1,switches[0]);
+    }
 }
