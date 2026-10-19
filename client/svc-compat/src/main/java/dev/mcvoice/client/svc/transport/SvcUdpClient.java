@@ -186,7 +186,7 @@ public final class SvcUdpClient {
         }
         for (SvcCipher.Mode m : SvcCipher.Mode.values()) {
             byte[] p = cipher.decrypt(m, enc, 0, enc.length);
-            if (p != null && p.length > 0) {
+            if (state == State.CONNECTING && p != null && p.length == 1 && p[0] == 0x06) {
                 mode = m;
                 return p;
             }
