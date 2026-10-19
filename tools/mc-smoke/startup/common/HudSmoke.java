@@ -46,7 +46,7 @@ public final class HudSmoke {
     public static void screenshot(Minecraft mc) {
         if (screenshot) return;
         screenshot = true;
-        Screenshot.grab(new java.io.File(mc.gameDirectory.getParentFile(), "evidence"), "group-hud.png", mc.getMainRenderTarget(), 1,
+        Screenshot.grab(new java.io.File(mc.gameDirectory.getParentFile(), "evidence"), "group-hud.png", mc.gameRenderer.mainRenderTarget(), 1,
             message -> LogUtils.getLogger().info("MCVOICE_SMOKE group-hud screenshot {}", message.getString()));
     }
 }
