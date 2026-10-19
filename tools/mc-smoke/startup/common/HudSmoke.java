@@ -1,0 +1,52 @@
+package dev.mcvoice.smoke;
+
+import java.lang.reflect.Proxy;
+import java.util.List;
+import java.util.UUID;
+import dev.mcvoice.client.config.ClientConfig;
+import dev.mcvoice.client.ui.HudRenderer;
+import dev.mcvoice.client.ui.TransportStatus;
+import dev.mcvoice.client.ui.VoiceControls;
+import dev.mcvoice.platform.mc.McCanvas;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Screenshot;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import com.mojang.logging.LogUtils;
+
+/** Render production HUD code through the actual 26.3 extractor, including skin and fallback paths. */
+public final class HudSmoke {
+    private static int frames;
+    private static boolean screenshot;
+
+    public static void render(GuiGraphicsExtractor graphics) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) return;
+        UUID self = mc.player.getUUID();
+        VoiceControls.Group group = new VoiceControls.Group("SMOKE", false, 15, List.of(
+            new VoiceControls.Member(self, "Speaking"), new VoiceControls.Member(new UUID(0, 123), "Quiet member")));
+        VoiceControls controls = (VoiceControls) Proxy.newProxyInstance(VoiceControls.class.getClassLoader(),
+            new Class<?>[] {VoiceControls.class}, (proxy, method, args) -> {
+                return switch (method.getName()) {
+                    case "config" -> new ClientConfig();
+                    case "transportStatus" -> TransportStatus.CLOUD;
+                    case "group" -> group;
+                    case "talkers" -> List.of(new VoiceControls.Talker(self, "Speaking", false, true, true));
+                    default -> false;
+                };
+            });
+        List<HudRenderer.Row> rows = HudRenderer.render(new McCanvas(graphics), controls, false);
+        if (rows.size() != 2) throw new AssertionError("26.3 group roster did not render both members");
+        if (++frames == 10) LogUtils.getLogger().info("MCVOICE_SMOKE group-hud-extractor PASS");
+    }
+
+    public static boolean ready() {
+        return frames >= 10;
+    }
+
+    public static void screenshot(Minecraft mc) {
+        if (screenshot) return;
+        screenshot = true;
+        Screenshot.grab(new java.io.File(mc.gameDirectory.getParentFile(), "evidence"), "group-hud.png", mc.gameRenderer.mainRenderTarget(), 1,
+            message -> LogUtils.getLogger().info("MCVOICE_SMOKE group-hud screenshot {}", message.getString()));
+    }
+}
