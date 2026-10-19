@@ -51,4 +51,15 @@ class ClientConfigTest {
         assertEquals(ClientConfig.ActivationMode.PUSH_TO_TALK, ClientConfig.load(dir.toFile()).groupActivationMode);
         assertEquals(ClientConfig.ActivationMode.VOICE_ACTIVATION, load("{\"groupActivationMode\":\"invalid\"}").groupActivationMode);
     }
+
+    @Test void concurrentPlayerControlsAndSerializationRemainSafe() throws Exception {
+        ClientConfig c=new ClientConfig();java.util.UUID id=java.util.UUID.randomUUID();
+        java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
+        try {
+            java.util.concurrent.Future<?> write=worker.submit(()->{for(int n=0;n<5000;n++){c.mutedPlayers.add(id);c.playerVolume.put(id,0.5);c.mutedPlayers.remove(id);}});
+            for(int n=0;n<500;n++){dev.mcvoice.client.json.Json.write(c.toJson());c.volumeOf(id);c.mutedPlayers.contains(id);}
+            write.get(5,java.util.concurrent.TimeUnit.SECONDS);
+            assertEquals(0.5,c.volumeOf(id));
+        }finally{worker.shutdownNow();}
+    }
 }

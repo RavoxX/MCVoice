@@ -88,6 +88,7 @@ public final class SettingsScreen extends BaseScreen {
             final Tab t = tabs[i];
             Button b = Button.of(tw, names[i], new Button.Action() {
                 public void run() {
+                    v.stopMicTest();
                     tab = t;
                     relayout();
                 }
@@ -107,6 +108,7 @@ public final class SettingsScreen extends BaseScreen {
         }
         Button done = Button.of(200, "Done", new Button.Action() {
             public void run() {
+                v.stopMicTest();
                 v.applyConfig();
             }
         });
@@ -136,7 +138,7 @@ public final class SettingsScreen extends BaseScreen {
         }), left, y);
         place(new Slider(colW, "Activation", -60, 0, new Slider.Model() {
             public double get() { return cfg().voiceActivationThresholdDb; }
-            public void set(double d) { cfg().voiceActivationThresholdDb = Math.round(d); }
+            public void set(double d) { cfg().voiceActivationThresholdDb = Math.round(d); v.previewAudioConfig(); }
             public String format(double d) { return Math.round(d) + " dB"; }
         }), right, y);
         y += row;
@@ -218,7 +220,7 @@ public final class SettingsScreen extends BaseScreen {
         y += row;
         place(new Slider(colW, "Mic Volume", 0, 4, new Slider.Model() {
             public double get() { return cfg().micGain; }
-            public void set(double d) { cfg().micGain = Math.round(d * 20) / 20.0; }
+            public void set(double d) { cfg().micGain = Math.round(d * 20) / 20.0; v.previewAudioConfig(); }
             public String format(double d) { return pct(d); }
         }), left, y);
         place(new Slider(colW, "Voice Volume", 0, 2, new Slider.Model() {
@@ -230,12 +232,12 @@ public final class SettingsScreen extends BaseScreen {
         place(toggle(colW, new Button.Label() {
             public String get() { return "Noise Suppression: " + (cfg().noiseSuppression ? "On" : "Off"); }
         }, new Button.Action() {
-            public void run() { cfg().noiseSuppression = !cfg().noiseSuppression; }
+            public void run() { cfg().noiseSuppression = !cfg().noiseSuppression; v.previewAudioConfig(); }
         }), left, y);
         place(toggle(colW, new Button.Label() {
             public String get() { return "Auto Gain: " + (cfg().automaticGainControl ? "On" : "Off"); }
         }, new Button.Action() {
-            public void run() { cfg().automaticGainControl = !cfg().automaticGainControl; }
+            public void run() { cfg().automaticGainControl = !cfg().automaticGainControl; v.previewAudioConfig(); }
         }), right, y);
         y += row;
         place(toggle(colW, new Button.Label() {
@@ -260,6 +262,12 @@ public final class SettingsScreen extends BaseScreen {
     }
 
     private int playersTop;
+
+    @Override
+    public void onClose() {
+        v.stopMicTest();
+        super.onClose();
+    }
 
     private void layoutPlayers(int left, int y) {
         searchField = new TextField(panelW, "Search online voice players", 64, TextField.PRINTABLE_ASCII, false, new TextField.Model() {
