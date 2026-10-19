@@ -32,11 +32,12 @@ func (b *tokenBucket) allow(now time.Time) bool {
 
 // ipLimiter limits events per key per minute (fixed window) with bounded memory.
 type ipLimiter struct {
-	mu      sync.Mutex
-	perMin  int
-	window  time.Time
-	counts  map[string]int
-	maxKeys int
+	mu       sync.Mutex
+	perMin   int
+	window   time.Time
+	counts   map[string]int
+	maxKeys  int
+	overflow int
 }
 
 func newIPLimiter(perMin int) *ipLimiter {
@@ -52,13 +53,19 @@ func (l *ipLimiter) allow(key string, now time.Time) bool {
 	if now.Sub(l.window) >= time.Minute {
 		l.window = now
 		clear(l.counts)
+		l.overflow = 0
 	}
 	n := l.counts[key]
 	if n >= l.perMin {
 		return false
 	}
-	if len(l.counts) >= l.maxKeys {
-		return false // fail closed under key flooding
+	if len(l.counts) >= l.maxKeys && n == 0 {
+		// Unknown identities share a bounded overflow budget; never evict live budgets.
+		if l.overflow >= l.perMin {
+			return false
+		}
+		l.overflow++
+		return true
 	}
 	l.counts[key] = n + 1
 	return true
@@ -74,5 +81,6 @@ func (l *ipLimiter) blocked(key string, now time.Time) bool {
 	if now.Sub(l.window) >= time.Minute {
 		return false
 	}
-	return l.counts[key] >= l.perMin
+	n, known := l.counts[key]
+	return n >= l.perMin || (!known && len(l.counts) >= l.maxKeys && l.overflow >= l.perMin)
 }

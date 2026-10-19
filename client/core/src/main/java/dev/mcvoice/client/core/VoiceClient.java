@@ -86,7 +86,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     private volatile long leftWorldAtMs = -1;
 
     // game thread state
-    private boolean scopeDirty = true;
+    private volatile boolean scopeDirty = true;
     private boolean stateDirty = true;
     private double lastPosX = Double.NaN, lastPosY, lastPosZ;
     private long lastPosMs;
@@ -275,8 +275,8 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         }
         if (scopeDirty) {
             String addr = mc.network().serverAddress();
-            networkId = addr == null ? "" : NetworkIds.of(addr);
-            boolean inWorld = snap.inWorld && !networkId.isEmpty();
+            networkId = NetworkIds.of(addr == null ? "unknown-session" : addr);
+            boolean inWorld = snap.inWorld;
             if (ctl.sendScope(snap.epoch, inWorld, networkId, snap.world)) {
                 scopeDirty = false;
                 reporter.resync();
@@ -453,7 +453,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
         public void onTransmitEnd() {
             CloudVoiceChannel c = cloud;
-            if (c != null && session != null) {
+            if (c != null && session != null && !scopeDirty) {
                 seq = (seq + 1) & 0xFFFF;
                 c.sendVoice(tracker.snapshot().epoch & 0xFFFFFFFFL, seq, timestamp, lastTxMode,
                     VoiceProtocol.FLAG_EOS | lastTxGroupFlag, empty, 0, 0);
@@ -480,7 +480,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             return;
         }
         long now = System.currentTimeMillis();
-        if (!selector.accept(sender, TransportKind.CLOUD, now)) {
+        if (mode != PlaybackValidator.MODE_GROUP && !selector.accept(sender, TransportKind.CLOUD, now)) {
             return;
         }
         mixer.enqueue(sender, senderEpoch, sequence, mode, flags, payload, off, len, now);
@@ -492,8 +492,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     public void onSvcPlayerAudio(UUID sender, long sequence, boolean whispering, float distance, byte[] opus) {
         WorldSnapshot snap = tracker.snapshot();
         int mode = whispering ? PlaybackValidator.MODE_WHISPER : PlaybackValidator.MODE_NORMAL;
-        double svcRange = svc.serverDistance() > 0 ? svc.serverDistance() : normalRange();
-        PlaybackDecision d = PlaybackValidator.check(snap, sender, PlaybackValidator.NO_EPOCH, mode, Math.max(svcRange, normalRange()),
+        PlaybackDecision d = PlaybackValidator.check(snap, sender, PlaybackValidator.NO_EPOCH, mode, normalRange(),
             whisperRange(), config.mutedPlayers, config.deafened);
         if (!d.accepted()) {
             rejected.get(d).incrementAndGet();
@@ -650,6 +649,11 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     @Override
     public ClientConfig config() {
         return config;
+    }
+
+    @Override
+    public void previewAudioConfig() {
+        engine.configure(config.micGain, config.noiseSuppression, config.automaticGainControl, config.voiceActivationThresholdDb);
     }
 
     @Override
@@ -1010,6 +1014,8 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     }
 
     private void setGroup(Group g, String notice) {
+        Group previous = group;
+        if (g == null || previous == null || !g.id.equals(previous.id)) mixer.clearGroups();
         group = g;
         Set<UUID> m = new java.util.HashSet<UUID>();
         if (g != null) {
