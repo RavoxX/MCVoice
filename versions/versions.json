@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-28T10:56:30Z",
+  "generated_at": "2026-10-19T09:56:04Z",
   "range": {
     "min": "1.8",
     "max": "26.3",
@@ -30,7 +30,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": "1.13.5+1.8",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -51,7 +51,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -72,7 +72,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -93,7 +93,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -114,7 +114,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -135,7 +135,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -156,7 +156,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -177,7 +177,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -199,7 +199,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -221,7 +221,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": "1.13.5+1.8.9",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -316,7 +316,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": "1.13.5+1.9.4",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -375,7 +375,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": "1.13.5+1.10.2",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -434,7 +434,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": "1.13.5+1.11.2",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -494,7 +494,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": "1.13.5+1.12.2",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -552,7 +552,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.19.3",
+          "loader": "0.20.0",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -1596,14 +1596,14 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "26.3-66.0.6",
+          "version": "26.3-66.0.13",
           "channel": "latest"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
           "loader": "0.19.5",
-          "fabric_api": "0.161.0+26.3",
+          "fabric_api": "0.163.0+26.3",
           "note": null
         }
       }
