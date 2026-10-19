@@ -289,12 +289,18 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **0.1.9 release preparation:** user authorized a new stable release for all
-  supported versions, including both backend images. Client/Rust/Go versions
-  are aligned at 0.1.9; publication is pending. The validated follow-up below
-  is included. See `docs/release-0.1.9.md` for exact release results once known.
+* **0.1.10 hardening candidate:** replay/rotation, trusted proxy identity,
+  reconnect password budgets, admission/moderation, concurrent config, group
+  transport isolation and protocol edge cases have regression coverage. CI
+  test/build permissions are separated from publication. Explicit proxy CIDRs
+  are now required when proxy trust is enabled. Release/deployment pending;
+  see `docs/hardening-0.1.10.md` for decisions and remaining scaling limits.
+* **0.1.9 released:** run `39269460274` passed: 102/102 jars, 62/62 GitHub
+  Releases, 102/102 Maven publications, both backend images. Independent local
+  Maven reads returned HTTP 401, so no separate byte-verification claim is made.
+  Production still uses the earlier local 0.1.5 image until the new deployment.
 
-* **Input/microphone/performance follow-up (client unreleased):** 26.3 text fields
+* **Input/microphone/performance follow-up (released in 0.1.9):** 26.3 text fields
   explicitly own native SDL text input; runtime tests now check SDL activation,
   native KeyboardHandler text dispatch and blur/removal. Whisper independently
   opens proximity capture; groups have an independent PTT/voice-activation mode
