@@ -57,10 +57,14 @@ public final class StartupSmoke {
         if (mc.level != null && mc.player != null && mc.gui.screen() == null && !returning) {
             KeyMapping.setAll();
             if (++worldTicks == 60) {
+                require(HudSmoke.ready(), "Production group HUD was not rendered through the 26.3 extractor");
+                HudSmoke.screenshot(mc);
                 LogUtils.getLogger().info("MCVOICE_SMOKE world-focus PASS upgrade={}", UPGRADE);
                 // Exercise another real mouse release/grab, in addition to LevelLoadingScreen.onClose.
                 mc.mouseHandler.releaseMouse();
                 mc.mouseHandler.grabMouse();
+            }
+            if (worldTicks == 90) {
                 returning = true;
                 mc.disconnect(new TitleScreen(), false);
             }

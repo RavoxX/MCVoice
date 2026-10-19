@@ -56,7 +56,7 @@ public interface VoiceControls {
 
     void playSpeakerTest();
 
-    /** Players currently tracked in the local world, for the volume list. */
+    /** Confirmed online voice users: local cloud peers, current group members and SVC server presence. */
     List<PlayerEntry> players();
 
     void setPlayerVolume(UUID player, double volume);
