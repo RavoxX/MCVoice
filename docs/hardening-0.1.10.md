@@ -16,7 +16,9 @@ replay checks remain mandatory.
 * Proxy headers are accepted only from explicitly configured
   `TRUSTED_PROXY_CIDRS`. Addresses are parsed and canonicalized; XFF is traversed
   from the trusted peer toward the first untrusted hop. Invalid/oversized chains
-  fall back to the peer. Enabling trust without CIDRs fails startup. Do not use
+  fall back to the peer. Repeated HTTP header fields are combined in wire order,
+  including empty fields, before applying the same bounds and trust walk.
+  Enabling trust without CIDRs fails startup. Do not use
   broad private-network ranges when an exact gateway/peer address is available.
 * Saturated limiter tables retain existing identities and use a bounded shared
   overflow budget. Evicting live identities would restore attack budgets and
@@ -99,7 +101,9 @@ GitHub's Actions incident; these pending runs are not validation passes.
 ## Before/after measurements
 
 [Raw samples and binary provenance](benchmarks/2026-10-19-hardening.json)
-compare 0.1.9 (`0fef0da`) with the 0.1.10 production source (`b451681`). Windows
+compare 0.1.9 (`0fef0da`) with measured 0.1.10 source (`b451681`, before the
+additional repeated-XFF parsing correction; measured audio/presence paths are
+unchanged by that correction). Windows
 x64, Ryzen 7 5800X3D, one loopback host, three repetitions; no concurrent builds
 during retained measurements. UDP runs alternate order, use four workers,
 200 clients/60 talkers at 50 Hz, 5s ramp and 10s measurement. Values below are
