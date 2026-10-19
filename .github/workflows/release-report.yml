@@ -1,0 +1,119 @@
+name: release-report
+run-name: "release-report ${{ inputs.run_id }}"
+
+# Recover/verify a report from an existing completed client-only release.
+# Never builds or republishes jars, Maven packages, or backend images.
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Completed release.yml run ID
+        required: true
+      version:
+        description: Already published version
+        required: true
+      minecraft:
+        description: Single Minecraft version from that run
+        required: true
+
+permissions:
+  actions: read
+  contents: write
+  packages: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RUN_ID: ${{ inputs.run_id }}
+      VERSION: ${{ inputs.version }}
+      MC: ${{ inputs.minecraft }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Test artifact layouts
+        run: python3 -m unittest discover -s tools/release
+      - id: records
+        name: Retrieve and validate the recorded release facts
+        run: |
+          set -euo pipefail
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          [[ "$MC" =~ ^[0-9]+(\.[0-9]+)+$ ]]
+          gh api "repos/$GH_REPO/actions/runs/$RUN_ID" > run.json
+          gh api "repos/$GH_REPO/actions/runs/$RUN_ID/jobs?per_page=100" > jobs.json
+          gh run download "$RUN_ID" -n "mc-$MC-status" -D "artifacts/mc-$MC-status"
+          gh run download "$RUN_ID" -n "release-result-$MC" -D "artifacts/release-result-$MC"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          e = os.environ
+          run = json.load(open('run.json'))
+          assert run['path'] == '.github/workflows/release.yml'
+          assert run['status'] == 'completed' and run['conclusion'] == 'success'
+          jobs = json.load(open('jobs.json'))['jobs']
+          tests = [j for j in jobs if j['name'].startswith('test / ')]
+          assert len(tests) == 6 and all(j['conclusion'] == 'success' for j in tests)
+          assert next(j for j in jobs if j['name'] == f"build ({e['MC']}) / build")['conclusion'] == 'success'
+          assert next(j for j in jobs if j['name'] == 'images')['conclusion'] == 'skipped'
+          results = [json.loads(p.read_text()) for p in Path('artifacts').rglob('*.json')]
+          builds = [r for r in results if 'loader' in r]
+          assert {r['loader'] for r in builds} == {'fabric', 'forge'} and len(builds) == 2
+          for r in builds:
+              assert r['minecraft'] == e['MC'] and r['status'] == 'pass' and r['maven'] == 'published'
+              assert r['jar'] == f"mcvoice-{e['VERSION']}-mc{e['MC']}-{r['loader']}.jar"
+          releases = [r for r in results if 'release' in r]
+          assert len(releases) == 1 and releases[0]['release'] in ('created', 'updated')
+          assert releases[0]['tag'] == f"v{e['VERSION']}-mc{e['MC']}"
+          with open(e['GITHUB_OUTPUT'], 'a') as out:
+              out.write('source=' + run['head_sha'] + '\n')
+          PY
+      - name: Verify published jar checksums and authenticated Maven downloads
+        run: |
+          set -euo pipefail
+          mkdir -p verified
+          gh release download "v$VERSION-mc$MC" -p '*.jar' -p checksums-sha256.txt -D verified
+          (cd verified && sha256sum -c checksums-sha256.txt)
+          for loader in fabric forge; do
+            artifact="voice-client-$loader"
+            mv="$VERSION+mc$MC"
+            curl -fsSL -u "$GITHUB_ACTOR:$GH_TOKEN" \
+              "https://maven.pkg.github.com/$GH_REPO/io/github/ravoxx/mcvoice/$artifact/$mv/$artifact-$mv.jar" \
+              -o "verified/maven-$loader.jar"
+            cmp "verified/maven-$loader.jar" "verified/mcvoice-$VERSION-mc$MC-$loader.jar"
+          done
+          sha256sum verified/maven-*.jar > maven-verification.txt
+      - name: Render and attach the corrected report
+        env:
+          SOURCE: ${{ steps.records.outputs.source }}
+          TEST_RESULT: success
+          BUILD_RESULT: success
+          IMAGES_RESULT: skipped
+          IMAGES_REQUESTED: "false"
+        run: |
+          set -euo pipefail
+          export RUN_URL="https://github.com/$GH_REPO/actions/runs/$RUN_ID"
+          name="release-report-run$RUN_ID.md"
+          python3 tools/release/report.py artifacts > "$name"
+          grep -q 'Jars built and validated: \*\*2/2\*\*' "$name"
+          grep -q 'GitHub Releases: \*\*1/1\*\*' "$name"
+          grep -q 'Maven packages published: \*\*2/2\*\*' "$name"
+          tag_source=$(gh api "repos/$GH_REPO/git/ref/tags/v$VERSION-mc$MC" --jq .object.sha)
+          printf '\n## Verification\n\nJar source revision: `%s`. Release workflow revision: `%s`.\n\nBoth Maven downloads match the published jars byte for byte. Report recovery: https://github.com/%s/actions/runs/%s\n' \
+            "$tag_source" "$SOURCE" "$GH_REPO" "$GITHUB_RUN_ID" >> "$name"
+          cat "$name" >> "$GITHUB_STEP_SUMMARY"
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            gh release upload "v$VERSION" "$name" maven-verification.txt --clobber
+          else
+            gh release create "v$VERSION" "$name" maven-verification.txt --target "$SOURCE" \
+              --title "MCVoice $VERSION" --notes "Verified release report for Minecraft $MC (Fabric and Forge); no backend images."
+          fi
+          gh release upload "v$VERSION-mc$MC" "$name" --clobber
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: verified-release-report
+          path: |
+            release-report-run*.md
+            maven-verification.txt
