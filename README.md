@@ -26,9 +26,9 @@ can still be heard on servers that run the Simple Voice Chat plugin.
   different servers: search and join active groups, or create one with an
   optional password (hotkey **G**). The menu loads 20 groups at a time and
   fetches more as you scroll; searching starts a fresh page of matching codes.
-  Group members hear you while your
-  microphone is on; nearby players still need push-to-talk, and nobody hears
-  you twice.
+  Groups default to voice activation while your microphone is on. The group's
+  **Group Mic** button independently switches to push-to-talk with **V**.
+  Nearby players keep their own activation mode, and nobody hears you twice.
 * Two interchangeable backends, in **Rust** (Tokio/axum) and **Go**, that
   pass the same black-box conformance suite.
 * Minecraft **1.8 → 26.3** on Forge, Fabric and Legacy Fabric (gaps listed with reasons). Every
@@ -55,7 +55,7 @@ Download the jar for your Minecraft version and loader from
 2. Join any server. Nothing is needed on the server.
 3. Default keys:
    * **V**: push to talk;
-   * **B**: whisper;
+   * **B**: hold to whisper (works without holding V);
    * **M**: mute;
    * **N**: deafen;
    * **G**: voice groups.

@@ -251,9 +251,10 @@ git show FETCH_HEAD:<path>`).
   GLFW on the compile classpath) and `GLFW.GLFW_KEY_*` below.
 
 **Validation**
-* `validate_jar.py` prints the platform classes of each jar. Every total is
-  about 327 classes, because Java 8 targets add synthetic classes where newer
-  targets use nestmates. The platform list is what matters.
+* `validate_jar.py` prints the platform classes of each jar. Totals vary with
+  client changes and target Java: 0.1.8 on 26.3 has 378 Fabric / 377 Forge
+  classes; Java 8 targets add synthetic classes where newer targets use
+  nestmates. The platform list is what matters.
 
 ## Contributing conventions
 
@@ -288,15 +289,41 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **Group roster and player settings (0.1.8, validation pending):** enabled by
+* **0.1.9 release preparation:** user authorized a new stable release for all
+  supported versions, including both backend images. Client/Rust/Go versions
+  are aligned at 0.1.9; publication is pending. The validated follow-up below
+  is included. See `docs/release-0.1.9.md` for exact release results once known.
+
+* **Input/microphone/performance follow-up (client unreleased):** 26.3 text fields
+  explicitly own native SDL text input; runtime tests now check SDL activation,
+  native KeyboardHandler text dispatch and blur/removal. Whisper independently
+  opens proximity capture; groups have an independent PTT/voice-activation mode
+  (open-mic default preserved). Control writes use a bounded connection FIFO;
+  audio lifecycle waits moved off game ticks without overlapping generations.
+  Tracking shares unchanged immutable entries, reporting scans are rate-gated,
+  and rejected/idle speaker decoding work is avoided. Both backends use shared
+  hub access for stable presence and revalidate changed diffs at commit. See
+  `docs/input-and-performance.md` for tests, benchmarks and the 100k-user scaling
+  target/remaining limits. CI `39264680302` passed all six jobs; 26.3 runtime
+  `39264685676` passed Fabric and Forge. The final client suite passes 98/98
+  against each backend, and Linux Rust passes 15 tests plus 40/40 conformance.
+  The backend was deployed by user request on 2026-10-19 as a locally built
+  Rust 0.1.5 image from `01d1e52`; no new registry/client release was published.
+  See `docs/deployment-2026-10-19.md` for the exact artifact and rollback.
+
+* **Group roster and player settings (released as v0.1.8):** enabled by
   default via `showGroupHud`; right-edge member heads, white speaking outline
   and styled name, independent dragging/head size/background in Edit HUD.
   Player settings share one snapshot/page for names and controls, search voice
   users, and use confirmed cloud/group/SVC presence instead of tracked entities
   or stale transport selections. SVC compatibility 20 `state`/`states` metadata
   was independently observed in real-server run `39251350550`. The 26.3 startup
-  harness now covers SDL roster controls/search and actual GUI-extractor head
-  rendering. Release and runtime results will be recorded after validation.
+  harness covers SDL roster controls/search and actual GUI-extractor head
+  rendering. Main CI `39252773119` passed all six jobs; 26.3 runtime
+  `39252773053` passed both loaders. Release `39253618498` passed: 102/102
+  validated jars, 62/62 GitHub Releases, 102/102 Maven publications, images
+  skipped. The published 26.3 GitHub asset digests match the runtime-tested jars
+  byte for byte. See `docs/release-0.1.8.md`. The public backend is unchanged.
 
 * **26.3 settings input follow-up:** `McScreen` now translates SDL buttons and
   navigation scancodes to the shared UI contract. Runtime coverage exercises
@@ -320,7 +347,7 @@ git show FETCH_HEAD:<path>`).
   Report recovery `39137283241` fixed the single-artifact layout report and
   verified authenticated Maven downloads against both published jars.
   See `docs/release-0.1.6.md`. This release is scoped to 26.3 and no backend images.
-* **HUD editing (unreleased):** the shared Java 8 client includes the local
+* **HUD editing (released in 0.1.8):** the shared Java 8 client includes the local
   speaker in the HUD during detected transmission. The microphone is hidden
   during idle push-to-talk, grey for silence in PTT/open-mic modes, and green
   while speaking. It defaults to 16 px at bottom right. General settings has
@@ -333,13 +360,13 @@ git show FETCH_HEAD:<path>`).
   * Fabric wherever Fabric API exists for 1.14.4–26.3.
   * Legacy Fabric 1.8–1.8.9, 1.9.4, 1.10.2, 1.11.2, 1.12.2 (1.8.1–1.8.8
     without Legacy Fabric API).
-* **Stable release:** v0.1.4 (run 36308643678: 102/102 jars, 62/62 GitHub
+* **Previous all-version stable release:** v0.1.4 (run 36308643678: 102/102 jars, 62/62 GitHub
   Releases, 102/102 Maven packages, images `0.1.4`/`latest`; all 134 jobs
   passed). Includes the 0.1.3-rc.1 features, optional cosmetic name-tag
   injections from issue #5, and modern Forge resource-pack metadata. Source
   `d337b49` is in `main`; runtime smoke passed six representative targets.
-  See `docs/release-0.1.4.md`. Rust `0.1.4` is deployed on the public backend;
-  readiness, public HTTPS and protocol capabilities were verified.
+  See `docs/release-0.1.4.md`. Rust `0.1.4` was deployed on the public backend;
+  it was superseded by the validated local 0.1.5 build on 2026-10-19.
 * **Previous candidate:** v0.1.3-rc.1 (run 36277389029: 102/102 jars,
   62/62 GitHub Releases, 102/102 Maven packages, both backend images). Adds
   compact shaded speaking indicators and formatted HUD names across every
@@ -357,9 +384,12 @@ git show FETCH_HEAD:<path>`).
   1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
   (`release-report-run36115472419.md`). Maven: every jar is in GitHub
   Packages; re-runs record `exists`. Backend images `0.1.0`/`latest` pushed.
-* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust, GHCR image
-  pinned by `MCVOICE_VERSION` in `/opt/mcvoice/.env` on 5.83.145.152;
-  `/opt/mcvoice/update.sh` pulls and restarts only that container). Host nginx
+* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.5,
+  locally built `ghcr.io/ravoxx/mcvoice/voice-backend-rust:local-01d1e52`, pinned
+  in `/opt/mcvoice/docker-compose.override.yml` on 5.83.145.152). The image was
+  not published. Remove/archive this override before a future registry update;
+  the original `MCVOICE_VERSION` in `.env` remains 0.1.4. See
+  `docs/deployment-2026-10-19.md` for exact digests and rollback. Host nginx
   vhost `mcvoice.ravoxx.dev` → `127.0.0.1:18455`, certbot `dns-cloudflare`
   certificate, DNS not proxied. UDP 24455 is opened in the host's
   `vpn_hardening` nftables firewall via `/etc/vpn-hardening/firewall-base.nft`
@@ -367,11 +397,12 @@ git show FETCH_HEAD:<path>`).
   sites): only ever add, validate (`nginx -t`, `nft --check`), never restart
   others. Since 0.1.1 the jars default to this backend
   (`mcvoiceBackendUrl` in `client/gradle.properties`).
-  Release `0.1.4`, revision `d337b49a68b8`, deployed 2026-09-27 at 10:01 UTC
+  Previous release `0.1.4`, revision `d337b49a68b8`, deployed 2026-09-27 at 10:01 UTC
   after full release workflow `36308643678` passed. Local readiness, public
   HTTPS and protocol 1.1 `groups` + `group_paging` verified; Mojang auth and
   port bindings unchanged. The other 30 running containers were unchanged.
-  A mode-600 environment backup was retained. Rollback image: `0.1.3-rc.1`.
+  A mode-600 environment backup was retained. That deployment's rollback image
+  was `0.1.3-rc.1`; the current deployment retains `0.1.4` for rollback.
   Measurements and limitations of that optimization are in
   `docs/rust-routing-performance.md` (allocation/presence-lock improvements;
   no general end-to-end latency improvement established). Initial deployment
