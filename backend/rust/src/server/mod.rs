@@ -38,6 +38,26 @@ pub(crate) struct Hub {
 }
 
 impl Hub {
+    fn presence_delta(&self, r: &PeerState) -> (Vec<String>, Vec<String>) {
+        let present = |u: &str| {
+            r.peer.in_world
+                && self.peer_of(u).is_some_and(|(_, o)| {
+                    o.peer.in_world
+                        && o.peer.udp_verified
+                        && routing::compatible_scopes(&o.peer, &r.peer)
+                        && routing::mutually_visible(&o.peer, &r.peer)
+                })
+        };
+        let add = r
+            .peer
+            .visible
+            .iter()
+            .filter(|u| !r.presence.contains(*u) && present(u))
+            .cloned()
+            .collect();
+        let remove = r.presence.iter().filter(|u| !present(u)).cloned().collect();
+        (add, remove)
+    }
     /// Session of a player UUID the given peer reports as visible (routing candidates, spec 8).
     pub(crate) fn peer_of(&self, uuid: &str) -> Option<(u64, &PeerState)> {
         let c = *self.by_uuid.get(uuid)?;
@@ -271,26 +291,10 @@ impl Server {
         self.group_tick(Instant::now());
         updates.clear();
         {
-            let mut hub = self.hub.write().unwrap();
+            let hub = self.hub.read().unwrap();
             for (conn, r) in &hub.peers {
-                let present = |u: &str| {
-                    r.peer.in_world
-                        && hub.peer_of(u).is_some_and(|(_, o)| {
-                            o.peer.in_world
-                                && o.peer.udp_verified
-                                && routing::compatible_scopes(&o.peer, &r.peer)
-                                && routing::mutually_visible(&o.peer, &r.peer)
-                        })
-                };
                 // Unchanged presence needs no owned UUIDs or temporary set.
-                let add: Vec<String> = r
-                    .peer
-                    .visible
-                    .iter()
-                    .filter(|u| !r.presence.contains(*u) && present(u))
-                    .cloned()
-                    .collect();
-                let remove: Vec<String> = r.presence.iter().filter(|u| !present(u)).cloned().collect();
+                let (add, remove) = hub.presence_delta(r);
                 if add.is_empty() && remove.is_empty() {
                     continue;
                 }
@@ -306,14 +310,26 @@ impl Server {
                     ));
                 }
             }
-            // Compute and commit under the same lock: no stale presence snapshot.
-            for (s, msg) in updates.iter() {
+        }
+        if !updates.is_empty() {
+            let mut hub = self.hub.write().unwrap();
+            // Recompute after acquiring write access: control updates may have changed routing.
+            updates.retain_mut(|(s, msg)| {
+                let Some(r) = hub.peers.get(&s.conn_id) else { return false };
+                let (add, remove) = hub.presence_delta(r);
+                if add.is_empty() && remove.is_empty() {
+                    return false;
+                }
+                msg.epoch = r.peer.epoch;
+                msg.add = add;
+                msg.remove = remove;
                 let r = hub.peers.get_mut(&s.conn_id).unwrap();
                 for u in &msg.remove {
                     r.presence.remove(u);
                 }
                 r.presence.extend(msg.add.iter().cloned());
-            }
+                true
+            });
         }
         for (s, mut msg) in updates.drain(..) {
             msg.add.sort();
