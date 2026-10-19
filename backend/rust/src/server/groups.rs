@@ -308,15 +308,25 @@ impl Server {
 
     /// End memberships of sessions that have been out of a world longer than the grace period.
     pub(crate) fn group_tick(&self, now: Instant) {
-        let mut hub = self.hub.write().unwrap();
+        let hub = self.hub.read().unwrap();
         let expired: Vec<u64> = hub
             .peers
             .iter()
             .filter(|(_, p)| !p.peer.group.is_empty() && p.out_of_world_since.is_some_and(|t| now.duration_since(t) > OUT_OF_WORLD_GRACE))
             .map(|(c, _)| *c)
             .collect();
+        if expired.is_empty() && hub.outbox.is_empty() {
+            return;
+        }
+        drop(hub);
+        let mut hub = self.hub.write().unwrap();
         for c in expired {
-            hub.leave_group(c, Some("not_in_world"));
+            // A client can re-enter the world while we wait for the write lock.
+            if hub.peers.get(&c).is_some_and(|p| {
+                !p.peer.group.is_empty() && p.out_of_world_since.is_some_and(|t| now.duration_since(t) > OUT_OF_WORLD_GRACE)
+            }) {
+                hub.leave_group(c, Some("not_in_world"));
+            }
         }
         let out = hub.take_outbox();
         drop(hub);
