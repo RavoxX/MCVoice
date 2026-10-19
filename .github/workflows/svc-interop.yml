@@ -29,11 +29,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
-      contents: write   # only to publish the result to the tooling/probe-output branch
+      contents: read
     env:
       MC: ${{ inputs.minecraft || '1.21.4' }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -47,20 +49,9 @@ jobs:
           set -euo pipefail
           mkdir -p server/plugins && cd server
           # Paper downloads API (v3 "fill"; v2 as fallback)
-          url=$(curl -sSf "https://fill.papermc.io/v3/projects/paper/versions/$MC/builds" \
-                | jq -r '[.[] | select(.channel=="STABLE" or .channel=="stable")][0].downloads["server:default"].url // empty' || true)
-          if [ -z "$url" ]; then
-            b=$(curl -sSf "https://api.papermc.io/v2/projects/paper/versions/$MC/builds" | jq -r '.builds[-1].build')
-            url="https://api.papermc.io/v2/projects/paper/versions/$MC/builds/$b/downloads/paper-$MC-$b.jar"
-          fi
-          echo "paper: $url"; curl -sSfL "$url" -o paper.jar
-          q=$(jq -rn --arg v "$MC" '"loaders=" + (["bukkit","paper"]|@json|@uri) + "&game_versions=" + ([$v]|@json|@uri)')
-          meta=$(curl -sSf -A "RavoxX/MCVoice svc-interop CI" "https://api.modrinth.com/v2/project/simple-voice-chat/version?$q")
-          svc_url=$(echo "$meta" | jq -r '.[0].files[] | select(.primary) | .url' | head -1)
-          svc_ver=$(echo "$meta" | jq -r '.[0].version_number')
-          echo "simple voice chat: $svc_ver $svc_url"
+          python3 ../tools/svc-interop/download-server.py "$MC"
+          svc_ver=$(cat svc-version.txt)
           echo "SVC_VERSION=$svc_ver" >> "$GITHUB_ENV"
-          curl -sSfL "$svc_url" -o plugins/voicechat-bukkit.jar
           echo "eula=true" > eula.txt
           printf 'online-mode=false\nserver-port=25565\nenforce-secure-profile=false\nspawn-protection=0\nlevel-type=minecraft\\:flat\ngenerate-structures=false\nview-distance=4\n' > server.properties
       - name: Start server
@@ -102,18 +93,27 @@ jobs:
             svc-interop-result.json
             probe.log
             server/server.log
-      - name: Publish result (developer diagnostics)
+      - name: Stage diagnostic data
         if: always()
         run: |
-          set -eu
-          [ -f svc-interop-result.json ] || echo '{"ok":false,"error":"no result"}' > svc-interop-result.json
-          mkdir -p pub && cp svc-interop-result.json pub/result.json
+          mkdir -p pub
+          if [ -f svc-interop-result.json ]; then cp svc-interop-result.json pub/result.json; else echo '{"ok":false,"error":"no result"}' > pub/result.json; fi
           tail -c 200000 server/server.log > pub/server.log || true
           tail -c 200000 probe.log > pub/probe.log || true
-          git init -q out && cd out
-          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-          if git fetch -q origin tooling/probe-output 2>/dev/null; then git checkout -q -b tooling/probe-output FETCH_HEAD; else git checkout -q --orphan tooling/probe-output; fi
-          mkdir -p "svc-interop/$MC"; cp ../pub/* "svc-interop/$MC/"; echo "${SVC_VERSION:-?}" > "svc-interop/$MC/svc-version.txt"
-          git add -A && git commit -q -m "svc-interop $MC run ${{ github.run_id }}" || exit 0
-          for i in 1 2 3 4 5; do git push -q origin HEAD:tooling/probe-output && break; sleep $((i * 3)); git fetch -q origin tooling/probe-output && git rebase -q FETCH_HEAD || true; done
+          printf '%s\n' "${SVC_VERSION:-?}" > pub/svc-version.txt
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: svc-interop-diagnostic-data
+          path: pub/
+
+  diagnostics:
+    needs: probe
+    if: always()
+    permissions:
+      contents: write
+    uses: ./.github/workflows/publish-diagnostics.yml
+    with:
+      artifact: svc-interop-diagnostic-data
+      category: svc-interop
+      minecraft: ${{ inputs.minecraft || '1.21.4' }}

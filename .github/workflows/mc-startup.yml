@@ -26,6 +26,8 @@ jobs:
       MOD_VERSION: ${{ inputs.version || '0.1.6' }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: actions/setup-java@v5
         with:
           distribution: temurin

@@ -30,6 +30,15 @@ Copy `backend/rust/.env.example` (identical to the Go one) to `.env` and set at 
   resume tokens then stop working after every restart.
 * `PUBLIC_HOSTNAME`.
 
+If a reverse proxy supplies client addresses, set `TRUST_PROXY_HEADERS=true`
+and `TRUSTED_PROXY_CIDRS` to its exact backend-facing peer IP/CIDRs. Empty trust
+lists are rejected. A host nginx connecting through Docker usually appears as
+that bridge's gateway; inspect the actual network. The supplied Compose setup
+requires this value explicitly. For Kubernetes, leave proxy trust disabled
+until the ingress path and exact trusted peers are configured. Headers from
+other peers are ignored; trusted chains are parsed from right to left, stopping
+at the first untrusted address. Keep the backend TCP listener private.
+
 **Never commit `.env`.** The repository's `.gitignore` excludes `.env` and
 `.env.*` except `.env.example`, and CI fails if such a file is tracked.
 Kubernetes users put the secrets into a `Secret` (see below). Other useful
@@ -118,8 +127,7 @@ location = /v1/control {
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
     proxy_set_header Host $host;
-    # TRUST_PROXY_HEADERS=true takes the FIRST X-Forwarded-For entry:
-    # overwrite it with the peer, never append ($proxy_add_x_forwarded_for is spoofable)
+    # Overwrite untrusted input. The backend independently validates proxy hops.
     proxy_set_header X-Forwarded-For $remote_addr;
     proxy_read_timeout 3600s;
 }

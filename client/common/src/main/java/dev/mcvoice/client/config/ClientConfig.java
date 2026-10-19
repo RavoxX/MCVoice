@@ -10,8 +10,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,49 +34,49 @@ public final class ClientConfig {
 
     // --- backend
     /** Control endpoint, e.g. wss://voice.example.org/v1/control. Empty = cloud voice disabled. */
-    public String backendUrl = "";
+    public volatile String backendUrl = "";
     /** Optional override of the UDP voice endpoint announced by the backend ("host:port"). */
-    public String voiceEndpointOverride = "";
+    public volatile String voiceEndpointOverride = "";
     /** Allow ws:// to non-loopback hosts (development only). */
-    public boolean allowInsecureControl = false;
+    public volatile boolean allowInsecureControl = false;
     /** "mojang" (default) or "offline" (development backends only). */
-    public String authMode = "mojang";
-    public boolean cloudEnabled = true;
-    public boolean svcInteropEnabled = true;
+    public volatile String authMode = "mojang";
+    public volatile boolean cloudEnabled = true;
+    public volatile boolean svcInteropEnabled = true;
 
     // --- audio devices
-    public String inputDevice = "";
-    public String outputDevice = "";
+    public volatile String inputDevice = "";
+    public volatile String outputDevice = "";
 
     // --- transmission
-    public ActivationMode activationMode = ActivationMode.PUSH_TO_TALK;
+    public volatile ActivationMode activationMode = ActivationMode.PUSH_TO_TALK;
     /** Independent group microphone mode; preserve open microphone for existing users. */
     public volatile ActivationMode groupActivationMode = ActivationMode.VOICE_ACTIVATION;
     /** Voice activation threshold in dBFS (-60..0). */
-    public double voiceActivationThresholdDb = -45;
-    public double micGain = 1.0;
-    public boolean noiseSuppression = true;
-    public boolean automaticGainControl = false;
-    public boolean muted = false;
-    public boolean deafened = false;
+    public volatile double voiceActivationThresholdDb = -45;
+    public volatile double micGain = 1.0;
+    public volatile boolean noiseSuppression = true;
+    public volatile boolean automaticGainControl = false;
+    public volatile boolean muted = false;
+    public volatile boolean deafened = false;
 
     // --- playback
-    public double normalDistance = 48;
-    public double whisperDistance = 8;
-    public double masterVolume = 1.0;
-    public Map<UUID, Double> playerVolume = new HashMap<UUID, Double>();
-    public Set<UUID> mutedPlayers = new HashSet<UUID>();
+    public volatile double normalDistance = 48;
+    public volatile double whisperDistance = 8;
+    public volatile double masterVolume = 1.0;
+    public final Map<UUID, Double> playerVolume = new ConcurrentHashMap<UUID, Double>();
+    public final Set<UUID> mutedPlayers = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
 
     // --- ui / diagnostics
-    public boolean showHud = true;
-    public boolean showGroupHud = true;
+    public volatile boolean showHud = true;
+    public volatile boolean showGroupHud = true;
     public HudLayout hudLayout = new HudLayout();
-    public boolean showDebugOverlay = false;
-    public boolean debugLogging = false;
+    public volatile boolean showDebugOverlay = false;
+    public volatile boolean debugLogging = false;
     /** Per-frame logging (very verbose). */
-    public boolean traceFrames = false;
+    public volatile boolean traceFrames = false;
     /** Exact positions in logs; also requires debugLogging. */
-    public boolean logPositions = false;
+    public volatile boolean logPositions = false;
 
     private transient File file;
 
@@ -107,15 +107,13 @@ public final class ClientConfig {
         c.file = new File(dir, "mcvoice.json");
         String env = System.getProperty("mcvoice.backendUrl", System.getenv("MCVOICE_BACKEND_URL"));
         if (c.file.isFile()) {
-            try {
-                Reader r = new InputStreamReader(new FileInputStream(c.file), UTF8);
+            try (Reader r = new InputStreamReader(new FileInputStream(c.file), UTF8)) {
                 StringBuilder b = new StringBuilder();
                 char[] buf = new char[4096];
                 int n;
                 while ((n = r.read(buf)) > 0) {
                     b.append(buf, 0, n);
                 }
-                r.close();
                 c.apply(Json.parseObject(b.toString()));
             } catch (Exception e) {
                 VoiceLog.warn(Category.CONTROL, "could not read " + c.file + ", using defaults: " + e.getMessage());
@@ -256,9 +254,9 @@ public final class ClientConfig {
                 return;
             }
             File tmp = new File(file.getPath() + ".tmp");
-            Writer w = new OutputStreamWriter(new FileOutputStream(tmp), UTF8);
-            w.write(Json.write(toJson()));
-            w.close();
+            try (Writer w = new OutputStreamWriter(new FileOutputStream(tmp), UTF8)) {
+                w.write(Json.write(toJson()));
+            }
             if (!tmp.renameTo(file)) {
                 if (file.delete() && tmp.renameTo(file)) {
                     return;

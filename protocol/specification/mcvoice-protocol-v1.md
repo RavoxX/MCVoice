@@ -331,7 +331,8 @@ different Minecraft servers. Groups live only in backend memory.
   first leaves the current one. An empty group is deleted.
 * **Password.** Optional, 1-32 printable characters. The backend keeps only a
   salted SHA-256 hash, compares in constant time, never logs it and never
-  sends it to anyone. At most 5 wrong passwords per session per minute; more
+  sends it to anyone. At most 5 wrong passwords per authenticated player UUID per fixed 60-second window,
+  retained across disconnect, replacement and resume; more
   are answered with `rate_limited`.
 * **Privacy.** The group list reveals id, member count, capacity and whether a
   password is required. Member names and UUIDs are sent to members only.
