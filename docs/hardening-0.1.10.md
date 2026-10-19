@@ -10,7 +10,10 @@ replay checks remain mandatory.
 * Java replay ages use unsigned comparisons. Duplicate current/previous key
   rotations preserve replay state and send counters; invalid IDs, conflicting
   keys and exhausted counters close/reject safely. Fresh byte-ID wrap remains
-  valid. SVC mode negotiation commits only on an exact AUTH_ACK. Legacy CBC is
+  valid. SVC mode negotiation commits only on the expected AUTH_ACK. The real
+  Bukkit 2.6.24 server uses a 256-byte ACK buffer; this form is accepted only
+  with valid GCM authentication, while CBC still requires the one-byte ACK.
+  Malformed two-byte ACKs, padded CBC and tampered GCM remain rejected. Legacy CBC is
   still unauthenticated; this change fixes premature negotiation, not CBC's
   cryptographic limitations. Only GCM compatibility 20 has real-server coverage.
 * Proxy headers are accepted only from explicitly configured
