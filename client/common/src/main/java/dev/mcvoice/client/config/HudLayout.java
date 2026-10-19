@@ -12,6 +12,9 @@ public final class HudLayout {
     public int microphoneSize = 16;
     public boolean horizontal;
     public boolean background = true;
+    public double groupX = 1, groupY = 0.5;
+    public int groupHeadSize = 18;
+    public boolean groupBackground;
 
     public HudLayout copy() {
         return fromJson(toJson());
@@ -39,6 +42,13 @@ public final class HudLayout {
             h.statusY = fraction(Json.num(m, "statusY", h.statusY));
             h.horizontal = Json.bool(m, "horizontal", h.horizontal);
             h.background = Json.bool(m, "background", h.background);
+            h.groupX = fraction(Json.num(m, "groupX", h.groupX));
+            h.groupY = fraction(Json.num(m, "groupY", h.groupY));
+            h.groupBackground = Json.bool(m, "groupBackground", h.groupBackground);
+            double headSize = Json.num(m, "groupHeadSize", h.groupHeadSize);
+            if (!Double.isNaN(headSize)) {
+                h.groupHeadSize = (int) Math.max(10, Math.min(32, headSize));
+            }
             double size = Json.num(m, "microphoneSize", h.microphoneSize);
             if (!Double.isNaN(size)) {
                 h.microphoneSize = (int) Math.max(10, Math.min(32, size));
@@ -56,6 +66,10 @@ public final class HudLayout {
         m.put("horizontal", horizontal);
         m.put("background", background);
         m.put("microphoneSize", microphoneSize);
+        m.put("groupX", groupX);
+        m.put("groupY", groupY);
+        m.put("groupHeadSize", groupHeadSize);
+        m.put("groupBackground", groupBackground);
         return m;
     }
 }
