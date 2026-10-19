@@ -6,6 +6,9 @@ import dev.mcvoice.client.platform.ui.UiScreen;
 
 
 
+
+
+
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.gui.screens.Screen;
@@ -117,6 +120,39 @@ public final class McScreen extends Screen {
         return true;
     }
 
+
+    private static int uiButton(int button) {
+
+
+
+
+
+
+        return button;
+
+    }
+
+    private static int uiKey(int key) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return key;
+
+    }
 
 
 
