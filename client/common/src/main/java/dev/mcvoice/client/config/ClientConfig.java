@@ -50,6 +50,8 @@ public final class ClientConfig {
 
     // --- transmission
     public ActivationMode activationMode = ActivationMode.PUSH_TO_TALK;
+    /** Independent group microphone mode; preserve open microphone for existing users. */
+    public volatile ActivationMode groupActivationMode = ActivationMode.VOICE_ACTIVATION;
     /** Voice activation threshold in dBFS (-60..0). */
     public double voiceActivationThresholdDb = -45;
     public double micGain = 1.0;
@@ -155,6 +157,9 @@ public final class ClientConfig {
             outputDevice = out;
         }
         String mode = Json.str(m, "activationMode");
+        String groupMode = Json.str(m, "groupActivationMode");
+        if ("PUSH_TO_TALK".equals(groupMode)) groupActivationMode = ActivationMode.PUSH_TO_TALK;
+        else if ("VOICE_ACTIVATION".equals(groupMode)) groupActivationMode = ActivationMode.VOICE_ACTIVATION;
         if ("VOICE_ACTIVATION".equals(mode)) {
             activationMode = ActivationMode.VOICE_ACTIVATION;
         } else if ("PUSH_TO_TALK".equals(mode)) {
@@ -211,6 +216,7 @@ public final class ClientConfig {
         m.put("inputDevice", inputDevice);
         m.put("outputDevice", outputDevice);
         m.put("activationMode", activationMode.name());
+        m.put("groupActivationMode", groupActivationMode.name());
         m.put("voiceActivationThresholdDb", voiceActivationThresholdDb);
         m.put("micGain", micGain);
         m.put("noiseSuppression", noiseSuppression);
