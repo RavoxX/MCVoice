@@ -1,491 +1,287 @@
-::group::URL https://maven.wagyourtail.xyz/releases/xyz/wagyourtail/unimined/xyz.wagyourtail.unimined.gradle.plugin/maven-metadata.xml
-<?xml version="1.0" encoding="UTF-8"?>
-<metadata>
-  <groupId>xyz.wagyourtail.unimined</groupId>
-  <artifactId>xyz.wagyourtail.unimined.gradle.plugin</artifactId>
-  <versioning>
-    <latest>1.4.1</latest>
-    <release>1.4.1</release>
-    <versions>
-      <version>0.1.3</version>
-      <version>0.1.4</version>
-      <version>0.1.5</version>
-      <version>0.2.0</version>
-      <version>0.2.1</version>
-      <version>0.2.2</version>
-      <version>0.2.3</version>
-      <version>0.3.0</version>
-      <version>0.3.1</version>
-      <version>0.3.2</version>
-      <version>0.3.3</version>
-      <version>0.3.4</version>
-      <version>0.3.5</version>
-      <version>0.3.6</version>
-      <version>0.3.7</version>
-      <version>0.3.8</version>
-      <version>0.3.9</version>
-      <version>0.3.10</version>
-      <version>0.3.11</version>
-      <version>0.3.12</version>
-      <version>0.3.13</version>
-      <version>0.3.14</version>
-      <version>0.3.15</version>
-      <version>0.3.16</version>
-      <version>0.4.0</version>
-      <version>0.4.1</version>
-      <version>0.4.2</version>
-      <version>0.4.3</version>
-      <version>0.4.4</version>
-      <version>0.4.5</version>
-      <version>0.4.6</version>
-      <version>0.4.8</version>
-      <version>0.4.9</version>
-      <version>0.4.10</version>
-      <version>1.0.0</version>
-      <version>1.0.1</version>
-      <version>1.0.2</version>
-      <version>1.0.3</version>
-      <version>1.0.4</version>
-      <version>1.0.5</version>
-      <version>1.1.0</version>
-      <version>1.1.1</version>
-      <version>1.1.2</version>
-      <version>1.2.0</version>
-      <version>1.2.1</version>
-      <version>1.2.2</version>
-      <version>1.2.3</version>
-      <version>1.2.4</version>
-      <version>1.2.5</version>
-      <version>1.2.6</version>
-      <version>1.2.7</version>
-      <version>1.2.8</version>
-      <version>1.2.9</version>
-      <version>1.2.10</version>
-      <version>1.2.11</version>
-      <version>1.2.12</version>
-      <version>1.2.13</version>
-      <version>1.2.14</version>
-      <version>1.3.0</version>
-      <version>1.3.1</version>
-      <version>1.3.2</version>
-      <version>1.3.3</version>
-      <version>1.3.4</version>
-      <version>1.3.5</version>
-      <version>1.3.6</version>
-      <version>1.3.7</version>
-      <version>1.3.8</version>
-      <version>1.3.9</version>
-      <version>1.3.10</version>
-      <version>1.3.11</version>
-      <version>1.3.12</version>
-      <version>1.3.13</version>
-      <version>1.3.14</version>
-      <version>1.3.15</version>
-      <version>1.4.1</version>
-    </versions>
-    <lastUpdated>20250630040143</lastUpdated>
-  </versioning>
-</metadata>
-
+::group::none
+Error: class not found: none
 ::endgroup::
-::group::URL https://plugins.gradle.org/m2/xyz/wagyourtail/unimined/xyz.wagyourtail.unimined.gradle.plugin/maven-metadata.xml
-curl: (22) The requested URL returned error: 404
-
-::endgroup::
-::group::URL https://maven.legacyfabric.net/net/legacyfabric/legacy-fabric-api/legacy-fabric-api/maven-metadata.xml
-<?xml version="1.0" encoding="UTF-8"?>
-<metadata>
-  <groupId>net.legacyfabric.legacy-fabric-api</groupId>
-  <artifactId>legacy-fabric-api</artifactId>
-  <versioning>
-    <latest>1.13.5+1.9.4</latest>
-    <release>1.13.5+1.9.4</release>
-    <versions>
-      <version>1.0.0+1.8.9</version>
-      <version>1.1.0+1.8.9</version>
-      <version>1.1.1+1.12.2</version>
-      <version>1.2.0+1.8.9</version>
-      <version>1.1.3+1.12.2</version>
-      <version>1.2.2+1.8.9</version>
-      <version>1.0.0+1.7.10</version>
-      <version>1.2.0+1.12.2</version>
-      <version>1.2.1+1.12.2</version>
-      <version>1.3.0+1.8.9</version>
-      <version>1.4.0+1.8.9</version>
-      <version>1.4.1+1.8.9</version>
-      <version>1.4.2+1.8.9</version>
-      <version>1.5.3+1.8.9</version>
-      <version>1.3.0+1.12.2</version>
-      <version>1.6.0+1.8.9</version>
-      <version>1.7.0+1.9.4</version>
-      <version>1.7.1+1.9.4</version>
-      <version>1.8.0+1.9.4</version>
-      <version>1.9.0+1.9.4</version>
-      <version>1.9.1+1.10.2</version>
-      <version>1.9.1+1.11.2</version>
-      <version>1.9.1+1.12.2</version>
-      <version>1.9.1+1.7.10</version>
-      <version>1.9.1+1.8</version>
-      <version>1.9.1+1.8.9</version>
-      <version>1.9.1+1.9.4</version>
-      <version>1.9.2+1.10.2</version>
-      <version>1.9.2+1.11.2</version>
-      <version>1.9.2+1.12.2</version>
-      <version>1.9.2+1.7.10</version>
-      <version>1.9.2+1.8</version>
-      <version>1.9.2+1.8.9</version>
-      <version>1.9.2+1.9.4</version>
-      <version>1.9.3+1.10.2</version>
-      <version>1.9.3+1.11.2</version>
-      <version>1.9.3+1.12.2</version>
-      <version>1.9.3+1.7.10</version>
-      <version>1.9.3+1.8</version>
-      <version>1.9.3+1.8.9</version>
-      <version>1.9.3+1.9.4</version>
-      <version>1.9.4+1.10.2</version>
-      <version>1.9.4+1.11.2</version>
-      <version>1.9.4+1.12.2</version>
-      <version>1.9.4+1.7.10</version>
-      <version>1.9.4+1.8</version>
-      <version>1.9.4+1.8.9</version>
-      <version>1.9.4+1.9.4</version>
-      <version>1.10.0+1.10.2</version>
-      <version>1.10.0+1.11.2</version>
-      <version>1.10.0+1.12.2</version>
-      <version>1.10.0+1.6.4</version>
-      <version>1.10.0+1.7.10</version>
-      <version>1.10.0+1.8</version>
-      <version>1.10.0+1.8.9</version>
-      <version>1.10.0+1.9.4</version>
-      <version>1.10.1+1.10.2</version>
-      <version>1.10.1+1.11.2</version>
-      <version>1.10.1+1.12.2</version>
-      <version>1.10.1+1.6.4</version>
-      <version>1.10.1+1.7.10</version>
-      <version>1.10.1+1.8</version>
-      <version>1.10.1+1.8.9</version>
-      <version>1.10.1+1.9.4</version>
-      <version>1.10.2+1.10.2</version>
-      <version>1.10.2+1.11.2</version>
-      <version>1.10.2+1.12.2</version>
-      <version>1.10.2+1.6.4</version>
-      <version>1.10.2+1.7.10</version>
-      <version>1.10.2+1.8</version>
-      <version>1.10.2+1.8.9</version>
-      <version>1.10.2+1.9.4</version>
-      <version>1.11.1+1.10.2</version>
-      <version>1.11.1+1.11.2</version>
-      <version>1.11.1+1.12.2</version>
-      <version>1.11.1+1.6.4</version>
-      <version>1.11.1+1.7.10</version>
-      <version>1.11.1+1.8</version>
-      <version>1.11.1+1.8.9</version>
-      <version>1.11.1+1.9.4</version>
-      <version>1.12.0+1.10.2</version>
-      <version>1.12.0+1.11.2</version>
-      <version>1.12.0+1.12.2</version>
-      <version>1.12.0+1.6.4</version>
-      <version>1.12.0+1.7.10</version>
-      <version>1.12.0+1.8</version>
-      <version>1.12.0+1.8.9</version>
-      <version>1.12.0+1.9.4</version>
-      <version>1.13.1+1.10.2</version>
-      <version>1.13.1+1.11.2</version>
-      <version>1.13.1+1.12.2</version>
-      <version>1.13.1+1.3.2</version>
-      <version>1.13.1+1.4.7</version>
-      <version>1.13.1+1.5.2</version>
-      <version>1.13.1+1.6.4</version>
-      <version>1.13.1+1.7.10</version>
-      <version>1.13.1+1.8</version>
-      <version>1.13.1+1.8.9</version>
-      <version>1.13.1+1.9.4</version>
-      <version>1.13.2+1.10.2</version>
-      <version>1.13.2+1.11.2</version>
-      <version>1.13.2+1.12.2</version>
-      <version>1.13.2+1.3.2</version>
-      <version>1.13.2+1.4.7</version>
-      <version>1.13.2+1.5.2</version>
-      <version>1.13.2+1.6.4</version>
-      <version>1.13.2+1.7.10</version>
-      <version>1.13.2+1.8</version>
-      <version>1.13.2+1.8.9</version>
-      <version>1.13.2+1.9.4</version>
-      <version>1.13.3+1.10.2</version>
-      <version>1.13.3+1.11.2</version>
-      <version>1.13.3+1.12.2</version>
-      <version>1.13.3+1.3.2</version>
-      <version>1.13.3+1.4.7</version>
-      <version>1.13.3+1.5.2</version>
-      <version>1.13.3+1.6.4</version>
-      <version>1.13.3+1.7.10</version>
-      <version>1.13.3+1.8</version>
-      <version>1.13.3+1.8.9</version>
-      <version>1.13.3+1.9.4</version>
-      <version>1.13.5+1.10.2</version>
-      <version>1.13.5+1.11.2</version>
-      <version>1.13.5+1.12.2</version>
-      <version>1.13.5+1.3.2</version>
-      <version>1.13.5+1.4.7</version>
-      <version>1.13.5+1.5.2</version>
-      <version>1.13.5+1.6.4</version>
-      <version>1.13.5+1.7.10</version>
-      <version>1.13.5+1.8</version>
-      <version>1.13.5+1.8.9</version>
-      <version>1.13.5+1.9.4</version>
-    </versions>
-    <lastUpdated>20260531140518</lastUpdated>
-  </versioning>
-</metadata>
-
-::endgroup::
-::group::URL https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/maven-metadata.xml
-<metadata><groupId>de.oceanlabs.mcp</groupId><artifactId>mcp_stable</artifactId><versioning><release>60-1.15</release><latest>60-1.15</latest><lastUpdated>20210418165825</lastUpdated><versions><version>60-1.15</version><version>58-1.14.4</version><version>56-1.14.3</version><version>53-1.14.2</version><version>51-1.14.1</version><version>49-1.14</version><version>47-1.13.2</version><version>45-1.13.1</version><version>43-1.13</version><version>42-1.13</version><version>41-1.13</version><version>39-1.12</version><version>32-1.11</version><version>31-1.11</version><version>29-1.10.2</version><version>28-1.10.2</version><version>26-1.9.4</version><version>24-1.9</version><version>22-1.8.9</version><version>20-1.8.8</version><version>18-1.8</version><version>17-1.8</version><version>16-1.8</version><version>15-1.8</version><version>14-1.8</version><version>12-1.7.10</version><version>11-1.7.10</version><version>10-1.7.10</version><version>9-1.7.10</version><version>8-1.7.10</version></versions></versioning></metadata>
-::endgroup::
-::group::URL https://raw.githubusercontent.com/unimined/unimined/main/README.md
-# Unimined
-
-Unified Minecraft modding environment with support for legacy environments.
-
-for details on usage, see [the docs](Writerside/topics/starter-topic.md)
-
-## LTS Branch
-
-In order to better support buildscripts. when I plan on making big/breaking changes, I will leave an LTS branch behind.
-In effect, this means that I always support the previous minor version for bugfixes.
-
-By consequence, seeing as it's only bugfixes, snapshots on the LTS branch are considered *relatively* stable as well.
-
-## Supported Loaders
-* [Fabric](https://fabricmc.net)
-* [Quilt](https://quiltmc.org)
-* [Minecraft Forge](https://minecraftforge.net)
-* [Neoforge](https://neoforged.net)
-* [Cleanroom](https://cleanroommc.com)
-* [Flint Loader](https://flintloader.net)
-* [JarModAgent](https://github.com/unimined/JarModAgent)
-* [Rift](https://github.com/DimensionalDevelopment/Rift)
-* [FoxLoader](https://github.com/Fox2Code/FoxLoader)
-* [LiteLoader](https://liteloader.com)
-* [CraftBukkit](https://bukkit.org)
-* [Spigot](https://www.spigotmc.org)
-* [Paper](https://papermc.io)
-* Risugami's ModLoader
-* just plain jarmodding
-
-## Planned Loaders
-* [Sponge](https://spongepowered.org/]Sponge)
-* [NilLoader](https://git.sleeping.town/Nil/NilLoader)
-
-## Custom Loaders
-Yes, this is possible, see [PrcraftExampleMod](https://github.com/prcraft-minecraft/PrcraftExampleMod) and it's buildsrc dir.
-
-## Supported Games / Total Conversion Mods
-* [Minecraft](https://minecraft.net)
-* [Minecraft: ReIndev](https://reindev.miraheze.org/wiki/Reindev_Wiki)
-* [Minecraft: Better Than Adventure](https://betterthanadventure.net)
-
-## Planned Games / Total Conversion Mods
-* [Not So Seecret Saturday](https://www.notsoseecretsaturday.net)
-
-## TODO
-* stop using artifactural
-* rework mcpconfig runner to be more kotlin and less old version of arch-loom code
-* Support for launch configs in other dev envs
-  * vscode
-  * eclipse
-* support to login to minecraft in dev
-* support to launch with the prod jar
-* add datagen support
-  * forge datagen
-  * fabric datagen
-  * quilt datagen
-* fix yarn on neoforge (these will probably be agents, possibly in separate projects and pulled like JarModAgent)
-  * inject remapper into ASMAPI
-  * reflection remapper (also for forge potentially, or in general).
-* genSources should apply forge source patches (at least on fg3+)
-
-## Recommended Setup
-1. take one of the versions from [testing](./testing)
-1. remove `includeBuild('../../')` from `settings.gradle`
-1. put a proper version number for the plugin in `build.grade`
-
-## Other Setups
-
-### Arch-Loom Style
-* direct porting of arch-loom projects without changing the directory structure is possible.
-* instructions pending...
-### third party template(s)
-* arch style: https://github.com/firstdarkdev/fdd-xplat or https://github.com/LegacyModdingMC/examplemod
-* //todo: add more
-
-::endgroup::
-::group::URL https://raw.githubusercontent.com/Legacy-Fabric/fabric-example-mod/main/build.gradle
-plugins {
-	id "net.fabricmc.fabric-loom-remap" version "${loom_version}"
-	id "legacy-looming" version "${loom_version}" // Version must be the same as fabric-loom's
-	id "maven-publish"
-}
-
-version = project.mod_version
-group = project.maven_group
-
-base {
-	archivesName = project.archives_base_name
-}
-
-repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-}
-
-loom {
-	// Only needed for versions not available from vanilla launcher by default.
-	// customMinecraftManifest.set("https://meta.legacyfabric.net/v2/manifest/${minecraft_version}")
-
-	// Required by 1.7.x
-	// runs {
-	// 	client {
-	// 		programArgs "--userProperties", "{}"
-	// 	}
-	// }
-}
-
-legacyLooming {
-	// 	The generation of intermediary to use, default is 1.
-	// 	legacy.yarn() will automatically point at the variant for the set intermediary generation.
-	// 	However do not forget to set the right build number of legacy yarn as they are different per variant.
-	//	intermediaryVersion = 2
-
-	// 	Wether to use Legacy Fabric intermediaries or Upstream/Official FabricMC ones.
-	//	Default to true: use Legacy Fabric intermediaries.
-	// 	If setting to false, don't forget to also set intermediaryVersion to generation 2.
-	//	useLFIntermediary.set(false)
-}
-
-dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings(legacy.yarn(project.minecraft_version, project.yarn_build))
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	// Legacy Fabric API provides hooks for events, item registration, and more. As most mods will need this, it's included by default.
-	// If you know for a fact you don't, it's not required and can be safely removed.
-	// As of September 2025, available only for intermediary generation 1.
-	// Check availability for your MC version at https://legacyfabric.net/usage.html
-	modImplementation "net.legacyfabric.legacy-fabric-api:legacy-fabric-api:${project.fabric_version}"
-	// If you use LFAPI with MC 1.3.2, 1.4.7 or 1.5.2, uncomment the next line
-	// implementation('com.google.code.gson:gson:2.8.9')
-
-	// You can retrieve a specific api module using this notation.
-	// modImplementation(legacy.apiModule("legacy-fabric-item-groups-v1", project.fabric_version))
-}
-
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
-}
-
-tasks.withType(JavaCompile).configureEach {
-	// Ensure that the encoding is set to UTF-8, no matter what the system default is
-	// this fixes some edge cases with special characters not displaying correctly
-	// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-	it.options.encoding = "UTF-8"
-
-	if (JavaVersion.current().isJava9Compatible()) {
-		it.options.release = 8
-	}
-}
-
-java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-jar {
-	inputs.property "archivesName", project.base.archivesName
-
-	from("LICENSE") {
-		rename { "${it}_${inputs.properties.archivesName}"}
-	}
-}
-
-// configure the maven publication
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
-			from components.java
-		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
-	}
-}
-
-::endgroup::
-::group::URL https://raw.githubusercontent.com/Legacy-Fabric/fabric-example-mod/main/gradle.properties
-# Done to increase the memory available to gradle.
-org.gradle.jvmargs=-Xmx1G
-org.gradle.parallel=true
-
-# Fabric Properties
-# More versions available at: https://legacyfabric.net/usage.html
-minecraft_version=1.8.9
-yarn_build=604
-loader_version=0.18.3
-loom_version=1.16-SNAPSHOT
-
-# Mod Properties
-mod_version=1.0.0
-maven_group=net.legacyfabric
-archives_base_name=legacy-fabric-example-mod
-
-# Dependencies
-# Legacy Fabric API
-# Check availability for your MC version at https://legacyfabric.net/usage.html
-fabric_version=1.13.2+1.8.9
-
-::endgroup::
-::group::URL https://raw.githubusercontent.com/Legacy-Fabric/fabric-example-mod/main/settings.gradle
-pluginManagement {
-	repositories {
-		maven {
-			name = "Fabric"
-			url = "https://maven.fabricmc.net/"
-		}
-		maven {
-			name = "legacy-fabric"
-			url = "https://maven.legacyfabric.net/"
-		}
-		mavenCentral()
-		gradlePluginPortal()
-	}
-}
-
-::endgroup::
-::group::URL https://raw.githubusercontent.com/Legacy-Fabric/fabric-example-mod/main/gradle/wrapper/gradle-wrapper.properties
-distributionBase=GRADLE_USER_HOME
-distributionPath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.4.0-bin.zip
-networkTimeout=10000
-validateDistributionUrl=true
-zipStoreBase=GRADLE_USER_HOME
-zipStorePath=wrapper/dists
-
+downloaded https://maven.legacyfabric.net/net/legacyfabric/yarn/1.8.9+build.604/yarn-1.8.9+build.604-v2.jar: Zip archive data, at least v2.0 to extract, compression method=deflate 226559 bytes
+::group::mappings ./x1/mappings/mappings.tiny
+CLASS net/minecraft/class_372 -> net/minecraft/client/gui/DrawableHelper
+  f F field_1172 -> zOffset
+  f Lnet/minecraft/class_1653; field_6290 -> OPTIONS_BACKGROUND_TEXTURE
+  f Lnet/minecraft/class_1653; field_6291 -> STATS_ICON_TEXTURE
+  f Lnet/minecraft/class_1653; field_6292 -> GUI_ICONS_TEXTURE
+  m (IIII)V method_987 -> drawHorizontalLine
+  m (IIII)V method_991 -> drawVerticalLine
+  m (IIIII)V method_988 -> fill
+  m (IIIIII)V method_989 -> fillGradient
+  m (Lnet/minecraft/class_370;Ljava/lang/String;III)V method_990 -> drawCenteredString
+  m (Lnet/minecraft/class_370;Ljava/lang/String;III)V method_993 -> drawWithShadow
+  m (IIIIII)V method_992 -> drawTexture
+  m (IIFFIIFF)V method_6674 -> drawTexture
+  m (IIFFIIIIFF)V method_6675 -> drawTexture
+  m (FFIIII)V method_9441 -> drawTexture
+  m (IILnet/minecraft/class_1639;II)V method_9442 -> drawSprite
+CLASS net/minecraft/class_1532 -> net/minecraft/client/texture/TextureManager
+  f Ljava/util/Map; field_6575 -> textures
+  f Ljava/util/List; field_6577 -> tickables
+  f Ljava/util/Map; field_6578 -> dynamicIdCounter
+  f Lnet/minecraft/class_1654; field_6579 -> resourceManager
+  f Lorg/apache/logging/log4j/Logger; field_8099 -> LOGGER
+  m (Lnet/minecraft/class_1653;)V method_5847 -> bindTexture
+  m (Lnet/minecraft/class_1653;Lnet/minecraft/class_1643;)Z method_5850 -> loadTickableTexture
+  m (Lnet/minecraft/class_1653;Lnet/minecraft/class_319;)Z method_5849 -> loadTexture
+  m (Lnet/minecraft/class_1653;)Lnet/minecraft/class_319; method_5852 -> getTexture
+  m (Ljava/lang/String;Lnet/minecraft/class_1636;)Lnet/minecraft/class_1653; method_5851 -> registerDynamicTexture
+  m (Lnet/minecraft/class_1653;)V method_7015 -> close
+CLASS net/minecraft/class_1532$1 -> net/minecraft/client/texture/TextureManager$1
+  m ()Ljava/lang/Object; call -> call
+  m ()Ljava/lang/String; method_5853 -> call
+CLASS net/minecraft/class_1845 -> net/minecraft/client/network/ClientPlayNetworkHandler
+  f Lorg/apache/logging/log4j/Logger; field_7913 -> LOGGER
+  f Lnet/minecraft/class_1957; field_7914 -> connection
+  f Lnet/minecraft/class_1600; field_7915 -> client
+  f Lnet/minecraft/class_478; field_7916 -> world
+  f Z field_7917 -> positionLookSetup
+  f Ljava/util/Map; field_7918 -> playerListEntries
+  f I field_7912 -> maxPlayers
+  f Lnet/minecraft/class_388; field_7919 -> loginScreen
+  f Ljava/util/Random; field_7921 -> random
+  f Lcom/mojang/authlib/GameProfile; field_10583 -> profile
+  m ()V method_6842 -> clearWorld
+  m (Lnet/minecraft/class_700;)V method_6840 -> sendPacket
+  m ()Lnet/minecraft/class_1957; method_6841 -> getClientConnection
+  m ()Ljava/util/Collection; method_9656 -> getPlayerList
+  m (Ljava/util/UUID;)Lnet/minecraft/class_2346; method_9655 -> getPlayerListEntry
+  m (Ljava/lang/String;)Lnet/minecraft/class_2346; method_9654 -> getPlayerListEntry
+  m ()Lcom/mojang/authlib/GameProfile; method_9657 -> getProfile
+CLASS net/minecraft/class_1845$1 -> net/minecraft/client/network/ClientPlayNetworkHandler$1
+  m (Ljava/lang/Object;)V onSuccess -> onSuccess
+  m (Ljava/lang/Throwable;)V onFailure -> onFailure
+CLASS net/minecraft/class_1845$2 -> net/minecraft/client/network/ClientPlayNetworkHandler$2
+  m (Ljava/lang/Object;)V onSuccess -> onSuccess
+  m (Ljava/lang/Throwable;)V onFailure -> onFailure
+CLASS net/minecraft/class_1845$3 -> net/minecraft/client/network/ClientPlayNetworkHandler$3
+  m ()V run -> run
+CLASS net/minecraft/class_1845$3$1 -> net/minecraft/client/network/ClientPlayNetworkHandler$3$1
+CLASS net/minecraft/class_1845$3$1$1 -> net/minecraft/client/network/ClientPlayNetworkHandler$3$1$1
+  m (Ljava/lang/Object;)V onSuccess -> onSuccess
+  m (Ljava/lang/Throwable;)V onFailure -> onFailure
+CLASS net/minecraft/class_1845$4 -> net/minecraft/client/network/ClientPlayNetworkHandler$4
+CLASS net/minecraft/class_2346 -> net/minecraft/client/network/PlayerListEntry
+  f Lcom/mojang/authlib/GameProfile; field_10594 -> profile
+  f Lnet/minecraft/class_1156$class_1157; field_10595 -> gameMode
+  f I field_10596 -> latency
+  f Z field_10597 -> texturesLoaded
+  f Lnet/minecraft/class_1653; field_10598 -> getSkinTexture
+  f Lnet/minecraft/class_1653; field_10599 -> getElytraTexture
+  f Ljava/lang/String; field_10600 -> model
+  f Lnet/minecraft/class_1982; field_10601 -> displayName
+  m ()Lcom/mojang/authlib/GameProfile; method_9671 -> getProfile
+  m ()Lnet/minecraft/class_1156$class_1157; method_9679 -> getGameMode
+  m ()I method_9683 -> getLatency
+  m (Lnet/minecraft/class_1156$class_1157;)V method_9674 -> setGameMode
+  m (I)V method_9672 -> setLatency
+  m ()Z method_9686 -> hasSkinTexture
+  m ()Ljava/lang/String; method_9687 -> getModel
+  m ()Lnet/minecraft/class_1653; method_9688 -> getSkinTexture
+  m ()Lnet/minecraft/class_1653; method_9689 -> getElytraTexture
+  m ()Lnet/minecraft/class_1468; method_9690 -> getScoreboardTeam
+  m ()V method_9691 -> loadTextures
+  m (Lnet/minecraft/class_1982;)V method_9678 -> setDisplayName
+  m ()Lnet/minecraft/class_1982; method_9692 -> getDisplayName
+  m ()I method_9693 -> getLastHealth
+  m (I)V method_9680 -> setLastHealth
+  m ()I method_9694 -> getHealth
+  m (I)V method_9684 -> setHealth
+  m ()J method_9695 -> getLastHealthTime
+  m (J)V method_9673 -> setLastHealthTime
+  m ()J method_9696 -> getBlinkingHeartTime
+  m (J)V method_9681 -> setBlinkingHeartTime
+  m ()J method_9697 -> getShowTime
+  m (J)V method_9685 -> setShowTime
+CLASS net/minecraft/class_2346$1 -> net/minecraft/client/network/PlayerListEntry$1
+CLASS net/minecraft/class_2346$2 -> net/minecraft/client/network/PlayerListEntry$2
+CLASS net/minecraft/class_2403 -> com/mojang/blaze3d/platform/GlStateManager
+  f Lnet/minecraft/class_2403$class_2404; field_10708 -> ALPHA_TEST
+  f Lnet/minecraft/class_2403$class_2406; field_10709 -> LIGHTING
+  f [Lnet/minecraft/class_2403$class_2406; field_10710 -> LIGHTING_STATES
+  f Lnet/minecraft/class_2403$class_2411; field_10711 -> COLOR_MATERIAL
+  f Lnet/minecraft/class_2403$class_2405; field_10712 -> BLEND
+  f Lnet/minecraft/class_2403$class_2413; field_10713 -> DEPTH
+  f Lnet/minecraft/class_2403$class_2414; field_10714 -> FOG
+  f Lnet/minecraft/class_2403$class_2412; field_10715 -> CULL
+  f Lnet/minecraft/class_2403$class_2415; field_10716 -> POLY_OFFSET
+  f Lnet/minecraft/class_2403$class_2409; field_10717 -> COLOR_LOGIC
+  f Lnet/minecraft/class_2403$class_2420; field_10718 -> TEX_GEN
+  f Lnet/minecraft/class_2403$class_2407; field_10719 -> CLEAR
+  f Lnet/minecraft/class_2403$class_2417; field_10720 -> STENCIL
+  f Lnet/minecraft/class_2403$class_2406; field_10721 -> NORMALIZE
+  f I field_10722 -> activeTexture
+  f [Lnet/minecraft/class_2403$class_2421; field_10723 -> TEXTURES
+  f I field_10724 -> modelShadeMode
+  f Lnet/minecraft/class_2403$class_2406; field_10725 -> RESCALE_NORMAL
+  f Lnet/minecraft/class_2403$class_2410; field_10726 -> COLOR_MASK
+  f Lnet/minecraft/class_2403$class_2408; field_10727 -> COLOR
+  m ()V method_9794 -> pushLightingAttributes
+  m ()V method_9813 -> popAttributes
+  m ()V method_9822 -> disableAlphaTest
+  m ()V method_9828 -> enableAlphaTest
+  m (IF)V method_9803 -> alphaFunc
+  m ()V method_9830 -> enableLighting
+  m ()V method_9832 -> disableLighting
+  m (I)V method_9802 -> enableLight
+  m (I)V method_9818 -> disableLight
+  m ()V method_9834 -> enableColorMaterial
+  m ()V method_9836 -> disableColorMaterial
+  m (II)V method_9804 -> colorMaterial
+  m ()V method_9838 -> disableDepthTest
+  m ()V method_9840 -> enableDepthTest
+  m (I)V method_9826 -> depthFunc
+  m (Z)V method_9811 -> depthMask
+  m ()V method_9842 -> disableBlend
+  m ()V method_9843 -> enableBlend
+  m (II)V method_9819 -> blendFunc
+  m (IIII)V method_9805 -> blendFuncSeparate
+  m ()V method_9844 -> enableFog
+  m ()V method_9846 -> disableFog
+  m (I)V method_9829 -> fogMode
+  m (F)V method_9798 -> fogDensity
+  m (F)V method_9815 -> fogStart
+  m (F)V method_9823 -> fogEnd
+  m ()V method_9848 -> enableCull
+  m ()V method_9850 -> disableCull
+  m (I)V method_9831 -> cullFace
+  m ()V method_9851 -> enablePolyOffset
+  m ()V method_9852 -> disablePolyOffset
+  m (FF)V method_9799 -> polygonOffset
+  m ()V method_9853 -> enableColorLogic
+  m ()V method_9854 -> disableColorLogic
+  m (I)V method_9833 -> logicOp
+  m (Lnet/minecraft/class_2403$class_2418;)V method_9807 -> enableTexCoord
+  m (Lnet/minecraft/class_2403$class_2418;)V method_9821 -> disableTexCoord
+  m (Lnet/minecraft/class_2403$class_2418;I)V method_9808 -> genTex
+  m (Lnet/minecraft/class_2403$class_2418;ILjava/nio/FloatBuffer;)V method_9809 -> genTex
+  m (Lnet/minecraft/class_2403$class_2418;)Lnet/minecraft/class_2403$class_2419; method_9827 -> getGenCoordState
+  m (I)V method_9835 -> activeTexture
+  m ()V method_9855 -> enableTexture
+  m ()V method_9856 -> disableTexture
+  m ()I method_9857 -> getTexLevelParameter
+  m (I)V method_9837 -> deleteTexture
+  m (I)V method_9839 -> bindTexture
+  m ()V method_9858 -> enableNormalize
+  m ()V method_9787 -> disableNormalize
+  m (I)V method_9841 -> shadeModel
+  m ()V method_9788 -> enableRescaleNormal
+  m ()V method_9789 -> disableRescaleNormal
+  m (IIII)V method_9820 -> viewport
+  m (ZZZZ)V method_9812 -> colorMask
+  m (D)V method_9795 -> clearDepth
+  m (FFFF)V method_9801 -> clearColor
+  m (I)V method_9845 -> clear
+  m (I)V method_9847 -> matrixMode
+  m ()V method_9790 -> loadIdentity
+  m ()V method_9791 -> pushMatrix
+  m ()V method_9792 -> popMatrix
+  m (ILjava/nio/FloatBuffer;)V method_9806 -> getFloat
+  m (DDDDDD)V method_9797 -> ortho
+  m (FFFF)V method_9817 -> rotate
+  m (FFF)V method_9800 -> scale
+  m (DDD)V method_9796 -> scale
+  m (FFF)V method_9816 -> translate
+  m (DDD)V method_9814 -> translate
+  m (Ljava/nio/FloatBuffer;)V method_9810 -> multiMatrix
+  m (FFFF)V method_9825 -> color
+  m (FFF)V method_9824 -> color
+  m ()V method_9793 -> clearColor
+  m (I)V method_9849 -> callList
+CLASS net/minecraft/class_2403$1 -> com/mojang/blaze3d/platform/GlStateManager$1
+CLASS net/minecraft/class_2403$class_2404 -> com/mojang/blaze3d/platform/GlStateManager$AlphaTestState
+  f Lnet/minecraft/class_2403$class_2406; field_10729 -> capState
+  f I field_10730 -> func
+  f F field_10731 -> ref
+CLASS net/minecraft/class_2403$class_2405 -> com/mojang/blaze3d/platform/GlStateManager$BlendFuncState
+  f Lnet/minecraft/class_2403$class_2406; field_10732 -> capState
+  f I field_10733 -> srcFactorRGB
+  f I field_10734 -> dstFactorRGB
+  f I field_10735 -> srcFactorAlpha
+  f I field_10736 -> dstFactorAlpha
+CLASS net/minecraft/class_2403$class_2406 -> com/mojang/blaze3d/platform/GlStateManager$BooleanState
+  f I field_10737 -> id
+  f Z field_10738 -> cachedState
+  m ()V method_9859 -> disable
+  m ()V method_9861 -> enable
+  m (Z)V method_9860 -> setState
+CLASS net/minecraft/class_2403$class_2407 -> com/mojang/blaze3d/platform/GlStateManager$ClearState
+  f D field_10739 -> clearDepth
+  f Lnet/minecraft/class_2403$class_2408; field_10740 -> color
+  f I field_10741 -> clearStencil
+CLASS net/minecraft/class_2403$class_2408 -> com/mojang/blaze3d/platform/GlStateManager$Color4
+  f F field_10742 -> red
+  f F field_10743 -> green
+  f F field_10744 -> blue
+  f F field_10745 -> alpha
+CLASS net/minecraft/class_2403$class_2409 -> com/mojang/blaze3d/platform/GlStateManager$LogicOpState
+  f Lnet/minecraft/class_2403$class_2406; field_10746 -> capState
+  f I field_10747 -> op
+CLASS net/minecraft/class_2403$class_2410 -> com/mojang/blaze3d/platform/GlStateManager$ColorMask
+  f Z field_10748 -> red
+  f Z field_10749 -> green
+  f Z field_10750 -> blue
+  f Z field_10751 -> alpha
+CLASS net/minecraft/class_2403$class_2411 -> com/mojang/blaze3d/platform/GlStateManager$ColorMaterialState
+  f Lnet/minecraft/class_2403$class_2406; field_10752 -> capState
+  f I field_10753 -> face
+  f I field_10754 -> mode
+CLASS net/minecraft/class_2403$class_2412 -> com/mojang/blaze3d/platform/GlStateManager$CullFaceState
+  f Lnet/minecraft/class_2403$class_2406; field_10755 -> capState
+  f I field_10756 -> mode
+CLASS net/minecraft/class_2403$class_2413 -> com/mojang/blaze3d/platform/GlStateManager$DepthTestState
+  f Lnet/minecraft/class_2403$class_2406; field_10757 -> capState
+  f Z field_10758 -> mask
+  f I field_10759 -> func
+CLASS net/minecraft/class_2403$class_2414 -> com/mojang/blaze3d/platform/GlStateManager$FogState
+  f Lnet/minecraft/class_2403$class_2406; field_10760 -> capState
+  f I field_10761 -> mode
+  f F field_10762 -> density
+  f F field_10763 -> start
+  f F field_10764 -> end
+CLASS net/minecraft/class_2403$class_2415 -> com/mojang/blaze3d/platform/GlStateManager$PolygonOffsetState
+  f Lnet/minecraft/class_2403$class_2406; field_10765 -> capFill
+  f Lnet/minecraft/class_2403$class_2406; field_10766 -> capLine
+  f F field_10767 -> factor
+  f F field_10768 -> units
+CLASS net/minecraft/class_2403$class_2416 -> com/mojang/blaze3d/platform/GlStateManager$StencilSubState
+  f I field_10769 -> func
+  f I field_10770 -> ref
+  f I field_10771 -> mask
+CLASS net/minecraft/class_2403$class_2417 -> com/mojang/blaze3d/platform/GlStateManager$StencilState
+  f Lnet/minecraft/class_2403$class_2416; field_10772 -> capState
+  f I field_10773 -> mask
+  f I field_10774 -> sfail
+  f I field_10775 -> dpfail
+  f I field_10776 -> dppass
+CLASS net/minecraft/class_2403$class_2418 -> com/mojang/blaze3d/platform/GlStateManager$TexCoord
+  f Lnet/minecraft/class_2403$class_2418; field_10777 -> S
+  f Lnet/minecraft/class_2403$class_2418; field_10778 -> T
+  f Lnet/minecraft/class_2403$class_2418; field_10779 -> R
+  f Lnet/minecraft/class_2403$class_2418; field_10780 -> Q
+  m ()[Lnet/minecraft/class_2403$class_2418; values -> values
+  m (Ljava/lang/String;)Lnet/minecraft/class_2403$class_2418; valueOf -> valueOf
+CLASS net/minecraft/class_2403$class_2419 -> com/mojang/blaze3d/platform/GlStateManager$TexGenCoordState
+  f Lnet/minecraft/class_2403$class_2406; field_10782 -> capState
+  f I field_10783 -> coord
+  f I field_10784 -> mode
+CLASS net/minecraft/class_2403$class_2420 -> com/mojang/blaze3d/platform/GlStateManager$TexGenState
+  f Lnet/minecraft/class_2403$class_2419; field_10785 -> s
+  f Lnet/minecraft/class_2403$class_2419; field_10786 -> t
+  f Lnet/minecraft/class_2403$class_2419; field_10787 -> r
+  f Lnet/minecraft/class_2403$class_2419; field_10788 -> q
+CLASS net/minecraft/class_2403$class_2421 -> com/mojang/blaze3d/platform/GlStateManager$Texture2DState
+  f Lnet/minecraft/class_2403$class_2406; field_10789 -> capState
+  f I field_10790 -> boundTexture
+CLASS net/minecraft/class_2526 -> net/minecraft/client/util/DefaultSkinHelper
+  f Lnet/minecraft/class_1653; field_11256 -> STEVE_SKIN
+  f Lnet/minecraft/class_1653; field_11257 -> ALEX_SKIN
+  m ()Lnet/minecraft/class_1653; method_10358 -> getTexture
+  m (Ljava/util/UUID;)Lnet/minecraft/class_1653; method_10359 -> getTexture
+  m (Ljava/util/UUID;)Ljava/lang/String; method_10360 -> getModel
+  m (Ljava/util/UUID;)Z method_10361 -> shouldUseSlimModel
 ::endgroup::
