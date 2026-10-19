@@ -78,6 +78,7 @@ public final class TransportSelector {
      */
     public boolean accept(UUID speaker, TransportKind transport, long nowMs) {
         State from, to;
+        boolean play;
         synchronized (this) {
             Speaker sp = speakers.get(speaker);
             if (sp == null) {
@@ -95,22 +96,19 @@ public final class TransportSelector {
             from = sp.state;
             to = select(sp, speaker, nowMs);
             sp.state = to;
-            boolean play = transport == TransportKind.CLOUD ? to == State.CLOUD : (to == State.SVC || to == State.SVC_FALLBACK);
+            play = transport == TransportKind.CLOUD ? to == State.CLOUD : (to == State.SVC || to == State.SVC_FALLBACK);
             if (!play) {
                 suppressed++;
             }
             if (from == to || (isSvc(from) && isSvc(to))) {
                 return play;
             }
-            if (!play) {
-                return false;
-            }
         }
         SwitchListener l = listener;
         if (l != null && from != State.NONE) {
             l.onSwitch(speaker, from, to);
         }
-        return true;
+        return play;
     }
 
     private static boolean isSvc(State s) {

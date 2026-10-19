@@ -118,7 +118,9 @@ impl Server {
                     return false;
                 }
                 let first = u.addr.is_none();
-                u.addr = Some(from);
+                if first || new_top {
+                    u.addr = Some(from);
+                }
                 let send_ok = !u.udp_ok_sent;
                 u.udp_ok_sent = true;
                 drop(u);
@@ -176,7 +178,11 @@ impl Server {
         let mut u = sess.udp.lock().unwrap();
         let Some(addr) = u.addr else { return };
         let k = u.send_key(Instant::now());
-        k.send_counter += 1;
+        let Some(counter) = k.send_counter.checked_add(1) else {
+            sess.close("key_exhausted");
+            return;
+        };
+        k.send_counter = counter;
         let h = Header {
             ptype: t,
             key_id: k.id,
@@ -252,15 +258,20 @@ impl Server {
                 continue;
             };
             let k = u.send_key(now);
-            k.send_counter += 1;
+            let Some(counter) = k.send_counter.checked_add(1) else {
+                r.close("key_exhausted");
+                continue;
+            };
+            k.send_counter = counter;
+            let key = k.key.clone();
             let h = Header {
                 ptype: TYPE_VOICE_RELAY,
                 key_id: k.id,
                 connection_id: r.conn_id,
                 counter: k.send_counter,
             };
-            k.key.seal(&mut out, DIR_S2C, &h, &scratch.relay_plain);
             drop(u);
+            key.seal(&mut out, DIR_S2C, &h, &scratch.relay_plain);
             scratch.outgoing.push((addr, out));
         }
         scratch.targets = targets;
