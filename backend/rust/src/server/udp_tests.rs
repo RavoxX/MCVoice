@@ -8,7 +8,7 @@ use std::collections::HashSet;
 use std::time::Duration;
 use tokio::sync::mpsc;
 
-fn player(srv: &Server, id: u8) -> (Arc<Session>, mpsc::Receiver<String>) {
+fn unregistered_player(srv: &Server, id: u8) -> (Arc<Session>, PeerState, mpsc::Receiver<String>) {
     let now = Instant::now();
     let (tx, rx) = mpsc::channel(128);
     let ident = Identity {
@@ -50,10 +50,13 @@ fn player(srv: &Server, id: u8) -> (Arc<Session>, mpsc::Receiver<String>) {
         has_scope: true,
         groups_cap: true,
         out_of_world_since: None,
-        group_fail_window: now,
-        group_fails: 0,
     };
-    assert!(srv.register(sess.clone(), ps));
+    (sess, ps, rx)
+}
+
+fn player(srv: &Server, id: u8) -> (Arc<Session>, mpsc::Receiver<String>) {
+    let (sess, ps, rx) = unregistered_player(srv, id);
+    assert!(srv.register(sess.clone(), ps).is_ok());
     (sess, rx)
 }
 
@@ -290,4 +293,89 @@ async fn jitter_sweep_releases_hub_before_waiting_for_udp() {
     }
     drop(udp);
     worker.join().unwrap();
+}
+
+#[test]
+fn admission_rechecks_policy_and_allows_replacement_at_capacity() {
+    let mut cfg = Config::from_env().unwrap();
+    cfg.max_sessions = 1;
+    let srv = Server::new(cfg);
+    let (old, _) = player(&srv, 1);
+    srv.metrics.active_voice_sessions.store(1, Relaxed);
+    srv.bans.write().unwrap().muted.insert(old.ident.uuid.clone());
+    let (next, ps, _) = unregistered_player(&srv, 1);
+    assert!(srv.register(next.clone(), ps).is_ok());
+    srv.unregister(&old);
+    assert_eq!(srv.metrics.connected_clients.load(Relaxed), 1);
+    assert_eq!(srv.metrics.active_voice_sessions.load(Relaxed), 0);
+    assert!(srv.hub.read().unwrap().peers[&next.conn_id].peer.muted);
+    srv.bans.write().unwrap().banned.insert(next.ident.uuid.clone());
+    let (rejected, ps, _) = unregistered_player(&srv, 1);
+    assert_eq!(srv.register(rejected, ps), Err(crate::protocol::control::code::BANNED));
+    let (other, ps, _) = unregistered_player(&srv, 2);
+    assert_eq!(srv.register(other, ps), Err(crate::protocol::control::code::SERVER_FULL));
+}
+
+#[test]
+fn reordered_hello_cannot_rebind_to_an_older_address() {
+    let srv = Server::new(Config::from_env().unwrap());
+    let (sess, _) = player(&srv, 1);
+    let newer = SocketAddr::from(([127, 0, 0, 1], 31001));
+    let older = SocketAddr::from(([127, 0, 0, 1], 31002));
+    let mut scratch = Scratch::new();
+    for (counter, from) in [(10, newer), (9, older)] {
+        let mut dg = Vec::new();
+        let mut plain = sess.uuid_b.to_vec();
+        plain.extend_from_slice(&0u64.to_be_bytes());
+        {
+            let u = sess.udp.lock().unwrap();
+            u.cur.key.seal(
+                &mut dg,
+                DIR_C2S,
+                &Header {
+                    ptype: TYPE_HELLO,
+                    key_id: 0,
+                    connection_id: sess.conn_id,
+                    counter,
+                },
+                &plain,
+            );
+        }
+        srv.handle_datagram(&dg, from, &mut scratch);
+    }
+    assert_eq!(sess.udp.lock().unwrap().addr, Some(newer));
+}
+
+#[test]
+fn saturated_limiter_records_known_budgets_and_denies_unknowns() {
+    let limiter = super::super::IpLimiter::new(2);
+    let now = Instant::now();
+    {
+        let mut state = limiter.inner.lock().unwrap();
+        for i in 0..100_000 {
+            state.1.insert(i.to_string(), 1);
+        }
+    }
+    assert!(limiter.allow("1", now));
+    assert!(!limiter.allow("1", now));
+    assert!(!limiter.blocked("unknown", now));
+    assert!(limiter.allow("unknown", now));
+    assert!(limiter.allow("another", now));
+    assert!(!limiter.allow("third", now));
+    assert!(limiter.blocked("third", now));
+    assert!(limiter.allow("unknown", now + Duration::from_secs(60)));
+}
+
+#[test]
+fn reply_counter_exhaustion_closes_without_nonce_wrap() {
+    let srv = Server::new(Config::from_env().unwrap());
+    let (sess, _) = player(&srv, 1);
+    {
+        let mut udp = sess.udp.lock().unwrap();
+        udp.addr = Some(SocketAddr::from(([127, 0, 0, 1], 31001)));
+        udp.cur.send_counter = u64::MAX;
+    }
+    srv.reply(&sess, TYPE_PONG, 0, &mut Scratch::new());
+    assert_eq!(sess.close_code(), "key_exhausted");
+    assert_eq!(sess.udp.lock().unwrap().cur.send_counter, u64::MAX);
 }

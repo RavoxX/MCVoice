@@ -38,6 +38,8 @@ jobs:
       targets: ${{ steps.plan.outputs.targets }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - id: plan
         env:
           SELECT: ${{ inputs.minecraft }}
@@ -95,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
-      contents: write   # results to tooling/probe-output
+      contents: read
     strategy:
       fail-fast: false
       max-parallel: 6
@@ -106,6 +108,8 @@ jobs:
       LOADER: ${{ matrix.loader }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: actions/download-artifact@v5
         continue-on-error: true
         with:
@@ -177,15 +181,23 @@ jobs:
           print(r)
           PY
           if [ -f run/logs/latest.log ]; then tail -c 400000 run/logs/latest.log > "status/$LOADER.log"; fi
-      - name: Publish result (developer diagnostics)
+      - uses: actions/upload-artifact@v5
         if: always()
-        run: |
-          set -eu
-          git init -q results && cd results
-          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-          if git fetch -q origin tooling/probe-output 2>/dev/null; then git checkout -q -b tooling/probe-output FETCH_HEAD; else git checkout -q --orphan tooling/probe-output; fi
-          mkdir -p "smoke/$MC"; rm -f "smoke/$MC/$LOADER".*
-          cp ../status/* "smoke/$MC/"
-          git add -A && git commit -q -m "smoke $MC $LOADER run ${{ github.run_id }}" || exit 0
-          for i in 1 2 3 4 5; do git push -q origin HEAD:tooling/probe-output && break; git fetch -q origin tooling/probe-output && git rebase -q FETCH_HEAD || true; done
+        with:
+          name: smoke-${{ matrix.minecraft }}-${{ matrix.loader }}-data
+          path: status/
+
+  diagnostics:
+    needs: [plan, smoke]
+    if: always() && needs.plan.outputs.targets != '[]' && needs.plan.outputs.targets != ''
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.plan.outputs.targets) }}
+    permissions:
+      contents: write
+    uses: ./.github/workflows/publish-diagnostics.yml
+    with:
+      artifact: smoke-${{ matrix.minecraft }}-${{ matrix.loader }}-data
+      category: smoke
+      minecraft: ${{ matrix.minecraft }}

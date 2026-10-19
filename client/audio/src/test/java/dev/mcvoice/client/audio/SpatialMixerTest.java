@@ -76,4 +76,28 @@ class SpatialMixerTest {
         assertEquals(0, mixer.streamCount());
         mixer.mixFrame(WorldSnapshot.EMPTY, (s,u,m) -> { fail("cleared stream was revived"); return PlaybackDecision.ACCEPT; }, SETTINGS, 40);
     }
+
+    @Test void emptyEosEndsWithoutDecodingOrConcealing() {
+        SpatialMixer m=new SpatialMixer();UUID u=UUID.randomUUID();byte[] p=packet();
+        m.enqueue(u,1,0,2,0,p,0,p.length,0);
+        m.enqueue(u,1,1,2,1,new byte[0],0,0,20);
+        m.mixFrame(WorldSnapshot.EMPTY,(a,b,c)->PlaybackDecision.ACCEPT,SETTINGS,40);
+        assertEquals(1,m.decodedFrames());
+        short[] tail=m.mixFrame(WorldSnapshot.EMPTY,(a,b,c)->PlaybackDecision.ACCEPT,SETTINGS,60);
+        assertEquals(1,m.decodedFrames());assertEquals(0,m.concealedFrames());
+        for(short sample:tail)assertEquals(0,sample);
+        assertFalse(m.isTalking(u));
+    }
+
+    @Test void groupChannelSurvivesPositionalTransportFlushAndKeepsMembershipChecks() {
+        SpatialMixer m=new SpatialMixer();UUID u=UUID.randomUUID();byte[] p=packet();
+        for(int i=0;i<4;i++)m.enqueue(u,1,i,2,0,p,0,p.length,i*20);
+        m.flush(u); // SVC/proximity transport transition must not discard group voice.
+        m.mixFrame(WorldSnapshot.EMPTY,(a,b,c)->{assertEquals(2,c);return PlaybackDecision.ACCEPT;},SETTINGS,80);
+        assertTrue(m.decodedFrames()>0);
+        long decoded=m.decodedFrames();
+        short[] denied=m.mixFrame(WorldSnapshot.EMPTY,(a,b,c)->PlaybackDecision.NOT_IN_GROUP,SETTINGS,100);
+        assertEquals(decoded,m.decodedFrames());
+        for(short sample:denied)assertEquals(0,sample);
+    }
 }

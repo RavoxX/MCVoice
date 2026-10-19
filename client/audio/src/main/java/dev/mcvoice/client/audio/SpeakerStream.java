@@ -14,6 +14,7 @@ final class SpeakerStream {
     long senderEpoch = -1;
     double gainL, gainR;
     long lastFrameMs;
+    volatile long lastEnqueueMs = Long.MIN_VALUE / 2;
     volatile boolean talking;
     volatile double levelDb = -100;
     boolean rejected;

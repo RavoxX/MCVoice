@@ -1,6 +1,6 @@
 [package]
 name = "mcvoice-backend"
-version = "0.1.9"
+version = "0.1.10"
 edition = "2021"
 rust-version = "1.80"
 description = "MCVoice proximity voice backend (Rust implementation)"
@@ -29,6 +29,8 @@ hmac = "0.12"
 sha2 = "0.10"
 base64 = "0.22"
 hex = "0.4"
+ipnet = "2"
+socket2 = "0.6"
 rand = "0.8"
 subtle = "2"
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
