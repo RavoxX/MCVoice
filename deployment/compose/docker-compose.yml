@@ -20,6 +20,7 @@ services:
       VOICE_BIND_ADDRESS: 0.0.0.0
       VOICE_UDP_PORT: 24455
       TRUST_PROXY_HEADERS: "true"
+      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:?Set the exact Caddy peer or dedicated proxy network CIDRs}
     ports:
       - "24455:24455/udp"
     expose:
@@ -45,6 +46,7 @@ services:
       VOICE_BIND_ADDRESS: 0.0.0.0
       VOICE_UDP_PORT: 24455
       TRUST_PROXY_HEADERS: "true"
+      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:?Set the exact Caddy peer or dedicated proxy network CIDRs}
     ports:
       - "24455:24455/udp"
     expose:
