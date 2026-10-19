@@ -35,6 +35,13 @@ its bundled GitHub release: older Maven jars contain only metadata. The log
 checker ignores loader TRACE/DEBUG diagnostics, while MCVoice runtime stack
 traces, error records and HUD failures still fail the check.
 
+For Minecraft 26.3, dispatch `mc-startup.yml` instead: mc-runtime-test 4.5.1
+has no test mod for that version. The dedicated workflow tests both loaders
+with fresh default keys, then reuses the generated world/configuration and
+launches Quick Play with saved invalid MCVoice keys and valid custom binds.
+See `docs/version-porting.md` for the checks and pinned dependencies. Its
+test-only jar is never included in production or publication.
+
 ## What the workflow does
 
 | Job | Does | Fails / records when |
@@ -71,6 +78,15 @@ assets are the rebuilt jars. To publish new Maven artifacts, bump the version.
 A run over selected versions (not `supported`) attaches its report as
 `release-report-run<run id>.md`, so the full report of the last `supported` run stays.
 Run it with `images: false` unless the backend changed.
+
+For a completed, single-version stable client-only release whose report needs
+recovery, dispatch `release-report.yml` with `run_id`, `version`, and
+`minecraft`. It validates the original successful test/build jobs and recorded
+publication results, checks release SHA-256s, and downloads both Maven jars
+with `packages: read` to compare their bytes. It attaches only the report and
+verification record through Actions; it does not rebuild or replace jars,
+republish Maven versions, or build images. The report renderer supports both
+flat single-artifact downloads and nested multi-artifact downloads.
 
 ## Backend-only deployments
 
