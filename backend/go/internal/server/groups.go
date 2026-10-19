@@ -303,6 +303,18 @@ func (s *Server) groupLeave(sess *Session) {
 
 // groupTick ends memberships of sessions out of a world longer than the grace period.
 func (s *Server) groupTick(now time.Time) {
+	s.mu.RLock()
+	needed := len(s.outbox) != 0
+	for _, sess := range s.byConn {
+		if sess.peer.Group != "" && !sess.outOfWorldSince.IsZero() && now.Sub(sess.outOfWorldSince) > outOfWorldGrace {
+			needed = true
+			break
+		}
+	}
+	s.mu.RUnlock()
+	if !needed {
+		return
+	}
 	s.mu.Lock()
 	for _, sess := range s.byConn {
 		if sess.peer.Group != "" && !sess.outOfWorldSince.IsZero() && now.Sub(sess.outOfWorldSince) > outOfWorldGrace {
