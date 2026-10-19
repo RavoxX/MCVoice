@@ -80,7 +80,13 @@ fn hex_u64(v: u64) -> String {
     hex::encode(v.to_be_bytes())
 }
 
-pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: String, host: String) {
+pub(crate) async fn handle_socket(
+    srv: Arc<Server>,
+    socket: WebSocket,
+    ip: String,
+    host: String,
+    permit: tokio::sync::OwnedSemaphorePermit,
+) {
     let (mut sink, mut stream) = socket.split();
     let tag = srv.ip_tag(&ip);
 
@@ -198,12 +204,11 @@ pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: Strin
         has_scope: false,
         groups_cap: hello.capabilities.as_ref().is_some_and(|c| c.iter().any(|c| c == "groups")),
         out_of_world_since: None,
-        group_fail_window: Instant::now(),
-        group_fails: 0,
     };
-    if !srv.register(sess.clone(), ps) {
-        return fail(&mut sink, code::SERVER_FULL, "server full").await;
+    if let Err(code) = srv.register(sess.clone(), ps) {
+        return fail(&mut sink, code, "session admission rejected").await;
     }
+    drop(permit);
     info!(category = "control", ip = %tag, session = %sess.id, player = %ident.uuid,
           client = %hello.client.as_ref().map(|c| c.version.as_str()).unwrap_or(""),
           minecraft = %hello.client.as_ref().map(|c| c.minecraft.as_str()).unwrap_or(""), "session started");
@@ -409,12 +414,12 @@ impl Server {
                 if last_pos.is_some_and(|t| now.duration_since(t) < Duration::from_millis(90)) {
                     return; // above position_hz_max: dropped silently
                 }
-                *last_pos = Some(now);
                 let (e, x, y, z) = (p.epoch.unwrap(), p.x.unwrap(), p.y.unwrap(), p.z.unwrap());
                 let now_ms = self.now_ms();
                 let mut hub = self.hub.write().unwrap();
                 if let Some(ps) = hub.peers.get_mut(&sess.conn_id) {
                     if e == ps.peer.epoch && ps.peer.in_world {
+                        *last_pos = Some(now);
                         ps.peer.pos = Some([x, y, z]);
                         ps.peer.pos_at_ms = now_ms;
                     }
@@ -448,14 +453,21 @@ impl Server {
                     sess.send(serde_json::to_string(&EpochMsg { t: "peers_resync", epoch }).unwrap());
                     return;
                 }
+                let mut visible = ps.peer.visible.clone();
                 for u in d.remove.unwrap_or_default() {
-                    ps.peer.visible.remove(&u);
+                    visible.remove(&u);
                 }
                 for u in d.add.unwrap_or_default() {
-                    if u != sess.ident.uuid && ps.peer.visible.len() < MAX_PEER_LIST {
-                        ps.peer.visible.insert(u);
+                    if u != sess.ident.uuid {
+                        visible.insert(u);
                     }
                 }
+                if visible.len() > MAX_PEER_LIST {
+                    drop(hub);
+                    sess.send(error_frame(code::BAD_MESSAGE, "peer set too large", false));
+                    return;
+                }
+                ps.peer.visible = visible;
                 ps.peers_rev = rev;
             }
             ClientMsg::State(s) => {

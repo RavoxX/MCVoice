@@ -41,6 +41,18 @@ public final class SpatialMixer {
         boolean mixInto(int[] mix);
     }
 
+    // Group and positional channels have independent jitter/decoder state.
+    private final SpatialMixer groups;
+
+    public SpatialMixer() { this(true); }
+    private SpatialMixer(boolean withGroups) { groups = withGroups ? new SpatialMixer(false) : null; }
+
+    private boolean groupActive(UUID speaker, long nowMs) {
+        if (groups == null) return false;
+        SpeakerStream g = groups.streams.get(speaker);
+        return g != null && nowMs - g.lastEnqueueMs <= 300;
+    }
+
     private final Map<UUID, SpeakerStream> streams = new ConcurrentHashMap<UUID, SpeakerStream>();
     private final Map<UUID, SpeakerStream> active = new ConcurrentHashMap<UUID, SpeakerStream>();
     private long lastReapMs;
@@ -52,6 +64,12 @@ public final class SpatialMixer {
 
     /** Queue an Opus frame for a speaker (network threads). */
     public void enqueue(UUID speaker, long senderEpoch, int seq16, int mode, int flags, byte[] data, int off, int len, long nowMs) {
+        if (groups != null && mode == PlaybackValidator.MODE_GROUP) {
+            flush(speaker);
+            groups.enqueue(speaker, senderEpoch, seq16, mode, flags, data, off, len, nowMs);
+            return;
+        }
+        if (groupActive(speaker, nowMs)) return;
         SpeakerStream s = streams.get(speaker);
         if (s == null) {
             s = new SpeakerStream(speaker);
@@ -69,6 +87,7 @@ public final class SpatialMixer {
                 s.senderEpoch = senderEpoch;
             }
             long ext = s.unwrap.unwrap(seq16);
+            s.lastEnqueueMs = nowMs;
             s.jitter.insert(ext, data, off, len, mode, flags, nowMs);
             if (!active.containsKey(speaker)) active.put(speaker, s);
         }
@@ -76,6 +95,7 @@ public final class SpatialMixer {
 
     /** Queue a frame with an already extended 64-bit sequence (Simple Voice Chat uses longs). */
     public void enqueueExtended(UUID speaker, long seq, int mode, int flags, byte[] data, int off, int len, long nowMs) {
+        if (groupActive(speaker, nowMs)) return;
         SpeakerStream s = streams.get(speaker);
         if (s == null) {
             s = new SpeakerStream(speaker);
@@ -86,6 +106,7 @@ public final class SpatialMixer {
         }
         synchronized (s) {
             if (streams.get(speaker) != s) return;
+            s.lastEnqueueMs = nowMs;
             s.jitter.insert(seq, data, off, len, mode, flags, nowMs);
             if (!active.containsKey(speaker)) active.put(speaker, s);
         }
@@ -104,7 +125,10 @@ public final class SpatialMixer {
         }
     }
 
+    public void clearGroups() { if (groups != null) groups.clear(); }
+
     public void clear() {
+        if (groups != null) groups.clear();
         active.clear();
         streams.clear();
     }
@@ -141,6 +165,13 @@ public final class SpatialMixer {
                     // Drain rejected traffic without decoding or mixing stale PCM into a fade.
                     if (!s.rejected) s.decoder.reset();
                     s.rejected = true;
+                    s.gainL = s.gainR = 0;
+                    s.levelDb = -100;
+                    continue;
+                }
+                if (r == JitterBuffer.Result.FRAME && s.jitter.outLen == 0 && (s.jitter.outFlags & 1) != 0) {
+                    s.talking = false;
+                    s.decoder.reset();
                     s.gainL = s.gainR = 0;
                     s.levelDb = -100;
                     continue;
@@ -211,8 +242,10 @@ public final class SpatialMixer {
                 }
             }
         }
+        short[] groupAudio = groups == null || (groups.active.isEmpty() && nowMs - groups.lastReapMs < 1000)
+            ? null : groups.mixFrame(snap, validator, settings, nowMs);
         for (int i = 0; i < mix.length; i++) {
-            int v = mix[i];
+            int v = mix[i] + (groupAudio == null ? 0 : groupAudio[i]);
             out[i] = (short) (v > 32767 ? 32767 : (v < -32768 ? -32768 : v));
         }
         return out;
@@ -221,7 +254,7 @@ public final class SpatialMixer {
     /** Allocation-free lookup for a rendered player's speaking indicator. */
     public boolean isTalking(UUID speaker) {
         SpeakerStream s = streams.get(speaker);
-        return s != null && s.talking;
+        return (s != null && s.talking) || (groups != null && groups.isTalking(speaker));
     }
 
     /** Speakers currently producing audio (for the HUD). */
@@ -232,6 +265,7 @@ public final class SpatialMixer {
                 l.add(s.speaker);
             }
         }
+        if (groups != null) for (UUID u : groups.talking()) if (!l.contains(u)) l.add(u);
         return l;
     }
 
@@ -260,14 +294,14 @@ public final class SpatialMixer {
     }
 
     public long decodedFrames() {
-        return decodedFrames;
+        return decodedFrames + (groups == null ? 0 : groups.decodedFrames());
     }
 
     public long concealedFrames() {
-        return concealedFrames;
+        return concealedFrames + (groups == null ? 0 : groups.concealedFrames());
     }
 
     public int streamCount() {
-        return streams.size();
+        return streams.size() + (groups == null ? 0 : groups.streamCount());
     }
 }
