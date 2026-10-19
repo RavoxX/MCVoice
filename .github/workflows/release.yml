@@ -122,7 +122,7 @@ jobs:
           jars=$(ls dist/*.jar 2>/dev/null || true)
           failed=$(python3 -c "import json,glob;print(' '.join(json.load(open(f))['loader'] for f in glob.glob('status/*.json') if json.load(open(f))['status']!='pass'))" 2>/dev/null || true)
           record() { python3 -c "import json,sys;json.dump({'minecraft':'$MC','tag':'$tag','release':sys.argv[1],'detail':sys.argv[2]},open('out/release-$MC.json','w'))" "$1" "$2"; }
-          if [ -z "$jars" ] || [ -n "$failed" ]; then
+          if [ -z "$jars" ] || [ -n "$failed" ] || ! compgen -G 'status/*.json' >/dev/null; then
             record skipped "build did not pass for: ${failed:-all loaders}"; exit 0
           fi
           (cd dist && sha256sum *.jar > checksums-sha256.txt)

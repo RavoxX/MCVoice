@@ -47,14 +47,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # publish build logs to the tooling/probe-output branch
-      packages: write   # Maven packages (release builds only, inputs.publish)
+      contents: read
     outputs:
       minecraft: ${{ steps.info.outputs.minecraft }}
     steps:
       - uses: actions/checkout@v5
         with:
           ref: ${{ inputs.ref || github.ref }}
+          persist-credentials: false
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -94,7 +94,9 @@ jobs:
           set -uo pipefail
           mkdir -p ../dist ../status
           extra=""
+          version=$(sed -n 's/^mod_version=//p' ../client/gradle.properties | tr -d '\r')
           if [ -n "$MOD_VERSION_OVERRIDE" ]; then extra="-Pmod_version=$MOD_VERSION_OVERRIDE"; fi
+          if [ -n "$MOD_VERSION_OVERRIDE" ]; then version="$MOD_VERSION_OVERRIDE"; fi
           fail=0
           for spec in ${{ steps.info.outputs.gradle_jdks }}; do
             loader=${spec%%:*}; jdk=${spec##*:}
@@ -112,8 +114,12 @@ jobs:
             if [ $ok = 1 ]; then
               jar=$(ls "$loader"/build/libs/mcvoice-*-mc*-"$loader".jar 2>/dev/null | grep -v -- '-sources' | head -1)
               if [ -n "$jar" ] && python3 ../tools/port-version/validate_jar.py "$jar" --loader "$loader" \
-                   --minecraft "${{ steps.info.outputs.minecraft }}" --java "${{ steps.info.outputs.java }}" | tee -a "../status/$loader.log"; then
+                   --minecraft "${{ steps.info.outputs.minecraft }}" --java "${{ steps.info.outputs.java }}" --version "$version" | tee -a "../status/$loader.log"; then
                 cp "$jar" ../dist/
+                mkdir -p ../maven-inputs
+                cp "$jar" ../maven-inputs/
+                source=$(find "$loader/build/libs" -maxdepth 1 -name '*-sources.jar' ! -name '*-dev-sources.jar' | head -1)
+                test -n "$source" && cp "$source" "../maven-inputs/$loader-sources.jar" || { echo "missing sources jar"; exit 1; }
                 status=pass; reason=""; jarname=$(basename "$jar")
               else
                 status=fail; reason="jar validation failed"; jarname=""; fail=1
@@ -137,49 +143,6 @@ jobs:
           done
           (cd ../dist && sha256sum *.jar > checksums-sha256.txt || true)
           exit $fail
-      - name: Publish Maven packages
-        if: inputs.publish && steps.build.outcome == 'success'
-        working-directory: minecraft
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: ${{ github.actor }}
-          MOD_VERSION_OVERRIDE: ${{ inputs.version }}
-          VERSION_TAG: ${{ inputs.version }}+mc${{ steps.info.outputs.minecraft }}
-        run: |
-          set -uo pipefail
-          extra=""
-          if [ -n "$MOD_VERSION_OVERRIDE" ]; then extra="-Pmod_version=$MOD_VERSION_OVERRIDE"; fi
-          for spec in ${{ steps.info.outputs.gradle_jdks }}; do
-            loader=${spec%%:*}; jdk=${spec##*:}
-            home_var="JAVA_HOME_${jdk}_X64"; export JAVA_HOME="${!home_var}"
-            log="../status/publish-$loader.log"; : > "$log"
-            publish() { (cd "$loader" && ./gradlew publish --no-daemon $extra) >> "$log" 2>&1; }
-            if publish; then
-              result=published
-            elif grep -q 'Received status code 409' "$log"; then
-              # GitHub Packages never replaces a Maven version: the one from an earlier run stays
-              result="exists: $VERSION_TAG already in GitHub Packages (409 Conflict), not replaced"
-            else
-              # ForgeGradle 7's Mavenizer once found its cached mcp_config zip truncated
-              # ("zip END header not found") although build had just used it: drop it, retry once
-              if grep -qE 'Invalid MCPConfig dependency|ZipException' "$log"; then
-                find "$HOME/.gradle/caches/minecraftforge" -path '*mcp_config*' -prune -exec rm -rf {} + 2>/dev/null || true
-              fi
-              echo "::warning::publish $loader failed, retrying once"; echo "=== retry ===" >> "$log"
-              if publish; then
-                result=published
-              else
-                # never report success we did not get: keep the exact reason for the release report
-                result="failed: $( { grep -E 'Could not|status code|Forbidden|Unauthorized|error|Exception|What went wrong' -A1 "$log" || tail -3 "$log"; } | tail -6 | tr '\n' ' ' | head -c 300)"
-              fi
-            fi
-            python3 - "$loader" "$result" <<'PY'
-          import json, sys
-          loader, result = sys.argv[1:3]
-          p = f"../status/{loader}.json"
-          r = json.load(open(p)); r["maven"] = result; json.dump(r, open(p, "w")); print(r)
-          PY
-          done
       - uses: actions/upload-artifact@v5
         if: always()
         with:
@@ -189,20 +152,62 @@ jobs:
       - uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: mc-${{ steps.info.outputs.minecraft }}-status
+          name: raw-mc-${{ steps.info.outputs.minecraft }}-results
           path: status/
-      - name: Publish build logs (developer diagnostics)
-        if: always()
+      - uses: actions/upload-artifact@v5
+        if: inputs.publish && steps.build.outcome == 'success'
+        with:
+          name: mc-${{ steps.info.outputs.minecraft }}-maven-inputs
+          path: maven-inputs/
+
+  maven:
+    needs: build
+    if: inputs.publish && needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+      - uses: actions/download-artifact@v5
+        with:
+          name: raw-mc-${{ needs.build.outputs.minecraft }}-results
+          path: status
+      - uses: actions/download-artifact@v5
+        with:
+          name: mc-${{ needs.build.outputs.minecraft }}-maven-inputs
+          path: maven-inputs
+      - name: Publish prebuilt artifacts only
         env:
-          MC: ${{ steps.info.outputs.minecraft }}
-        run: |
-          set -eu
-          [ -d status ] || exit 0
-          git init -q logs && cd logs
-          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-          if git fetch -q origin tooling/probe-output 2>/dev/null; then git checkout -q -b tooling/probe-output FETCH_HEAD; else git checkout -q --orphan tooling/probe-output; fi
-          mkdir -p "builds/$MC"; rm -f "builds/$MC"/*
-          for f in ../status/*; do tail -c 400000 "$f" > "builds/$MC/$(basename "$f")"; done
-          git add -A && git commit -q -m "build logs $MC run ${{ github.run_id }}" || exit 0
-          for i in 1 2 3; do git push -q origin HEAD:tooling/probe-output && break; git fetch -q origin tooling/probe-output && git rebase -q FETCH_HEAD || true; done
+          VERSION: ${{ inputs.version }}
+          MC: ${{ needs.build.outputs.minecraft }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 tools/release/publish-prebuilt.py
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: maven-mc-${{ needs.build.outputs.minecraft }}-results
+          path: status/
+
+  diagnostics:
+    needs: [build, maven]
+    if: always() && needs.build.outputs.minecraft != ''
+    permissions:
+      contents: write
+    uses: ./.github/workflows/publish-diagnostics.yml
+    with:
+      artifact: raw-mc-${{ needs.build.outputs.minecraft }}-results
+      supplement: ${{ inputs.publish && needs.build.result == 'success' && format('maven-mc-{0}-results', needs.build.outputs.minecraft) || '' }}
+      publication_result: ${{ inputs.publish && needs.build.result == 'success' && needs.maven.result || '' }}
+      category: builds
+      minecraft: ${{ needs.build.outputs.minecraft }}
+      final_artifact: mc-${{ needs.build.outputs.minecraft }}-status
