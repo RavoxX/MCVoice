@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::net::SocketAddr;
 use std::sync::atomic::{AtomicBool, AtomicI64, Ordering};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 use rand::RngCore;
@@ -23,7 +23,7 @@ pub fn random_bytes<const N: usize>() -> [u8; N] {
 pub struct KeySlot {
     pub id: u8,
     pub raw: [u8; KEY_LEN],
-    pub key: VoiceKey,
+    pub key: Arc<VoiceKey>,
     pub window: ReplayWindow,
     pub send_counter: u64,
     pub retire_at: Option<Instant>,
@@ -36,7 +36,7 @@ impl KeySlot {
         KeySlot {
             id,
             raw,
-            key: VoiceKey::new(&raw).expect("16-byte key"),
+            key: Arc::new(VoiceKey::new(&raw).expect("16-byte key")),
             window: ReplayWindow::default(),
             send_counter: 0,
             retire_at: None,
@@ -208,6 +208,4 @@ pub struct PeerState {
     pub groups_cap: bool,
     /// set while the session is out of a world (group grace, spec 6.12)
     pub out_of_world_since: Option<Instant>,
-    pub group_fail_window: Instant,
-    pub group_fails: u32,
 }
