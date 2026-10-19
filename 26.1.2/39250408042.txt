@@ -1,0 +1,100 @@
+::group::net.minecraft.client.gui.components.PlayerFaceRenderer
+Error: class not found: net.minecraft.client.gui.components.PlayerFaceRenderer
+::endgroup::
+::group::net.minecraft.client.gui.components.PlayerFaceExtractor
+Compiled from "PlayerFaceExtractor.java"
+public class net.minecraft.client.gui.components.PlayerFaceExtractor {
+  public static final int SKIN_HEAD_U;
+  public static final int SKIN_HEAD_V;
+  public static final int SKIN_HEAD_WIDTH;
+  public static final int SKIN_HEAD_HEIGHT;
+  public static final int SKIN_HAT_U;
+  public static final int SKIN_HAT_V;
+  public static final int SKIN_HAT_WIDTH;
+  public static final int SKIN_HAT_HEIGHT;
+  public static final int SKIN_TEX_WIDTH;
+  public static final int SKIN_TEX_HEIGHT;
+  public net.minecraft.client.gui.components.PlayerFaceExtractor();
+  public static void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor, net.minecraft.world.entity.player.PlayerSkin, int, int, int);
+  public static void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor, net.minecraft.world.entity.player.PlayerSkin, int, int, int, int);
+  public static void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor, net.minecraft.resources.Identifier, int, int, int, boolean, boolean, int);
+}
+::endgroup::
+::group::net.minecraft.client.multiplayer.PlayerInfo
+Compiled from "PlayerInfo.java"
+public class net.minecraft.client.multiplayer.PlayerInfo {
+  public net.minecraft.client.multiplayer.PlayerInfo(com.mojang.authlib.GameProfile, boolean);
+  public com.mojang.authlib.GameProfile getProfile();
+  public net.minecraft.network.chat.RemoteChatSession getChatSession();
+  public net.minecraft.network.chat.SignedMessageValidator getMessageValidator();
+  public boolean hasVerifiableChat();
+  public net.minecraft.world.level.GameType getGameMode();
+  public int getLatency();
+  public net.minecraft.world.entity.player.PlayerSkin getSkin();
+  public net.minecraft.world.scores.PlayerTeam getTeam();
+  public void setTabListDisplayName(net.minecraft.network.chat.Component);
+  public net.minecraft.network.chat.Component getTabListDisplayName();
+  public void setShowHat(boolean);
+  public boolean showHat();
+  public void setTabListOrder(int);
+  public int getTabListOrder();
+}
+::endgroup::
+::group::net.minecraft.client.resources.DefaultPlayerSkin
+Compiled from "DefaultPlayerSkin.java"
+public class net.minecraft.client.resources.DefaultPlayerSkin {
+  public net.minecraft.client.resources.DefaultPlayerSkin();
+  public static net.minecraft.resources.Identifier getDefaultTexture();
+  public static net.minecraft.world.entity.player.PlayerSkin getDefaultSkin();
+  public static net.minecraft.world.entity.player.PlayerSkin get(java.util.UUID);
+  public static net.minecraft.world.entity.player.PlayerSkin get(com.mojang.authlib.GameProfile);
+}
+::endgroup::
+::group::net.minecraft.client.gui.GuiComponent
+Error: class not found: net.minecraft.client.gui.GuiComponent
+::endgroup::
+::group::net.minecraft.client.gui.GuiGraphics
+Error: class not found: net.minecraft.client.gui.GuiGraphics
+::endgroup::
+::group::net.minecraft.client.renderer.GameRenderer
+Compiled from "GameRenderer.java"
+public class net.minecraft.client.renderer.GameRenderer implements java.lang.AutoCloseable,net.minecraft.world.waypoints.TrackedWaypoint$Projector {
+  public static final int MAX_BLUR_RADIUS;
+  public static final float PROJECTION_3D_HUD_Z_FAR;
+  public final net.minecraft.client.renderer.ItemInHandRenderer itemInHandRenderer;
+  public net.minecraft.client.renderer.GameRenderer(net.minecraft.client.Minecraft, net.minecraft.client.renderer.ItemInHandRenderer, net.minecraft.client.renderer.RenderBuffers, net.minecraft.client.resources.model.ModelManager);
+  public void close();
+  public net.minecraft.client.renderer.SubmitNodeStorage getSubmitNodeStorage();
+  public net.minecraft.client.renderer.feature.FeatureRenderDispatcher getFeatureRenderDispatcher();
+  public net.minecraft.client.renderer.state.GameRenderState getGameRenderState();
+  public void setRenderBlockOutline(boolean);
+  public void clearPostEffect();
+  public void togglePostEffect();
+  public void checkEntityPostEffect(net.minecraft.world.entity.Entity);
+  public void processBlurEffect();
+  public void preloadUiShader(net.minecraft.server.packs.resources.ResourceProvider);
+  public void tick();
+  public net.minecraft.resources.Identifier currentPostEffect();
+  public void resize(int, int);
+  public static float getNightVisionScale(net.minecraft.world.entity.LivingEntity, float);
+  public void update(net.minecraft.client.DeltaTracker, boolean);
+  public void extract(net.minecraft.client.DeltaTracker, boolean);
+  public void render(net.minecraft.client.DeltaTracker, boolean);
+  public void renderLevel(net.minecraft.client.DeltaTracker);
+  public void resetData();
+  public void displayItemActivation(net.minecraft.world.item.ItemStack);
+  public net.minecraft.client.Minecraft getMinecraft();
+  public float getBossOverlayWorldDarkening(float);
+  public net.minecraft.client.Camera getMainCamera();
+  public com.mojang.blaze3d.textures.GpuTextureView lightmap();
+  public com.mojang.blaze3d.textures.GpuTextureView levelLightmap();
+  public net.minecraft.client.renderer.texture.OverlayTexture overlayTexture();
+  public net.minecraft.world.phys.Vec3 projectPointToScreen(net.minecraft.world.phys.Vec3);
+  public double projectHorizonToScreen();
+  public net.minecraft.client.renderer.GlobalSettingsUniform getGlobalSettingsUniform();
+  public com.mojang.blaze3d.platform.Lighting getLighting();
+  public void setLevel(net.minecraft.client.multiplayer.ClientLevel);
+  public net.minecraft.client.renderer.Panorama getPanorama();
+  public void registerPanoramaTextures(net.minecraft.client.renderer.texture.TextureManager);
+}
+::endgroup::
