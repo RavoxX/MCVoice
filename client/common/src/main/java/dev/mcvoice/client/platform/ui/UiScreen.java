@@ -13,6 +13,7 @@ public interface UiScreen {
 
     void render(UiCanvas canvas, int mouseX, int mouseY, float partialTicks);
 
+    /** Normalized mouse button: left 0, right 1, middle 2, extra buttons 3+. */
     void mouseClicked(int x, int y, int button);
 
     void mouseDragged(int x, int y, int button);
