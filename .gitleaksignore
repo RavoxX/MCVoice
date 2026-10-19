@@ -1,0 +1,14 @@
+# Verified source-file SHA-256 values, not credentials, in the immutable benchmark commit.
+# Exact historical fingerprints only; no file, rule or future finding is excluded.
+# DecodeAPI.java
+2fe849e2e10723ab6016dd9ddac9ebc60971bfef:docs/benchmarks/2026-10-19-input-performance.json:generic-api-key:1178
+# DecoderAPIFlag.java
+2fe849e2e10723ab6016dd9ddac9ebc60971bfef:docs/benchmarks/2026-10-19-input-performance.json:generic-api-key:1184
+# EncodeAPI.java
+2fe849e2e10723ab6016dd9ddac9ebc60971bfef:docs/benchmarks/2026-10-19-input-performance.json:generic-api-key:1187
+# SessionAuthenticator.java
+2fe849e2e10723ab6016dd9ddac9ebc60971bfef:docs/benchmarks/2026-10-19-input-performance.json:generic-api-key:1289
+# KeyHolder.java
+2fe849e2e10723ab6016dd9ddac9ebc60971bfef:docs/benchmarks/2026-10-19-input-performance.json:generic-api-key:1320
+# SecretInfo.java
+2fe849e2e10723ab6016dd9ddac9ebc60971bfef:docs/benchmarks/2026-10-19-input-performance.json:generic-api-key:1366
