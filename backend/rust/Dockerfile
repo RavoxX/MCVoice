@@ -18,6 +18,6 @@ LABEL org.opencontainers.image.title="mcvoice-backend-rust" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.source="https://github.com/RavoxX/MCVoice"
 COPY --from=build /mcvoice-backend /mcvoice-backend
-USER nonroot:nonroot
+USER 65532:65532
 EXPOSE 8080/tcp 24455/udp
 ENTRYPOINT ["/mcvoice-backend"]
