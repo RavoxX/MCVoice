@@ -15,6 +15,9 @@ Please make sure to read and understand the following license:
 duplicate input class net/fabricmc/fabric/mixin/tag/package-info, from /home/runner/.gradle/caches/modules-2/files-2.1/net.fabricmc.fabric-api/fabric-convention-tags-v2/2.12.0+c3656daa19/45cd5f071ec42e13b8b6ce15c8f83db322da2494/fabric-convention-tags-v2-2.12.0+c3656daa19.jar and /home/runner/.gradle/caches/modules-2/files-2.1/net.fabricmc.fabric-api/fabric-tag-api-v1/1.3.0+1eb36c0719/ba08d91572b12cd23a2d7a193ed45c26f8da62b0/fabric-tag-api-v1-1.3.0+1eb36c0719.jar
 
 > Task :compileJava
+Note: /home/runner/work/MCVoice/MCVoice/client/core/src/main/java/dev/mcvoice/client/core/ReleaseChecker.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
 > Task :processResources
 > Task :classes
 > Task :jar
@@ -30,12 +33,14 @@ duplicate input class net/fabricmc/fabric/mixin/tag/package-info, from /home/run
 > Task :remapSourcesJar
 > Task :assemble
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792428799121.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792765374329.json
 
-BUILD SUCCESSFUL in 1m 14s
+[Incubating] Problems report is available at: file:///home/runner/work/MCVoice/MCVoice/minecraft/fabric/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 1m 12s
 7 actionable tasks: 7 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.10-mc1.21.1-fabric.jar (384 classes, 19 platform classes, metadata ['fabric.mod.json'])
+valid: mcvoice-0.1.11-mc1.21.1-fabric.jar (399 classes, 19 platform classes, metadata ['fabric.mod.json'])
   platform: dev/mcvoice/platform/fabric/McVoiceFabric
   platform: dev/mcvoice/platform/fabric/McVoiceFabric$FabricSvcChannels
   platform: dev/mcvoice/platform/fabric/mixin/NameTagMixin
