@@ -46,11 +46,12 @@ type GroupMember struct {
 
 // GroupInfo is one entry of a group_list answer.
 type GroupInfo struct {
-	Roster   []GroupMember `json:"roster"`
-	ID       string        `json:"id"`
-	Members  int           `json:"members"`
-	Max      int           `json:"max"`
-	Password bool          `json:"password"`
+	GroupType string        `json:"group_type"`
+	Roster    []GroupMember `json:"roster"`
+	ID        string        `json:"id"`
+	Members   int           `json:"members"`
+	Max       int           `json:"max"`
+	Password  bool          `json:"password"`
 }
 
 // GroupEvent is a received group_list, group_joined, group_update or group_left message.
@@ -63,10 +64,11 @@ type GroupEvent struct {
 	Members    []GroupMember `json:"members"`
 	Groups     []GroupInfo   `json:"groups"`
 	Group      *struct {
-		ID       string        `json:"id"`
-		Max      int           `json:"max"`
-		Password bool          `json:"password"`
-		Members  []GroupMember `json:"members"`
+		GroupType string        `json:"group_type"`
+		ID        string        `json:"id"`
+		Max       int           `json:"max"`
+		Password  bool          `json:"password"`
+		Members   []GroupMember `json:"members"`
 	} `json:"group"`
 }
 
@@ -170,7 +172,7 @@ func Dial(ctx context.Context, o Options) (*Client, error) {
 		o.Method = "offline"
 	}
 	if o.Capabilities == nil {
-		o.Capabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "groups"}
+		o.Capabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "groups", "group_modes"}
 	}
 	c := &Client{opts: o, presence: map[string]bool{}, udpOK: make(chan struct{}),
 		relays: make(chan RelayFrame, 4096), errors: make(chan string, 64), pongs: make(chan uint64, 16),
