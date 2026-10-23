@@ -51,7 +51,7 @@ class PlaybackVectorsTest {
             }
             PlaybackDecision d = PlaybackValidator.check(s, UUID.fromString(Json.str(f, "sender")), epoch,
                 (int) Json.lng(f, "mode", 0), Json.num(c, "normal_range", 48), Json.num(c, "whisper_range", 8), muted,
-                Json.bool(c, "deafened", false), group);
+                Json.bool(c, "deafened", false), group, Json.bool(c, "isolated", false));
             assertEquals(Json.str(c, "expect"), d.code, Json.str(c, "name"));
         }
     }

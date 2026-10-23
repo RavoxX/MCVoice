@@ -12,6 +12,10 @@ import dev.mcvoice.client.platform.ui.UiScreen;
 import dev.mcvoice.client.ui.SettingsScreen;
 import dev.mcvoice.client.ui.GroupScreen;
 import dev.mcvoice.client.ui.UpdateScreen;
+import dev.mcvoice.client.ui.KeyBindingsScreen;
+import dev.mcvoice.client.ui.VoiceMenuScreen;
+import dev.mcvoice.client.core.VoiceClient;
+import dev.mcvoice.client.platform.InputAdapter.Action;
 import dev.mcvoice.client.ui.HudEditorScreen;
 import dev.mcvoice.client.config.HudLayout;
 import dev.mcvoice.client.ui.HudRenderer;
@@ -36,11 +40,44 @@ final class UiSmoke {
         testGroupHudEditor();
         testPlayerSearch();
         testDirectoryAndUpdates();
+        testNativeBindings();
         LogUtils.getLogger().info("MCVOICE_SMOKE settings-input PASS");
     }
 
     private static MouseButtonEvent mouse(int x, int y, int button) {
         return new MouseButtonEvent(x, y, new MouseButtonInfo(button, 0));
+    }
+
+    private static void testNativeBindings() {
+        VoiceClient client = null;
+        for (String entry : List.of("dev.mcvoice.platform.fabric.McVoiceFabric", "dev.mcvoice.platform.forge.McVoiceForge")) {
+            try {
+                java.lang.reflect.Field field = Class.forName(entry).getDeclaredField("client");
+                field.setAccessible(true); client = (VoiceClient) field.get(null); break;
+            } catch (ClassNotFoundException ignored) {
+                // The other loader is deliberately absent.
+            } catch (ReflectiveOperationException e) { throw new AssertionError(e); }
+        }
+        require(client != null, "No initialized production voice client");
+        net.minecraft.client.KeyMapping key = java.util.Arrays.stream(Minecraft.getInstance().options.keyMappings)
+            .filter(k -> k.getName().equals("key.mcvoice.push_to_talk")).findFirst().orElseThrow();
+        LoaderChecks.modifiedDefaults(client, key);
+        KeyBindingsScreen bindings = new KeyBindingsScreen(client);
+        McScreen screen = new McScreen(bindings);
+        Canvas canvas = new Canvas(); canvas.draw(bindings);
+        click(screen, canvas.find("Push to Talk:"));
+        screen.keyPressed(new KeyEvent(InputConstants.KEY_P, InputConstants.KEY_P, 0));
+        require(key.saveString().equals("key.keyboard.p") && client.keyBound(Action.PUSH_TO_TALK), "SDL keyboard binding did not reach registered production mapping");
+        canvas.draw(bindings); click(screen, canvas.find("Push to Talk:"));
+        screen.mouseClicked(mouse(20,20,InputConstants.MOUSE_BUTTON_RIGHT), false);
+        require(key.saveString().equals("key.mouse.right"), "SDL mouse binding used the normalized UI button instead of native SDL input");
+        canvas.draw(bindings); click(screen, canvas.find("Push to Talk:"));
+        screen.keyPressed(new KeyEvent(InputConstants.KEY_ESCAPE, InputConstants.KEY_ESCAPE, 0));
+        require(key.isUnbound() && !client.keyBound(Action.PUSH_TO_TALK), "Escape did not clear the binding safely");
+        net.minecraft.client.KeyMapping.setAll();
+        VoiceMenuScreen menu = new VoiceMenuScreen(client); canvas.draw(menu);
+        canvas.find("Key Bindings"); canvas.find("Choose a talk key"); canvas.find("Groups");
+        LogUtils.getLogger().info("MCVOICE_SMOKE native-voice-bindings PASS");
     }
 
     private static void testDirectoryAndUpdates() {
@@ -141,7 +178,7 @@ final class UiSmoke {
         UiScreen ui = (UiScreen) Proxy.newProxyInstance(UiScreen.class.getClassLoader(), new Class<?>[] {UiScreen.class},
             (proxy, method, args) -> {
                 if (method.getName().equals("title")) return "Input probe";
-                if (method.getName().equals("textInputFocused")) return false;
+                if (method.getName().equals("textInputFocused") || method.getName().startsWith("binding")) return false;
                 if (method.getName().equals("keyPressed")) { received[0] = (Integer) args[0]; return true; }
                 if (method.getName().startsWith("mouse") && args.length == 3) received[0] = (Integer) args[2];
                 return null;
@@ -241,6 +278,7 @@ final class UiSmoke {
                 case "mouseClicked": field.click((Integer) args[0], (Integer) args[1], (Integer) args[2]); return null;
                 case "charTyped": field.typed((Character) args[0]); return null;
                 case "keyPressed": return field.key((Integer) args[0]);
+                case "bindingKeyPressed": case "bindingMouseClicked": return false;
                 default: return null;
                 }
             });
