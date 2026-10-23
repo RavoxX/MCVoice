@@ -1,1 +1,1 @@
-{"minecraft": "1.21.9", "loader": "fabric", "status": "pass", "run": "https://github.com/RavoxX/MCVoice/actions/runs/39965856784", "commit": "45b096230a20dc0baeefc96231d609f454c9bd68", "jar": "mcvoice-0.1.11-mc1.21.9-fabric.jar", "maven": "published", "maven_sha256": "f0490cbf2e4c7cec9ff437d5e00cb44c9c6fa5b450e163bfc7f34c594cfef4e0"}
+{"minecraft": "1.21.9", "loader": "fabric", "status": "pass", "run": "https://github.com/RavoxX/MCVoice/actions/runs/40005935726", "commit": "711282e3114631da2ed309f1c6cd58acc779178a", "jar": "mcvoice-0.1.12-dev-mc1.21.9-fabric.jar"}

@@ -81,7 +81,7 @@ Maven POM
 Metadata
   metadata[forge]
   metadata[forge][variants]
-Minecraft Maven has finished, took 3:53.230
+Minecraft Maven has finished, took 3:53.213
 
 > Task :compileJava
 Note: /home/runner/work/MCVoice/MCVoice/client/core/src/main/java/dev/mcvoice/client/core/ReleaseChecker.java uses or overrides a deprecated API.
@@ -98,14 +98,14 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792765851046.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792781223226.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/MCVoice/MCVoice/minecraft/forge/build/reports/problems/problems-report.html
 
-BUILD SUCCESSFUL in 4m 38s
+BUILD SUCCESSFUL in 4m 23s
 4 actionable tasks: 4 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.11-mc1.21.9-forge.jar (398 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.12-dev-mc1.21.9-forge.jar (418 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
