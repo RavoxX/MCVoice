@@ -91,7 +91,7 @@ python3 protocol/test-vectors/generate.py --check           # vectors reproducib
 python3 tools/versions/matrix.py validate
 (cd backend/go && gofmt -l . && go vet ./... && go test -race ./...)
 (cd backend/rust && cargo fmt --check && cargo clippy --all-targets --release -- -D warnings && cargo test --release)
-# conformance (30 scenarios) against either backend binary
+# conformance (43 scenarios) against either backend binary
 backend/go/mcvoice-conformance -name rust -- backend/rust/target/release/mcvoice-backend
 # client core + headless end-to-end tests (needs a backend binary)
 (cd client && MCVOICE_BACKEND_BIN=$PWD/../dist/mcvoice-backend-go ./gradlew build)
@@ -221,7 +221,7 @@ git show FETCH_HEAD:<path>`).
   Recipients come from the sender's visible set via the UUID index.
 
 **Voice groups (protocol 1.1)**
-* Backend-only state (`backend/*/…/groups`), up to 15 members, 5-char ids
+* Backend-only state (`backend/*/…/groups`), up to 20 members, 5-char ids
   from `ABCDEFGHJKLMNPQRSTUVWXYZ23456789`, optional password (salted SHA-256,
   constant-time compare, 5 wrong tries/min), search via `group_list.query`.
   `group_paging` adds id-ordered pages (limit 1–20, cursor, request_id); legacy
@@ -234,9 +234,13 @@ git show FETCH_HEAD:<path>`).
 * One frame serves both channels: mode 2 = group only, flag bit 1 on mode
   0/1 = also to the group. Proximity routing skips members of the sender's
   group when group delivery applied (no double audio).
-* Client: group channel = open mic gated by VAD while unmuted; proximity
-  keeps push-to-talk. Group frames are mixed centred and validated against
-  the current member list (`PlaybackValidator` mode 2).
+* Client: one activation mode controls nearby and group speech. Normal groups
+  send only to members but hear nearby outsiders; Open also sends nearby;
+  Isolated sends/plays only group audio, including SVC interop. `group_modes`
+  negotiates types; omitted create type is legacy Open. Normal/Isolated require
+  capable members. Backend-owned policy restricts positional routing even when
+  group flags are absent; every positional playback check remains mandatory.
+  Group audio stays centred and checked against current members on every frame.
 * HUD clicks: `GuiAdapter.chatPointer()` polls the cursor while the chat is
   open (Mojang `mouseHandler.xpos/ypos/isLeftPressed` stable 1.14.4-26.3;
   1.13.2 `mouseHelper.getMouseX/isLeftDown`; legacy LWJGL 2 `Mouse`).
@@ -289,7 +293,19 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **0.1.11 group directory / updates (unreleased):** paged `group_directory`
+* **0.1.12, release preparation:** SVC-style voice menu and default bindings, one
+  shared microphone mode, native keyboard/mouse binding capture (SDL on 26.3),
+  Normal/Open/Isolated group policies and a 20-member cap. Old default V/B
+  bindings migrate once; non-default custom bindings remain. Group type is
+  enforced by both backends and every client transport, with fail-closed
+  fallback for unknown policies. Runtime source `18c1fa7` passes all six CI jobs
+  (`40007617453`), both backend container checks and 26.3 builds. The client has
+  126 passing tests against each backend; shared conformance is 43/43. Thirteen
+  representative Minecraft versions built successfully. See
+  `docs/svc-style-controls.md` for exact revisions, native runtime evidence and
+  limitations. The public backend and released jars remain on 0.1.11.
+
+* **Stable 0.1.11 released:** paged `group_directory`
   previews include public UUID/name rosters (password groups included) without
   granting membership/playback. Both backends filter before paging using the
   latest in-world address hash; network ids remain absent from routing checks.
@@ -300,9 +316,16 @@ git show FETCH_HEAD:<path>`).
   `docs/group-directory-and-updates.md` for coverage and limitations. Source
   `d70ea5d` passes CI `39960283850` (six jobs) and 26.3 runtime `39960281089`
   (Fabric + Forge, including real menu screenshots and native SDL controls).
-  No 0.1.11 release or production deployment has occurred.
+  Release `39965856784` passes after retrying a Forge 26.2 plugin-resolution
+  failure: 102/102 validated jars, 62/62 GitHub Releases, 102/102 Maven
+  publications and both images. Every asset digest matches the byte-verified
+  Maven jar; both 26.3 jars match the runtime-tested artifacts byte for byte.
+  Merged source is `45b0962`; see `docs/release-0.1.11.md`.
+  Rust 0.1.11 deployed 2026-10-23 14:08:14 UTC after isolated staging;
+  public/local readiness and protocol checks pass, all 30 unrelated containers
+  unchanged. See `docs/deployment-0.1.11.md` for evidence and 0.1.10 rollback.
 
-* **Stable 0.1.10 released:** replay/rotation, trusted proxy identity,
+* **Earlier stable 0.1.10:** replay/rotation, trusted proxy identity,
   reconnect password budgets, admission/moderation, concurrent config, group
   transport isolation and protocol edge cases have regression coverage. CI
   test/build permissions are separated from publication. Explicit proxy CIDRs
@@ -413,32 +436,27 @@ git show FETCH_HEAD:<path>`).
   1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
   (`release-report-run36115472419.md`). Maven: every jar is in GitHub
   Packages; re-runs record `exists`. Backend images `0.1.0`/`latest` pushed.
-* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.10,
-  source `c10a847`, image selected by `MCVOICE_VERSION=0.1.10` in
+* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.11,
+  source `45b0962`, image selected by `MCVOICE_VERSION=0.1.11` in
   `/opt/mcvoice/.env` on 5.83.145.152). Published digest
-  `sha256:7e85c1c5f40484a71314db82a20a0e817938e8a1ed316903486054f6c955fe4f`.
-  Deployed 2026-10-19 16:36:35 UTC; the former local-image override is archived,
-  exact gateway `172.24.0.1/32` is trusted, Mojang auth/ports are preserved.
-  Local/public readiness/protocol checks pass; all 30 unrelated containers
-  unchanged. Rollback image is `local-01d1e52`; mode-600 environment backup
-  retained. See `docs/deployment-0.1.10.md` for digests and rollback. Host nginx
-  vhost `mcvoice.ravoxx.dev` → `127.0.0.1:18455`, certbot `dns-cloudflare`
-  certificate, DNS not proxied. UDP 24455 is opened in the host's
-  `vpn_hardening` nftables firewall via `/etc/vpn-hardening/firewall-base.nft`
-  (input + forward). The host is a shared production server (mail, other
-  sites): only ever add, validate (`nginx -t`, `nft --check`), never restart
-  others. Since 0.1.1 the jars default to this backend
-  (`mcvoiceBackendUrl` in `client/gradle.properties`).
-  Previous release `0.1.4`, revision `d337b49a68b8`, deployed 2026-09-27 at 10:01 UTC
-  after full release workflow `36308643678` passed. Local readiness, public
-  HTTPS and protocol 1.1 `groups` + `group_paging` verified; Mojang auth and
-  port bindings unchanged. The other 30 running containers were unchanged.
-  A mode-600 environment backup was retained. That deployment's rollback image
-  was `0.1.3-rc.1`; the current deployment retains `0.1.4` for rollback.
-  Measurements and limitations of that optimization are in
-  `docs/rust-routing-performance.md` (allocation/presence-lock improvements;
-  no general end-to-end latency improvement established). Initial deployment
-  attempts timed out without changing production; the retry above succeeded.
+  `sha256:ae72f8cd7efae7a4b28a2682f887c1f20bf4c45f5bb2fa90b6c08d7bdd96af70`.
+  Deployed 2026-10-23 14:08:14 UTC after isolated staging and image verification.
+  Exact gateway `172.24.0.1/32` remains trusted; Mojang auth and ports preserved.
+  Local/public readiness and protocol 1.1 (`groups`, `group_paging`,
+  `group_directory`) pass; all 30 unrelated container IDs unchanged.
+  The published 0.1.10 image and mode-600 environment backup remain for rollback:
+  `sh /opt/mcvoice/candidates/0.1.11/rollback.sh`. See
+  `docs/deployment-0.1.11.md` for digests and checks. Earlier deployment details
+  remain in `docs/deployment-0.1.10.md` and `docs/deployment-2026-10-19.md`.
+  Host nginx vhost `mcvoice.ravoxx.dev` → `127.0.0.1:18455`, certbot
+  `dns-cloudflare` certificate, DNS not proxied. UDP 24455 is opened in the
+  host's `vpn_hardening` nftables firewall via
+  `/etc/vpn-hardening/firewall-base.nft` (input + forward). The host is a shared
+  production server (mail, other sites): only ever add, validate (`nginx -t`,
+  `nft --check`), never restart others. Since 0.1.1 the jars default to this
+  backend (`mcvoiceBackendUrl` in `client/gradle.properties`). Measurements and
+  limits remain in `docs/rust-routing-performance.md` and
+  `docs/hardening-0.1.10.md`; no general latency or 100k-capacity claim is made.
 * **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
   1.20.1 and 1.21.4 (compatibility 20, AES-GCM with 12-byte IV). Older
   compatibility versions (19–16) are not verified.
@@ -455,7 +473,7 @@ git show FETCH_HEAD:<path>`).
 * **Not implemented** (reasons are in `versions/supported.md`):
   * Forge 1.14.2/1.14.3 (MCP names, 1.14 class names: extend `mcp13`);
   * Legacy Fabric 1.13.2 (no API; needs a Legacy Yarn 1.13 adapter).
-* **Voice groups:** implemented in both backends (conformance 40/40) and the
+* **Voice groups:** implemented in both backends (conformance 41/41) and the
   client (end-to-end tests against both backends). Version 0.1.3-rc.1 adds
   negotiated paging, scroll/search loading, stale-response protection and
   per-connection request limits. Legacy clients/backends retain their
