@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
-
+import com.mojang.blaze3d.platform.InputConstants;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -64,12 +63,24 @@ public final class McAdapter implements MinecraftAdapter {
 
 
 
+
+
         int unboundKey = GLFW.GLFW_KEY_UNKNOWN;
-        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", GLFW.GLFW_KEY_V));
-        keys.put(InputAdapter.Action.WHISPER, key("whisper", GLFW.GLFW_KEY_B));
+        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", unboundKey));
+        keys.put(InputAdapter.Action.WHISPER, key("whisper", unboundKey));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", GLFW.GLFW_KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", GLFW.GLFW_KEY_N));
         keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", GLFW.GLFW_KEY_G));
+
+
+
+
+
+        keys.put(InputAdapter.Action.OPEN_MENU, key("open_menu", GLFW.GLFW_KEY_V));
+        keys.put(InputAdapter.Action.TOGGLE_ICONS, key("toggle_icons", GLFW.GLFW_KEY_H));
+
+
+
 
         keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", unboundKey));
         keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", unboundKey));
@@ -309,6 +320,52 @@ public final class McAdapter implements MinecraftAdapter {
 
 
 
+        }
+
+        @Override public boolean isBound(Action a) { return keys.get(a) != null && !keys.get(a).isUnbound(); }
+        @Override public boolean bindKey(Action a, int code, boolean mouse) {
+            KeyMapping k = keys.get(a);
+            if (k == null) return false;
+
+
+
+
+
+            k.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE,
+                !mouse && code < 0 ? InputConstants.UNKNOWN : (mouse ? InputConstants.Type.MOUSE : InputConstants.Type.KEYSYM).getOrCreate(code));
+
+
+
+
+
+
+
+
+
+
+
+
+            KeyMapping.resetMapping(); mc().options.save(); return true;
+        }
+        @Override public void migrateControls() {
+            if (legacyDefault(Action.PUSH_TO_TALK, "key.keyboard.v")) bindKey(Action.PUSH_TO_TALK, -1, false);
+            if (legacyDefault(Action.WHISPER, "key.keyboard.b")) bindKey(Action.WHISPER, -1, false);
+
+
+
+            for (Action action : new Action[]{Action.OPEN_MENU, Action.TOGGLE_ICONS}) {
+                KeyMapping k = keys.get(action);
+                for (KeyMapping other : keys.values()) if (other != k && !k.isUnbound() && k.same(other)) {
+                    bindKey(action, -1, false); break;
+                }
+            }
+        }
+        private boolean legacyDefault(Action action, String value) {
+            KeyMapping k = keys.get(action);
+
+            if (k.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE) return false;
+
+            return value.equals(k.saveString());
         }
     };
 
