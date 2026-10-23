@@ -38,6 +38,8 @@ final class FakeMinecraft implements MinecraftAdapter {
     volatile float yaw;
     volatile boolean ptt;
     volatile boolean whisper;
+    final java.util.Set<InputAdapter.Action> presses = java.util.Collections.newSetFromMap(new ConcurrentHashMap<InputAdapter.Action,Boolean>());
+    volatile UiScreen currentScreen;
     final Map<UUID, double[]> tracked = new ConcurrentHashMap<UUID, double[]>();
     final Map<UUID, String> names = new ConcurrentHashMap<UUID, String>();
     final FakeAudio audio = new FakeAudio();
@@ -122,17 +124,17 @@ final class FakeMinecraft implements MinecraftAdapter {
     public InputAdapter input() {
         return new InputAdapter() {
             public boolean isDown(Action a) { return a == Action.PUSH_TO_TALK ? ptt : a == Action.WHISPER && whisper; }
-            public boolean consumePress(Action a) { return false; }
+            public boolean consumePress(Action a) { return presses.remove(a); }
             public String keyName(Action a) { return "V"; }
         };
     }
 
     public GuiAdapter gui() {
         return new GuiAdapter() {
-            public void open(UiScreen s) { }
-            public void close() { }
-            public boolean isOurScreenOpen() { return false; }
-            public boolean isAnyScreenOpen() { return false; }
+            public void open(UiScreen s) { currentScreen = s; }
+            public void close() { currentScreen = null; }
+            public boolean isOurScreenOpen() { return currentScreen != null; }
+            public boolean isAnyScreenOpen() { return currentScreen != null; }
         };
     }
 
