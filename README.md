@@ -36,6 +36,12 @@ can still be heard on servers that run the Simple Voice Chat plugin.
 
 ## Supported Minecraft versions
 
+Upcoming **0.1.11** adds member heads/name tooltips and a saved **All Groups /
+This Server** directory filter, plus optional background update notifications
+linking to the stable GitHub release for your Minecraft version and loader.
+These changes require the new client; directory previews/filtering also require
+an updated voice backend. See [behavior and verification](docs/group-directory-and-updates.md).
+
 The authoritative, CI-generated matrix is
 [`versions/supported.md`](versions/supported.md) (machine-readable:
 `versions/versions.json` + `versions/build-status.json`). A version and loader
@@ -102,7 +108,7 @@ Audio is never recorded or stored by the mod or by the backend.
 
 ```sh
 cd deployment/compose
-cp ../../backend/rust/.env.example .env   # set JWT_SIGNING_SECRET, SESSION_SECRET, PUBLIC_HOSTNAME
+cp ../../backend/rust/.env.example .env   # set secrets, PUBLIC_HOSTNAME and TRUSTED_PROXY_CIDRS
 docker compose up -d                      # backend + Caddy (TLS for wss://), UDP 24455
 ```
 
@@ -110,6 +116,10 @@ Images: `ghcr.io/ravoxx/mcvoice/voice-backend-rust` and
 `…/voice-backend-go`. Kubernetes manifests, configuration, scaling and
 monitoring: [backend deployment](docs/backend-deployment.md). Never commit a
 real `.env`.
+
+Compose requires an explicit trusted Caddy peer or dedicated proxy-network CIDR.
+See [proxy configuration and first startup](docs/backend-deployment.md#docker-compose)
+before starting the backend; do not trust client-supplied forwarding headers.
 
 ## Repository layout
 
