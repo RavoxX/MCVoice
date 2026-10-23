@@ -1,7 +1,8 @@
 # Releasing
 
 Releases are made by `.github/workflows/release.yml` (Actions → release →
-Run workflow). Nothing is built or uploaded from a developer machine.
+Run workflow). Published release artifacts are built and uploaded by CI.
+Local test builds are separate evidence and do not replace CI validation.
 
 ## Versioning
 
