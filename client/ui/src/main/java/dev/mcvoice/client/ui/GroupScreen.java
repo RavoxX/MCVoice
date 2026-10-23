@@ -22,6 +22,7 @@ public final class GroupScreen extends BaseScreen {
     private String laidOutFor = "?"; // never a real state
     private int laidOutMembers = -1;
     private Button[] slots = new Button[0];
+    private VoiceControls.Member hoveredMember;
 
     public GroupScreen(VoiceControls v) {
         this.v = v;
@@ -58,14 +59,23 @@ public final class GroupScreen extends BaseScreen {
             long now = System.currentTimeMillis();
             // Debounce searches; refresh the first page without interrupting deeper browsing.
             boolean changed = !search.equals(sentQuery) && now - searchChangedMs > 300;
-            if (changed || (scroll == 0 && !v.groupsLoading() && now - lastRequestMs > 30000)) {
+            if (changed || (scroll == 0 && !v.groupsLoading() && now - lastRequestMs > 10000)) {
                 scroll = 0;
                 v.requestGroups(search);
                 sentQuery = search;
                 lastRequestMs = now;
             }
         }
+        hoveredMember = null;
         super.render(c, mouseX, mouseY, partialTicks);
+        if (hoveredMember != null) {
+            String name = hoveredMember.name;
+            int w = Math.min(c.width() - 8, c.playerNameWidth(hoveredMember.uuid, name) + 8);
+            int x = Math.max(2, Math.min(mouseX + 8, c.width() - w - 2));
+            int y = Math.max(2, Math.min(mouseY + 12, c.height() - c.fontHeight() - 10));
+            c.fill(x, y, x + w, y + c.fontHeight() + 6, 0xF0100010);
+            c.playerName(hoveredMember.uuid, name, x + 4, y + 3, Theme.LABEL, true, w - 8);
+        }
     }
 
     private static boolean eq(String a, String b) {
@@ -122,12 +132,23 @@ public final class GroupScreen extends BaseScreen {
             }
         }), left + searchW + 4, y);
         y += ROW + 2;
+        add(new Button(panelW, 20, new Button.Label() {
+            public String get() { return v.config().groupServerOnly ? "Show: This Server" : "Show: All Groups"; }
+        }, new Button.Action() {
+            public void run() {
+                v.setGroupServerOnly(!v.config().groupServerOnly);
+                scroll = 0;
+                sentQuery = null;
+            }
+        }), left, y);
+        y += 24;
         int bottom = height - 27 - 4 - 20 - 14; // above: notice line, password/create row
-        int n = Math.max(1, (bottom - y) / 22);
+        final int groupHeight = panelW < 230 ? 62 : 48;
+        int n = Math.max(0, (bottom - y) / (groupHeight + 2));
         slots = new Button[n];
         for (int i = 0; i < n; i++) {
             final int slot = i;
-            Button b = new Button(panelW, 20, new Button.Label() {
+            Button b = new Button(panelW, groupHeight, new Button.Label() {
                 public String get() {
                     VoiceControls.GroupInfo g = entry(slot);
                     if (g == null) {
@@ -142,9 +163,31 @@ public final class GroupScreen extends BaseScreen {
                         v.joinGroup(g.id, g.password ? password : "");
                     }
                 }
-            });
+            }) {
+                @Override public void render(UiCanvas c, int mx, int my) {
+                    VoiceControls.GroupInfo g = entry(slot);
+                    if (g == null) return;
+                    vanillaButton(c, x, y, w, h, contains(mx, my));
+                    String names = "";
+                    for (int j = 0; j < Math.min(2, g.roster.size()); j++) {
+                        names += (j == 0 ? "  " : ", ") + g.roster.get(j).name;
+                    }
+                    if (g.roster.size() > 2) names += ", ...";
+                    c.text(ellipsize(c, g.id + names, w - 12), x + 6, y + 5, Theme.LABEL, true);
+                    int columns = Math.max(1, (w - 12) / 14);
+                    for (int j = 0; j < g.roster.size(); j++) {
+                        VoiceControls.Member member = g.roster.get(j);
+                        int hx = x + 6 + j % columns * 14, hy = y + 17 + j / columns * 14;
+                        if (hy + 12 > y + h - 13) break;
+                        c.playerHead(member.uuid, hx, hy, 12);
+                        if (mx >= hx && mx < hx + 12 && my >= hy && my < hy + 12) hoveredMember = member;
+                    }
+                    String status = g.members + "/" + g.max + (g.password ? "  Password" : "  Open");
+                    c.text(ellipsize(c, status, w - 12), x + 6, y + h - 11, Theme.LABEL, true);
+                }
+            };
             slots[i] = b;
-            add(b, left, y + i * 22);
+            add(b, left, y + i * (groupHeight + 2));
         }
         int row = height - 27 - 4 - 20;
         int pwW = (panelW - 4) / 2;
