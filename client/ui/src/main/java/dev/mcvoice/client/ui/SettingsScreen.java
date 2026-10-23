@@ -24,10 +24,17 @@ public final class SettingsScreen extends BaseScreen {
     private TextField searchField;
     private List<VoiceControls.PlayerEntry> playerResults = Collections.emptyList();
     private List<VoiceControls.PlayerEntry> playerPage = Collections.emptyList();
+    private String updateVersion = "";
 
     @Override
     public void render(UiCanvas c, int mouseX, int mouseY, float partialTicks) {
         boolean refocus = false;
+        String update = v.availableUpdate();
+        if (update != null && !update.equals(updateVersion)) {
+            refocus = searchField != null && searchField.focused();
+            updateVersion = update;
+            relayout();
+        }
         if (tab == Tab.PLAYERS) {
             List<VoiceControls.PlayerEntry> next = new ArrayList<VoiceControls.PlayerEntry>();
             String query = playerSearch.trim().toLowerCase(Locale.ROOT);
@@ -106,14 +113,23 @@ public final class SettingsScreen extends BaseScreen {
         } else {
             layoutPlayers(left, y);
         }
-        Button done = Button.of(200, "Done", new Button.Action() {
+        int doneWidth = (panelW - 4) / 2;
+        Button done = Button.of(doneWidth, "Done", new Button.Action() {
             public void run() {
                 v.stopMicTest();
                 v.applyConfig();
             }
         });
-        done.x = (width - 200) / 2;
+        done.x = panelX;
         done.y = height - 27;
+        {
+            Button release = Button.of(panelW - doneWidth - 4, updateVersion.isEmpty() ? "Updates" : "Update " + updateVersion, new Button.Action() {
+                public void run() { v.stopMicTest(); v.openUpdates(); }
+            });
+            release.x = panelX + doneWidth + 4;
+            release.y = height - 27;
+            widgets.add(release);
+        }
         widgets.add(done);
     }
 
