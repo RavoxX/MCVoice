@@ -2377,6 +2377,851 @@
    "expect_group": [
     "853c80ef-3c37-49fd-aa49-938b674adae6"
    ]
+  },
+  {
+   "name": "normal_group_outbound_flags_0",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "normal"
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      1,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "normal"
+    },
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "",
+     "epoch": 1,
+     "pos": [
+      2,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "epoch": 1,
+    "mode": 0,
+    "flags": 0
+   },
+   "expect": [],
+   "expect_group": []
+  },
+  {
+   "name": "normal_group_outbound_flags_2",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "normal"
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      1,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "normal"
+    },
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "",
+     "epoch": 1,
+     "pos": [
+      2,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "epoch": 1,
+    "mode": 0,
+    "flags": 2
+   },
+   "expect": [],
+   "expect_group": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ]
+  },
+  {
+   "name": "normal_group_inbound_outsider",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "normal"
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      1,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "normal"
+    },
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "",
+     "epoch": 1,
+     "pos": [
+      2,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+    "epoch": 1,
+    "mode": 0,
+    "flags": 0
+   },
+   "expect": [
+    "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "expect_group": []
+  },
+  {
+   "name": "open_group_outbound_flags_0",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "open"
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      1,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "open"
+    },
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "",
+     "epoch": 1,
+     "pos": [
+      2,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "epoch": 1,
+    "mode": 0,
+    "flags": 0
+   },
+   "expect": [
+    "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "expect_group": []
+  },
+  {
+   "name": "open_group_outbound_flags_2",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "open"
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      1,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "open"
+    },
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "",
+     "epoch": 1,
+     "pos": [
+      2,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "epoch": 1,
+    "mode": 0,
+    "flags": 2
+   },
+   "expect": [
+    "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+   ],
+   "expect_group": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ]
+  },
+  {
+   "name": "open_group_inbound_outsider",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "open"
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      1,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "open"
+    },
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "",
+     "epoch": 1,
+     "pos": [
+      2,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+    "epoch": 1,
+    "mode": 0,
+    "flags": 0
+   },
+   "expect": [
+    "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "expect_group": []
+  },
+  {
+   "name": "isolated_group_outbound_flags_0",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "isolated"
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      1,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "isolated"
+    },
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "",
+     "epoch": 1,
+     "pos": [
+      2,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "epoch": 1,
+    "mode": 0,
+    "flags": 0
+   },
+   "expect": [],
+   "expect_group": []
+  },
+  {
+   "name": "isolated_group_outbound_flags_2",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "isolated"
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      1,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "isolated"
+    },
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "",
+     "epoch": 1,
+     "pos": [
+      2,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+    "epoch": 1,
+    "mode": 0,
+    "flags": 2
+   },
+   "expect": [],
+   "expect_group": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ]
+  },
+  {
+   "name": "isolated_group_inbound_outsider",
+   "config": {
+    "normal_range": 48.0,
+    "whisper_range": 8.0,
+    "max_range": 96.0,
+    "distance_slack": 4.0,
+    "position_stale_ms": 3000
+   },
+   "now_ms": 100000,
+   "sessions": [
+    {
+     "uuid": "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      0,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "853c80ef-3c37-49fd-aa49-938b674adae6",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "isolated"
+    },
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "K7M2Q",
+     "epoch": 1,
+     "pos": [
+      1,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+     ],
+     "muted": false,
+     "deafened": false,
+     "group_type": "isolated"
+    },
+    {
+     "uuid": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+     "authenticated": true,
+     "udp_verified": true,
+     "in_world": true,
+     "network_id": "n1:6b86b273ff34fce19d6b804eff5a3f57",
+     "world_id": "minecraft:overworld",
+     "attested": "",
+     "group": "",
+     "epoch": 1,
+     "pos": [
+      2,
+      64,
+      0
+     ],
+     "pos_at_ms": 99900,
+     "visible": [
+      "069a79f4-44e9-4726-a5be-fca90e38aaf5",
+      "853c80ef-3c37-49fd-aa49-938b674adae6"
+     ],
+     "muted": false,
+     "deafened": false
+    }
+   ],
+   "packet": {
+    "sender": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6",
+    "epoch": 1,
+    "mode": 0,
+    "flags": 0
+   },
+   "expect": [],
+   "expect_group": []
   }
  ]
 }
