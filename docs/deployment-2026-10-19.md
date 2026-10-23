@@ -1,5 +1,9 @@
 # Backend deployment — 19 October 2026
 
+Historical 14:02 deployment, superseded by
+[Rust 0.1.10 at 16:36 UTC](deployment-0.1.10.md). The artifact and rollback
+details below describe the earlier local 0.1.5 installation.
+
 The user authorized replacing the existing MCVoice backend on 5.83.145.152.
 Only MCVoice was restarted. No image, Maven package or client release was
 published. Client changes remain on `codex/input-group-ptt-performance`.

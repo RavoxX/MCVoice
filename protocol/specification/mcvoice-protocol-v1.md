@@ -207,7 +207,8 @@ tracker reset MUST produce a new scope with a larger `epoch`.
 
 * `network_id`: `"n1:"` + first 32 hex chars of
   `SHA-256(lowercase(host) + ":" + port)` of the address the user connected to
-  (before SRV resolution). It is **informational only**: backends MUST NOT
+  (before SRV resolution, default port 25565, with a trailing DNS root dot
+  removed from the host before hashing). It is **informational only**: backends MUST NOT
   use it to decide who can hear whom (§8). The same server is reachable under
   many addresses (aliases, IPs, SRV records, tunnels, several proxies of one
   network, LAN), and a hash of the address is trivially forged, so it can
@@ -359,6 +360,21 @@ Backend → client:
 * `group_list` lists at most 100 groups, most members first, then by id. With
   `query` (1-5 characters `[A-Za-z0-9]`) only groups whose id contains it,
   case-insensitively, are listed (search).
+* **Directory previews (`group_directory` capability).** A paged `group_list`
+  may add `details:true` to include `roster:[{"uuid":"...","name":"..."}]`
+  on each returned entry (join order, at most 15). This is public membership
+  metadata, including password-protected groups; passwords still gate joining
+  and playback. No addresses, positions, tokens or skin URLs are exposed.
+  `server_only:true` filters before paging to groups with at least one current
+  in-world member whose latest `scope.network_id` equals the requester's latest
+  in-world scope. A missing/out-of-world scope matches nothing. This is an
+  informational, self-reported address filter, never an access-control or audio
+  routing boundary. Groups spanning domains appear on each represented domain.
+  Raw domains are never returned. Omitted/null fields default to false; true requires
+  paging; older clients retain their exact metadata-only response. Clients
+  only send these fields to a backend advertising `group_directory`.
+  Rosters are copied for the selected page only; responses retain the existing
+  20-entry page and 64-KiB frame bounds and existing list request budgets.
 * **Paged browsing (`group_paging` capability).** A backend advertising this
   capability accepts `group_list` with `limit` (integer 1–20) and `request_id`
   (uint32), both required together. An optional `cursor` is a 5-character
