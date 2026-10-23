@@ -61,7 +61,7 @@ public abstract class Widget {
         centered(c, ellipsize(c, s, w - 8), x + w / 2, y + (h - c.fontHeight()) / 2 + 1, color);
     }
 
-    protected static String ellipsize(UiCanvas c, String s, int maxW) {
+    public static String ellipsize(UiCanvas c, String s, int maxW) {
         if (c.textWidth(s) <= maxW) {
             return s;
         }
