@@ -208,6 +208,7 @@ pub struct PeerState {
     pub has_scope: bool,
     /// the client advertised the `groups` capability
     pub groups_cap: bool,
+    pub group_modes_cap: bool,
     /// set while the session is out of a world (group grace, spec 6.12)
     pub out_of_world_since: Option<Instant>,
 }

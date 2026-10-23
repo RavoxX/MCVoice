@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import dev.mcvoice.client.config.ClientConfig;
 import dev.mcvoice.client.config.HudLayout;
+import dev.mcvoice.client.proximity.GroupType;
 
 /** What the UI needs from the voice client (implemented by client/core). */
 public interface VoiceControls {
@@ -115,12 +116,19 @@ public interface VoiceControls {
 
     void createGroup(String password);
 
+    default void createGroup(String password, GroupType type) { if (type == GroupType.OPEN) createGroup(password); }
+    default boolean groupModesAvailable() { return false; }
+
     void joinGroup(String id, String password);
 
     void leaveGroup();
 
     default void setGroupActivationMode(ClientConfig.ActivationMode mode) {
-        config().groupActivationMode = mode;
+        setActivationMode(mode);
+    }
+
+    default void setActivationMode(ClientConfig.ActivationMode mode) {
+        config().activationMode = mode;
         applyConfig();
     }
 
@@ -132,6 +140,14 @@ public interface VoiceControls {
 
     /** Push-to-talk key name for hints. */
     String pushToTalkKey();
+
+    default String keyName(dev.mcvoice.client.platform.InputAdapter.Action action) { return "Unbound"; }
+    default boolean keyBound(dev.mcvoice.client.platform.InputAdapter.Action action) { return false; }
+    default boolean bindKey(dev.mcvoice.client.platform.InputAdapter.Action action, int code, boolean mouse) { return false; }
+    default void openVoiceMenu() { openSettings(); }
+    default void openBindings() { }
+    default void openGroups() { }
+    default void toggleIcons() { config().hideVoiceIcons = !config().hideVoiceIcons; }
 
     final class Talker {
         public final UUID uuid;
@@ -171,12 +187,18 @@ public interface VoiceControls {
         public final boolean password;
         public final int max;
         public final List<Member> members;
+        public final GroupType type;
 
         public Group(String id, boolean password, int max, List<Member> members) {
+            this(id, password, max, members, GroupType.OPEN);
+        }
+
+        public Group(String id, boolean password, int max, List<Member> members, GroupType type) {
             this.id = id;
             this.password = password;
             this.max = max;
             this.members = members;
+            this.type = type == null ? GroupType.ISOLATED : type;
         }
     }
 
@@ -185,6 +207,7 @@ public interface VoiceControls {
         public final int members;
         public final int max;
         public final boolean password;
+        public final GroupType type;
 
         public GroupInfo(String id, int members, int max, boolean password) {
             this(id, members, max, password, java.util.Collections.<Member>emptyList());
@@ -193,10 +216,15 @@ public interface VoiceControls {
         public final List<Member> roster;
 
         public GroupInfo(String id, int members, int max, boolean password, List<Member> roster) {
+            this(id, members, max, password, roster, GroupType.OPEN);
+        }
+
+        public GroupInfo(String id, int members, int max, boolean password, List<Member> roster, GroupType type) {
             this.id = id;
             this.members = members;
             this.max = max;
             this.password = password;
+            this.type = type;
             this.roster = java.util.Collections.unmodifiableList(new java.util.ArrayList<Member>(roster));
         }
     }
