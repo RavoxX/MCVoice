@@ -7,6 +7,8 @@ import dev.mcvoice.client.config.ClientConfig;
 import dev.mcvoice.client.ui.HudRenderer;
 import dev.mcvoice.client.ui.TransportStatus;
 import dev.mcvoice.client.ui.VoiceControls;
+import dev.mcvoice.client.ui.GroupScreen;
+import dev.mcvoice.client.ui.UpdateScreen;
 import dev.mcvoice.platform.mc.McCanvas;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
@@ -17,6 +19,11 @@ import com.mojang.logging.LogUtils;
 public final class HudSmoke {
     private static int frames;
     private static boolean screenshot;
+    private static int preview;
+    private static GroupScreen directory;
+    private static UpdateScreen updates;
+
+    public static void preview(int mode) { preview = mode; }
 
     public static void render(GuiGraphicsExtractor graphics) {
         Minecraft mc = Minecraft.getInstance();
@@ -37,6 +44,31 @@ public final class HudSmoke {
         List<HudRenderer.Row> rows = HudRenderer.render(new McCanvas(graphics), controls, false);
         if (rows.size() != 2) throw new AssertionError("26.3 group roster did not render both members");
         if (++frames == 10) LogUtils.getLogger().info("MCVOICE_SMOKE group-hud-extractor PASS");
+        if (preview != 0) {
+            McCanvas canvas = new McCanvas(graphics);
+            if (directory == null) {
+                ClientConfig config = new ClientConfig();
+                java.util.ArrayList<VoiceControls.Member> members = new java.util.ArrayList<>();
+                members.add(new VoiceControls.Member(self,"Alice"));
+                for (int i=1;i<15;i++) members.add(new VoiceControls.Member(new UUID(0,i),"Player"+i));
+                VoiceControls browser = (VoiceControls)Proxy.newProxyInstance(VoiceControls.class.getClassLoader(),new Class<?>[]{VoiceControls.class},
+                    (proxy,method,args) -> {
+                        return switch(method.getName()) {
+                            case "config" -> config;
+                            case "groupsAvailable", "groupDirectoryAvailable" -> true;
+                            case "group" -> null;
+                            case "groupList" -> List.of(new VoiceControls.GroupInfo("ABCDE",15,15,true,members));
+                            case "groupNotice" -> "";
+                            case "availableUpdate" -> "0.1.12";
+                            case "updateReleaseUrl" -> "https://github.com/RavoxX/MCVoice/releases/tag/v0.1.12-mc26.3";
+                            default -> method.getReturnType()==void.class ? null : false;
+                        };
+                    });
+                directory = new GroupScreen(browser); updates = new UpdateScreen(browser);
+            }
+            if (preview == 1) directory.render(canvas,(canvas.width()-Math.min(310,canvas.width()-16))/2+7,106,0);
+            else updates.render(canvas,0,0,0);
+        }
     }
 
     public static boolean ready() {
@@ -46,7 +78,11 @@ public final class HudSmoke {
     public static void screenshot(Minecraft mc) {
         if (screenshot) return;
         screenshot = true;
-        Screenshot.grab(new java.io.File(mc.gameDirectory.getParentFile(), "evidence"), "group-hud.png", mc.gameRenderer.mainRenderTarget(), 1,
+        screenshot(mc,"group-hud.png");
+    }
+
+    public static void screenshot(Minecraft mc, String name) {
+        Screenshot.grab(new java.io.File(mc.gameDirectory.getParentFile(), "evidence"), name, mc.gameRenderer.mainRenderTarget(), 1,
             message -> LogUtils.getLogger().info("MCVOICE_SMOKE group-hud screenshot {}", message.getString()));
     }
 }
