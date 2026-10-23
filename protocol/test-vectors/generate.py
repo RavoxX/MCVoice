@@ -260,6 +260,13 @@ def control_vectors():
         ("group_list_query_empty", {"type": "group_list", "query": ""}, "bad_message"),
         ("group_create_open", {"type": "group_create"}, None),
         ("group_create_null_password", {"type": "group_create", "password": None}, None),
+        ("group_create_normal_type", {"type": "group_create", "group_type": "normal"}, None),
+        ("group_create_open_type", {"type": "group_create", "group_type": "open"}, None),
+        ("group_create_isolated_type", {"type": "group_create", "group_type": "isolated"}, None),
+        ("group_create_null_type", {"type": "group_create", "group_type": None}, None),
+        ("group_create_unknown_type", {"type": "group_create", "group_type": "public"}, "bad_message"),
+        ("group_create_uppercase_type", {"type": "group_create", "group_type": "NORMAL"}, "bad_message"),
+        ("group_create_numeric_type", {"type": "group_create", "group_type": 1}, "bad_message"),
         ("group_create_password", {"type": "group_create", "password": "hunter 2!"}, None),
         ("group_create_password_empty", {"type": "group_create", "password": ""}, "bad_message"),
         ("group_create_password_too_long", {"type": "group_create", "password": "x" * 33}, "bad_message"),
@@ -367,6 +374,17 @@ def routing_vectors():
         out.append({"name": name, "config": cfg, "now_ms": now, "sessions": sessions,
                     "packet": {"sender": sender, "epoch": epoch, "mode": mode, "flags": flags},
                     "expect": sorted(expect), "expect_group": sorted(expect_group)})
+    for policy in ("normal", "open", "isolated"):
+        peers = [s(A, [0,64,0], [B,C], group=G, group_type=policy),
+                 s(B, [1,64,0], [A,C], group=G, group_type=policy), s(C, [2,64,0], [A,B])]
+        for flags in (0, 2):
+            out.append({"name": f"{policy}_group_outbound_flags_{flags}", "config": cfg, "now_ms": now,
+                        "sessions": peers, "packet": {"sender": A,"epoch":1,"mode":0,"flags":flags},
+                        "expect": ([C] + ([] if flags else [B])) if policy == "open" else [],
+                        "expect_group": [B] if flags else []})
+        out.append({"name": f"{policy}_group_inbound_outsider", "config": cfg, "now_ms": now,
+                    "sessions": peers, "packet": {"sender":C,"epoch":1,"mode":0,"flags":0},
+                    "expect": [] if policy == "isolated" else [A,B], "expect_group": []})
     return {"description": "Backend routing decisions (spec section 8 and 8.1). expect = sorted proximity recipients "
                            "(relayed with the frame's mode), expect_group = sorted group recipients (relayed with mode 2).",
             "cases": out}
@@ -376,11 +394,11 @@ def playback_vectors():
     A, B, C = UUID_A, UUID_B, UUID_C
     ow, nether = "minecraft:overworld", "minecraft:the_nether"
 
-    def case(name, tracked, frame, expect, local=None, muted=(), deafened=False, normal=48.0, whisper=8.0, group=()):
+    def case(name, tracked, frame, expect, local=None, muted=(), deafened=False, normal=48.0, whisper=8.0, group=(), isolated=False):
         return {"name": name,
                 "local": local or {"in_world": True, "world": ow, "epoch": 5, "pos": [0, 64, 0]},
                 "tracked": tracked, "frame": frame, "muted": list(muted), "deafened": deafened, "group": list(group),
-                "normal_range": normal, "whisper_range": whisper, "expect": expect}
+                "normal_range": normal, "whisper_range": whisper, "isolated": isolated, "expect": expect}
 
     def fr(sender=B, epoch=5, mode=0):
         return {"sender": sender, "recipient_epoch": epoch, "mode": mode}
@@ -417,6 +435,10 @@ def playback_vectors():
                 case("group_frame_self", [], fr(sender=A, mode=2), "reject:self", group=[A, B],
                      local={"in_world": True, "world": ow, "epoch": 5, "pos": [0, 64, 0], "uuid": A}),
                 case("positional_frame_group_member_still_needs_entity", [], fr(mode=0), "reject:not_tracked", group=[B]),
+                case("isolated_blocks_tracked_cloud_voice", [{"uuid": B,"world":ow,"pos":[1,64,0]}], fr(), "reject:group_isolated", group=[C], isolated=True),
+                case("isolated_blocks_tracked_svc_voice", [{"uuid": B,"world":ow,"pos":[1,64,0]}], {"sender":B,"recipient_epoch":None,"mode":1}, "reject:group_isolated", group=[C], isolated=True),
+                case("isolated_group_member_is_still_heard", [], fr(mode=2), "accept", group=[B], isolated=True),
+                case("isolated_keeps_local_entity_validation", [], fr(), "reject:not_tracked", group=[B], isolated=True),
             ]}
 
 
