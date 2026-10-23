@@ -35,6 +35,7 @@ import dev.mcvoice.client.platform.InputAdapter;
 import dev.mcvoice.client.platform.MinecraftAdapter;
 import dev.mcvoice.client.platform.ui.UiCanvas;
 import dev.mcvoice.client.proximity.NetworkIds;
+import dev.mcvoice.client.proximity.GroupType;
 import dev.mcvoice.client.proximity.PeerReporter;
 import dev.mcvoice.client.proximity.PlaybackDecision;
 import dev.mcvoice.client.proximity.PlaybackValidator;
@@ -179,22 +180,29 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
         InputAdapter in = mc.input();
         if (in != null) {
+            if (config.controlsVersion < 1) {
+                in.migrateControls();
+                config.controlsVersion = 1;
+                config.save();
+            }
             boolean screen = mc.gui() != null && mc.gui().isAnyScreenOpen();
             pttDown = !screen && in.isDown(InputAdapter.Action.PUSH_TO_TALK);
             whisperDown = !screen && in.isDown(InputAdapter.Action.WHISPER);
-            if (in.consumePress(InputAdapter.Action.TOGGLE_MUTE)) {
+            if (in.consumePress(InputAdapter.Action.TOGGLE_MUTE) && !screen && config.activationMode == ClientConfig.ActivationMode.VOICE_ACTIVATION) {
                 setMicMuted(!config.muted);
             }
-            if (in.consumePress(InputAdapter.Action.TOGGLE_DEAFEN)) {
+            if (in.consumePress(InputAdapter.Action.TOGGLE_DEAFEN) && !screen) {
                 setDeafened(!config.deafened);
             }
-            if (in.consumePress(InputAdapter.Action.OPEN_SETTINGS) && mc.gui() != null) {
+            if (in.consumePress(InputAdapter.Action.OPEN_MENU) && !screen) openVoiceMenu();
+            if (in.consumePress(InputAdapter.Action.TOGGLE_ICONS) && !screen) toggleIcons();
+            if (in.consumePress(InputAdapter.Action.OPEN_SETTINGS) && !screen && mc.gui() != null) {
                 mc.gui().open(new SettingsScreen(this)); // "Done" applies the configuration
             }
-            if (in.consumePress(InputAdapter.Action.OPEN_DEBUG) && mc.gui() != null) {
+            if (in.consumePress(InputAdapter.Action.OPEN_DEBUG) && !screen && mc.gui() != null) {
                 mc.gui().open(new DebugScreen(this));
             }
-            if (in.consumePress(InputAdapter.Action.OPEN_GROUPS) && mc.gui() != null) {
+            if (in.consumePress(InputAdapter.Action.OPEN_GROUPS) && !screen && mc.gui() != null) {
                 mc.gui().open(new GroupScreen(this));
             }
         }
@@ -297,7 +305,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
                 }
             }
         }
-        if (stateDirty && ctl.sendState(config.muted || config.deafened, config.deafened)) {
+        if (stateDirty && ctl.sendState(micMuted() || config.deafened, config.deafened)) {
             stateDirty = false;
         }
         if (!snap.inWorld) {
@@ -350,11 +358,11 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     /** Platform hook: decorate an already visible player name tag, never reveal hidden entities. */
     public boolean isSpeaking(UUID player) {
         WorldSnapshot s = tracker.snapshot();
-        if (!s.inWorld || (!config.cloudEnabled && !config.svcInteropEnabled) || config.deafened) {
+        if (!s.inWorld || config.hideVoiceIcons || (!config.cloudEnabled && !config.svcInteropEnabled) || config.deafened) {
             return false;
         }
         if (player.equals(s.localUuid)) {
-            return transmitting() && voiceDetected() && !config.muted;
+            return transmitting() && voiceDetected() && !micMuted();
         }
         if (s.player(player) == null) {
             return false;
@@ -369,7 +377,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     /** Platform hook: HUD render (render thread; cheap, reads volatile state only). */
     public void renderHud(UiCanvas canvas) {
         try {
-            if (config.showHud && tracker.snapshot().inWorld && (mc.gui() == null || !mc.gui().isOurScreenOpen())) {
+            if (config.showHud && !config.hideVoiceIcons && tracker.snapshot().inWorld && (mc.gui() == null || !mc.gui().isOurScreenOpen())) {
                 hudRows = HudRenderer.render(canvas, this, config.showDebugOverlay);
                 handleHudClick();
                 if (!availableUpdate().isEmpty()) {
@@ -403,7 +411,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     private final SpatialMixer.Validator mixValidator = new SpatialMixer.Validator() {
         public PlaybackDecision check(WorldSnapshot s, UUID speaker, int mode) {
             return PlaybackValidator.check(s, speaker, PlaybackValidator.NO_EPOCH, mode, normalRange(), whisperRange(),
-                config.mutedPlayers, config.deafened, groupMembers);
+                config.mutedPlayers, config.deafened, groupMembers, isolatedGroup());
         }
     };
 
@@ -442,7 +450,8 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         private final byte[] empty = new byte[0];
 
         public int transmitMask(boolean voiceDetected) {
-            return TransmissionPolicy.mask(config, tracker.snapshot().inWorld, group != null, pttDown, whisperDown, voiceDetected);
+            Group current = group;
+            return TransmissionPolicy.mask(config, tracker.snapshot().inWorld, current == null ? null : current.type, pttDown, whisperDown, voiceDetected);
         }
 
         public boolean whisper() {
@@ -450,6 +459,9 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         }
 
         public void onEncoded(byte[] opus, int len, int txMask, boolean whisper) {
+            Group current = group;
+            txMask = TransmissionPolicy.restrictGroupMask(txMask, current == null ? null : current.type);
+            if (txMask == 0) return;
             long epoch = tracker.snapshot().epoch;
             seq = (seq + 1) & 0xFFFF;
             timestamp = (timestamp + 960) & 0xFFFFFFFFL;
@@ -490,7 +502,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
                         byte[] payload, int off, int len) {
         WorldSnapshot snap = tracker.snapshot();
         PlaybackDecision d = PlaybackValidator.check(snap, sender, recipientEpoch, mode, normalRange(), whisperRange(),
-            config.mutedPlayers, config.deafened, groupMembers);
+            config.mutedPlayers, config.deafened, groupMembers, isolatedGroup());
         if (!d.accepted()) {
             rejected.get(d).incrementAndGet();
             if (d == PlaybackDecision.MUTED) {
@@ -515,7 +527,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         WorldSnapshot snap = tracker.snapshot();
         int mode = whispering ? PlaybackValidator.MODE_WHISPER : PlaybackValidator.MODE_NORMAL;
         PlaybackDecision d = PlaybackValidator.check(snap, sender, PlaybackValidator.NO_EPOCH, mode, normalRange(),
-            whisperRange(), config.mutedPlayers, config.deafened);
+            whisperRange(), config.mutedPlayers, config.deafened, groupMembers, isolatedGroup());
         if (!d.accepted()) {
             rejected.get(d).incrementAndGet();
             if (d == PlaybackDecision.MUTED) {
@@ -715,6 +727,32 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         }
     }
 
+    @Override public void openVoiceMenu() {
+        if (mc.gui() != null) mc.gui().open(new dev.mcvoice.client.ui.VoiceMenuScreen(this));
+    }
+    @Override public void openBindings() {
+        if (mc.gui() != null) mc.gui().open(new dev.mcvoice.client.ui.KeyBindingsScreen(this));
+    }
+    @Override public void openGroups() {
+        if (mc.gui() != null) mc.gui().open(new GroupScreen(this));
+    }
+    @Override public void toggleIcons() {
+        config.hideVoiceIcons = !config.hideVoiceIcons;
+        config.save();
+    }
+    @Override public String keyName(InputAdapter.Action action) {
+        InputAdapter in = mc.input();
+        return in == null ? "Unbound" : in.keyName(action);
+    }
+    @Override public boolean keyBound(InputAdapter.Action action) {
+        InputAdapter in = mc.input();
+        return in != null && in.isBound(action);
+    }
+    @Override public boolean bindKey(InputAdapter.Action action, int code, boolean mouse) {
+        InputAdapter in = mc.input();
+        return in != null && in.bindKey(action, code, mouse);
+    }
+
     @Override
     public void saveHudLayout(HudLayout layout) {
         config.hudLayout = layout.copy();
@@ -745,19 +783,23 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
     @Override
     public boolean microphoneIndicatorVisible() {
-        return pttDown || whisperDown || config.activationMode == ClientConfig.ActivationMode.VOICE_ACTIVATION
-            || (group != null && config.groupActivationMode == ClientConfig.ActivationMode.VOICE_ACTIVATION);
+        return pttDown || whisperDown || config.activationMode == ClientConfig.ActivationMode.VOICE_ACTIVATION;
     }
 
     @Override
     public void setGroupActivationMode(ClientConfig.ActivationMode mode) {
-        config.groupActivationMode = mode;
+        setActivationMode(mode);
+    }
+
+    @Override public void setActivationMode(ClientConfig.ActivationMode mode) {
+        config.activationMode = mode;
+        stateDirty = true;
         config.save();
     }
 
     @Override
     public boolean micMuted() {
-        return config.muted;
+        return config.activationMode == ClientConfig.ActivationMode.VOICE_ACTIVATION && config.muted;
     }
 
     @Override
@@ -890,7 +932,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         Set<UUID> members = groupMembers;
         List<Talker> out = new ArrayList<Talker>();
         List<UUID> seen = new ArrayList<UUID>();
-        if (s.inWorld && s.localUuid != null && transmitting() && voiceDetected() && !config.muted && !config.deafened
+        if (s.inWorld && s.localUuid != null && transmitting() && voiceDetected() && !micMuted() && !config.deafened
             && (config.cloudEnabled || config.svcInteropEnabled)) {
             boolean toGroup = members.contains(s.localUuid)
                 && (lastTxMode == VoiceProtocol.MODE_GROUP || (lastTxGroupFlag & VoiceProtocol.FLAG_GROUP) != 0);
@@ -1045,9 +1087,22 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
     @Override
     public void createGroup(String password) {
+        createGroup(password, GroupType.NORMAL);
+    }
+
+    @Override public boolean groupModesAvailable() {
+        ControlClient ctl = control;
+        return ctl != null && ctl.serverSupports("group_modes");
+    }
+
+    @Override public void createGroup(String password, GroupType type) {
         ControlClient ctl = control;
         groupNotice = "";
-        if (ctl == null || !ctl.sendGroupCreate(password)) {
+        if (!groupModesAvailable() && type != GroupType.OPEN) {
+            groupNotice = "This group type needs a newer voice backend.";
+            return;
+        }
+        if (ctl == null || !ctl.sendGroupCreate(password, groupModesAvailable() ? type.wire : null)) {
             groupNotice = "Not connected to the voice server";
         }
     }
@@ -1090,6 +1145,16 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         }
     }
 
+    private boolean isolatedGroup() {
+        Group current = group;
+        return current != null && current.type == GroupType.ISOLATED;
+    }
+
+    private GroupType groupType(Map<String, Object> value) {
+        Object policy = value.get("group_type");
+        return policy == null && groupModesAvailable() ? GroupType.ISOLATED : GroupType.fromWire(policy);
+    }
+
     private static List<Member> members(List<Object> l) {
         List<Member> out = new ArrayList<Member>();
         if (l != null) {
@@ -1119,7 +1184,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
                         @SuppressWarnings("unchecked")
                         Map<String, Object> g = (Map<String, Object>) o;
                         l.add(new GroupInfo(String.valueOf(Json.str(g, "id")), (int) Json.lng(g, "members", 0),
-                            (int) Json.lng(g, "max", 15), Json.bool(g, "password", false), members(Json.list(g, "roster"))));
+                            (int) Json.lng(g, "max", 15), Json.bool(g, "password", false), members(Json.list(g, "roster")), groupType(g)));
                     }
                 }
             }
@@ -1128,13 +1193,13 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             Map<String, Object> g = Json.objAt(m, "group");
             if (g != null) {
                 setGroup(new Group(String.valueOf(Json.str(g, "id")), Json.bool(g, "password", false), (int) Json.lng(g, "max", 15),
-                    members(Json.list(g, "members"))), "");
+                    members(Json.list(g, "members")), groupType(g)), "");
                 VoiceLog.info(Category.VOICE, "joined voice group " + Json.str(g, "id"));
             }
         } else if ("group_update".equals(type)) {
             Group cur = group;
             if (cur != null && cur.id.equals(Json.str(m, "id"))) {
-                setGroup(new Group(cur.id, cur.password, cur.max, members(Json.list(m, "members"))), null);
+                setGroup(new Group(cur.id, cur.password, cur.max, members(Json.list(m, "members")), cur.type), null);
             }
         } else if ("group_left".equals(type)) {
             String reason = Json.str(m, "reason");
@@ -1156,6 +1221,8 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             text = "Wrong password";
         } else if ("not_in_world".equals(code)) {
             text = "Join a server first";
+        } else if ("bad_message".equals(code) && message != null && message.contains("group type")) {
+            text = "Update MCVoice to join this group type.";
         } else if ("rate_limited".equals(code)) {
             if (message != null && (message.contains("group list") || message.equals("slow down"))) {
                 groupBrowser.rateLimited(System.currentTimeMillis());

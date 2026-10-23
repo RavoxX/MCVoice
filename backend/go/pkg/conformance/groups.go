@@ -128,7 +128,7 @@ func createGroup(c *voiceclient.Client, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if ev.Group == nil || len(ev.Group.ID) != 5 || len(ev.Group.Members) != 1 || ev.Group.Max != 15 ||
+	if ev.Group == nil || len(ev.Group.ID) != 5 || len(ev.Group.Members) != 1 || ev.Group.Max != 20 ||
 		ev.Group.Password != (password != "") {
 		return "", errorf("bad group_joined after create: %+v", ev.Group)
 	}
@@ -172,7 +172,7 @@ func scGroupLifecycle(e *Env) error {
 	}
 	found := false
 	for _, g := range l.Groups {
-		if g.ID == id && g.Members == 1 && g.Max == 15 && !g.Password {
+		if g.ID == id && g.Members == 1 && g.Max == 20 && !g.Password {
 			found = true
 		}
 	}
@@ -319,7 +319,7 @@ func scGroupPassword(e *Env) error {
 }
 
 func scGroupFull(e *Env) error {
-	ps, err := e.groupPlayers(16)
+	ps, err := e.groupPlayers(21)
 	if err != nil {
 		return err
 	}
@@ -327,15 +327,19 @@ func scGroupFull(e *Env) error {
 	if err != nil {
 		return err
 	}
-	for i := 1; i < 15; i++ {
-		if _, err := joinGroup(ps[i], id, ""); err != nil {
+	for i := 1; i < 20; i++ {
+		event, err := joinGroup(ps[i], id, "")
+		if err != nil {
 			return errorf("member %d: %v", i+1, err)
 		}
+		if event.Group == nil || len(event.Group.Members) != i+1 || event.Group.Max != 20 {
+			return errorf("member %d missing from full group roster", i+1)
+		}
 	}
-	if err := ps[15].GroupJoin(id, ""); err != nil {
+	if err := ps[20].GroupJoin(id, ""); err != nil {
 		return err
 	}
-	return expectError(ps[15], "group_full")
+	return expectError(ps[20], "group_full")
 }
 
 func scGroupNeedsWorld(e *Env) error {
