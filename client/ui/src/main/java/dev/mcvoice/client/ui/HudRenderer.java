@@ -228,7 +228,7 @@ public final class HudRenderer {
     private static Bounds drawGroup(UiCanvas c, HudLayout layout, VoiceControls.Group group,
                                     List<VoiceControls.Talker> talkers, List<Row> rows) {
         if (group == null || group.members.isEmpty()) return new Bounds(0, 0, 0, 0);
-        int count = Math.min(15, group.members.size());
+        int count = Math.min(20, group.members.size());
         int size = layout.groupHeadSize;
         size = Math.min(size, Math.max(1, (c.height() - 8) / count - 4));
         int cell = size + 4;
