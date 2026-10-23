@@ -258,6 +258,41 @@
    "error": null
   },
   {
+   "name": "group_create_normal_type",
+   "json": "{\"type\":\"group_create\",\"group_type\":\"normal\"}",
+   "error": null
+  },
+  {
+   "name": "group_create_open_type",
+   "json": "{\"type\":\"group_create\",\"group_type\":\"open\"}",
+   "error": null
+  },
+  {
+   "name": "group_create_isolated_type",
+   "json": "{\"type\":\"group_create\",\"group_type\":\"isolated\"}",
+   "error": null
+  },
+  {
+   "name": "group_create_null_type",
+   "json": "{\"type\":\"group_create\",\"group_type\":null}",
+   "error": null
+  },
+  {
+   "name": "group_create_unknown_type",
+   "json": "{\"type\":\"group_create\",\"group_type\":\"public\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_create_uppercase_type",
+   "json": "{\"type\":\"group_create\",\"group_type\":\"NORMAL\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_create_numeric_type",
+   "json": "{\"type\":\"group_create\",\"group_type\":1}",
+   "error": "bad_message"
+  },
+  {
    "name": "group_create_password",
    "json": "{\"type\":\"group_create\",\"password\":\"hunter 2!\"}",
    "error": null

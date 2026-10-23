@@ -71,12 +71,12 @@ class GroupHudTest {
 
     @Test void fullGroupFitsSmallGuiAndHeadsDoNotJumpWhenSpeechChanges() {
         List<VoiceControls.Member> members = new ArrayList<VoiceControls.Member>();
-        for (int i = 0; i < 15; i++) members.add(new VoiceControls.Member(new UUID(0, i + 1), "Player" + i));
-        group = new VoiceControls.Group("ABCDE", false, 15, members);
+        for (int i = 0; i < 20; i++) members.add(new VoiceControls.Member(new UUID(0, i + 1), "Player" + i));
+        group = new VoiceControls.Group("ABCDE", false, 20, members);
         config.hudLayout.groupHeadSize = 32;
         Canvas c = new Canvas(); c.height = 180;
         HudRenderer.render(c, controls, false);
-        assertEquals(15, c.heads.size());
+        assertEquals(20, c.heads.size());
         for (int[] b : c.boxes) {
             assertTrue(b[0] >= 4 && b[0] + b[2] < c.width);
             assertTrue(b[1] >= 4 && b[1] + b[2] < c.height - 4);
@@ -84,6 +84,6 @@ class GroupHudTest {
         talkers = Collections.emptyList();
         Canvas silent = new Canvas(); silent.height = 180;
         HudRenderer.render(silent, controls, false);
-        for (int i = 0; i < 15; i++) assertArrayEquals(c.boxes.get(i), silent.boxes.get(i));
+        for (int i = 0; i < 20; i++) assertArrayEquals(c.boxes.get(i), silent.boxes.get(i));
     }
 }
