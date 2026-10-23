@@ -51,7 +51,7 @@ settings: ranges (`NORMAL_RANGE`, `WHISPER_RANGE`, `MAX_RANGE`,
 
 ```sh
 cd deployment/compose
-cp ../../backend/rust/.env.example .env      # edit secrets and PUBLIC_HOSTNAME
+cp ../../backend/rust/.env.example .env      # edit secrets, PUBLIC_HOSTNAME and TRUSTED_PROXY_CIDRS
 docker compose up -d                          # Rust backend + Caddy (automatic TLS)
 docker compose --profile go up -d backend-go  # or the Go backend (set BACKEND_SERVICE=backend-go for Caddy)
 ```
@@ -59,6 +59,19 @@ docker compose --profile go up -d backend-go  # or the Go backend (set BACKEND_S
 Caddy terminates TLS for `/v1/control`, `/health` and `/ready` and hides
 `/metrics`. UDP goes straight to the backend container. Containers run
 read-only, as non-root, with all capabilities dropped.
+
+For a fresh default network whose Caddy address is not known yet, start only
+the proxy with a temporary loopback trust placeholder (no backend is started):
+
+```sh
+TRUSTED_PROXY_CIDRS=127.0.0.1/32 docker compose up -d --no-deps caddy
+```
+
+Inspect that Caddy container's backend-facing network address, replace the empty
+`TRUSTED_PROXY_CIDRS` in `.env` with its exact `/32` address (or use a deliberately
+configured isolated proxy-network CIDR), then run `docker compose up -d` normally.
+Recheck this value whenever recreating the proxy/network. The placeholder is
+only for creating the proxy, not for serving clients through the backend.
 
 ## Kubernetes
 
@@ -88,9 +101,13 @@ Session state (positions, visibility, keys) lives in memory. All players
 who should hear each other must be on the **same instance**, so keep
 `replicas: 1` per voice host and scale by running more hosts (for example
 one per community or region, each with its own client backend URL). One
-instance handles hundreds of concurrent speakers; see `tools/load-test` for
-measurements (200 clients at about 16k relayed packets/s with p99 under 5 ms
-on a CI runner). `REDIS_URL`/`DATABASE_URL` are reserved and ignored in 0.1.x.
+instance's capacity must be measured for its workload and host. The
+[current comparison](hardening-0.1.10.md#beforeafter-measurements) uses 200
+loopback clients with 60 talkers; dense Go forwarding still saturates. CI load
+smoke proves its checked delivery scenario, not a general capacity guarantee.
+100k concurrent users remains an unproven target; follow the
+[staged scaling plan](input-and-performance.md#practical-path-toward-100000-concurrent-users).
+`REDIS_URL`/`DATABASE_URL` are reserved and ignored in 0.1.x.
 
 A restart drops sessions. Clients reconnect with exponential backoff and
 resume using their resume token when it is still valid.
