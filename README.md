@@ -36,11 +36,14 @@ can still be heard on servers that run the Simple Voice Chat plugin.
 
 ## Supported Minecraft versions
 
-Upcoming **0.1.11** adds member heads/name tooltips and a saved **All Groups /
+**[0.1.11](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.11)** adds member
+heads/name tooltips and a saved **All Groups /
 This Server** directory filter, plus optional background update notifications
 linking to the stable GitHub release for your Minecraft version and loader.
 These changes require the new client; directory previews/filtering also require
-an updated voice backend. See [behavior and verification](docs/group-directory-and-updates.md).
+an updated voice backend. The public backend runs 0.1.11. See
+[behavior and verification](docs/group-directory-and-updates.md) and the
+[release report](docs/release-0.1.11.md).
 
 The authoritative, CI-generated matrix is
 [`versions/supported.md`](versions/supported.md) (machine-readable:
