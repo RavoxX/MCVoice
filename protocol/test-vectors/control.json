@@ -138,6 +138,31 @@
    "error": null
   },
   {
+   "name": "group_directory",
+   "json": "{\"type\":\"group_list\",\"limit\":20,\"request_id\":1,\"details\":true,\"server_only\":true}",
+   "error": null
+  },
+  {
+   "name": "group_directory_unpaged",
+   "json": "{\"type\":\"group_list\",\"details\":true}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_filter_unpaged",
+   "json": "{\"type\":\"group_list\",\"server_only\":true}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_directory_bad_type",
+   "json": "{\"type\":\"group_list\",\"limit\":20,\"request_id\":1,\"details\":\"yes\"}",
+   "error": "bad_message"
+  },
+  {
+   "name": "group_directory_null",
+   "json": "{\"type\":\"group_list\",\"details\":null,\"server_only\":null}",
+   "error": null
+  },
+  {
    "name": "group_page",
    "json": "{\"type\":\"group_list\",\"limit\":20,\"request_id\":1}",
    "error": null

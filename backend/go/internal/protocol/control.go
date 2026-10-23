@@ -122,10 +122,12 @@ type Bye struct{}
 
 // Voice groups (spec 6.12).
 type GroupList struct {
-	Query     *string `json:"query"`
-	Limit     *uint32 `json:"limit"`
-	Cursor    *string `json:"cursor"`
-	RequestID *uint32 `json:"request_id"`
+	Query      *string `json:"query"`
+	Limit      *uint32 `json:"limit"`
+	Cursor     *string `json:"cursor"`
+	RequestID  *uint32 `json:"request_id"`
+	Details    bool    `json:"details"`
+	ServerOnly bool    `json:"server_only"`
 }
 
 type GroupCreate struct {
@@ -329,6 +331,9 @@ func validate(m any) *ControlError {
 			return bad("missing nonce")
 		}
 	case *GroupList:
+		if (v.Details || v.ServerOnly) && v.Limit == nil {
+			return bad("group directory requires paging")
+		}
 		if (v.Limit != nil && (*v.Limit == 0 || *v.Limit > GroupPageMax)) ||
 			(v.Limit != nil) != (v.RequestID != nil) ||
 			(v.Cursor != nil && (v.Limit == nil || !validGroupID(*v.Cursor))) {
@@ -479,4 +484,4 @@ type Simple struct {
 }
 
 // Capabilities advertised by both backend implementations.
-var ServerCapabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "scope_attestation", "groups", "group_paging"}
+var ServerCapabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "scope_attestation", "groups", "group_paging", "group_directory"}
