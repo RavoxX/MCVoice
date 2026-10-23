@@ -65,6 +65,8 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
     private final MinecraftAdapter mc;
     private final String modVersion;
+    private final ReleaseChecker releases = new ReleaseChecker();
+    private long updateNoticeUntil;
     private final ClientConfig config;
     private final WorldTracker tracker;
     private final PeerReporter reporter = new PeerReporter();
@@ -172,6 +174,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         long now = System.currentTimeMillis();
         tracker.tick();
         WorldSnapshot snap = tracker.snapshot();
+        if (config.checkForUpdates && snap.inWorld) releases.start(modVersion, mc.minecraftVersion(), mc.loader());
         boolean multiplayer = mc.network().isMultiplayer();
 
         InputAdapter in = mc.input();
@@ -201,8 +204,14 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         final ControlClient groupControl = control;
         if (groupBrowser.loading() && groupControl != null && groupControl.serverSupports("groups")) {
             groupBrowser.tick(new GroupBrowser.Sender() {
-                public boolean send(String query, String cursor, long requestId, boolean paged) {
-                    return paged ? groupControl.sendGroupPage(query, cursor, requestId) : groupControl.sendGroupList(query);
+                public boolean send(String query, String cursor, long requestId, boolean paged, boolean serverOnly) {
+                    boolean directory = groupControl.serverSupports("group_directory");
+                    String address = mc.network().serverAddress();
+                    if (serverOnly && (!directory || address == null || address.trim().isEmpty())) {
+                        groupNotice = directory ? "Server address unavailable; select All Groups." : "Server filter needs a newer voice backend.";
+                        return false;
+                    }
+                    return paged ? groupControl.sendGroupPage(query, cursor, requestId, directory, serverOnly) : groupControl.sendGroupList(query);
                 }
             }, groupControl.serverSupports("group_paging"), now);
         }
@@ -278,6 +287,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             networkId = NetworkIds.of(addr == null ? "unknown-session" : addr);
             boolean inWorld = snap.inWorld;
             if (ctl.sendScope(snap.epoch, inWorld, networkId, snap.world)) {
+                groupBrowser.scopeChanged();
                 scopeDirty = false;
                 reporter.resync();
                 lastPosX = Double.NaN;
@@ -362,6 +372,18 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             if (config.showHud && tracker.snapshot().inWorld && (mc.gui() == null || !mc.gui().isOurScreenOpen())) {
                 hudRows = HudRenderer.render(canvas, this, config.showDebugOverlay);
                 handleHudClick();
+                if (!availableUpdate().isEmpty()) {
+                    if (updateNoticeUntil == 0) updateNoticeUntil = System.currentTimeMillis() + 15000;
+                    if (System.currentTimeMillis() < updateNoticeUntil) {
+                        String notice = "MCVoice " + availableUpdate() + " available";
+                        String hint = "Voice Chat Settings > Updates";
+                        int width = Math.max(canvas.textWidth(notice), canvas.textWidth(hint));
+                        int x = Math.max(6, (canvas.width() - width) / 2);
+                        canvas.fill(x - 4, 3, x + width + 4, 12 + 2 * canvas.fontHeight(), 0xD0101010);
+                        canvas.text(notice, x, 6, 0xFFFFFF55, true);
+                        canvas.text(hint, x, 9 + canvas.fontHeight(), 0xFFFFFFFF, true);
+                    }
+                }
             }
         } catch (Throwable t) {
             VoiceLog.every(60000, "hud", LogSink.Level.WARN, Category.VOICE, "HUD render failed: " + t);
@@ -968,7 +990,46 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     @Override
     public void requestGroups(String query) {
         groupNotice = "";
-        groupBrowser.search(query);
+        groupBrowser.search(query, config.groupServerOnly);
+    }
+
+    @Override
+    public boolean groupDirectoryAvailable() {
+        ControlClient ctl = control;
+        return ctl != null && ctl.serverSupports("group_directory");
+    }
+
+    @Override public String availableUpdate() {
+        ReleaseChecker.Update update = releases.update();
+        return config.checkForUpdates && update != null ? update.version : "";
+    }
+
+    @Override public String updateReleaseUrl() {
+        ReleaseChecker.Update update = releases.update();
+        return config.checkForUpdates && update != null ? update.url : "";
+    }
+
+    @Override public void openUpdateRelease() {
+        final String url = updateReleaseUrl();
+        if (url.isEmpty()) return;
+        Thread browser = new Thread(new Runnable() {
+            public void run() {
+                try { java.awt.Desktop.getDesktop().browse(new java.net.URI(url)); }
+                catch (Exception unavailable) { VoiceLog.info(Category.CONTROL, "Update release: " + url); }
+            }
+        }, "MCVoice-Release-Link");
+        browser.setDaemon(true);
+        browser.start();
+    }
+
+    @Override public void openUpdates() {
+        if (mc.gui() != null) mc.gui().open(new dev.mcvoice.client.ui.UpdateScreen(this));
+    }
+
+    @Override
+    public void setGroupServerOnly(boolean value) {
+        config.groupServerOnly = value;
+        config.save();
     }
 
     @Override
@@ -1058,7 +1119,7 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
                         @SuppressWarnings("unchecked")
                         Map<String, Object> g = (Map<String, Object>) o;
                         l.add(new GroupInfo(String.valueOf(Json.str(g, "id")), (int) Json.lng(g, "members", 0),
-                            (int) Json.lng(g, "max", 15), Json.bool(g, "password", false)));
+                            (int) Json.lng(g, "max", 15), Json.bool(g, "password", false), members(Json.list(g, "roster"))));
                     }
                 }
             }
