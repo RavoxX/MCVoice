@@ -32,6 +32,7 @@ fn unregistered_player(srv: &Server, id: u8) -> (Arc<Session>, PeerState, mpsc::
         },
     ));
     let ps = PeerState {
+        network_id: String::new(),
         peer: Peer {
             uuid: ident.uuid,
             authenticated: true,

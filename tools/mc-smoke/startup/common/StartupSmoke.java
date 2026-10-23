@@ -64,6 +64,11 @@ public final class StartupSmoke {
                 mc.mouseHandler.releaseMouse();
                 mc.mouseHandler.grabMouse();
             }
+            if (worldTicks == 62) HudSmoke.preview(1);
+            if (worldTicks == 70) HudSmoke.screenshot(mc,"group-directory.png");
+            if (worldTicks == 72) HudSmoke.preview(2);
+            if (worldTicks == 80) HudSmoke.screenshot(mc,"updates.png");
+            if (worldTicks == 82) HudSmoke.preview(0);
             if (worldTicks == 90) {
                 returning = true;
                 mc.disconnect(new TitleScreen(), false);

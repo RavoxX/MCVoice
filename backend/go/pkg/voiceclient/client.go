@@ -46,10 +46,11 @@ type GroupMember struct {
 
 // GroupInfo is one entry of a group_list answer.
 type GroupInfo struct {
-	ID       string `json:"id"`
-	Members  int    `json:"members"`
-	Max      int    `json:"max"`
-	Password bool   `json:"password"`
+	Roster   []GroupMember `json:"roster"`
+	ID       string        `json:"id"`
+	Members  int           `json:"members"`
+	Max      int           `json:"max"`
+	Password bool          `json:"password"`
 }
 
 // GroupEvent is a received group_list, group_joined, group_update or group_left message.
