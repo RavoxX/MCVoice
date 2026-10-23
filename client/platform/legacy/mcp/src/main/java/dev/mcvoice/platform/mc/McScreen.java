@@ -23,7 +23,7 @@ public final class McScreen extends GuiScreen {
 
     @Override
     protected void mouseClicked(int x, int y, int button) throws IOException {
-        ui.mouseClicked(x, y, button);
+        if (!ui.bindingMouseClicked(button)) ui.mouseClicked(x, y, button);
     }
 
     @Override
@@ -49,7 +49,7 @@ public final class McScreen extends GuiScreen {
 
     @Override
     protected void keyTyped(char c, int keyCode) throws IOException {
-        if (ui.keyPressed(glfwKey(keyCode))) {
+        if (ui.bindingKeyPressed(keyCode, glfwKey(keyCode)) || ui.keyPressed(glfwKey(keyCode))) {
             return;
         }
         if (keyCode == Keyboard.KEY_ESCAPE) {

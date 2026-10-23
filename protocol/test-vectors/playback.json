@@ -34,6 +34,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "accept"
   },
   {
@@ -69,6 +70,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:out_of_range"
   },
   {
@@ -104,6 +106,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "accept"
   },
   {
@@ -139,6 +142,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:other_world"
   },
   {
@@ -174,6 +178,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:not_tracked"
   },
   {
@@ -209,6 +214,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:not_tracked"
   },
   {
@@ -244,6 +250,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:stale_epoch"
   },
   {
@@ -279,6 +286,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:not_in_world"
   },
   {
@@ -315,6 +323,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:self"
   },
   {
@@ -352,6 +361,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:muted"
   },
   {
@@ -387,6 +397,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:deafened"
   },
   {
@@ -422,6 +433,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "accept"
   },
   {
@@ -457,6 +469,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:out_of_range"
   },
   {
@@ -492,6 +505,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "accept"
   },
   {
@@ -520,6 +534,7 @@
    ],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "accept"
   },
   {
@@ -558,6 +573,7 @@
    ],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "accept"
   },
   {
@@ -585,6 +601,7 @@
    ],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "accept"
   },
   {
@@ -623,6 +640,7 @@
    ],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:not_in_group"
   },
   {
@@ -658,6 +676,7 @@
    "group": [],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:not_in_group"
   },
   {
@@ -687,6 +706,7 @@
    ],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:muted"
   },
   {
@@ -714,6 +734,7 @@
    ],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:deafened"
   },
   {
@@ -743,6 +764,7 @@
    ],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
    "expect": "reject:self"
   },
   {
@@ -770,6 +792,139 @@
    ],
    "normal_range": 48.0,
    "whisper_range": 8.0,
+   "isolated": false,
+   "expect": "reject:not_tracked"
+  },
+  {
+   "name": "isolated_blocks_tracked_cloud_voice",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      1,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [
+    "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "isolated": true,
+   "expect": "reject:group_isolated"
+  },
+  {
+   "name": "isolated_blocks_tracked_svc_voice",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [
+    {
+     "uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+     "world": "minecraft:overworld",
+     "pos": [
+      1,
+      64,
+      0
+     ]
+    }
+   ],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": null,
+    "mode": 1
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [
+    "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "isolated": true,
+   "expect": "reject:group_isolated"
+  },
+  {
+   "name": "isolated_group_member_is_still_heard",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 2
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "isolated": true,
+   "expect": "accept"
+  },
+  {
+   "name": "isolated_keeps_local_entity_validation",
+   "local": {
+    "in_world": true,
+    "world": "minecraft:overworld",
+    "epoch": 5,
+    "pos": [
+     0,
+     64,
+     0
+    ]
+   },
+   "tracked": [],
+   "frame": {
+    "sender": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 5,
+    "mode": 0
+   },
+   "muted": [],
+   "deafened": false,
+   "group": [
+    "853c80ef-3c37-49fd-aa49-938b674adae6"
+   ],
+   "normal_range": 48.0,
+   "whisper_range": 8.0,
+   "isolated": true,
    "expect": "reject:not_tracked"
   }
  ]
