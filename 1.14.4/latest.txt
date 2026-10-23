@@ -55,6 +55,23 @@ com.mojang.blaze3d.platform.InputConstants
     java.lang.String translateScanCode(int)
     void <clinit>()
 ::endgroup::
+::group::com.mojang.blaze3d.platform.InputConstants$Key
+com.mojang.blaze3d.platform.InputConstants$Key
+    java.lang.String name
+    com.mojang.blaze3d.platform.InputConstants$Type type
+    int value
+    java.util.Map NAME_MAP
+    void <init>(java.lang.String,com.mojang.blaze3d.platform.InputConstants$Type,int)
+    com.mojang.blaze3d.platform.InputConstants$Type getType()
+    int getValue()
+    java.lang.String getName()
+    boolean equals(java.lang.Object)
+    int hashCode()
+    java.lang.String toString()
+    void <init>(java.lang.String,com.mojang.blaze3d.platform.InputConstants$Type,int,com.mojang.blaze3d.platform.InputConstants$1)
+    java.util.Map access$100()
+    void <clinit>()
+::endgroup::
 ::group::com.mojang.blaze3d.platform.InputConstants$Type
 com.mojang.blaze3d.platform.InputConstants$Type
     com.mojang.blaze3d.platform.InputConstants$Type KEYSYM
@@ -73,732 +90,100 @@ com.mojang.blaze3d.platform.InputConstants$Type
     java.lang.String access$200(com.mojang.blaze3d.platform.InputConstants$Type)
     void <clinit>()
 ::endgroup::
-::group::net.minecraft.client.Options
-net.minecraft.client.Options
-    org.apache.logging.log4j.Logger LOGGER
-    com.google.gson.Gson GSON
-    java.lang.reflect.Type RESOURCE_PACK_TYPE
-    com.google.common.base.Splitter COLON_SPLITTER
-    double sensitivity
-    int renderDistance
-    int framerateLimit
-    net.minecraft.client.CloudStatus renderClouds
-    boolean fancyGraphics
-    net.minecraft.client.AmbientOcclusionStatus ambientOcclusion
-    java.util.List resourcePacks
-    java.util.List incompatibleResourcePacks
-    net.minecraft.world.entity.player.ChatVisiblity chatVisibility
-    double chatOpacity
-    double textBackgroundOpacity
-    java.lang.String fullscreenVideoModeString
-    boolean hideServerAddress
-    boolean advancedItemTooltips
-    boolean pauseOnLostFocus
-    java.util.Set modelParts
-    net.minecraft.world.entity.HumanoidArm mainHand
-    int overrideWidth
-    int overrideHeight
-    boolean heldItemTooltips
-    double chatScale
-    double chatWidth
-    double chatHeightUnfocused
-    double chatHeightFocused
-    int mipmapLevels
-    java.util.Map sourceVolumes
-    boolean useNativeTransport
-    net.minecraft.client.AttackIndicatorStatus attackIndicator
-    net.minecraft.client.tutorial.TutorialSteps tutorialStep
-    int biomeBlendRadius
-    double mouseWheelSensitivity
-    boolean rawMouseInput
-    int glDebugVerbosity
-    boolean autoJump
-    boolean autoSuggestions
-    boolean chatColors
-    boolean chatLinks
-    boolean chatLinksPrompt
-    boolean enableVsync
-    boolean entityShadows
-    boolean forceUnicodeFont
-    boolean invertYMouse
-    boolean discreteMouseScroll
-    boolean realmsNotifications
-    boolean reducedDebugInfo
-    boolean snooperEnabled
-    boolean showSubtitles
-    boolean backgroundForChatOnly
-    boolean touchscreen
-    boolean fullscreen
-    boolean bobView
-    net.minecraft.client.KeyMapping keyUp
-    net.minecraft.client.KeyMapping keyLeft
-    net.minecraft.client.KeyMapping keyDown
-    net.minecraft.client.KeyMapping keyRight
-    net.minecraft.client.KeyMapping keyJump
-    net.minecraft.client.KeyMapping keySneak
-    net.minecraft.client.KeyMapping keySprint
-    net.minecraft.client.KeyMapping keyInventory
-    net.minecraft.client.KeyMapping keySwapHands
-    net.minecraft.client.KeyMapping keyDrop
-    net.minecraft.client.KeyMapping keyUse
-    net.minecraft.client.KeyMapping keyAttack
-    net.minecraft.client.KeyMapping keyPickItem
-    net.minecraft.client.KeyMapping keyChat
-    net.minecraft.client.KeyMapping keyPlayerList
-    net.minecraft.client.KeyMapping keyCommand
-    net.minecraft.client.KeyMapping keyScreenshot
-    net.minecraft.client.KeyMapping keyTogglePerspective
-    net.minecraft.client.KeyMapping keySmoothCamera
-    net.minecraft.client.KeyMapping keyFullscreen
-    net.minecraft.client.KeyMapping keySpectatorOutlines
-    net.minecraft.client.KeyMapping keyAdvancements
-    net.minecraft.client.KeyMapping[] keyHotbarSlots
-    net.minecraft.client.KeyMapping keySaveHotbarActivator
-    net.minecraft.client.KeyMapping keyLoadHotbarActivator
-    net.minecraft.client.KeyMapping[] keyMappings
-    net.minecraft.client.Minecraft minecraft
-    java.io.File optionsFile
-    net.minecraft.world.Difficulty difficulty
-    boolean hideGui
-    int thirdPersonView
-    boolean renderDebug
-    boolean renderDebugCharts
-    boolean renderFpsChart
-    java.lang.String lastMpIp
-    boolean smoothCamera
-    double fov
-    double gamma
-    int guiScale
-    net.minecraft.client.ParticleStatus particles
-    net.minecraft.client.NarratorStatus narratorStatus
-    java.lang.String languageCode
-    void <init>(net.minecraft.client.Minecraft,java.io.File)
-    float getBackgroundOpacity(float)
-    int getBackgroundColor(float)
-    int getBackgroundColor(int)
-    void setKey(net.minecraft.client.KeyMapping,com.mojang.blaze3d.platform.InputConstants$Key)
-    void load()
-    net.minecraft.nbt.CompoundTag dataFix(net.minecraft.nbt.CompoundTag)
-    float readFloat(java.lang.String)
-    void save()
-    float getSoundSourceVolume(net.minecraft.sounds.SoundSource)
-    void setSoundCategoryVolume(net.minecraft.sounds.SoundSource,float)
-    void broadcastOptions()
-    java.util.Set getModelParts()
-    void setModelPart(net.minecraft.world.entity.player.PlayerModelPart,boolean)
-    void toggleModelPart(net.minecraft.world.entity.player.PlayerModelPart)
-    net.minecraft.client.CloudStatus getCloudsType()
-    boolean useNativeTransport()
-    void loadResourcePacks(net.minecraft.server.packs.repository.PackRepository)
-    void <clinit>()
-::endgroup::
-downloaded https://maven.legacyfabric.net/net/legacyfabric/yarn/1.8.9+build.604/yarn-1.8.9+build.604-v2.jar: Zip archive data, at least v2.0 to extract, compression method=deflate 226559 bytes
 downloaded https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/47-1.13.2/mcp_stable-47-1.13.2.zip: Zip archive data, at least v2.0 to extract, compression method=deflate 403427 bytes
-::group::mappings ./x1/mappings/mappings.tiny
-CLASS net/minecraft/class_327 -> net/minecraft/client/option/KeyBinding
-  f Ljava/util/List; field_904 -> KEYS
-  f Lnet/minecraft/class_833; field_905 -> KEY_MAP
-  f Ljava/lang/String; field_906 -> translationKey
-  f I field_907 -> code
-  f Z field_908 -> pressed
-  f I field_909 -> timesPressed
-  f Ljava/util/Set; field_7614 -> categories
-  f I field_7615 -> defaultCode
-  f Ljava/lang/String; field_7616 -> category
-  m (I)V method_838 -> onKeyPressed
-  m (IZ)V method_839 -> setKeyPressed
-  m ()V method_837 -> releaseAllKeys
-  m ()V method_840 -> updateKeysByCode
-  m ()Z method_841 -> wasPressed
-  m ()V method_842 -> reset
-  m ()Ljava/util/Set; method_6618 -> getCategories
-  m ()Z method_6619 -> isPressed
-  m ()Ljava/lang/String; method_6620 -> getCategory
-  m ()Ljava/lang/String; method_6621 -> getTranslationKey
-  m ()I method_6622 -> getDefaultCode
-  m ()I method_6623 -> getCode
-  m (I)V method_6617 -> setCode
-  m (Ljava/lang/Object;)I compareTo -> compareTo
-  m (Lnet/minecraft/class_327;)I method_6616 -> compareTo
-CLASS net/minecraft/class_347 -> net/minecraft/client/option/GameOptions
-  f [Ljava/lang/String; field_966 -> GUI_SCALE
-  f [Ljava/lang/String; field_967 -> CHAT_VISIBILITY
-  f [Ljava/lang/String; field_968 -> PARTICLES
-  f [Ljava/lang/String; field_969 -> STREAM_CHAT_USERFILTER
-  f F field_972 -> sensitivity
-  f Z field_973 -> invertYMouse
-  f Z field_975 -> bobView
-  f Z field_976 -> anaglyph3d
-  f I field_978 -> maxFramerate
-  f Z field_979 -> fancyGraphics
-  f Ljava/lang/String; field_982 -> currentTexturePackName
-  f Z field_984 -> chatColor
-  f Z field_985 -> chatLink
-  f Z field_986 -> chatLinkPrompt
-  f F field_987 -> chatOpacity
-  f Z field_989 -> snopperEnabled
-  f Z field_990 -> fullscreen
-  f Z field_991 -> vsync
-  f Z field_992 -> hideServerAddress
-  f Lnet/minecraft/class_327; field_993 -> forwardKey
-  f Lnet/minecraft/class_327; field_994 -> leftKey
-  f Lnet/minecraft/class_327; field_995 -> backKey
-  f Lnet/minecraft/class_327; field_934 -> rightKey
-  f Lnet/minecraft/class_327; field_935 -> jumpKey
-  f Lnet/minecraft/class_327; field_936 -> inventoryKey
-  f Lnet/minecraft/class_327; field_937 -> dropKey
-  f Lnet/minecraft/class_327; field_938 -> chatKey
-  f Lnet/minecraft/class_327; field_939 -> sneakKey
-  f Lnet/minecraft/class_327; field_940 -> attackKey
-  f Lnet/minecraft/class_327; field_941 -> useKey
-  f Lnet/minecraft/class_327; field_942 -> playerListKey
-  f Lnet/minecraft/class_327; field_943 -> pickItemKey
-  f Lnet/minecraft/class_327; field_944 -> commandKey
-  f [Lnet/minecraft/class_327; field_945 -> allKeys
-  f Ljava/io/File; field_970 -> optionsFile
-  f Z field_948 -> hudHidden
-  f I field_949 -> perspective
-  f Z field_950 -> debugEnabled
-  f Z field_951 -> debugProfilerEnabled
-  f Ljava/lang/String; field_952 -> lastServer
-  f Z field_954 -> smoothCameraEnabled
-  f F field_958 -> fov
-  f F field_959 -> gamma
-  f I field_961 -> guiScale
-  f I field_962 -> particle
-  f Ljava/lang/String; field_963 -> language
-  f Z field_5051 -> advancedItemTooltips
-  f Z field_5052 -> pauseOnLostFocus
-  f Z field_5047 -> touchscreen
-  f I field_5048 -> overrideWidth
-  f I field_5049 -> overrideHeight
-  f Z field_5050 -> heldItemTooltips
-  f [Ljava/lang/String; field_5707 -> AMBIENT_OCCLUSION
-  f I field_5708 -> ao
-  f F field_5703 -> chatScale
-  f F field_5704 -> chatWidth
-  f F field_5705 -> chatHeightUnfocused
-  f F field_5706 -> chatHeightFocused
-  f Lnet/minecraft/class_1600; field_946 -> client
-  f Lorg/apache/logging/log4j/Logger; field_7651 -> LOGGER
-  f Lcom/google/gson/Gson; field_7652 -> GSON
-  f Ljava/lang/reflect/ParameterizedType; field_7653 -> STRING_LIST_TYPE
-  f [Ljava/lang/String; field_7654 -> STREAM_CHAT_ENABLED
-  f [Ljava/lang/String; field_7655 -> STREAM_MIC_TOGGLE
-  f I field_7668 -> viewDistance
-  f Z field_7669 -> fbo
-  f Ljava/util/List; field_7670 -> resourcePacks
-  f Z field_7636 -> showInventoryAchievementHint
-  f I field_7637 -> mipmapLevels
-  f Ljava/util/Map; field_7656 -> soundVolumeLevels
-  f F field_7639 -> streamBytesPerPixel
-  f F field_7640 -> streamMicVolume
-  f F field_7641 -> streamSystemVolume
-  f F field_7642 -> streamKbps
-  f F field_7643 -> streamFps
-  f I field_7644 -> streamCompression
-  f Z field_7645 -> streamSendMetadata
-  f I field_7646 -> streamChatEnabled
-  f I field_7647 -> streamChatUserFilter
-  f I field_7648 -> streamMicToggleBehavior
-  f Lnet/minecraft/class_327; field_7657 -> sprintKey
-  f Lnet/minecraft/class_327; field_7658 -> screenshotKey
-  f Lnet/minecraft/class_327; field_7659 -> togglePerspectiveKey
-  f Lnet/minecraft/class_327; field_7660 -> smoothCameraKey
-  f Lnet/minecraft/class_327; field_7661 -> fullscreenKey
-  f Lnet/minecraft/class_327; field_7662 -> streamStartStopKey
-  f Lnet/minecraft/class_327; field_7663 -> streamPauseUnpauseKey
-  f Lnet/minecraft/class_327; field_7664 -> streamCommercialKey
-  f Lnet/minecraft/class_327; field_7665 -> streamToggleMicKey
-  f [Lnet/minecraft/class_327; field_7666 -> hotbarKeys
-  f Lnet/minecraft/class_2151; field_7667 -> difficulty
-  f F field_7649 -> saturation
-  f Z field_7650 -> forcesUnicodeFont
-  f [Ljava/lang/String; field_10325 -> GRAPHICS_LEVEL
-  f I field_10328 -> cloudMode
-  f Ljava/util/List; field_10329 -> incompatibleResourcePacks
-  f Lnet/minecraft/class_988$class_2157; field_7671 -> chatVisibilityType
-  f Z field_10330 -> vbo
-  f Z field_10331 -> alternativeBlocks
-  f Z field_10332 -> reducedDebugInfo
-  f Ljava/util/Set; field_10327 -> playerModelParts
-  f Z field_10321 -> useNativeTransport
-  f Z field_10322 -> entityShadows
-  f Z field_10323 -> realmsNotifications
-  f Lnet/minecraft/class_327; field_10326 -> spectatorOutlines
-  f Z field_10324 -> debugFpsEnabled
-  m (I)Ljava/lang/String; method_877 -> getFormattedNameForKeyCode
-  m ([Ljava/lang/String;I)Ljava/lang/String; method_872 -> translateArrayElement
-  m ()V method_865 -> load
-  m (Ljava/lang/String;)F method_871 -> parseFloat
-  m ()V method_873 -> save
-  m ()V method_4228 -> onPlayerModelPartChange
-  m (Lnet/minecraft/class_327;)Z method_4931 -> isPressed
-  m (Lnet/minecraft/class_327;I)V method_6655 -> setKeyBindingCode
-  m (Lnet/minecraft/class_2153;)F method_6656 -> getSoundVolume
-  m (Lnet/minecraft/class_2153;F)V method_6657 -> setSoundVolume
-  m (Lnet/minecraft/class_347$class_350;F)V method_869 -> setValue
-  m (Lnet/minecraft/class_347$class_350;I)V method_870 -> getBooleanValue
-  m (Lnet/minecraft/class_347$class_350;)F method_868 -> getIntValue
-  m (Lnet/minecraft/class_347$class_350;)Z method_875 -> getIntVideoOptions
-  m (Lnet/minecraft/class_347$class_350;)Ljava/lang/String; method_878 -> getValueMessage
-  m ()Ljava/util/Set; method_9413 -> getEnabledPlayerModelParts
-  m (Lnet/minecraft/class_2670;Z)V method_9412 -> setPlayerModelPart
-  m (Lnet/minecraft/class_2670;)V method_9411 -> togglePlayerModelPart
-  m ()I method_9414 -> getCloudMode
-  m ()Z method_9415 -> shouldUseNativeTransport
-CLASS net/minecraft/class_347$1 -> net/minecraft/client/option/GameOptions$1
-  m ()[Ljava/lang/reflect/Type; getActualTypeArguments -> getActualTypeArguments
-  m ()Ljava/lang/reflect/Type; getRawType -> getRawType
-  m ()Ljava/lang/reflect/Type; getOwnerType -> getOwnerType
-CLASS net/minecraft/class_347$2 -> net/minecraft/client/option/GameOptions$2
-CLASS net/minecraft/class_347$class_350 -> net/minecraft/client/option/GameOptions$Option
-  f Lnet/minecraft/class_347$class_350; field_1004 -> INVERT_MOUSE
-  f Lnet/minecraft/class_347$class_350; field_1005 -> SENSITIVITY
-  f Lnet/minecraft/class_347$class_350; field_1006 -> FIELD_OF_VIEW
-  f Lnet/minecraft/class_347$class_350; field_1007 -> BRIGHTNESS
-  f Lnet/minecraft/class_347$class_350; field_7691 -> SATURATION
-  f Lnet/minecraft/class_347$class_350; field_7692 -> RENDER_DISTANCE
-  f Lnet/minecraft/class_347$class_350; field_1009 -> VIEW_BOBBING
-  f Lnet/minecraft/class_347$class_350; field_1010 -> ANAGLYPH
-  f Lnet/minecraft/class_347$class_350; field_7693 -> MAX_FPS
-  f Lnet/minecraft/class_347$class_350; field_7694 -> FBO_ENABLE
-  f Lnet/minecraft/class_347$class_350; field_1017 -> SHOW_CLOUDS
-  f Lnet/minecraft/class_347$class_350; field_1014 -> GRAPHICS
-  f Lnet/minecraft/class_347$class_350; field_1015 -> AMBIENT_OCCLUSION
-  f Lnet/minecraft/class_347$class_350; field_1016 -> GUI_SCALE
-  f Lnet/minecraft/class_347$class_350; field_1018 -> PARTICLES
-  f Lnet/minecraft/class_347$class_350; field_1019 -> CHAT_VISIBILITY
-  f Lnet/minecraft/class_347$class_350; field_1020 -> CHAT_COLOR
-  f Lnet/minecraft/class_347$class_350; field_1021 -> CHAT_LINKS
-  f Lnet/minecraft/class_347$class_350; field_1022 -> CHAT_OPACITY
-  f Lnet/minecraft/class_347$class_350; field_1023 -> CHAT_LINKS_PROMPT
-  f Lnet/minecraft/class_347$class_350; field_1025 -> SNOOPER_ENABLED
-  f Lnet/minecraft/class_347$class_350; field_1026 -> USE_FULLSCREEN
-  f Lnet/minecraft/class_347$class_350; field_1027 -> ENABLE_VSYNC
-  f Lnet/minecraft/class_347$class_350; field_10337 -> USE_VBO
-  f Lnet/minecraft/class_347$class_350; field_5055 -> TOUCHSCREEN
-  f Lnet/minecraft/class_347$class_350; field_5709 -> CHAT_SCALE
-  f Lnet/minecraft/class_347$class_350; field_5710 -> CHAT_WIDTH
-  f Lnet/minecraft/class_347$class_350; field_5711 -> CHAT_HEIGHT_FOCUSED
-  f Lnet/minecraft/class_347$class_350; field_5712 -> CHAT_HEIGHT_UNFOCUSED
-  f Lnet/minecraft/class_347$class_350; field_7672 -> MIPMAP_LEVELS
-  f Lnet/minecraft/class_347$class_350; field_7674 -> FORCE_UNICODE
-  f Lnet/minecraft/class_347$class_350; field_7675 -> STREAM_BYTES_PER_PIXEL
-  f Lnet/minecraft/class_347$class_350; field_7676 -> STREAM_VOLUME_MIC
-  f Lnet/minecraft/class_347$class_350; field_7677 -> STREAM_VOLUME_SYSTEM
-  f Lnet/minecraft/class_347$class_350; field_7678 -> STREAM_KBPS
-  f Lnet/minecraft/class_347$class_350; field_7679 -> STREAM_FPS
-  f Lnet/minecraft/class_347$class_350; field_7680 -> STREAM_COMPRESSION
-  f Lnet/minecraft/class_347$class_350; field_7681 -> STREAM_SEND_METADATA
-  f Lnet/minecraft/class_347$class_350; field_7682 -> STREAM_CHAT_ENABLED
-  f Lnet/minecraft/class_347$class_350; field_7683 -> STREAM_CHAT_USER_FILTER
-  f Lnet/minecraft/class_347$class_350; field_7684 -> STREAM_MIC_TOGGLE_BEHAVIOR
-  f Lnet/minecraft/class_347$class_350; field_10333 -> BLOCK_ALTERNATIVES
-  f Lnet/minecraft/class_347$class_350; field_10334 -> REDUCED_DEBUG_INFO
-  f Lnet/minecraft/class_347$class_350; field_10335 -> ENTITY_SHADOWS
-  f Lnet/minecraft/class_347$class_350; field_10336 -> REALMS_NOTIFICATIONS
-  f Z field_7685 -> numeric
-  f Z field_7686 -> booleanToggle
-  f Ljava/lang/String; field_7687 -> name
-  f F field_7688 -> step
-  f F field_7689 -> min
-  f F field_7690 -> max
-  m ()[Lnet/minecraft/class_347$class_350; values -> values
-  m (Ljava/lang/String;)Lnet/minecraft/class_347$class_350; valueOf -> valueOf
-  m (I)Lnet/minecraft/class_347$class_350; method_880 -> byOrdinal
-  m ()Z method_879 -> isNumeric
-  m ()Z method_881 -> isBooleanToggle
-  m ()I method_882 -> getOrdinal
-  m ()Ljava/lang/String; method_883 -> getName
-  m ()F method_6663 -> getMaxValue
-  m (F)V method_6658 -> setMaxValue
-  m (F)F method_6660 -> getRatio
-  m (F)F method_6661 -> getValue
-  m (F)F method_6662 -> adjust
-  m (F)F method_6664 -> round
-CLASS net/minecraft/class_358 -> net/minecraft/client/gui/screen/options/ChatOptionsScreen
-  f Lnet/minecraft/class_388; field_1063 -> parent
-  f Lnet/minecraft/class_347; field_1064 -> options
-  f Ljava/lang/String; field_1065 -> title
-  f [Lnet/minecraft/class_347$class_350; field_1062 -> OPTIONS
-CLASS net/minecraft/class_362 -> net/minecraft/client/gui/screen/options/ControlsOptionsScreen
-  f Lnet/minecraft/class_388; field_1084 -> parent
-  f Ljava/lang/String; field_1083 -> title
-  f Lnet/minecraft/class_347; field_1085 -> options
-  f Lnet/minecraft/class_327; field_7810 -> selectedKeyBinding
-  f J field_7811 -> time
-  f Lnet/minecraft/class_1819; field_7813 -> keyBindingListWidget
-  f Lnet/minecraft/class_356; field_7814 -> resetButton
-  f [Lnet/minecraft/class_347$class_350; field_7812 -> OPTIONS
-CLASS net/minecraft/class_380 -> net/minecraft/client/gui/screen/options/LanguageOptionsScreen
-  f Lnet/minecraft/class_388; field_1203 -> parent
-  f Lnet/minecraft/class_347; field_1206 -> options
-  f Lnet/minecraft/class_395; field_1207 -> doneButton
-  f Lnet/minecraft/class_1666; field_6293 -> languageManager
-  f Lnet/minecraft/class_395; field_7763 -> forceUnicodeButton
-  f Lnet/minecraft/class_380$class_381; field_1205 -> languageSelectionList
-CLASS net/minecraft/class_380$class_381 -> net/minecraft/client/gui/screen/options/LanguageOptionsScreen$LanguageSelectionListWidget
-  f Ljava/util/List; field_6294 -> languageCodes
-  f Ljava/util/Map; field_6295 -> languageDefinitions
-CLASS net/minecraft/class_1600 -> net/minecraft/client/MinecraftClient
-  f Lnet/minecraft/class_1653; field_6265 -> MOJANG_LOGO_TEXTURE
-  f Z field_6269 -> IS_MAC
-  f [B field_3785 -> memoryReservedForCrash
-  f Ljava/util/List; field_6266 -> DISPLAY_MODES
-  f Ljava/io/File; field_6267 -> resourcePackDir
-  f Lnet/minecraft/class_485; field_3773 -> currentServerEntry
-  f Lnet/minecraft/class_1532; field_6268 -> textureManager
-  f Lnet/minecraft/class_1600; field_3774 -> instance
-  f Lnet/minecraft/class_477; field_3800 -> interactionManager
-  f Z field_3775 -> fullscreen
-  f Z field_3776 -> crashed
-  f Lnet/minecraft/class_1; field_3777 -> crashReport
-  f I field_3801 -> width
-  f I field_3802 -> height
-  f Lnet/minecraft/class_354; field_3778 -> ticker
-  f Lnet/minecraft/class_853; field_3779 -> snooper
-  f Lnet/minecraft/class_478; field_3803 -> world
-  f Lnet/minecraft/class_530; field_3804 -> worldRenderer
-  f Lnet/minecraft/class_503; field_3807 -> particleManager
-  f Lnet/minecraft/class_355; field_3808 -> session
-  f Z field_3812 -> paused
-  f Lnet/minecraft/class_370; field_3814 -> textRenderer
-  f Lnet/minecraft/class_370; field_3815 -> shadowTextRenderer
-  f Lnet/minecraft/class_388; field_3816 -> currentScreen
-  f Lnet/minecraft/class_351; field_3817 -> loadingScreenRenderer
-  f Lnet/minecraft/class_524; field_3818 -> gameRenderer
-  f I field_3781 -> attackCooldown
-  f I field_3782 -> tempWidth
-  f I field_3783 -> tempHeight
-  f Lnet/minecraft/class_601; field_3784 -> server
-  f Lnet/minecraft/class_399; field_3819 -> notification
-  f Lnet/minecraft/class_371; field_3820 -> inGameHud
-  f Z field_3821 -> skipGameRender
-  f Lnet/minecraft/class_234; field_3822 -> result
-  f Lnet/minecraft/class_347; field_3823 -> options
-  f Lnet/minecraft/class_345; field_3760 -> mouse
-  f Ljava/io/File; field_3762 -> runDirectory
-  f Ljava/io/File; field_6270 -> assetDirectory
-  f Ljava/lang/String; field_6271 -> gameVersion
-  f Ljava/net/Proxy; field_6272 -> networkProxy
-  f Lnet/minecraft/class_102; field_3786 -> currentSave
-  f I field_3787 -> currentFps
-  f I field_3788 -> blockPlaceDelay
-  f Ljava/lang/String; field_3790 -> serverAddress
-  f I field_3791 -> serverPort
-  f Z field_3765 -> focused
-  f J field_3766 -> sysTime
-  f I field_3794 -> joinPlayerCounter
-  f Z field_3795 -> isDemo
-  f Z field_3797 -> isIntegratedServerRunning
-  f Lnet/minecraft/class_839; field_3767 -> profiler
-  f J field_5356 -> f3CTime
-  f Lnet/minecraft/class_1651; field_6273 -> resourceManager
-  f Lnet/minecraft/class_1671; field_6274 -> metadataSerializer
-  f Ljava/util/List; field_6275 -> resourcePacks
-  f Lnet/minecraft/class_1645; field_6276 -> defaultResourcePack
-  f Lnet/minecraft/class_1657; field_6277 -> loader
-  f Lnet/minecraft/class_1666; field_6278 -> languageManager
-  f Z field_3768 -> running
-  f Ljava/lang/String; field_3769 -> fpsDebugString
-  f J field_3770 -> time
-  f I field_3771 -> fpsCounter
-  f J field_3772 -> debugTime
-  f Ljava/lang/String; field_3799 -> openProfilerSection
-  f Lorg/apache/logging/log4j/Logger; field_7617 -> LOGGER
-  f Lnet/minecraft/class_864; field_7630 -> targetedEntity
-  f Z field_7622 -> is64Bit
-  f Lnet/minecraft/class_1957; field_3796 -> clientConnection
-  f Lnet/minecraft/class_1931; field_7623 -> twitchStreamProvider
-  f Lnet/minecraft/class_1862; field_7624 -> fbo
-  f Lnet/minecraft/class_1533; field_7625 -> texture
-  f Lnet/minecraft/class_1909; field_7626 -> soundManager
-  f Lnet/minecraft/class_1904; field_7627 -> musicTracker
-  f Lnet/minecraft/class_1653; field_7628 -> mojang
-  f Lcom/mojang/authlib/minecraft/MinecraftSessionService; field_7629 -> sessionService
-  f Lnet/minecraft/class_1885; field_7619 -> skinProvider
-  f Ljava/util/Queue; field_7620 -> tasks
-  f Ljava/lang/Thread; field_7621 -> currentThread
-  f Lcom/mojang/authlib/properties/PropertyMap; field_10299 -> twitchPropertyMap
-  f Lcom/mojang/authlib/properties/PropertyMap; field_10300 -> sessionPropertyMap
-  f Z field_10301 -> glErrors
-  f Z field_10302 -> connectedToRealms
-  f Lnet/minecraft/class_550; field_10306 -> entityRenderDispatcher
-  f Lnet/minecraft/class_560; field_10307 -> itemRenderer
-  f Lnet/minecraft/class_529; field_10308 -> heldItemRenderer
-  f Lnet/minecraft/class_518; field_10310 -> player
-  f Lnet/minecraft/class_864; field_10309 -> cameraEntity
-  f Lnet/minecraft/class_2601; field_10311 -> metricsData
-  f J field_10312 -> nanoTime
-  f J field_10303 -> frameTime
-  f Lnet/minecraft/class_2532; field_10304 -> modelManager
-  f Lnet/minecraft/class_2430; field_10305 -> blockRenderManager
-  f Z field_10295 -> wireFrame
-  f Z field_10296 -> chunkPath
-  f Z field_10297 -> chunkVisibility
-  f Z field_10298 -> chunkCullingEnabled
-  m ()V method_2914 -> initializeTimerHackThread
-  m (Lnet/minecraft/class_1;)V method_2927 -> crash
-  m (Lnet/minecraft/class_1;)V method_2939 -> printCrashReport
-  m ()V method_2921 -> initializeGame
-  m ()V method_5576 -> reloadResources
-  m ()V method_5575 -> updateDisplayMode
-  m ()Lnet/minecraft/class_102; method_2944 -> getCurrentSave
-  m (Lnet/minecraft/class_388;)V method_2928 -> setScreen
-  m (Ljava/lang/String;)V method_2946 -> setGlErrorMessage
-  m ()V method_2947 -> stop
-  m ()V method_5580 -> run
-  m ()V method_2916 -> runGameLoop
-  m ()I method_4498 -> getMaxFramerate
-  m ()V method_2948 -> cleanUpAfterCrash
-  m (I)V method_2938 -> handleProfilerKeyPress
-  m (J)V method_2926 -> drawProfilerResults
-  m ()V method_2949 -> scheduleStop
-  m ()V method_2950 -> closeScreen
-  m ()V method_2951 -> grabMouse
-  m ()V method_2952 -> openGameMenuScreen
-  m ()V method_2953 -> toggleFullscreen
-  m (II)V method_2923 -> onResolutionChanged
-  m ()V method_2954 -> tick
-  m (Lnet/minecraft/class_478;)V method_2929 -> connect
-  m (Lnet/minecraft/class_478;Ljava/lang/String;)V method_2930 -> connect
-  m (I)V method_2922 -> setDimensionAndSpawn
-  m ()Z method_2959 -> isDemo
-  m ()Z method_2961 -> isHudEnabled
-  m ()Z method_2962 -> isFancyGraphicsEnabled
-  m ()Z method_2963 -> isAmbientOcclusionEnabled
-  m ()V method_2919 -> doPick
-  m (Lnet/minecraft/class_1;)Lnet/minecraft/class_1; method_2945 -> addSystemDetailsToCrashReport
-  m ()Lnet/minecraft/class_1600; method_2965 -> getInstance
-  m ()I method_2920 -> getMaxTextureSize
-  m (Lnet/minecraft/class_485;)V method_2931 -> setCurrentServerEntry
-  m ()Z method_2907 -> isIntegratedServerRunning
-  m ()Z method_2908 -> isInSingleplayer
-  m ()Lnet/minecraft/class_601; method_2909 -> getServer
-  m ()V method_2910 -> stopServer
-  m ()Lnet/minecraft/class_853; method_2911 -> getSnooper
-  m ()J method_2912 -> getTime
-  m ()Z method_2913 -> isFullscreen
-  m ()Lnet/minecraft/class_355; method_5568 -> getSession
-  m ()Ljava/net/Proxy; method_5569 -> getNetworkProxy
-  m ()Lnet/minecraft/class_1532; method_5570 -> getTextureManager
-  m ()Lnet/minecraft/class_1654; method_5571 -> getResourceManager
-  m ()Lnet/minecraft/class_1657; method_5572 -> getResourcePackLoader
-  m ()Lnet/minecraft/class_1666; method_5573 -> getLanguageManager
-  m ()Z method_6643 -> checkIs64Bit
-  m ()Lnet/minecraft/class_1862; method_6633 -> getFramebuffer
-  m ()Z method_6647 -> forcesUnicodeFont
-  m (Ljava/io/InputStream;)Ljava/nio/ByteBuffer; method_6634 -> readInputStreamAsImage
-  m ()Z method_6649 -> isFramerateValid
-  m (Z)V method_6638 -> handleBlockBreaking
-  m ()V method_6644 -> doAttack
-  m ()V method_6645 -> doUse
-  m ()V method_6646 -> resizeFramebuffer
-  m (Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/class_1156;)V method_6636 -> startIntegratedServer
-  m ()Lnet/minecraft/class_1845; method_2960 -> getNetworkHandler
-  m ()Lnet/minecraft/class_485; method_6625 -> getCurrentServerEntry
-  m ()Lnet/minecraft/class_1533; method_6627 -> getSpriteAtlasTexture
-  m ()Z method_6628 -> is64Bit
-  m ()Z method_6629 -> isPaused
-  m ()Lnet/minecraft/class_1909; method_6630 -> getSoundManager
-  m ()Lnet/minecraft/class_1931; method_6632 -> getTwitchStreamProvider
-  m ()V method_6639 -> handleKeyInput
-  m (Ljava/util/concurrent/Callable;)Lcom/google/common/util/concurrent/ListenableFuture; method_6637 -> execute
-  m ()Lcom/mojang/authlib/minecraft/MinecraftSessionService; method_6641 -> getSessionService
-  m ()Lnet/minecraft/class_1885; method_6642 -> getSkinProvider
-  m ()V method_9397 -> registerMetadataSerializers
-  m ()V method_9398 -> initializeStream
-  m ()V method_9399 -> setPixelFormat
-  m ()V method_9400 -> setDisplayBounds
-  m ()V method_9401 -> setDefaultIcon
-  m ()Ljava/lang/String; method_9402 -> getGameVersion
-  m (Lnet/minecraft/class_1532;)V method_9383 -> loadLogo
-  m (IIIIIIIIII)V method_9382 -> drawLogo
-  m ()V method_9403 -> updateDisplay
-  m ()V method_9404 -> updateWindow
-  m ()Lnet/minecraft/class_1904; method_9405 -> getMusicTracker
-  m (Lnet/minecraft/class_1069;ILnet/minecraft/class_226;)Lnet/minecraft/class_1071; method_9385 -> addBlockEntityNbt
-  m ()Lcom/google/common/util/concurrent/ListenableFuture; method_9379 -> reloadResourcesConcurrently
-  m ()Ljava/lang/String; method_9387 -> getCurrentAction
-  m ()Lcom/mojang/authlib/properties/PropertyMap; method_9380 -> getTwitchPropertyMap
-  m ()Lcom/mojang/authlib/properties/PropertyMap; method_9381 -> getSessionProperties
-  m ()Lnet/minecraft/class_1904$class_1905; method_6631 -> getMusicType
-  m ()Lnet/minecraft/class_864; method_9388 -> getCameraEntity
-  m (Lnet/minecraft/class_864;)V method_9384 -> setCameraEntity
-  m ()Lnet/minecraft/class_2430; method_9389 -> getBlockRenderManager
-  m ()Lnet/minecraft/class_550; method_9390 -> getEntityRenderManager
-  m ()Lnet/minecraft/class_560; method_9391 -> getItemRenderer
-  m ()Lnet/minecraft/class_529; method_9392 -> getHeldItemRenderer
-  m ()I method_9393 -> getCurrentFps
-  m ()Lnet/minecraft/class_2601; method_9394 -> getMetricsData
-  m ()Ljava/util/Map; method_9395 -> getSessionInfoMap
-  m ()Z method_9396 -> isConnectedToRealms
-  m (Z)V method_9386 -> setConnectedToRealms
-CLASS net/minecraft/class_1600$1 -> net/minecraft/client/MinecraftClient$1
-CLASS net/minecraft/class_1600$10 -> net/minecraft/client/MinecraftClient$10
-CLASS net/minecraft/class_1600$11 -> net/minecraft/client/MinecraftClient$11
-  m ()V run -> run
-CLASS net/minecraft/class_1600$12 -> net/minecraft/client/MinecraftClient$12
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_855 -> call
-CLASS net/minecraft/class_1600$13 -> net/minecraft/client/MinecraftClient$13
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_4224 -> call
-CLASS net/minecraft/class_1600$14 -> net/minecraft/client/MinecraftClient$14
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_6651 -> call
-CLASS net/minecraft/class_1600$15 -> net/minecraft/client/MinecraftClient$15
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_9406 -> call
-CLASS net/minecraft/class_1600$16 -> net/minecraft/client/MinecraftClient$16
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_9407 -> call
-CLASS net/minecraft/class_1600$17 -> net/minecraft/client/MinecraftClient$17
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_9408 -> call
-CLASS net/minecraft/class_1600$18 -> net/minecraft/client/MinecraftClient$18
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_9409 -> call
-CLASS net/minecraft/class_1600$2 -> net/minecraft/client/MinecraftClient$2
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_9410 -> call
-CLASS net/minecraft/class_1600$3 -> net/minecraft/client/MinecraftClient$3
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_4225 -> call
-CLASS net/minecraft/class_1600$4 -> net/minecraft/client/MinecraftClient$4
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_4226 -> call
-CLASS net/minecraft/class_1600$5 -> net/minecraft/client/MinecraftClient$5
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_5582 -> call
-CLASS net/minecraft/class_1600$6 -> net/minecraft/client/MinecraftClient$6
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_856 -> call
-CLASS net/minecraft/class_1600$7 -> net/minecraft/client/MinecraftClient$7
-  m ()Ljava/lang/Object; call -> call
-  m ()Ljava/lang/String; method_857 -> call
-CLASS net/minecraft/class_1600$8 -> net/minecraft/client/MinecraftClient$8
-  m ()V run -> run
-CLASS net/minecraft/class_1600$9 -> net/minecraft/client/MinecraftClient$9
-CLASS net/minecraft/class_1819 -> net/minecraft/client/gui/screen/options/ControlsListWidget
-  f Lnet/minecraft/class_362; field_7798 -> parent
-  f Lnet/minecraft/class_1600; field_7799 -> mc
-  f I field_7801 -> maxKeyNameLength
-  f [Lnet/minecraft/class_1802$class_1803; field_7800 -> entries
-CLASS net/minecraft/class_1819$1 -> net/minecraft/client/gui/screen/options/ControlsListWidget$1
-CLASS net/minecraft/class_1819$class_1821 -> net/minecraft/client/gui/screen/options/ControlsListWidget$CategoryEntry
-  f Ljava/lang/String; field_7803 -> name
-  f I field_7804 -> nameWidth
-CLASS net/minecraft/class_1819$class_1822 -> net/minecraft/client/gui/screen/options/ControlsListWidget$KeyBindingEntry
-  f Lnet/minecraft/class_327; field_7806 -> keyBinding
-  f Ljava/lang/String; field_7807 -> name
-  f Lnet/minecraft/class_356; field_7808 -> keyBindingButton
-  f Lnet/minecraft/class_356; field_7809 -> resetButton
-CLASS net/minecraft/class_2318 -> net/minecraft/client/gui/screen/options/SkinOptionsScreen
-  f Lnet/minecraft/class_388; field_10464 -> parent
-  f Ljava/lang/String; field_10465 -> title
-  m (Lnet/minecraft/class_2670;)Ljava/lang/String; method_9591 -> getPlayerModelPartDisplayString
-CLASS net/minecraft/class_2318$1 -> net/minecraft/client/gui/screen/options/SkinOptionsScreen$1
-CLASS net/minecraft/class_2318$class_2319 -> net/minecraft/client/gui/screen/options/SkinOptionsScreen$SkinOptionButton
-  f Lnet/minecraft/class_2670; field_10467 -> part
+downloaded https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/1.13.2/mcp_config-1.13.2.zip: Zip archive data, at least v1.0 to extract, compression method=deflate 466835 bytes
+::group::mappings ./x2/config/joined.tsrg
+	a (Ljava/lang/String;Lcfa;)Z func_197901_a
+	a (Ljava/util/Collection;Ltf;)I func_197926_a
+	b (Ljava/util/Collection;Ltf;)I func_197925_b
+	a ()Lwr; func_197921_a
+	a (Lpc;)Ljava/lang/String; func_197919_a
+	a (Lwr;Ljava/lang/Object;)Ljava/lang/String; func_197918_a
+	b ()Ljava/lang/Object; func_197920_b
+	a (Lcff;)Ljava/util/List; func_197903_a
+	a (Lhe;)V func_197905_a
+	a (Ljava/lang/String;Lcfa;)Z func_197901_a
+	a (Ljava/util/function/Consumer;Ljava/lang/String;Lcez;)V func_197906_a
+	b (Ljava/lang/String;)Z func_197900_b
+	e (Ljava/lang/String;Lcez;)Lcfb; func_197904_e
+	i ()Lhe; func_197902_i
+	b ()Lij; func_197907_b
+	b ()Lij; func_197910_b
+	a (Ljava/lang/String;)Lcff; func_197911_a
+	a (Lwr;Lpc;)Lcff; func_197912_a
+	a (Laog;ZF)V func_197924_a
+	a (J)V func_197933_a
+	b ()I func_74540_b
+	c ()I func_74539_c
+cfo net/minecraft/client/util/InputMappings
+	a (I)Z func_197956_a
+	a (II)Lcfo$a; func_197954_a
+	a (Ljava/lang/String;)Lcfo$a; func_197955_a
+cfo$1 net/minecraft/client/util/InputMappings$1
+cfo$a net/minecraft/client/util/InputMappings$Input
+	a ()Ljava/lang/String; func_197936_a
+	b ()Lcfo$b; func_197938_b
+	c ()I func_197937_c
+	d ()Ljava/lang/String; func_197935_d
+cfo$b net/minecraft/client/util/InputMappings$Type
+	a (I)Lcfo$a; func_197944_a
+	a (Lcfo$b;Ljava/lang/String;I)V func_197943_a
+cfp net/minecraft/client/settings/KeyBinding
+	a (I)Z func_197984_a
+	a (II)Z func_197976_a
+	a (Lcfo$a;)V func_197981_a
+	a (Lcfo$a;Z)V func_197980_a
+	b ()V func_74506_a
+	b (Lcfo$a;)V func_197979_b
+	b (Lcfp;)Z func_197983_b
+	c ()V func_74508_b
+	h ()Lcfo$a; func_197977_i
+	i ()Z func_197986_j
+	j ()Ljava/lang/String; func_197978_k
+	k ()Z func_197985_l
+	l ()Ljava/lang/String; func_197982_m
+	m ()V func_74505_d
+	a ()Ljava/lang/String; func_197965_a
+	a (IJ)V func_197966_a
+	a (J)V func_197968_a
+	a (JII)V func_197963_a
+	a (JIIII)V func_197961_a
+	a (Ljava/lang/String;)V func_197960_a
+	a (Ljava/lang/String;[Ljava/lang/Object;)V func_197964_a
+	a (Z)V func_197967_a
+	c (I)Z func_197962_c
+	a ()V func_74518_a
+	a (DDDD)Ljava/nio/FloatBuffer; func_74517_a
+	a (FFFF)Ljava/nio/FloatBuffer; func_74521_a
+	b ()V func_74519_b
+	c ()V func_74520_c
+	a (I)I func_74526_a
+	b (I)V func_74523_b
+	c (I)Ljava/nio/ByteBuffer; func_74524_c
+	h (I)Ljava/nio/FloatBuffer; func_74529_h
+	a ()V func_197988_a
+	a (I)Lcgb; func_197991_a
+	a (Ljava/util/Optional;)Lcgb; func_197992_a
+	b ()Lcgb; func_197987_b
+	b (Ljava/util/Optional;)I func_197993_b
+	c ()I func_197989_c
+	d ()I func_197990_d
+	e ()I func_197994_e
+	f ()J func_197995_f
+cku net/minecraft/client/gui/GuiKeyBindingList
+cku$1 net/minecraft/client/gui/GuiKeyBindingList$1
+cku$a net/minecraft/client/gui/GuiKeyBindingList$CategoryEntry
+cku$b net/minecraft/client/gui/GuiKeyBindingList$Entry
+cku$c net/minecraft/client/gui/GuiKeyBindingList$KeyEntry
+cku$c$1 net/minecraft/client/gui/GuiKeyBindingList$KeyEntry$1
+cku$c$2 net/minecraft/client/gui/GuiKeyBindingList$KeyEntry$2
 ::endgroup::
-::group::mappings ./x2/fields.csv
-field_111171_e,isSaved,2,"If false, this modifier is not saved in NBT. Used for ""natural"" modifiers like speed boost from sprinting"
-field_146336_i,saveDirName,0,
-field_146497_i,options,0,Reference to the GameSettings object.
-field_146501_h,optionsRowList,0,
-field_146502_i,VIDEO_OPTIONS,0,An array of all of GameSettings.Options's video options.
-field_146804_i,savedServerList,0,
+::group::mappings ./x1/fields.csv
 field_148280_d,btnChangeKeyBinding,0,
-field_148619_d,options,0,Reference to the GameSettings object.
-field_152695_c,saveFile,2,
-field_175300_s,savedGameMode,0,"Used to save away the game mode when the current ""debug"" world type is chosen (forcing it to spectator mode)"
-field_189831_G,saveButton,0,
-field_195327_a,saveButton,0,
-field_208328_e,staleFiles,2,A map from file name to the original hash. Entries are removed from this map as they are saved (regardless as to whether the hash matches or not; the hash is only used to count the number of {@linkplain #hits})
-field_212778_c,savedDatum,2,
-field_212780_e,saveHandler,2,
-field_71469_aa,saveLoader,0,
-field_72416_e,hostPlayerData,0,"Holds the NBT data for the host player's save file, so this can be written to level.dat."
-field_72988_C,savedDataStorage,2,
-field_72995_K,isRemote,2,"True if the world is a 'slave' client; changes will not be saved or propagated from this world. For example, server worlds have this set to false, client worlds have this set to true."
-field_73019_z,saveHandler,2,
-field_74354_ai,optionsFile,0,
-field_74749_a,intArray,2,The array of saved integers
-field_75737_d,savedIOCounter,2,
-field_75751_a,saveHandler,2,
-field_75767_f,saveDirectoryName,2,The directory name of the world
-field_75770_b,worldDirectory,2,The directory in which to save world data.
-field_75771_c,playersDirectory,2,The directory in which to save player data.
-field_75795_b,displayName,0,the displayed name of this save file
-field_75797_a,fileName,0,the file name of this save
-field_75808_a,savesDirectory,2,Reference to the File object representing the directory for the world saves
-field_76103_l,saveVersion,2,"Introduced in beta 1.3, is the save version for future control."
-field_76106_k,levelName,2,The name of the save defined at world creation.
-field_76107_h,sizeOnDisk,2,"The size of entire save of current world on the disk, isn't exactly."
-field_76641_n,lastSaveTime,2,The time according to World.worldTime when this chunk was last saved
-field_78733_k,options,0,Reference to the GameSettings object.
 ::endgroup::
-::group::mappings ./x2/params.csv
-p_111168_1_,saved,2
-p_146317_0_,saveLoader,0
-p_175584_2_,saveHandlerIn,2
-p_177432_1_,saveTime,2
-p_180192_0_,saveFile,0
-p_180597_5_,optionsIn,0
-p_186352_1_,saveName,2
-p_191281_2_,saveEmpty,2
-p_192044_3_,save,0
-p_197714_1_,saveName,0
-p_197715_1_,saveName,2
-p_199709_3_,options,0
-p_200212_0_,saveFormat,0
-p_200466_2_,save,2
-p_200484_2_,save,2
-p_202141_2_,save,2
-p_207742_1_,saveName,0
-p_207743_1_,saveName,0
-p_212424_3_,savedData,2
-p_71247_1_,saveName,2
-p_75801_1_,saveName,2
-p_75802_1_,saveName,0
-p_75803_1_,saveName,2
-p_90033_1_,saveName,0
-p_i1144_1_,saveFile,2
-p_i1152_1_,saveFile,2
-p_i2162_1_,saveHandlerIn,2
-p_i46591_3_,saveFormat,0
+::group::mappings ./x1/params.csv
 ::endgroup::
-::group::mappings ./x2/methods.csv
-func_130105_g,getMinecraftStartTimeMillis,2,Returns the saved value of System#currentTimeMillis when the game started
-func_146314_g,calcSaveDirName,0,Determine a save-directory name from the world name
-func_146315_i,toggleMoreWorldOptions,0,"Toggles between initial world-creation display, and ""more options"" display.\nCalled when user clicks ""More World Options..."" or ""Done"" (same button, different labels depending on current display)."
-func_146316_a,showMoreWorldOptions,0,"Shows additional world-creation options if toggle is true, otherwise shows main world-creation elements"
-func_147149_a,saveToFile,2,Saves this CrashReport to the given file and returns a value indicating whether we were successful at doing so.
-func_147414_b,saveSingleServer,0,
-func_148259_a,saveScreenshot,0,Saves a screenshot in the game directory with the given file name (or null to generate a time-stamped name).\nReturns an ITextComponent indicating the success/failure of the saving.
-func_148260_a,saveScreenshot,0,Saves a screenshot in the game directory with a time-stamped filename.\nReturns an ITextComponent indicating the success/failure of the saving.
-func_150883_b,saveStatFile,2,
-func_152459_a,readGameProfile,2,Reads and returns a GameProfile that has been saved to the passed in NBTTagCompound
-func_152658_c,save,2,Save the cached profiles to disk
-func_178765_a,draw,0,Draw this primitve. This is typically called only once as the generated drawing instructions are saved by the renderer and reused later.
-func_184166_c,saveAdditionalData,2,Called during saving of a world to give children worlds a chance to save additional data. Only used to save WorldProviderEnd's data in Vanilla.
-func_184198_c,writeUnlessRemoved,2,"Writes this entity to NBT, unless it has been removed. Also writes this entity's passengers, and the entity type ID (so the produced NBT is sufficient to recreate the entity).\n \nGenerally, {@link #writeUnlessPassenger} or {@link #writeWithoutTypeId} should be used instead of this method.\n \n@return True if the entity was written (and the passed compound should be saved); false if the entity was not written."
-func_184419_m,save,2,"Saves the template, writing it to disk.\n \n@return true if the template was successfully saved."
-func_186027_a,saveChunks,2,
-func_186057_q,onWorldSave,2,Called when the world is performing a save. Only used to save the state of the Dragon Boss fight in WorldProviderEnd in Vanilla.
-func_187247_w,saveIPBanList,2,
-func_187248_x,savePlayerBanList,2,
-func_189712_b,save,2,"Saves the template, either updating the local version or writing it to disk.\n \n@return true if the template was successfully saved."
-func_190580_f,saveToNbt,2,
-func_191281_a,saveAllItems,2,
-func_191282_a,saveAllItems,2,
-func_192564_b,save,0,
-func_192749_b,save,2,
-func_195317_h,saveChanges,0,Saves changes to the world name and closes this GUI.
-func_195766_a,getInputStream,2,
-func_195782_c,getInputStreamVanilla,2,
+::group::mappings ./x1/methods.csv
 func_197900_b,hasObjective,0,
 func_197901_a,addPlayerToTeam,2,
 func_197907_b,getDisplayName,2,
@@ -851,60 +236,19 @@ func_197993_b,getVideoModeOrDefaultIndex,0,
 func_197994_e,getVideoModeCount,0,
 func_197995_f,getMonitorPointer,0,
 func_198014_a,setKeyBindingCode,0,
-func_198612_a,saveWorld,2,
-func_198614_a,saveAll,2,
-func_199019_a,getInputStream,2,
-func_199027_b,getInputStream,2,
-func_200010_a,getInputStreamVanilla,2,
-func_200264_a,makeGenerator,2,Creates a data generator based on the given options
-func_200389_a,getInputFolders,2,Gets a collection of folders to look for data to convert in
-func_200431_a,makePath,2,Resolves a Path for the location to save the given tag.
-func_200466_a,build,2,Builds this recipe into an {@link IFinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for the result.
-func_200484_a,build,2,Builds this recipe into an {@link IFinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for the result.
-func_202141_a,build,2,Builds this recipe into an {@link IFinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for the result.
-func_208309_a,saveAdvancement,2,
-func_208310_b,saveRecipeAdvancement,2,Saves an advancement to a file.
-func_208311_a,saveRecipe,2,Saves a recipe to a file.
-func_208484_a,save,2,
-func_212775_b,save,2,
-func_70021_al,getParts,2,"Return all subparts of this entity. These parts are not saved in the chunk and do not tick, but are detected by getEntitiesInAABB and are put in the entity ID map. Vanilla makes the assumption that the entities in this array have consecutive entity ID's after their owner ID, so you must construct all parts in the constructor of the parent."
-func_70039_c,writeUnlessPassenger,2,"Writes this entity to NBT, unless it has been removed or it is a passenger. Also writes this entity's passengers, and the entity type ID (so the produced NBT is sufficient to recreate the entity).\nTo always write the entity, use {@link #writeWithoutTypeId}.\n \n@return True if the entity was written (and the passed compound should be saved); false if the entity was not written."
-func_70296_d,markDirty,2,"For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't think it hasn't changed and skip it."
-func_71267_a,saveAllWorlds,2,par1 indicates if a log message should be output.
-func_71326_a,saveProperties,2,Saves all of the server properties to the properties file.
-func_71359_d,getSaveLoader,0,Returns the save loader that is currently being used
-func_71497_f,getFile,0,Gets the file this crash report is saved into.
-func_72389_g,saveAllPlayerData,2,Saves all of the players' current states.
-func_72419_u,saveOpsList,2,
-func_72421_w,saveWhiteList,2,
-func_72860_G,getSaveHandler,2,Returns this world's current save handler
-func_73042_a,saveLevel,2,Saves the chunks to disk.
-func_73044_a,saveAllChunks,2,Saves all chunks to disk while updating progress bar.
-func_73242_b,saveChunkData,2,
-func_73668_b,saveProperties,2,Writes the properties to the properties file.
 func_74297_c,getKeyBinding,0,Gets a key binding.
-func_74300_a,loadOptions,0,Loads the options from the options file. It appears that this has replaced the previous 'loadOptions'
-func_74303_b,saveOptions,0,Saves the options to the options file.
-func_74306_a,setOptionValue,0,"For non-float options. Toggles the option on/off, or cycles through the list i.e. render distances."
+func_74505_d,unpressKey,0,
+func_74506_a,unPressAllKeys,0,
 func_74508_b,resetKeyBindingArrayAndHash,0,
-func_75743_a,getUniqueDataId,2,Returns an unique new data id for the given prefix and saves the idCounts map to the 'idcounts' file.
-func_75744_a,save,2,
-func_75747_a,saveData,2,Saves the given MapDataBase to disk.
-func_75755_a,saveWorldInfoWithPlayer,2,Saves the given World Info with the given NBTTagCompound as the Player.
-func_75761_a,saveWorldInfo,2,used to update level.dat from old format to MCRegion format
-func_75762_c,checkSessionLock,2,Checks the session lock to prevent save collisions
-func_75788_b,getDisplayName,0,return the display name of the save
-func_75816_a,saveChunk,2,
-func_76078_e,setSaveVersion,2,Sets the save version of the world
-func_76088_k,getSaveVersion,2,Returns the save version of this world
-func_76185_a,markDirty,2,"Marks this MapDataBase dirty, to be saved to disk when the level next saves."
-func_76601_a,needsSaving,2,Returns true if this Chunk needs to be saved
-func_76657_c,setSkyLight,2,Sets the saved Sky-light value in the extended block storage structure.
-func_76670_c,getSkyLight,2,Gets the saved Sky-light value in the extended block storage structure.
-func_76674_d,getBlockLight,2,Gets the saved Block-light value in the extended block storage structure.
-func_76677_d,setBlockLight,2,Sets the saved Block-light value in the extended block storage structure.
-func_76709_c,isChunkSaved,2,Checks if a chunk has been saved.
-func_78855_b,saveServerList,0,"Runs getNBTCompound on each ServerData instance, puts everything into a ""servers"" NBT list and writes it to servers.dat."
-func_82744_b,setCloudUpdateTick,0,saves the current Cloud update tick into the PartiallyDestroyedBlock
-func_85069_a,firstTwoElementsOfStackTraceMatch,2,"Do the deepest two elements of our saved stack trace match the given elements, in order from the deepest?"
+func_74517_a,setColorBuffer,0,Update and return colorBuffer with the RGBA values passed as arguments
+func_74518_a,disableStandardItemLighting,0,Disables the OpenGL lighting properties enabled by enableStandardItemLighting
+func_74519_b,enableStandardItemLighting,0,Sets the OpenGL lighting properties to the values used when rendering blocks as items
+func_74520_c,enableGUIStandardItemLighting,0,Sets OpenGL lighting for rendering blocks as items inside GUI screens (such as containers).
+func_74521_a,setColorBuffer,0,Update and return colorBuffer with the RGBA values passed as arguments
+func_74523_b,deleteDisplayLists,0,
+func_74524_c,createDirectByteBuffer,0,Creates and returns a direct byte buffer with the specified capacity. Applies native ordering to speed up access.
+func_74526_a,generateDisplayLists,0,Generates the specified number of display lists and returns the first index.
+func_74529_h,createDirectFloatBuffer,0,Creates and returns a direct float buffer with the specified capacity. Applies native ordering to speed up access.
+func_74539_c,getChatLineID,0,
+func_74540_b,getUpdatedCounter,0,
 ::endgroup::

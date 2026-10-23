@@ -1,0 +1,254 @@
+::group::net.minecraft.client.KeyMapping
+net.minecraft.client.KeyMapping
+    java.util.Map ALL
+    java.util.Map MAP
+    java.util.Set CATEGORIES
+    java.util.Map CATEGORY_SORT_ORDER
+    java.lang.String name
+    com.mojang.blaze3d.platform.InputConstants$Key defaultKey
+    java.lang.String category
+    com.mojang.blaze3d.platform.InputConstants$Key key
+    boolean isDown
+    int clickCount
+    void click(com.mojang.blaze3d.platform.InputConstants$Key)
+    void set(com.mojang.blaze3d.platform.InputConstants$Key,boolean)
+    void setAll()
+    void releaseAll()
+    void resetMapping()
+    void <init>(java.lang.String,int,java.lang.String)
+    void <init>(java.lang.String,com.mojang.blaze3d.platform.InputConstants$Type,int,java.lang.String)
+    boolean isDown()
+    java.lang.String getCategory()
+    boolean consumeClick()
+    void release()
+    java.lang.String getName()
+    com.mojang.blaze3d.platform.InputConstants$Key getDefaultKey()
+    void setKey(com.mojang.blaze3d.platform.InputConstants$Key)
+    int compareTo(net.minecraft.client.KeyMapping)
+    java.util.function.Supplier createNameSupplier(java.lang.String)
+    boolean same(net.minecraft.client.KeyMapping)
+    boolean isUnbound()
+    boolean matches(int,int)
+    boolean matchesMouse(int)
+    java.lang.String getTranslatedKeyMessage()
+    boolean isDefault()
+    java.lang.String saveString()
+    int compareTo(java.lang.Object)
+    java.lang.String lambda$createNameSupplier$1(java.lang.String)
+    void lambda$static$0(java.util.HashMap)
+    void <clinit>()
+::endgroup::
+::group::com.mojang.blaze3d.platform.InputConstants
+com.mojang.blaze3d.platform.InputConstants
+    java.lang.invoke.MethodHandle glfwRawMouseMotionSupported
+    int GLFW_RAW_MOUSE_MOTION
+    com.mojang.blaze3d.platform.InputConstants$Key UNKNOWN
+    com.mojang.blaze3d.platform.InputConstants$Key getKey(int,int)
+    com.mojang.blaze3d.platform.InputConstants$Key getKey(java.lang.String)
+    boolean isKeyDown(long,int)
+    void setupKeyboardCallbacks(long,org.lwjgl.glfw.GLFWKeyCallbackI,org.lwjgl.glfw.GLFWCharModsCallbackI)
+    void setupMouseCallbacks(long,org.lwjgl.glfw.GLFWCursorPosCallbackI,org.lwjgl.glfw.GLFWMouseButtonCallbackI,org.lwjgl.glfw.GLFWScrollCallbackI)
+    void grabOrReleaseMouse(long,int,double,double)
+    boolean isRawMouseInputSupported()
+    void updateRawMouseInput(long,boolean)
+    java.lang.String translateKeyCode(int)
+    java.lang.String translateScanCode(int)
+    void <clinit>()
+::endgroup::
+::group::com.mojang.blaze3d.platform.InputConstants$Key
+com.mojang.blaze3d.platform.InputConstants$Key
+    java.lang.String name
+    com.mojang.blaze3d.platform.InputConstants$Type type
+    int value
+    java.util.Map NAME_MAP
+    void <init>(java.lang.String,com.mojang.blaze3d.platform.InputConstants$Type,int)
+    com.mojang.blaze3d.platform.InputConstants$Type getType()
+    int getValue()
+    java.lang.String getName()
+    boolean equals(java.lang.Object)
+    int hashCode()
+    java.lang.String toString()
+    void <init>(java.lang.String,com.mojang.blaze3d.platform.InputConstants$Type,int,com.mojang.blaze3d.platform.InputConstants$1)
+    java.util.Map access$100()
+    void <clinit>()
+::endgroup::
+::group::com.mojang.blaze3d.platform.InputConstants$Type
+com.mojang.blaze3d.platform.InputConstants$Type
+    com.mojang.blaze3d.platform.InputConstants$Type KEYSYM
+    com.mojang.blaze3d.platform.InputConstants$Type SCANCODE
+    com.mojang.blaze3d.platform.InputConstants$Type MOUSE
+    java.lang.String[] MOUSE_BUTTON_NAMES
+    it.unimi.dsi.fastutil.ints.Int2ObjectMap map
+    java.lang.String defaultPrefix
+    com.mojang.blaze3d.platform.InputConstants$Type[] $VALUES
+    com.mojang.blaze3d.platform.InputConstants$Type[] values()
+    com.mojang.blaze3d.platform.InputConstants$Type valueOf(java.lang.String)
+    void addKey(com.mojang.blaze3d.platform.InputConstants$Type,java.lang.String,int)
+    void <init>(java.lang.String,int,java.lang.String)
+    com.mojang.blaze3d.platform.InputConstants$Key getOrCreate(int)
+    java.lang.String getDefaultPrefix()
+    java.lang.String access$200(com.mojang.blaze3d.platform.InputConstants$Type)
+    void <clinit>()
+::endgroup::
+downloaded https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/47-1.13.2/mcp_stable-47-1.13.2.zip: Zip archive data, at least v2.0 to extract, compression method=deflate 403427 bytes
+downloaded https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_config/1.13.2/mcp_config-1.13.2.zip: Zip archive data, at least v1.0 to extract, compression method=deflate 466835 bytes
+::group::mappings ./x2/config/joined.tsrg
+	a (Ljava/lang/String;Lcfa;)Z func_197901_a
+	a (Ljava/util/Collection;Ltf;)I func_197926_a
+	b (Ljava/util/Collection;Ltf;)I func_197925_b
+	a ()Lwr; func_197921_a
+	a (Lpc;)Ljava/lang/String; func_197919_a
+	a (Lwr;Ljava/lang/Object;)Ljava/lang/String; func_197918_a
+	b ()Ljava/lang/Object; func_197920_b
+	a (Lcff;)Ljava/util/List; func_197903_a
+	a (Lhe;)V func_197905_a
+	a (Ljava/lang/String;Lcfa;)Z func_197901_a
+	a (Ljava/util/function/Consumer;Ljava/lang/String;Lcez;)V func_197906_a
+	b (Ljava/lang/String;)Z func_197900_b
+	e (Ljava/lang/String;Lcez;)Lcfb; func_197904_e
+	i ()Lhe; func_197902_i
+	b ()Lij; func_197907_b
+	b ()Lij; func_197910_b
+	a (Ljava/lang/String;)Lcff; func_197911_a
+	a (Lwr;Lpc;)Lcff; func_197912_a
+	a (Laog;ZF)V func_197924_a
+	a (J)V func_197933_a
+	b ()I func_74540_b
+	c ()I func_74539_c
+cfo net/minecraft/client/util/InputMappings
+	a (I)Z func_197956_a
+	a (II)Lcfo$a; func_197954_a
+	a (Ljava/lang/String;)Lcfo$a; func_197955_a
+cfo$1 net/minecraft/client/util/InputMappings$1
+cfo$a net/minecraft/client/util/InputMappings$Input
+	a ()Ljava/lang/String; func_197936_a
+	b ()Lcfo$b; func_197938_b
+	c ()I func_197937_c
+	d ()Ljava/lang/String; func_197935_d
+cfo$b net/minecraft/client/util/InputMappings$Type
+	a (I)Lcfo$a; func_197944_a
+	a (Lcfo$b;Ljava/lang/String;I)V func_197943_a
+cfp net/minecraft/client/settings/KeyBinding
+	a (I)Z func_197984_a
+	a (II)Z func_197976_a
+	a (Lcfo$a;)V func_197981_a
+	a (Lcfo$a;Z)V func_197980_a
+	b ()V func_74506_a
+	b (Lcfo$a;)V func_197979_b
+	b (Lcfp;)Z func_197983_b
+	c ()V func_74508_b
+	h ()Lcfo$a; func_197977_i
+	i ()Z func_197986_j
+	j ()Ljava/lang/String; func_197978_k
+	k ()Z func_197985_l
+	l ()Ljava/lang/String; func_197982_m
+	m ()V func_74505_d
+	a ()Ljava/lang/String; func_197965_a
+	a (IJ)V func_197966_a
+	a (J)V func_197968_a
+	a (JII)V func_197963_a
+	a (JIIII)V func_197961_a
+	a (Ljava/lang/String;)V func_197960_a
+	a (Ljava/lang/String;[Ljava/lang/Object;)V func_197964_a
+	a (Z)V func_197967_a
+	c (I)Z func_197962_c
+	a ()V func_74518_a
+	a (DDDD)Ljava/nio/FloatBuffer; func_74517_a
+	a (FFFF)Ljava/nio/FloatBuffer; func_74521_a
+	b ()V func_74519_b
+	c ()V func_74520_c
+	a (I)I func_74526_a
+	b (I)V func_74523_b
+	c (I)Ljava/nio/ByteBuffer; func_74524_c
+	h (I)Ljava/nio/FloatBuffer; func_74529_h
+	a ()V func_197988_a
+	a (I)Lcgb; func_197991_a
+	a (Ljava/util/Optional;)Lcgb; func_197992_a
+	b ()Lcgb; func_197987_b
+	b (Ljava/util/Optional;)I func_197993_b
+	c ()I func_197989_c
+	d ()I func_197990_d
+	e ()I func_197994_e
+	f ()J func_197995_f
+cku net/minecraft/client/gui/GuiKeyBindingList
+cku$1 net/minecraft/client/gui/GuiKeyBindingList$1
+cku$a net/minecraft/client/gui/GuiKeyBindingList$CategoryEntry
+cku$b net/minecraft/client/gui/GuiKeyBindingList$Entry
+cku$c net/minecraft/client/gui/GuiKeyBindingList$KeyEntry
+cku$c$1 net/minecraft/client/gui/GuiKeyBindingList$KeyEntry$1
+cku$c$2 net/minecraft/client/gui/GuiKeyBindingList$KeyEntry$2
+::endgroup::
+::group::mappings ./x1/fields.csv
+field_148280_d,btnChangeKeyBinding,0,
+::endgroup::
+::group::mappings ./x1/params.csv
+::endgroup::
+::group::mappings ./x1/methods.csv
+func_197900_b,hasObjective,0,
+func_197901_a,addPlayerToTeam,2,
+func_197907_b,getDisplayName,2,
+func_197910_b,getDisplayName,2,
+func_197911_a,byName,2,
+func_197912_a,getStat,2,
+func_197918_a,buildName,2,
+func_197919_a,locationToKey,2,
+func_197920_b,getValue,2,
+func_197921_a,getType,2,
+func_197924_a,updateRenderInfo,0,
+func_197925_b,remove,2,
+func_197926_a,add,2,
+func_197933_a,untrack,0,
+func_197935_d,getTranslationKey,0,
+func_197936_a,getName,0,
+func_197937_c,getKeyCode,0,
+func_197938_b,getType,0,
+func_197943_a,registerInput,0,
+func_197944_a,getOrMakeInput,0,
+func_197954_a,getInputByCode,0,
+func_197955_a,getInputByName,0,
+func_197956_a,isKeyDown,0,
+func_197960_a,setClipboardString,0,
+func_197961_a,onKeyEvent,0,
+func_197962_c,processKeyF3,0,
+func_197963_a,onCharEvent,0,
+func_197964_a,printDebugMessage,0,
+func_197965_a,getClipboardString,0,
+func_197967_a,enableRepeatEvents,0,
+func_197968_a,setupCallbacks,0,
+func_197976_a,matchesKey,0,
+func_197977_i,getDefault,0,
+func_197978_k,getLocalizedName,0,Returns the localized name of the key and key modifier combo set for this KeyBinding
+func_197979_b,bind,0,Binds a new KeyCode to this\n \n@param key Key to bind to this KeyBinding
+func_197980_a,setKeyBindState,0,
+func_197981_a,onTick,0,
+func_197982_m,getTranslationKey,0,
+func_197983_b,conflicts,0,Returns true if the supplied KeyBinding conflicts with this\n \n@param binding KeyBinding to check conflicts against
+func_197984_a,matchesMouseKey,0,Returns true if the KeyBinding is set to a mouse key and the key matches\n \n@param key KeyCode to check
+func_197985_l,isDefault,0,Returns true if the keybinding is using the default key and key modifier
+func_197986_j,isInvalid,0,
+func_197987_b,getDefaultVideoMode,0,
+func_197988_a,setup,0,
+func_197989_c,getVirtualPosX,0,
+func_197990_d,getVirtualPosY,0,
+func_197991_a,getVideoModeFromIndex,0,
+func_197992_a,getVideoModeOrDefault,0,
+func_197993_b,getVideoModeOrDefaultIndex,0,
+func_197994_e,getVideoModeCount,0,
+func_197995_f,getMonitorPointer,0,
+func_198014_a,setKeyBindingCode,0,
+func_74297_c,getKeyBinding,0,Gets a key binding.
+func_74505_d,unpressKey,0,
+func_74506_a,unPressAllKeys,0,
+func_74508_b,resetKeyBindingArrayAndHash,0,
+func_74517_a,setColorBuffer,0,Update and return colorBuffer with the RGBA values passed as arguments
+func_74518_a,disableStandardItemLighting,0,Disables the OpenGL lighting properties enabled by enableStandardItemLighting
+func_74519_b,enableStandardItemLighting,0,Sets the OpenGL lighting properties to the values used when rendering blocks as items
+func_74520_c,enableGUIStandardItemLighting,0,Sets OpenGL lighting for rendering blocks as items inside GUI screens (such as containers).
+func_74521_a,setColorBuffer,0,Update and return colorBuffer with the RGBA values passed as arguments
+func_74523_b,deleteDisplayLists,0,
+func_74524_c,createDirectByteBuffer,0,Creates and returns a direct byte buffer with the specified capacity. Applies native ordering to speed up access.
+func_74526_a,generateDisplayLists,0,Generates the specified number of display lists and returns the first index.
+func_74529_h,createDirectFloatBuffer,0,Creates and returns a direct float buffer with the specified capacity. Applies native ordering to speed up access.
+func_74539_c,getChatLineID,0,
+func_74540_b,getUpdatedCounter,0,
+::endgroup::
