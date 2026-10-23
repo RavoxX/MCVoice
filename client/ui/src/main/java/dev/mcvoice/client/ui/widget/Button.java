@@ -16,6 +16,8 @@ public class Button extends Widget {
     private final Action action;
     public boolean highlighted;
 
+    public boolean enabled() { return true; }
+
     public Button(int w, int h, Label label, Action action) {
         super(w, h);
         this.label = label;
@@ -32,14 +34,14 @@ public class Button extends Widget {
 
     @Override
     public void render(UiCanvas c, int mx, int my) {
-        boolean hover = contains(mx, my);
+        boolean hover = enabled() && contains(mx, my);
         vanillaButton(c, x, y, w, h, hover || highlighted);
-        label(c, label.get(), highlighted ? Theme.LABEL_SELECTED : Theme.LABEL);
+        label(c, label.get(), !enabled() ? Theme.LABEL_DIM : highlighted ? Theme.LABEL_SELECTED : Theme.LABEL);
     }
 
     @Override
     public boolean click(int mx, int my, int button) {
-        if (button == 0 && contains(mx, my)) {
+        if (enabled() && button == 0 && contains(mx, my)) {
             action.run();
             return true;
         }
