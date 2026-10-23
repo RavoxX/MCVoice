@@ -380,13 +380,14 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 		sess.peersRev = 0
 		sess.presence = map[string]struct{}{}
 		sess.peer.WorldID, sess.peer.Attested = "", ""
+		sess.networkID = ""
 		if *m.InWorld {
 			sess.outOfWorldSince = time.Time{}
 		} else if sess.outOfWorldSince.IsZero() {
 			sess.outOfWorldSince = now
 		}
 		if *m.InWorld {
-			// network_id is validated by the parser but never used for routing (spec 6.3)
+			sess.networkID = *m.NetworkID // directory discovery only
 			sess.peer.WorldID = *m.WorldID
 			sess.peer.Attested = attested
 		}
@@ -473,6 +474,6 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 
 // NetworkID computes the spec 6.3 network id for tests and tools.
 func NetworkID(host string, port int) string {
-	h := sha256.Sum256([]byte(strings.ToLower(host) + ":" + itoa(port)))
+	h := sha256.Sum256([]byte(strings.TrimSuffix(strings.ToLower(host), ".") + ":" + itoa(port)))
 	return "n1:" + hex.EncodeToString(h[:])[:32]
 }

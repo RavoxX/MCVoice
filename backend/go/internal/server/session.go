@@ -47,6 +47,7 @@ type Session struct {
 	selfMuted bool
 	adminMute bool
 	hasScope  bool
+	networkID string // directory filter only; never an audio routing boundary
 
 	// Voice groups (spec 6.12), guarded by Hub.mu.
 	groupsCap       bool      // the client advertised the "groups" capability
