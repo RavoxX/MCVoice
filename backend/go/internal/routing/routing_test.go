@@ -30,6 +30,7 @@ type vecSession struct {
 	WorldID       string     `json:"world_id"`
 	Attested      string     `json:"attested"`
 	Group         string     `json:"group"`
+	GroupType     string     `json:"group_type"`
 	Epoch         uint32     `json:"epoch"`
 	Pos           *[]float64 `json:"pos"`
 	PosAtMs       int64      `json:"pos_at_ms"`
@@ -78,7 +79,7 @@ func TestRoutingVectors(t *testing.T) {
 			var sender *Peer
 			for _, s := range c.Sessions {
 				p := &Peer{UUID: s.UUID, Authenticated: s.Authenticated, UDPVerified: s.UDPVerified, InWorld: s.InWorld,
-					WorldID: s.WorldID, Attested: s.Attested, Group: s.Group, Epoch: s.Epoch, PosAtMs: s.PosAtMs,
+					WorldID: s.WorldID, Attested: s.Attested, Group: s.Group, GroupType: s.GroupType, Epoch: s.Epoch, PosAtMs: s.PosAtMs,
 					Visible: map[string]struct{}{}, Muted: s.Muted, Deafened: s.Deafened}
 				if s.Pos != nil {
 					p.HasPos, p.X, p.Y, p.Z = true, (*s.Pos)[0], (*s.Pos)[1], (*s.Pos)[2]
