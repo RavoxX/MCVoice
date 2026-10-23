@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
 import com.mojang.blaze3d.platform.InputConstants;
 
 
@@ -58,11 +57,10 @@ public final class McAdapter implements MinecraftAdapter {
         this.configDir = configDir;
 
         int unboundKey = InputConstants.UNKNOWN.getValue();
-        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", InputConstants.KEY_V));
-        keys.put(InputAdapter.Action.WHISPER, key("whisper", InputConstants.KEY_B));
+        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", unboundKey));
+        keys.put(InputAdapter.Action.WHISPER, key("whisper", unboundKey));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", InputConstants.KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", InputConstants.KEY_N));
-        keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", InputConstants.KEY_G));
 
 
 
@@ -70,6 +68,19 @@ public final class McAdapter implements MinecraftAdapter {
 
 
 
+
+
+
+
+
+        keys.put(InputAdapter.Action.OPEN_MENU, key("open_menu", InputConstants.KEY_V));
+        keys.put(InputAdapter.Action.TOGGLE_ICONS, key("toggle_icons", InputConstants.KEY_H));
+
+
+
+
+
+        keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", unboundKey));
 
         keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", unboundKey));
         keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", unboundKey));
@@ -309,6 +320,52 @@ public final class McAdapter implements MinecraftAdapter {
 
 
 
+        }
+
+        @Override public boolean isBound(Action a) { return keys.get(a) != null && !keys.get(a).isUnbound(); }
+        @Override public boolean bindKey(Action a, int code, boolean mouse) {
+            KeyMapping k = keys.get(a);
+            if (k == null) return false;
+
+
+
+
+
+
+
+
+
+            if (!mouse && code < 0) k.setKey(InputConstants.UNKNOWN);
+            else if (mouse) k.setKey(InputConstants.Type.MOUSE.getOrCreate(code));
+            else {
+
+
+
+                k.setKey(InputConstants.Type.KEYSYM.getOrCreate(code));
+
+            }
+
+            KeyMapping.resetMapping(); mc().options.save(); return true;
+        }
+        @Override public void migrateControls() {
+            if (legacyDefault(Action.PUSH_TO_TALK, "key.keyboard.v")) bindKey(Action.PUSH_TO_TALK, -1, false);
+            if (legacyDefault(Action.WHISPER, "key.keyboard.b")) bindKey(Action.WHISPER, -1, false);
+
+            if (legacyDefault(Action.OPEN_GROUPS, "key.keyboard.g")) bindKey(Action.OPEN_GROUPS, -1, false);
+
+            for (Action action : new Action[]{Action.OPEN_MENU, Action.TOGGLE_ICONS}) {
+                KeyMapping k = keys.get(action);
+                for (KeyMapping other : keys.values()) if (other != k && !k.isUnbound() && k.same(other)) {
+                    bindKey(action, -1, false); break;
+                }
+            }
+        }
+        private boolean legacyDefault(Action action, String value) {
+            KeyMapping k = keys.get(action);
+
+
+
+            return value.equals(k.saveString());
         }
     };
 
