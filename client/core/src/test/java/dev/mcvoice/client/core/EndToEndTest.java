@@ -342,6 +342,14 @@ class EndToEndTest {
             }
             return false;
         }, 5000);
+        VoiceControls.GroupInfo preview = vb.groupList().stream().filter(g -> g.id.equals(id)).findFirst().get();
+        assertEquals(1, preview.roster.size());
+        assertEquals(a.uuid, preview.roster.get(0).uuid);
+        vb.setGroupServerOnly(true);
+        vb.requestGroups(id);
+        waitFor("server filter has finished", () -> !vb.groupsLoading(), 5000);
+        assertTrue(vb.groupList().isEmpty(), "different joined addresses must not match directory filtering");
+        vb.setGroupServerOnly(false);
         vb.joinGroup(id, "");
         waitFor("both in the group", () -> vb.group() != null && va.group() != null && va.group().members.size() == 2, 5000);
         assertTrue(va.players().stream().anyMatch(p -> p.uuid.equals(b.uuid) && p.via.equals("group")), "remote group members remain searchable without a local entity");
