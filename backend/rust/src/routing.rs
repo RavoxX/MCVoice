@@ -49,12 +49,31 @@ pub struct Peer {
     pub attested: String,
     /// Voice group id, empty if none (spec 6.12).
     pub group: String,
+    pub group_policy: GroupPolicy,
     pub epoch: u32,
     pub pos: Option<[f64; 3]>,
     pub pos_at_ms: i64,
     pub visible: HashSet<String>,
     pub muted: bool,
     pub deafened: bool,
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum GroupPolicy {
+    #[default]
+    Open,
+    Normal,
+    Isolated,
+}
+
+impl GroupPolicy {
+    pub fn from_name(name: &str) -> Self {
+        match name {
+            "open" | "" => Self::Open,
+            "normal" => Self::Normal,
+            _ => Self::Isolated,
+        }
+    }
 }
 
 impl Peer {
@@ -111,6 +130,9 @@ pub fn deliver_group(s: &Peer, r: &Peer) -> bool {
 /// Spec 8.1: proximity delivery of a frame that was (or was not) also delivered to the group.
 /// Group members never get it twice.
 pub fn deliver_proximity(cfg: &RoutingConfig, now_ms: i64, s: &Peer, r: &Peer, mode: u8, group: bool) -> bool {
+    if (!s.group.is_empty() && s.group_policy != GroupPolicy::Open) || (!r.group.is_empty() && r.group_policy == GroupPolicy::Isolated) {
+        return false;
+    }
     mode != MODE_GROUP && !(group && r.group == s.group) && deliver(cfg, now_ms, s, r, mode)
 }
 

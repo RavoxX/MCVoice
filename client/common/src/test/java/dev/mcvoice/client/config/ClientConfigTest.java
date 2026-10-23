@@ -1,6 +1,7 @@
 package dev.mcvoice.client.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
@@ -49,14 +50,14 @@ class ClientConfigTest {
         assertEquals("wss://voice.example.org/v1/control", load("{\"backendUrl\":\" wss://voice.example.org/v1/control \"}").backendUrl);
     }
 
-    @Test void groupMicrophoneModeDefaultsMigratesAndPersistsIndependently() throws Exception {
-        assertEquals(ClientConfig.ActivationMode.VOICE_ACTIVATION, load("{}").groupActivationMode);
+    @Test void legacyGroupModeCannotOverrideTheSharedMicrophoneMode() throws Exception {
+        assertEquals(ClientConfig.ActivationMode.PUSH_TO_TALK, load("{}").activationMode);
         ClientConfig c = load("{\"activationMode\":\"VOICE_ACTIVATION\",\"groupActivationMode\":\"PUSH_TO_TALK\"}");
         assertEquals(ClientConfig.ActivationMode.VOICE_ACTIVATION, c.activationMode);
-        assertEquals(ClientConfig.ActivationMode.PUSH_TO_TALK, c.groupActivationMode);
         c.save();
-        assertEquals(ClientConfig.ActivationMode.PUSH_TO_TALK, ClientConfig.load(dir.toFile()).groupActivationMode);
-        assertEquals(ClientConfig.ActivationMode.VOICE_ACTIVATION, load("{\"groupActivationMode\":\"invalid\"}").groupActivationMode);
+        assertEquals(ClientConfig.ActivationMode.VOICE_ACTIVATION, ClientConfig.load(dir.toFile()).activationMode);
+        assertFalse(c.toJson().containsKey("groupActivationMode"));
+        assertEquals(ClientConfig.ActivationMode.PUSH_TO_TALK, load("{\"groupActivationMode\":\"VOICE_ACTIVATION\"}").activationMode);
     }
 
     @Test void concurrentPlayerControlsAndSerializationRemainSafe() throws Exception {
