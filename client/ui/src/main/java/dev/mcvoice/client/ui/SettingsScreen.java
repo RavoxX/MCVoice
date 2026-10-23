@@ -118,6 +118,7 @@ public final class SettingsScreen extends BaseScreen {
             public void run() {
                 v.stopMicTest();
                 v.applyConfig();
+                v.openVoiceMenu();
             }
         });
         done.x = panelX;
@@ -148,8 +149,8 @@ public final class SettingsScreen extends BaseScreen {
             }
         }, new Button.Action() {
             public void run() {
-                cfg().activationMode = cfg().activationMode == ClientConfig.ActivationMode.PUSH_TO_TALK
-                    ? ClientConfig.ActivationMode.VOICE_ACTIVATION : ClientConfig.ActivationMode.PUSH_TO_TALK;
+                v.setActivationMode(cfg().activationMode == ClientConfig.ActivationMode.PUSH_TO_TALK
+                    ? ClientConfig.ActivationMode.VOICE_ACTIVATION : ClientConfig.ActivationMode.PUSH_TO_TALK);
             }
         }), left, y);
         place(new Slider(colW, "Activation", -60, 0, new Slider.Model() {
@@ -169,11 +170,13 @@ public final class SettingsScreen extends BaseScreen {
             public String format(double d) { return Math.round(d) + " blocks"; }
         }), right, y);
         y += row;
-        place(toggle(colW, new Button.Label() {
-            public String get() { return "Microphone: " + (v.micMuted() ? "Muted" : "On"); }
+        place(new Button(colW, 20, new Button.Label() {
+            public String get() { return cfg().activationMode == ClientConfig.ActivationMode.PUSH_TO_TALK ? "Microphone: Push to Talk" : "Microphone: " + (v.micMuted() ? "Muted" : "On"); }
         }, new Button.Action() {
             public void run() { v.setMicMuted(!v.micMuted()); }
-        }), left, y);
+        }) {
+            @Override public boolean enabled() { return cfg().activationMode == ClientConfig.ActivationMode.VOICE_ACTIVATION; }
+        }, left, y);
         place(toggle(colW, new Button.Label() {
             public String get() { return "Deafen: " + (v.deafened() ? "On" : "Off"); }
         }, new Button.Action() {
