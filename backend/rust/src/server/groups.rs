@@ -1,4 +1,4 @@
-//! Voice groups (spec 6.12): up to 15 sessions that hear each other non-positionally,
+//! Voice groups (spec 6.12): up to 20 sessions that hear each other non-positionally,
 //! across worlds and Minecraft servers. State lives in the hub, under its lock.
 
 use std::sync::Arc;
@@ -49,6 +49,7 @@ impl GroupLimits {
 
 pub(crate) struct Group {
     pub id: String,
+    group_type: String,
     /// salt, SHA-256(salt || password); never logged, never sent
     password: Option<([u8; 16], [u8; 32])>,
     /// connection ids in join order
@@ -63,13 +64,14 @@ fn hash(salt: &[u8; 16], password: &str) -> [u8; 32] {
 }
 
 impl Group {
-    fn new(id: String, password: Option<&str>) -> Group {
+    fn new(id: String, password: Option<&str>, group_type: String) -> Group {
         let password = password.map(|p| {
             let salt: [u8; 16] = rand::thread_rng().gen();
             (salt, hash(&salt, p))
         });
         Group {
             id,
+            group_type,
             password,
             members: Vec::new(),
         }
@@ -90,6 +92,7 @@ struct GroupEntry {
     members: usize,
     max: usize,
     password: bool,
+    group_type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     roster: Option<Vec<Value>>,
 }
@@ -159,6 +162,7 @@ impl Hub {
     pub(crate) fn leave_group(&mut self, conn: u64, reason: Option<&str>) {
         let Some(ps) = self.peers.get_mut(&conn) else { return };
         let id = std::mem::take(&mut ps.peer.group);
+        ps.peer.group_policy = crate::routing::GroupPolicy::Open;
         if id.is_empty() {
             return;
         }
@@ -181,8 +185,11 @@ impl Hub {
     }
 
     fn join_group(&mut self, conn: u64, id: &str) {
+        let Some(g) = self.groups.get(id) else { return };
+        let policy = crate::routing::GroupPolicy::from_name(&g.group_type);
         if let Some(ps) = self.peers.get_mut(&conn) {
             ps.peer.group = id.to_string();
+            ps.peer.group_policy = policy;
         }
         let Some(g) = self.groups.get_mut(id) else { return };
         if !g.members.contains(&conn) {
@@ -190,7 +197,7 @@ impl Hub {
         }
         let g = &self.groups[id];
         let joined = json!({"type": "group_joined", "group": {
-            "id": g.id, "max": GROUP_MAX_MEMBERS, "password": g.password.is_some(), "members": self.members_json(g)
+            "id": g.id, "max": GROUP_MAX_MEMBERS, "password": g.password.is_some(), "group_type": g.group_type, "members": self.members_json(g)
         }})
         .to_string();
         self.queue(conn, joined);
@@ -211,11 +218,7 @@ pub(crate) fn send_all(out: Vec<(Arc<Session>, String)>) {
 
 impl Server {
     fn group_session_ok(&self, sess: &Session, hub: &Hub) -> bool {
-        let caps = hub.peers.get(&sess.conn_id).is_some_and(|p| p.groups_cap);
-        if !caps {
-            sess.send(error_frame(code::UNKNOWN_MESSAGE, "groups capability not negotiated", false));
-        }
-        caps
+        hub.peers.get(&sess.conn_id).is_some_and(|p| p.groups_cap)
     }
 
     pub(crate) fn group_list(&self, sess: &Session, m: GroupList) {
@@ -223,6 +226,8 @@ impl Server {
         let cursor = m.cursor.as_deref().unwrap_or("").to_ascii_uppercase();
         let hub = self.hub.read().unwrap();
         if !self.group_session_ok(sess, &hub) {
+            drop(hub);
+            sess.send(error_frame(code::UNKNOWN_MESSAGE, "groups capability not negotiated", false));
             return;
         }
         let mut entries: Vec<GroupEntry> = hub
@@ -236,6 +241,7 @@ impl Server {
                 members: g.members.len(),
                 max: GROUP_MAX_MEMBERS,
                 password: g.password.is_some(),
+                group_type: g.group_type.clone(),
                 roster: None,
             })
             .collect();
@@ -267,6 +273,13 @@ impl Server {
     pub(crate) fn group_create(&self, sess: &Session, m: GroupCreate) {
         let mut hub = self.hub.write().unwrap();
         if !self.group_session_ok(sess, &hub) {
+            drop(hub);
+            sess.send(error_frame(code::UNKNOWN_MESSAGE, "groups capability not negotiated", false));
+            return;
+        }
+        if m.group_type.is_some() && !hub.peers.get(&sess.conn_id).is_some_and(|p| p.group_modes_cap) {
+            drop(hub);
+            sess.send(error_frame(code::BAD_MESSAGE, "group_modes capability required", false));
             return;
         }
         if !hub.peers.get(&sess.conn_id).is_some_and(|p| p.peer.in_world) {
@@ -276,7 +289,10 @@ impl Server {
         }
         hub.leave_group(sess.conn_id, Some("replaced"));
         let id = hub.new_group_id();
-        hub.groups.insert(id.clone(), Group::new(id.clone(), m.password.as_deref()));
+        hub.groups.insert(
+            id.clone(),
+            Group::new(id.clone(), m.password.as_deref(), m.group_type.unwrap_or_else(|| "open".into())),
+        );
         hub.join_group(sess.conn_id, &id);
         let out = hub.take_outbox();
         drop(hub);
@@ -287,6 +303,8 @@ impl Server {
         let id = m.id.unwrap_or_default().to_ascii_uppercase();
         let mut hub = self.hub.write().unwrap();
         if !self.group_session_ok(sess, &hub) {
+            drop(hub);
+            sess.send(error_frame(code::UNKNOWN_MESSAGE, "groups capability not negotiated", false));
             return;
         }
         let Some(ps) = hub.peers.get_mut(&sess.conn_id) else { return };
@@ -301,8 +319,10 @@ impl Server {
             return;
         }
         let already = ps.peer.group == id;
+        let modes = ps.group_modes_cap;
         let err = match hub.groups.get(&id) {
             None => Some((code::GROUP_NOT_FOUND, "no such group")),
+            Some(g) if g.group_type != "open" && !modes => Some((code::BAD_MESSAGE, "update your client to join this group type")),
             Some(_) if already => None,
             Some(g) if g.members.len() >= GROUP_MAX_MEMBERS => Some((code::GROUP_FULL, "group is full")),
             Some(g) if !g.password_ok(m.password.as_deref()) => Some((code::GROUP_PASSWORD, "wrong or missing password")),
@@ -328,6 +348,8 @@ impl Server {
     pub(crate) fn group_leave(&self, sess: &Session) {
         let mut hub = self.hub.write().unwrap();
         if !self.group_session_ok(sess, &hub) {
+            drop(hub);
+            sess.send(error_frame(code::UNKNOWN_MESSAGE, "groups capability not negotiated", false));
             return;
         }
         hub.leave_group(sess.conn_id, Some("left"));
@@ -370,6 +392,33 @@ mod tests {
     use crate::protocol::control::ClientMsg;
 
     #[test]
+    fn full_twenty_member_directory_page_fits_existing_control_frame() {
+        let entries: Vec<GroupEntry> = (0..20)
+            .map(|i| GroupEntry {
+                id: format!("AAA{i:02}"),
+                members: 20,
+                max: 20,
+                password: false,
+                group_type: "isolated".into(),
+                roster: Some(
+                    (0..20)
+                        .map(|j| json!({"uuid": format!("{i:08x}-0000-4000-8000-{j:012x}"), "name": "x".repeat(16)}))
+                        .collect(),
+                ),
+            })
+            .collect();
+        let frame = json!({"type":"group_list","groups":entries,"request_id":u32::MAX,"next_cursor":null}).to_string();
+        assert!(frame.len() <= crate::protocol::control::MAX_CONTROL_FRAME);
+        let parsed: Value = serde_json::from_str(&frame).unwrap();
+        assert_eq!(parsed["groups"].as_array().unwrap().len(), 20);
+        assert!(parsed["groups"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|g| g["roster"].as_array().unwrap().len() == 20));
+    }
+
+    #[test]
     fn group_budgets_are_independent_refill_and_never_block_leave() {
         let now = Instant::now();
         let list = ClientMsg::GroupList(GroupList {
@@ -380,7 +429,10 @@ mod tests {
             cursor: None,
             request_id: Some(1),
         });
-        let create = ClientMsg::GroupCreate(GroupCreate { password: None });
+        let create = ClientMsg::GroupCreate(GroupCreate {
+            password: None,
+            group_type: None,
+        });
         let join = ClientMsg::GroupJoin(GroupJoin {
             id: Some("ABCDE".into()),
             password: None,
