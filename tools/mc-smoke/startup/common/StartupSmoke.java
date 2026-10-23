@@ -68,8 +68,14 @@ public final class StartupSmoke {
             if (worldTicks == 70) HudSmoke.screenshot(mc,"group-directory.png");
             if (worldTicks == 72) HudSmoke.preview(2);
             if (worldTicks == 80) HudSmoke.screenshot(mc,"updates.png");
-            if (worldTicks == 82) HudSmoke.preview(0);
-            if (worldTicks == 90) {
+            if (worldTicks == 82) HudSmoke.preview(3);
+            if (worldTicks == 90) HudSmoke.screenshot(mc,"voice-menu.png");
+            if (worldTicks == 92) HudSmoke.preview(4);
+            if (worldTicks == 100) HudSmoke.screenshot(mc,"voice-bindings.png");
+            if (worldTicks == 102) HudSmoke.preview(5);
+            if (worldTicks == 110) HudSmoke.screenshot(mc,"group-policy.png");
+            if (worldTicks == 112) HudSmoke.preview(0);
+            if (worldTicks == 120) {
                 returning = true;
                 mc.disconnect(new TitleScreen(), false);
             }

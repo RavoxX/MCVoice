@@ -218,11 +218,7 @@ pub(crate) fn send_all(out: Vec<(Arc<Session>, String)>) {
 
 impl Server {
     fn group_session_ok(&self, sess: &Session, hub: &Hub) -> bool {
-        let caps = hub.peers.get(&sess.conn_id).is_some_and(|p| p.groups_cap);
-        if !caps {
-            sess.send(error_frame(code::UNKNOWN_MESSAGE, "groups capability not negotiated", false));
-        }
-        caps
+        hub.peers.get(&sess.conn_id).is_some_and(|p| p.groups_cap)
     }
 
     pub(crate) fn group_list(&self, sess: &Session, m: GroupList) {
@@ -230,6 +226,8 @@ impl Server {
         let cursor = m.cursor.as_deref().unwrap_or("").to_ascii_uppercase();
         let hub = self.hub.read().unwrap();
         if !self.group_session_ok(sess, &hub) {
+            drop(hub);
+            sess.send(error_frame(code::UNKNOWN_MESSAGE, "groups capability not negotiated", false));
             return;
         }
         let mut entries: Vec<GroupEntry> = hub
@@ -275,6 +273,8 @@ impl Server {
     pub(crate) fn group_create(&self, sess: &Session, m: GroupCreate) {
         let mut hub = self.hub.write().unwrap();
         if !self.group_session_ok(sess, &hub) {
+            drop(hub);
+            sess.send(error_frame(code::UNKNOWN_MESSAGE, "groups capability not negotiated", false));
             return;
         }
         if m.group_type.is_some() && !hub.peers.get(&sess.conn_id).is_some_and(|p| p.group_modes_cap) {
@@ -303,6 +303,8 @@ impl Server {
         let id = m.id.unwrap_or_default().to_ascii_uppercase();
         let mut hub = self.hub.write().unwrap();
         if !self.group_session_ok(sess, &hub) {
+            drop(hub);
+            sess.send(error_frame(code::UNKNOWN_MESSAGE, "groups capability not negotiated", false));
             return;
         }
         let Some(ps) = hub.peers.get_mut(&sess.conn_id) else { return };
@@ -346,6 +348,8 @@ impl Server {
     pub(crate) fn group_leave(&self, sess: &Session) {
         let mut hub = self.hub.write().unwrap();
         if !self.group_session_ok(sess, &hub) {
+            drop(hub);
+            sess.send(error_frame(code::UNKNOWN_MESSAGE, "groups capability not negotiated", false));
             return;
         }
         hub.leave_group(sess.conn_id, Some("left"));
@@ -386,6 +390,33 @@ impl Server {
 mod tests {
     use super::*;
     use crate::protocol::control::ClientMsg;
+
+    #[test]
+    fn full_twenty_member_directory_page_fits_existing_control_frame() {
+        let entries: Vec<GroupEntry> = (0..20)
+            .map(|i| GroupEntry {
+                id: format!("AAA{i:02}"),
+                members: 20,
+                max: 20,
+                password: false,
+                group_type: "isolated".into(),
+                roster: Some(
+                    (0..20)
+                        .map(|j| json!({"uuid": format!("{i:08x}-0000-4000-8000-{j:012x}"), "name": "x".repeat(16)}))
+                        .collect(),
+                ),
+            })
+            .collect();
+        let frame = json!({"type":"group_list","groups":entries,"request_id":u32::MAX,"next_cursor":null}).to_string();
+        assert!(frame.len() <= crate::protocol::control::MAX_CONTROL_FRAME);
+        let parsed: Value = serde_json::from_str(&frame).unwrap();
+        assert_eq!(parsed["groups"].as_array().unwrap().len(), 20);
+        assert!(parsed["groups"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|g| g["roster"].as_array().unwrap().len() == 20));
+    }
 
     #[test]
     fn group_budgets_are_independent_refill_and_never_block_leave() {

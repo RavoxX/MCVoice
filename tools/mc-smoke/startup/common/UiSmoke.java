@@ -61,6 +61,7 @@ final class UiSmoke {
         require(client != null, "No initialized production voice client");
         net.minecraft.client.KeyMapping key = java.util.Arrays.stream(Minecraft.getInstance().options.keyMappings)
             .filter(k -> k.getName().equals("key.mcvoice.push_to_talk")).findFirst().orElseThrow();
+        LoaderChecks.modifiedDefaults(client, key);
         KeyBindingsScreen bindings = new KeyBindingsScreen(client);
         McScreen screen = new McScreen(bindings);
         Canvas canvas = new Canvas(); canvas.draw(bindings);

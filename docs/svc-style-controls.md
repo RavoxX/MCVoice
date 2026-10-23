@@ -13,6 +13,8 @@ offers audio devices, microphone testing, PTT/voice activation and its threshold
 Key Bindings captures native keyboard and mouse input, saves Minecraft's
 registered mappings immediately, and uses Escape to clear a binding. Short
 screens scroll to expose every binding. Minecraft's Controls remains usable.
+Forge modifier combinations can be configured in Minecraft's own Controls;
+existing combinations, including modified old-default keys, are preserved.
 
 | Action | New default |
 |---|---|

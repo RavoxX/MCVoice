@@ -319,6 +319,12 @@ public final class GroupScreen extends BaseScreen {
             notice = v.groupsLoading() ? "Loading more groups..." : v.hasMoreGroups() ? "Scroll down to load more groups" : "";
             noticeColor = Theme.LABEL_DIM;
         }
+        VoiceControls.Group current = v.group();
+        if (notice.isEmpty() && current != null && current.members.size() > membersPerPage) {
+            notice = "Members " + (memberScroll + 1) + "-" + Math.min(current.members.size(), memberScroll + membersPerPage)
+                + "/" + current.members.size() + " (scroll)";
+            noticeColor = Theme.LABEL_DIM;
+        }
         if (!notice.isEmpty()) {
             int ny = st.isEmpty() ? c.height() - 27 - 4 - 20 - 24 - 12 : c.height() - 27 - 24 - 12;
             c.text(notice, cx - c.textWidth(notice) / 2, ny, noticeColor, true);
