@@ -318,6 +318,7 @@ public final class ControlClient {
         caps.add("groups");
         caps.add("group_paging");
         caps.add("group_directory");
+        caps.add("group_modes");
         if (opts.svcInterop) {
             caps.add("svc_interop");
         }
@@ -525,7 +526,12 @@ public final class ControlClient {
     }
 
     public boolean sendGroupCreate(String password) {
+        return sendGroupCreate(password, null);
+    }
+
+    public boolean sendGroupCreate(String password, String groupType) {
         Json.Obj o = Json.obj().put("type", "group_create");
+        if (groupType != null) o.put("group_type", groupType);
         if (password != null && !password.isEmpty()) {
             o.put("password", password);
         }
