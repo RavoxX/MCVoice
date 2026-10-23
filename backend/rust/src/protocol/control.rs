@@ -36,10 +36,11 @@ pub const SERVER_CAPABILITIES: &[&str] = &[
     "groups",
     "group_paging",
     "group_directory",
+    "group_modes",
 ];
 
 /// Voice groups (spec 6.12).
-pub const GROUP_MAX_MEMBERS: usize = 15;
+pub const GROUP_MAX_MEMBERS: usize = 20;
 pub const GROUP_LIST_MAX: usize = 100;
 pub const GROUP_PAGE_MAX: u32 = 20;
 pub const GROUP_ID_ALPHABET: &[u8] = b"ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -150,6 +151,7 @@ pub struct GroupList {
 #[derive(Debug, Deserialize)]
 pub struct GroupCreate {
     pub password: Option<String>,
+    pub group_type: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -363,6 +365,12 @@ fn validate(m: &ClientMsg) -> Result<(), ControlError> {
             }
         }
         ClientMsg::GroupCreate(g) => {
+            if g.group_type
+                .as_deref()
+                .is_some_and(|t| !matches!(t, "normal" | "open" | "isolated"))
+            {
+                return Err(bad("invalid group type"));
+            }
             if g.password.as_deref().is_some_and(|p| !is_group_password(p)) {
                 return Err(bad("invalid group password"));
             }
