@@ -26,6 +26,7 @@ type Peer struct {
 	WorldID       string // dimension key the client reported (spec 6.3)
 	Attested      string // companion-plugin attested scope "<network>/<subserver>", empty if none (spec 6.3.1)
 	Group         string // voice group id, empty if none (spec 6.12)
+	GroupType     string // backend-owned policy; empty means legacy open
 	Epoch         uint32
 	HasPos        bool
 	X, Y, Z       float64
@@ -99,6 +100,10 @@ func DeliverGroup(s, r *Peer) bool {
 // DeliverProximity is proximity delivery of a frame that was (or was not) also delivered to the
 // group; group members never get it twice (spec 8.1).
 func DeliverProximity(cfg *Config, now int64, s, r *Peer, mode byte, group bool) bool {
+	if (s.Group != "" && s.GroupType != "" && s.GroupType != "open") ||
+		(r.Group != "" && r.GroupType != "" && r.GroupType != "normal" && r.GroupType != "open") {
+		return false
+	}
 	return mode != protocol.ModeGroup && !(group && r.Group == s.Group) && Deliver(cfg, now, s, r, mode)
 }
 
