@@ -60,6 +60,7 @@ that is a bug that has to be fixed before release.
 | `scope_attestation` | backend verifies optional companion-plugin scope attestations (§6.3.1) |
 | `svc_interop`       | client-only; informative, lets the backend count hybrid clients |
 | `groups`            | voice groups (§6.12, §8.1, §9.1); added in 1.1 |
+| `group_modes`       | Normal/Open/Isolated policies; required for creating typed groups and joining Normal/Isolated groups |
 
 ## 3. Identifiers
 
@@ -317,7 +318,7 @@ retry `HELLO` with back-off and report "UDP blocked" if it never arrives.
 
 ### 6.12 Voice groups (capability `groups`, protocol 1.1)
 
-A voice group is a set of at most **15** sessions that hear each other
+A voice group is a set of at most **20** sessions that hear each other
 non-positionally, independent of worlds and servers: members may be on
 different Minecraft servers. Groups live only in backend memory.
 
@@ -335,8 +336,23 @@ different Minecraft servers. Groups live only in backend memory.
   sends it to anyone. At most 5 wrong passwords per authenticated player UUID per fixed 60-second window,
   retained across disconnect, replacement and resume; more
   are answered with `rate_limited`.
-* **Privacy.** The group list reveals id, member count, capacity and whether a
-  password is required. Member names and UUIDs are sent to members only.
+* **Privacy.** The group list reveals id, member count, capacity, group type and
+  whether a password is required. Public roster previews require `group_directory`.
+* **Group types (`group_modes` capability).** `group_create` may include
+  `group_type:"normal"`, `"open"` or `"isolated"`; other strings/types are
+  `bad_message`. Omitted/null means legacy `open`. The field requires the client
+  and backend to advertise `group_modes`. New clients default to `normal` and
+  MUST NOT silently downgrade to open when the backend lacks this capability.
+  The type is fixed at creation and returned in every list entry and the
+  `group_joined.group` object. Only capable clients may join normal/isolated
+  groups (`bad_message` otherwise), so all members can enforce the playback
+  policy on every transport. Open groups remain available to older clients.
+  Missing response metadata means legacy open; unknown types fail closed.
+  Normal members transmit only to their group and may hear nearby outsiders.
+  Open members also transmit to nearby players. Isolated members neither send
+  nor play positional voice. Membership, password and all existing security
+  checks remain mandatory. The backend stores the group type with each member's
+  routing state; clients cannot override it through voice mode/flags.
 
 Client → backend:
 
@@ -350,8 +366,8 @@ Client → backend:
 Backend → client:
 
 ```json
-{"type":"group_list","groups":[{"id":"K7M2Q","members":3,"max":15,"password":true}]}
-{"type":"group_joined","group":{"id":"K7M2Q","max":15,"password":true,
+{"type":"group_list","groups":[{"id":"K7M2Q","members":3,"max":20,"password":true,"group_type":"normal"}]}
+{"type":"group_joined","group":{"id":"K7M2Q","max":20,"password":true,"group_type":"normal",
  "members":[{"uuid":"…","name":"Alex"}]}}
 {"type":"group_update","id":"K7M2Q","members":[{"uuid":"…","name":"Alex"}]}
 {"type":"group_left","id":"K7M2Q","reason":"left"}
@@ -362,7 +378,7 @@ Backend → client:
   case-insensitively, are listed (search).
 * **Directory previews (`group_directory` capability).** A paged `group_list`
   may add `details:true` to include `roster:[{"uuid":"...","name":"..."}]`
-  on each returned entry (join order, at most 15). This is public membership
+  on each returned entry (join order, at most 20). This is public membership
   metadata, including password-protected groups; passwords still gate joining
   and playback. No addresses, positions, tokens or skin URLs are exposed.
   `server_only:true` filters before paging to groups with at least one current
@@ -392,7 +408,7 @@ Backend → client:
 
   ```json
   {"type":"group_list","limit":20,"request_id":1,"query":"K"}
-  {"type":"group_list","groups":[{"id":"K7M2Q","members":3,"max":15,"password":true}],"request_id":1,"next_cursor":null}
+  {"type":"group_list","groups":[{"id":"K7M2Q","members":3,"max":20,"password":true}],"request_id":1,"next_cursor":null}
   ```
 * **Group request limits.** Per authenticated control connection, independent
   token buckets permit `group_list` at 2/s (burst 4), `group_create` at 1/10 s
@@ -579,8 +595,10 @@ chose to hear each other.
 A mode-`2` datagram gets no proximity delivery, and is dropped if S is in no
 group. A mode `0`/`1` datagram additionally gets proximity delivery (checks
 2-9), **except** to members of G when group delivery applied, so nobody hears
-a group member twice. A frame from a group member without flag bit 1 (e.g.
-push-to-talk pressed while the group channel is silent) is routed by §8 only.
+a group member twice. A frame without group flags is routed by §8 only.
+In addition, positional delivery is refused when S belongs to a normal or
+isolated group, or R belongs to an isolated group. These restrictions apply
+even without group flags and do not relax any check in §8.
 
 ## 9. Client playback rule (normative)
 
@@ -611,7 +629,8 @@ latest `group_joined`/`group_update`, and the sender is not the client
 itself, not locally muted and the client is not deafened. It is mixed
 centred at the per-player volume, without distance attenuation. The local
 entity rule above applies to every positional frame (mode `0`/`1`) and is
-unchanged.
+unchanged. An isolated-group member MUST also reject every positional frame,
+including SVC interop and already queued audio, until leaving that group.
 
 ## 10. Transport identity and deduplication
 
