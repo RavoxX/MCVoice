@@ -7,7 +7,7 @@ can still be heard on servers that run the Simple Voice Chat plugin.
 
 <img src="docs/images/icon.png" width="96" alt="MCVoice icon">
 
-Development **0.1.12-dev** changes the controls and group behavior described below.
+Release preparation **0.1.12** changes the controls and group behavior described below.
 The published 0.1.11 release and public backend remain unchanged until a new
 release/deployment. See [controls, migration and compatibility](docs/svc-style-controls.md).
 

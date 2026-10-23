@@ -1,4 +1,4 @@
-# Speaking controls and group types (0.1.12-dev, unreleased)
+# Speaking controls and group types (0.1.12, release preparation)
 
 The controls follow Simple Voice Chat's documented user model, implemented with
 MCVoice's own code, widgets and artwork. No SVC source, assets or sounds are

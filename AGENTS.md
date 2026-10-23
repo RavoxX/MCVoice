@@ -293,7 +293,7 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **0.1.12-dev, unreleased:** SVC-style voice menu and default bindings, one
+* **0.1.12, release preparation:** SVC-style voice menu and default bindings, one
   shared microphone mode, native keyboard/mouse binding capture (SDL on 26.3),
   Normal/Open/Isolated group policies and a 20-member cap. Old default V/B
   bindings migrate once; non-default custom bindings remain. Group type is
