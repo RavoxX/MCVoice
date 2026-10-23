@@ -247,6 +247,7 @@ func (s *Server) groupList(sess *Session, m *protocol.GroupList) {
 				continue
 			}
 			e.Members = len(g.members)
+			e.Password = g.pwHash != nil
 			if m.Details {
 				e.Roster = membersJSON(g)
 			}

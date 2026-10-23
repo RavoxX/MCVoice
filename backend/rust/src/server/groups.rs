@@ -249,6 +249,7 @@ impl Server {
                     return false;
                 }
                 entry.members = g.members.len();
+                entry.password = g.password.is_some();
                 if m.details.unwrap_or(false) {
                     entry.roster = Some(hub.members_json(g));
                 }

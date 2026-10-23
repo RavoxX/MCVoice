@@ -25,7 +25,8 @@ final class ReleaseChecker {
     Update update() { return update; }
 
     void start(final String current, final String minecraft, final String loader) {
-        if (!stable(current) || !minecraft.matches("[0-9]+(?:\\.[0-9]+){1,2}") || !started.compareAndSet(false, true)) return;
+        if (!started.compareAndSet(false, true)) return;
+        if (!stable(current) || minecraft == null || !minecraft.matches("[0-9]+(?:\\.[0-9]+){1,2}")) return;
         Thread worker = new Thread(new Runnable() {
             public void run() {
                 final long deadline = System.nanoTime() + 15000000000L;

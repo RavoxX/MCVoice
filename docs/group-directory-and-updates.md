@@ -28,6 +28,8 @@ This filter uses self-reported scope and is not proof of server membership.
 It never changes audio authorization, visibility/range checks or group routing.
 Both implementations copy rosters only for the selected page, outside of which
 no roster allocation is added. Existing frame, page and request-rate bounds stay.
+Directory enumeration/sorting still scans group metadata; the server filter may
+inspect up to 15 members per group. It is not a new 100k-user capacity claim.
 
 ## Updates
 

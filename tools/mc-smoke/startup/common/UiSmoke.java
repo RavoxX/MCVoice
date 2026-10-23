@@ -206,6 +206,7 @@ final class UiSmoke {
                     case "config" -> new ClientConfig();
                     case "transportStatus" -> TransportStatus.CLOUD;
                     case "pushToTalkKey" -> "V";
+                    case "availableUpdate" -> "";
                     case "players" -> List.of(new VoiceControls.PlayerEntry(alice, "Alice", 1, false, "cloud"),
                         new VoiceControls.PlayerEntry(bob, "Bob", 1, false, "SVC"));
                     default -> false;
