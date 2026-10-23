@@ -204,6 +204,7 @@ pub(crate) async fn handle_socket(
         admin_muted,
         has_scope: false,
         groups_cap: hello.capabilities.as_ref().is_some_and(|c| c.iter().any(|c| c == "groups")),
+        group_modes_cap: hello.capabilities.as_ref().is_some_and(|c| c.iter().any(|c| c == "group_modes")),
         out_of_world_since: None,
     };
     if let Err(code) = srv.register(sess.clone(), ps) {
