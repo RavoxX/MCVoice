@@ -57,7 +57,7 @@ public final class McScreen extends Screen {
     //#if MC >= 1.21.9
     @Override
     public boolean mouseClicked(MouseButtonEvent e, boolean doubleClick) {
-        ui.mouseClicked((int) e.x(), (int) e.y(), uiButton(e.button()));
+        if (!ui.bindingMouseClicked(e.button())) ui.mouseClicked((int) e.x(), (int) e.y(), uiButton(e.button()));
         syncTextInput();
         return true;
     }
@@ -76,7 +76,7 @@ public final class McScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent e) {
-        boolean handled = ui.keyPressed(uiKey(e.key()));
+        boolean handled = ui.bindingKeyPressed(e.key(), uiKey(e.key())) || ui.keyPressed(uiKey(e.key()));
         syncTextInput();
         if (handled) {
             return true;
@@ -94,7 +94,7 @@ public final class McScreen extends Screen {
     //#else
     @Override
     public boolean mouseClicked(double x, double y, int button) {
-        ui.mouseClicked((int) x, (int) y, button);
+        if (!ui.bindingMouseClicked(button)) ui.mouseClicked((int) x, (int) y, button);
         return true;
     }
 
@@ -112,7 +112,7 @@ public final class McScreen extends Screen {
 
     @Override
     public boolean keyPressed(int key, int scanCode, int modifiers) {
-        if (ui.keyPressed(key)) {
+        if (ui.bindingKeyPressed(key, key) || ui.keyPressed(key)) {
             return true;
         }
         return super.keyPressed(key, scanCode, modifiers); // ESC closes
