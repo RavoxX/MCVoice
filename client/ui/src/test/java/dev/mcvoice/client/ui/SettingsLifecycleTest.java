@@ -16,6 +16,7 @@ class SettingsLifecycleTest {
                 case "stopMicTest":stopped[0]++;return null;
                 case "applyConfig":applied[0]++;return null;
                 case "pushToTalkKey":return "V";
+                case "availableUpdate":return "";
                 default:return false;
             }
         });
