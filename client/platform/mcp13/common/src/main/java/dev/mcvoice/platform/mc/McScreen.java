@@ -23,7 +23,7 @@ public final class McScreen extends GuiScreen {
 
     @Override
     public boolean mouseClicked(double x, double y, int button) {
-        ui.mouseClicked((int) x, (int) y, button);
+        if (!ui.bindingMouseClicked(button)) ui.mouseClicked((int) x, (int) y, button);
         return true;
     }
 
@@ -41,7 +41,7 @@ public final class McScreen extends GuiScreen {
 
     @Override
     public boolean keyPressed(int key, int scanCode, int modifiers) {
-        if (ui.keyPressed(key)) {
+        if (ui.bindingKeyPressed(key, key) || ui.keyPressed(key)) {
             return true;
         }
         return super.keyPressed(key, scanCode, modifiers); // ESC closes
