@@ -200,6 +200,7 @@ func All() []Scenario {
 		{"one_sided_visibility_not_delivered", "offline", scOneSided},
 		{"group_create_list_join_leave", "offline", scGroupLifecycle},
 		{"group_pages_search_and_deleted_cursor", "offline", scGroupPages},
+		{"group_directory_roster_and_server_filter", "offline", scGroupDirectory},
 		{"group_request_budgets_and_leave", "offline", scGroupRequestBudgets},
 		{"group_password_and_rate_limit", "offline", scGroupPassword},
 		{"group_full_at_15_members", "offline", scGroupFull},

@@ -191,6 +191,7 @@ pub(crate) async fn handle_socket(
     let sess = Arc::new(Session::new(ident.clone(), uuid_b, tx, udp));
     let admin_muted = srv.is_admin_muted(&ident.uuid);
     let ps = PeerState {
+        network_id: String::new(),
         peer: Peer {
             uuid: ident.uuid.clone(),
             authenticated: true,
@@ -405,7 +406,7 @@ impl Server {
                 ps.peer.visible.clear();
                 ps.peers_rev = 0;
                 ps.presence.clear();
-                // network_id is validated by the parser but never used for routing (spec 6.3)
+                ps.network_id = if in_world { s.network_id.unwrap() } else { String::new() };
                 ps.peer.attested = attested.unwrap_or_default();
                 ps.peer.world_id = if in_world { s.world_id.unwrap() } else { String::new() };
                 ps.out_of_world_since = if in_world { None } else { ps.out_of_world_since.or(Some(now)) };
