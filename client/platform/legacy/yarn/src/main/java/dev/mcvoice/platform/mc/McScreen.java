@@ -21,7 +21,7 @@ public final class McScreen extends Screen {
 
     @Override
     protected void mouseClicked(int x, int y, int button) {
-        ui.mouseClicked(x, y, button);
+        if (!ui.bindingMouseClicked(button)) ui.mouseClicked(x, y, button);
     }
 
     @Override
@@ -47,7 +47,7 @@ public final class McScreen extends Screen {
 
     @Override
     protected void keyPressed(char c, int keyCode) {
-        if (ui.keyPressed(glfwKey(keyCode))) {
+        if (ui.bindingKeyPressed(keyCode, glfwKey(keyCode)) || ui.keyPressed(glfwKey(keyCode))) {
             return;
         }
         if (keyCode == Keyboard.KEY_ESCAPE) {
