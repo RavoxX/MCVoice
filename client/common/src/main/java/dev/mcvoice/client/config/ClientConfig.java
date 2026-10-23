@@ -70,6 +70,8 @@ public final class ClientConfig {
     // --- ui / diagnostics
     public volatile boolean showHud = true;
     public volatile boolean showGroupHud = true;
+    public volatile boolean groupServerOnly = false;
+    public volatile boolean checkForUpdates = true;
     public HudLayout hudLayout = new HudLayout();
     public volatile boolean showDebugOverlay = false;
     public volatile boolean debugLogging = false;
@@ -130,6 +132,8 @@ public final class ClientConfig {
     }
 
     void apply(Map<String, Object> m) {
+        groupServerOnly = Json.bool(m, "groupServerOnly", groupServerOnly);
+        checkForUpdates = Json.bool(m, "checkForUpdates", checkForUpdates);
         String url = Json.str(m, "backendUrl");
         // empty means "no choice made" (0.1.0 saved "" when its jars had no default): keep the built-in default
         if (url != null && !url.trim().isEmpty()) {
@@ -236,6 +240,8 @@ public final class ClientConfig {
         m.put("mutedPlayers", mp);
         m.put("showHud", showHud);
         m.put("showGroupHud", showGroupHud);
+        m.put("groupServerOnly", groupServerOnly);
+        m.put("checkForUpdates", checkForUpdates);
         m.put("hudLayout", hudLayout.toJson());
         m.put("showDebugOverlay", showDebugOverlay);
         m.put("debugLogging", debugLogging);
