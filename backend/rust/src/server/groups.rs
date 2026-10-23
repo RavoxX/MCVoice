@@ -90,24 +90,36 @@ struct GroupEntry {
     members: usize,
     max: usize,
     password: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    roster: Option<Vec<Value>>,
 }
 
 // Only copied public metadata is sorted/serialized, after releasing the hub lock.
-fn group_list_json(mut entries: Vec<GroupEntry>, m: &GroupList) -> String {
+fn select_page(entries: &mut Vec<GroupEntry>, m: &GroupList) -> Option<String> {
     if let Some(limit) = m.limit {
         entries.sort_unstable_by(|a, b| a.id.cmp(&b.id));
         let more = entries.len() > limit as usize;
         entries.truncate(limit as usize);
         let next = if more { entries.last().map(|g| g.id.clone()) } else { None };
-        json!({"type": "group_list", "groups": entries, "request_id": m.request_id, "next_cursor": next}).to_string()
+        next
     } else {
         entries.sort_unstable_by(|a, b| b.members.cmp(&a.members).then_with(|| a.id.cmp(&b.id)));
         entries.truncate(GROUP_LIST_MAX);
-        json!({"type": "group_list", "groups": entries}).to_string()
+        None
     }
 }
 
 impl Hub {
+    fn group_on_network(&self, g: &Group, conn: u64) -> bool {
+        let Some(viewer) = self.peers.get(&conn).filter(|p| p.peer.in_world && !p.network_id.is_empty()) else {
+            return false;
+        };
+        g.members.iter().any(|c| {
+            self.peers
+                .get(c)
+                .is_some_and(|p| p.peer.in_world && p.network_id == viewer.network_id)
+        })
+    }
     fn new_group_id(&self) -> String {
         let mut rng = rand::thread_rng();
         loop {
@@ -213,19 +225,43 @@ impl Server {
         if !self.group_session_ok(sess, &hub) {
             return;
         }
-        let entries: Vec<GroupEntry> = hub
+        let mut entries: Vec<GroupEntry> = hub
             .groups
             .values()
-            .filter(|g| g.id.contains(&query) && g.id > cursor)
+            .filter(|g| {
+                g.id.contains(&query) && g.id > cursor && (!m.server_only.unwrap_or(false) || hub.group_on_network(g, sess.conn_id))
+            })
             .map(|g| GroupEntry {
                 id: g.id.clone(),
                 members: g.members.len(),
                 max: GROUP_MAX_MEMBERS,
                 password: g.password.is_some(),
+                roster: None,
             })
             .collect();
         drop(hub);
-        sess.send(group_list_json(entries, &m));
+        let next = select_page(&mut entries, &m);
+        if m.details.unwrap_or(false) || m.server_only.unwrap_or(false) {
+            let hub = self.hub.read().unwrap();
+            entries.retain_mut(|entry| {
+                let Some(g) = hub.groups.get(&entry.id) else { return false };
+                if m.server_only.unwrap_or(false) && !hub.group_on_network(g, sess.conn_id) {
+                    return false;
+                }
+                entry.members = g.members.len();
+                entry.password = g.password.is_some();
+                if m.details.unwrap_or(false) {
+                    entry.roster = Some(hub.members_json(g));
+                }
+                true
+            });
+        }
+        let response = if m.limit.is_some() {
+            json!({"type": "group_list", "groups": entries, "request_id": m.request_id, "next_cursor": next})
+        } else {
+            json!({"type": "group_list", "groups": entries})
+        };
+        sess.send(response.to_string());
     }
 
     pub(crate) fn group_create(&self, sess: &Session, m: GroupCreate) {
@@ -337,6 +373,8 @@ mod tests {
     fn group_budgets_are_independent_refill_and_never_block_leave() {
         let now = Instant::now();
         let list = ClientMsg::GroupList(GroupList {
+            details: None,
+            server_only: None,
             query: None,
             limit: Some(20),
             cursor: None,
