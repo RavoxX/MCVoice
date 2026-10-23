@@ -1,1 +1,1 @@
-{"minecraft": "26.2", "loader": "forge", "status": "pass", "run": "https://github.com/RavoxX/MCVoice/actions/runs/40005938655", "commit": "711282e3114631da2ed309f1c6cd58acc779178a", "jar": "mcvoice-0.1.12-dev-mc26.2-forge.jar"}
+{"minecraft": "26.2", "loader": "forge", "status": "pass", "run": "https://github.com/RavoxX/MCVoice/actions/runs/40012401858", "commit": "39d375f58d870adcf01777c9d2701138adf7e463", "jar": "mcvoice-0.1.12-mc26.2-forge.jar", "maven": "published", "maven_sha256": "65b7bf84cbcefd4f45b1528ad3a16c73c977ffc4ca0a475d36931481ab3f1bed"}
