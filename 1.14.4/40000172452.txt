@@ -1,0 +1,505 @@
+::group::net.minecraft.client.KeyMapping
+net.minecraft.client.KeyMapping
+    java.util.Map ALL
+    java.util.Map MAP
+    java.util.Set CATEGORIES
+    java.util.Map CATEGORY_SORT_ORDER
+    java.lang.String name
+    com.mojang.blaze3d.platform.InputConstants$Key defaultKey
+    java.lang.String category
+    com.mojang.blaze3d.platform.InputConstants$Key key
+    boolean isDown
+    int clickCount
+    void click(com.mojang.blaze3d.platform.InputConstants$Key)
+    void set(com.mojang.blaze3d.platform.InputConstants$Key,boolean)
+    void setAll()
+    void releaseAll()
+    void resetMapping()
+    void <init>(java.lang.String,int,java.lang.String)
+    void <init>(java.lang.String,com.mojang.blaze3d.platform.InputConstants$Type,int,java.lang.String)
+    boolean isDown()
+    java.lang.String getCategory()
+    boolean consumeClick()
+    void release()
+    java.lang.String getName()
+    com.mojang.blaze3d.platform.InputConstants$Key getDefaultKey()
+    void setKey(com.mojang.blaze3d.platform.InputConstants$Key)
+    int compareTo(net.minecraft.client.KeyMapping)
+    java.util.function.Supplier createNameSupplier(java.lang.String)
+    boolean same(net.minecraft.client.KeyMapping)
+    boolean isUnbound()
+    boolean matches(int,int)
+    boolean matchesMouse(int)
+    java.lang.String getTranslatedKeyMessage()
+    boolean isDefault()
+    java.lang.String saveString()
+    int compareTo(java.lang.Object)
+    java.lang.String lambda$createNameSupplier$1(java.lang.String)
+    void lambda$static$0(java.util.HashMap)
+    void <clinit>()
+::endgroup::
+::group::com.mojang.blaze3d/platform/InputConstants
+NOT FOUND in mappings: com.mojang.blaze3d/platform/InputConstants
+::endgroup::
+::group::net.minecraft.client.Options
+net.minecraft.client.Options
+    org.apache.logging.log4j.Logger LOGGER
+    com.google.gson.Gson GSON
+    java.lang.reflect.Type RESOURCE_PACK_TYPE
+    com.google.common.base.Splitter COLON_SPLITTER
+    double sensitivity
+    int renderDistance
+    int framerateLimit
+    net.minecraft.client.CloudStatus renderClouds
+    boolean fancyGraphics
+    net.minecraft.client.AmbientOcclusionStatus ambientOcclusion
+    java.util.List resourcePacks
+    java.util.List incompatibleResourcePacks
+    net.minecraft.world.entity.player.ChatVisiblity chatVisibility
+    double chatOpacity
+    double textBackgroundOpacity
+    java.lang.String fullscreenVideoModeString
+    boolean hideServerAddress
+    boolean advancedItemTooltips
+    boolean pauseOnLostFocus
+    java.util.Set modelParts
+    net.minecraft.world.entity.HumanoidArm mainHand
+    int overrideWidth
+    int overrideHeight
+    boolean heldItemTooltips
+    double chatScale
+    double chatWidth
+    double chatHeightUnfocused
+    double chatHeightFocused
+    int mipmapLevels
+    java.util.Map sourceVolumes
+    boolean useNativeTransport
+    net.minecraft.client.AttackIndicatorStatus attackIndicator
+    net.minecraft.client.tutorial.TutorialSteps tutorialStep
+    int biomeBlendRadius
+    double mouseWheelSensitivity
+    boolean rawMouseInput
+    int glDebugVerbosity
+    boolean autoJump
+    boolean autoSuggestions
+    boolean chatColors
+    boolean chatLinks
+    boolean chatLinksPrompt
+    boolean enableVsync
+    boolean entityShadows
+    boolean forceUnicodeFont
+    boolean invertYMouse
+    boolean discreteMouseScroll
+    boolean realmsNotifications
+    boolean reducedDebugInfo
+    boolean snooperEnabled
+    boolean showSubtitles
+    boolean backgroundForChatOnly
+    boolean touchscreen
+    boolean fullscreen
+    boolean bobView
+    net.minecraft.client.KeyMapping keyUp
+    net.minecraft.client.KeyMapping keyLeft
+    net.minecraft.client.KeyMapping keyDown
+    net.minecraft.client.KeyMapping keyRight
+    net.minecraft.client.KeyMapping keyJump
+    net.minecraft.client.KeyMapping keySneak
+    net.minecraft.client.KeyMapping keySprint
+    net.minecraft.client.KeyMapping keyInventory
+    net.minecraft.client.KeyMapping keySwapHands
+    net.minecraft.client.KeyMapping keyDrop
+    net.minecraft.client.KeyMapping keyUse
+    net.minecraft.client.KeyMapping keyAttack
+    net.minecraft.client.KeyMapping keyPickItem
+    net.minecraft.client.KeyMapping keyChat
+    net.minecraft.client.KeyMapping keyPlayerList
+    net.minecraft.client.KeyMapping keyCommand
+    net.minecraft.client.KeyMapping keyScreenshot
+    net.minecraft.client.KeyMapping keyTogglePerspective
+    net.minecraft.client.KeyMapping keySmoothCamera
+    net.minecraft.client.KeyMapping keyFullscreen
+    net.minecraft.client.KeyMapping keySpectatorOutlines
+    net.minecraft.client.KeyMapping keyAdvancements
+    net.minecraft.client.KeyMapping[] keyHotbarSlots
+    net.minecraft.client.KeyMapping keySaveHotbarActivator
+    net.minecraft.client.KeyMapping keyLoadHotbarActivator
+    net.minecraft.client.KeyMapping[] keyMappings
+    net.minecraft.client.Minecraft minecraft
+    java.io.File optionsFile
+    net.minecraft.world.Difficulty difficulty
+    boolean hideGui
+    int thirdPersonView
+    boolean renderDebug
+    boolean renderDebugCharts
+    boolean renderFpsChart
+    java.lang.String lastMpIp
+    boolean smoothCamera
+    double fov
+    double gamma
+    int guiScale
+    net.minecraft.client.ParticleStatus particles
+    net.minecraft.client.NarratorStatus narratorStatus
+    java.lang.String languageCode
+    void <init>(net.minecraft.client.Minecraft,java.io.File)
+    float getBackgroundOpacity(float)
+    int getBackgroundColor(float)
+    int getBackgroundColor(int)
+    void setKey(net.minecraft.client.KeyMapping,com.mojang.blaze3d.platform.InputConstants$Key)
+    void load()
+    net.minecraft.nbt.CompoundTag dataFix(net.minecraft.nbt.CompoundTag)
+    float readFloat(java.lang.String)
+    void save()
+    float getSoundSourceVolume(net.minecraft.sounds.SoundSource)
+    void setSoundCategoryVolume(net.minecraft.sounds.SoundSource,float)
+    void broadcastOptions()
+    java.util.Set getModelParts()
+    void setModelPart(net.minecraft.world.entity.player.PlayerModelPart,boolean)
+    void toggleModelPart(net.minecraft.world.entity.player.PlayerModelPart)
+    net.minecraft.client.CloudStatus getCloudsType()
+    boolean useNativeTransport()
+    void loadResourcePacks(net.minecraft.server.packs.repository.PackRepository)
+    void <clinit>()
+::endgroup::
+downloaded https://maven.legacyfabric.net/net/legacyfabric/yarn/1.8.9+build.604/yarn-1.8.9+build.604-v2.jar: Zip archive data, at least v2.0 to extract, compression method=deflate 226559 bytes
+downloaded https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/47-1.13.2/mcp_stable-47-1.13.2.zip: Zip archive data, at least v2.0 to extract, compression method=deflate 403427 bytes
+::group::mappings ./x1/mappings/mappings.tiny
+CLASS net/minecraft/class_327 -> net/minecraft/client/option/KeyBinding
+  f Ljava/util/List; field_904 -> KEYS
+  f Lnet/minecraft/class_833; field_905 -> KEY_MAP
+  f Ljava/lang/String; field_906 -> translationKey
+  f I field_907 -> code
+  f Z field_908 -> pressed
+  f I field_909 -> timesPressed
+  f Ljava/util/Set; field_7614 -> categories
+  f I field_7615 -> defaultCode
+  f Ljava/lang/String; field_7616 -> category
+  m (I)V method_838 -> onKeyPressed
+  m (IZ)V method_839 -> setKeyPressed
+  m ()V method_837 -> releaseAllKeys
+  m ()V method_840 -> updateKeysByCode
+  m ()Z method_841 -> wasPressed
+  m ()V method_842 -> reset
+  m ()Ljava/util/Set; method_6618 -> getCategories
+  m ()Z method_6619 -> isPressed
+  m ()Ljava/lang/String; method_6620 -> getCategory
+  m ()Ljava/lang/String; method_6621 -> getTranslationKey
+  m ()I method_6622 -> getDefaultCode
+  m ()I method_6623 -> getCode
+  m (I)V method_6617 -> setCode
+  m (Ljava/lang/Object;)I compareTo -> compareTo
+  m (Lnet/minecraft/class_327;)I method_6616 -> compareTo
+CLASS net/minecraft/class_345 -> net/minecraft/client/MouseInput
+  f I field_931 -> x
+  f I field_932 -> y
+  m ()V method_861 -> lockMouse
+  m ()V method_862 -> grabMouse
+  m ()V method_863 -> updateMouse
+CLASS net/minecraft/class_516 -> net/minecraft/client/input/Input
+  f F field_1753 -> movementSideways
+  f F field_1754 -> movementForward
+  f Z field_1755 -> jumping
+  f Z field_1756 -> sneaking
+  m ()V method_1302 -> tick
+CLASS net/minecraft/class_517 -> net/minecraft/client/input/KeyboardInput
+  f Lnet/minecraft/class_347; field_1757 -> options
+CLASS net/minecraft/class_1320 -> net/minecraft/client/gui/screen/SuperflatPresetScreen
+  f Ljava/util/List; field_5077 -> PRESETS
+  f Lnet/minecraft/class_1318; field_5078 -> parent
+  f Ljava/lang/String; field_5079 -> title
+  f Ljava/lang/String; field_5080 -> shareText
+  f Ljava/lang/String; field_5081 -> listText
+  f Lnet/minecraft/class_356; field_5083 -> selectButton
+  f Lnet/minecraft/class_367; field_5084 -> customPresetField
+  f Lnet/minecraft/class_1320$class_1322; field_5082 -> listWidget
+  m ()V method_4252 -> updateSelectButton
+  m ()Z method_4255 -> isEntrySelected
+  m (Ljava/lang/String;Lnet/minecraft/class_1069;Lnet/minecraft/class_1170;[Lnet/minecraft/class_1282;)V method_4250 -> addRedstonePreset
+  m (Ljava/lang/String;Lnet/minecraft/class_1069;Lnet/minecraft/class_1170;Ljava/util/List;[Lnet/minecraft/class_1282;)V method_4249 -> addPreset
+  m (Ljava/lang/String;Lnet/minecraft/class_1069;ILnet/minecraft/class_1170;Ljava/util/List;[Lnet/minecraft/class_1282;)V method_9575 -> addOverworldPreset
+CLASS net/minecraft/class_1320$class_1321 -> net/minecraft/client/gui/screen/SuperflatPresetScreen$PresetEntry
+  f Lnet/minecraft/class_1069; field_7765 -> icon
+  f I field_10459 -> iconDamage
+  f Ljava/lang/String; field_5086 -> name
+  f Ljava/lang/String; field_5087 -> config
+CLASS net/minecraft/class_1320$class_1322 -> net/minecraft/client/gui/screen/SuperflatPresetScreen$SuperflatPresetsListWidget
+  f I field_5088 -> selectedEntryIndex
+  m (IILnet/minecraft/class_1069;I)V method_9576 -> renderEntry
+  m (II)V method_4258 -> renderIconBackground
+  m (IIII)V method_4257 -> renderIconBackground
+CLASS net/minecraft/class_1819$class_1822 -> net/minecraft/client/gui/screen/options/ControlsListWidget$KeyBindingEntry
+  f Lnet/minecraft/class_327; field_7806 -> keyBinding
+  f Ljava/lang/String; field_7807 -> name
+  f Lnet/minecraft/class_356; field_7808 -> keyBindingButton
+  f Lnet/minecraft/class_356; field_7809 -> resetButton
+CLASS net/minecraft/class_2067 -> net/minecraft/network/packet/c2s/play/PlayerInputC2SPacket
+  f F field_8819 -> sideways
+  f F field_8820 -> forward
+  f Z field_8821 -> jumping
+  f Z field_8822 -> sneaking
+  m ()F method_8023 -> getSideways
+  m ()F method_8024 -> getForward
+  m ()Z method_8025 -> isJumping
+  m ()Z method_8026 -> isSneaking
+  m (Lnet/minecraft/class_2050;)V method_8022 -> apply
+CLASS net/minecraft/class_2314 -> net/minecraft/client/gui/screen/CustomizedWorldPresetsScreen
+  f Ljava/util/List; field_10420 -> entries
+  f Lnet/minecraft/class_2314$class_2316; field_10421 -> presetList
+  f Lnet/minecraft/class_356; field_10422 -> selectButton
+  f Lnet/minecraft/class_367; field_10423 -> searchField
+  f Lnet/minecraft/class_2317; field_10424 -> parent
+  f Ljava/lang/String; field_10419 -> title
+  f Ljava/lang/String; field_10425 -> shareText
+  f Ljava/lang/String; field_10426 -> listText
+  m ()V method_9551 -> updateSelectButton
+  m ()Z method_9559 -> isEntrySelected
+CLASS net/minecraft/class_2314$class_2315 -> net/minecraft/client/gui/screen/CustomizedWorldPresetsScreen$PresetEntry
+  f Ljava/lang/String; field_10427 -> name
+  f Lnet/minecraft/class_1653; field_10428 -> texture
+  f Lnet/minecraft/class_2253$class_2254; field_10429 -> utilities
+CLASS net/minecraft/class_2314$class_2316 -> net/minecraft/client/gui/screen/CustomizedWorldPresetsScreen$PresetsListWidget
+  f I field_10430 -> selectedEntryIndex
+  m (IILnet/minecraft/class_1653;)V method_9560 -> renderEntryBackground
+::endgroup::
+::group::mappings ./x2/fields.csv
+field_111171_e,isSaved,2,"If false, this modifier is not saved in NBT. Used for ""natural"" modifiers like speed boost from sprinting"
+field_146291_p,allowUserInput,0,
+field_146336_i,saveDirName,0,
+field_146409_v,defaultInputFieldText,0,is the text that appears when you press the chat key and the input box appears pre-filled
+field_146438_h,presetsTitle,0,
+field_146439_i,presetsShare,0,
+field_146804_i,savedServerList,0,
+field_147309_h,doneLoadingTerrain,0,"True if the client has finished downloading terrain and may spawn. Set upon receipt of S08PacketPlayerPosLook, reset upon respawning"
+field_148280_d,btnChangeKeyBinding,0,
+field_152695_c,saveFile,2,
+field_175300_s,savedGameMode,0,"Used to save away the game mode when the current ""debug"" world type is chosen (forcing it to spectator mode)"
+field_184459_aA,rightInputDown,2,
+field_184461_aB,forwardInputDown,2,
+field_184463_aC,backInputDown,2,
+field_184480_az,leftInputDown,2,
+field_189831_G,saveButton,0,
+field_193280_g,resetCount,0,
+field_195327_a,saveButton,0,
+field_199035_e,metadataInputStream,2,
+field_208328_e,staleFiles,2,A map from file name to the original hash. Entries are removed from this map as they are saved (regardless as to whether the hash matches or not; the hash is only used to count the number of {@linkplain #hits})
+field_212778_c,savedDatum,2,
+field_212780_e,saveHandler,2,
+field_71101_bC,flyToggleTimer,2,"Used to tell if the player pressed jump twice. If this is at 0 and it's pressed (And they are allowed to fly, as defined in the player's movementInput) it sets this to 7. If it's pressed and it's greater than 0 enable fly."
+field_71158_b,movementInput,0,
+field_71469_aa,saveLoader,0,
+field_72416_e,hostPlayerData,0,"Holds the NBT data for the host player's save file, so this can be written to level.dat."
+field_72988_C,savedDataStorage,2,
+field_72995_K,isRemote,2,"True if the world is a 'slave' client; changes will not be saved or propagated from this world. For example, server worlds have this set to false, client worlds have this set to true."
+field_73019_z,saveHandler,2,
+field_74749_a,intArray,2,The array of saved integers
+field_75237_g,amountCrafted,2,The number of items that have been crafted so far. Gets passed to ItemStack.onCrafting before being reset.
+field_75737_d,savedIOCounter,2,
+field_75751_a,saveHandler,2,
+field_75767_f,saveDirectoryName,2,The directory name of the world
+field_75770_b,worldDirectory,2,The directory in which to save world data.
+field_75771_c,playersDirectory,2,The directory in which to save player data.
+field_75795_b,displayName,0,the displayed name of this save file
+field_75797_a,fileName,0,the file name of this save
+field_75808_a,savesDirectory,2,Reference to the File object representing the directory for the world saves
+field_76103_l,saveVersion,2,"Introduced in beta 1.3, is the save version for future control."
+field_76106_k,levelName,2,The name of the save defined at world creation.
+field_76107_h,sizeOnDisk,2,"The size of entire save of current world on the disk, isn't exactly."
+field_76641_n,lastSaveTime,2,The time according to World.worldTime when this chunk was last saved
+field_78780_h,stepSoundTickCounter,0,"Tick counter, when it hits 4 it resets back to 0 and plays the step sound"
+field_82653_b,worldFeatures,2,List of world features enabled on this preset.
+field_82655_a,flatLayers,2,List of layers on this preset.
+::endgroup::
+::group::mappings ./x2/params.csv
+p_111168_1_,saved,2
+p_146317_0_,saveLoader,0
+p_175584_2_,saveHandlerIn,2
+p_177432_1_,saveTime,2
+p_180192_0_,saveFile,0
+p_186352_1_,saveName,2
+p_191281_2_,saveEmpty,2
+p_192044_3_,save,0
+p_197714_1_,saveName,0
+p_197715_1_,saveName,2
+p_200212_0_,saveFormat,0
+p_200466_2_,save,2
+p_200484_2_,save,2
+p_202141_2_,save,2
+p_207742_1_,saveName,0
+p_207743_1_,saveName,0
+p_210502_1_,preset,0
+p_212424_3_,savedData,2
+p_70799_2_,resetHealth,2
+p_71247_1_,saveName,2
+p_75801_1_,saveName,2
+p_75802_1_,saveName,0
+p_75803_1_,saveName,2
+p_90033_1_,saveName,0
+p_i1144_1_,saveFile,2
+p_i1152_1_,saveFile,2
+p_i2162_1_,saveHandlerIn,2
+p_i46591_3_,saveFormat,0
+p_i47904_4_,metadataInputStreamIn,2
+::endgroup::
+::group::mappings ./x2/methods.csv
+func_110230_cF,resetTexturePrefix,2,
+func_130105_g,getMinecraftStartTimeMillis,2,Returns the saved value of System#currentTimeMillis when the game started
+func_146240_d,resetScroll,0,"Resets the chat scroll (executed when the GUI is closed, among others)"
+func_146314_g,calcSaveDirName,0,Determine a save-directory name from the world name
+func_147149_a,saveToFile,2,Saves this CrashReport to the given file and returns a value indicating whether we were successful at doing so.
+func_147358_a,processInput,2,"Processes player movement input. Includes walking, strafing, jumping, sneaking; excludes riding and toggling flying/sprinting"
+func_147414_b,saveSingleServer,0,
+func_148024_c,resetProjectionMatrix,0,
+func_148259_a,saveScreenshot,0,Saves a screenshot in the game directory with the given file name (or null to generate a time-stamped name).\nReturns an ITextComponent indicating the success/failure of the saving.
+func_148260_a,saveScreenshot,0,Saves a screenshot in the game directory with a time-stamped filename.\nReturns an ITextComponent indicating the success/failure of the saving.
+func_149740_M,hasComparatorInputOverride,2,@deprecated call via {@link IBlockState#hasComparatorInputOverride()} whenever possible. Implementing/overriding is fine.
+func_150883_b,saveStatFile,2,
+func_152456_a,read,2,"Reads the given DataInput, constructs, and returns an NBTTagCompound with the data from the DataInput"
+func_152459_a,readGameProfile,2,Reads and returns a GameProfile that has been saved to the passed in NBTTagCompound
+func_152658_c,save,2,Save the cached profiles to disk
+func_174829_m,resetPositionToBB,2,Resets the entity's position to the center (planar) and bottom (vertical) points of its bounding box.
+func_175133_bi,resetPotionEffectMetadata,2,Resets the potion effect color and ambience metadata values
+func_176397_f,calculateInputStrength,2,
+func_178765_a,draw,0,Draw this primitve. This is typically called only once as the generated drawing instructions are saved by the renderer and reused later.
+func_178965_a,reset,0,
+func_179117_G,resetColor,0,
+func_180641_l,getComparatorInputOverride,2,"@deprecated call via {@link IBlockState#getComparatorInputOverride(World,BlockPos)} whenever possible. Implementing/overriding is fine."
+func_181029_i,resetPlayersOverlayFooterHeader,0,Reset the GuiPlayerTabOverlay's message header and footer
+func_181030_a,resetFooterHeader,0,
+func_184166_c,saveAdditionalData,2,Called during saving of a world to give children worlds a chance to save additional data. Only used to save WorldProviderEnd's data in Vanilla.
+func_184198_c,writeUnlessRemoved,2,"Writes this entity to NBT, unless it has been removed. Also writes this entity's passengers, and the entity type ID (so the produced NBT is sufficient to recreate the entity).\n \nGenerally, {@link #writeUnlessPassenger} or {@link #writeWithoutTypeId} should be used instead of this method.\n \n@return True if the entity was written (and the passed compound should be saved); false if the entity was not written."
+func_184419_m,save,2,"Saves the template, writing it to disk.\n \n@return true if the template was successfully saved."
+func_184442_a,updateInputs,0,
+func_184602_cy,resetActiveHand,2,
+func_184821_cY,resetCooldown,2,
+func_185545_A,isAlternateInput,2,
+func_185888_a,getComparatorInputOverride,2,
+func_185912_n,hasComparatorInputOverride,2,
+func_186027_a,saveChunks,2,
+func_186057_q,onWorldSave,2,Called when the world is performing a save. Only used to save the state of the Dragon Boss fight in WorldProviderEnd in Vanilla.
+func_186087_f,resetSpikeCrystals,2,
+func_187118_j,resetPositionToBB,0,
+func_187247_w,saveIPBanList,2,
+func_187248_x,savePlayerBanList,2,
+func_187261_c,resetPlayerVisibility,2,
+func_187460_a,resetEquippedProgress,0,
+func_188663_j,resetFlameCount,2,
+func_189712_b,save,2,"Saves the template, either updating the local version or writing it to disk.\n \n@return true if the template was successfully saved."
+func_190564_k,resetData,0,
+func_190580_f,saveToNbt,2,
+func_191195_a,contract,2,"Creates a new {@link AxisAlignedBB} that has been contracted by the given amount, with positive changes decreasing max values and negative changes increasing min values.\n<br/>\nIf the amount to contract by is larger than the length of a side, then the side will wrap (still creating a valid AABB - see last sample).\n \n<h3>Samples:</h3>\n<table>\n<tr><th>Input</th><th>Result</th></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 4, 4, 4).contract(2, 2, 2)</code></pre></td><td><pre><samp>box[0.0, 0.0, 0.0 -> 2.0, 2.0, 2.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 4, 4, 4).contract(-2, -2, -2)</code></pre></td><td><pre><samp>box[2.0, 2.0, 2.0 -> 4.0, 4.0, 4.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(5, 5, 5, 7, 7, 7).contract(0, 1, -1)</code></pre></td><td><pre><samp>box[5.0, 5.0, 6.0 -> 7.0, 6.0, 7.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(-2, -2, -2, 2, 2, 2).contract(4, -4, 0)</code></pre></td><td><pre><samp>box[-8.0, 2.0, -2.0 -> -2.0, 8.0, 2.0]</samp></pre></td></tr>\n</table>\n \n<h3>See Also:</h3>\n<ul>\n<li>{@link #expand(double, double, double)} - like this, except for expanding.</li>\n<li>{@link #grow(double, double, double)} and {@link #grow(double)} - expands in all directions.</li>\n<li>{@link #shrink(double)} - contracts in all directions (like {@link #grow(double)})</li>\n</ul>\n \n@return A new modified bounding box."
+func_191281_a,saveAllItems,2,
+func_191282_a,saveAllItems,2,
+func_192154_c,reset,2,
+func_192564_b,save,0,
+func_192749_b,save,2,
+func_195069_b,resetRecipes,2,
+func_195317_h,saveChanges,0,Saves changes to the world name and closes this GUI.
+func_195581_a,handleConsoleInput,2,
+func_195724_a,readToNativeBuffer,0,"Reads the given InputStream into a buffer backed by native memory, for usage with OpenGL. Note: The returned buffer MUST be freed with {@code MemoryUtil.memFree}, or the memory will be leaked."
+func_195766_a,getInputStream,2,
+func_195782_c,getInputStreamVanilla,2,
+func_196970_c,isAllowedInputChat,2,
+func_197891_c,reset,2,
+func_197943_a,registerInput,0,
+func_197944_a,getOrMakeInput,0,
+func_197954_a,getInputByCode,0,
+func_197955_a,getInputByName,0,
+func_197978_k,getLocalizedName,0,Returns the localized name of the key and key modifier combo set for this KeyBinding
+func_197979_b,bind,0,Binds a new KeyCode to this\n \n@param key Key to bind to this KeyBinding
+func_197980_a,setKeyBindState,0,
+func_197983_b,conflicts,0,Returns true if the supplied KeyBinding conflicts with this\n \n@param binding KeyBinding to check conflicts against
+func_197984_a,matchesMouseKey,0,Returns true if the KeyBinding is set to a mouse key and the key matches\n \n@param key KeyCode to check
+func_198014_a,setKeyBindingCode,0,
+func_198612_a,saveWorld,2,
+func_198614_a,saveAll,2,
+func_198654_a,resetPlayerAllScores,2,
+func_198656_b,resetPlayerScore,2,
+func_198844_b,reset,2,
+func_199019_a,getInputStream,2,
+func_199027_b,getInputStream,2,
+func_199101_a,reset,0,
+func_199709_a,addPreset,0,
+func_200010_a,getInputStreamVanilla,2,
+func_200211_b,resetProgressAndMessage,0,
+func_200389_a,getInputFolders,2,Gets a collection of folders to look for data to convert in
+func_200431_a,makePath,2,Resolves a Path for the location to save the given tag.
+func_200466_a,build,2,Builds this recipe into an {@link IFinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for the result.
+func_200484_a,build,2,Builds this recipe into an {@link IFinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for the result.
+func_202141_a,build,2,Builds this recipe into an {@link IFinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for the result.
+func_202386_c,resetData,2,"Resets the current available data on the stronghold structure, since biome checks and existing structure coordinates are needed to properly generate strongholds."
+func_208309_a,saveAdvancement,2,
+func_208310_b,saveRecipeAdvancement,2,Saves an advancement to a file.
+func_208311_a,saveRecipe,2,Saves a recipe to a file.
+func_208484_a,save,2,
+func_208509_a,reset,2,
+func_210501_h,getPreset,0,Gets the superflat preset string for the generator; see https://minecraft.gamepedia.com/Superflat#Preset_code_format
+func_210502_a,setPreset,0,Sets the generator config based off of the given preset.\n \nImplementation note: {@link GuiFlatPresets} calls this method and not {@link #getGeneratorOptions} when the done button is used.
+func_210504_i,getGeneratorOptions,0,Gets the NBT data for the generator (which has the same use as the preset)
+func_212775_b,save,2,
+func_70007_b,resetLog,2,Clears the RCon log
+func_70021_al,getParts,2,"Return all subparts of this entity. These parts are not saved in the chunk and do not tick, but are detected by getEntitiesInAABB and are put in the entity ID map. Vanilla makes the assumption that the entities in this array have consecutive entity ID's after their owner ID, so you must construct all parts in the constructor of the parent."
+func_70039_c,writeUnlessPassenger,2,"Writes this entity to NBT, unless it has been removed or it is a passenger. Also writes this entity's passengers, and the entity type ID (so the produced NBT is sufficient to recreate the entity).\nTo always write the entity, use {@link #writeWithoutTypeId}.\n \n@return True if the entity was written (and the passed compound should be saved); false if the entity was not written."
+func_70296_d,markDirty,2,"For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't think it hasn't changed and skip it."
+func_70469_d,inventoryResetNeededOnSlotChange,2,"if par1 slot has changed, does resetRecipeAndSlots need to be called?"
+func_70470_g,resetRecipeAndSlots,2,
+func_70875_t,resetInLove,2,
+func_71118_n,setPlayerHealthUpdated,2,"this function is called when a players inventory is sent to him, lastHealth is updated on any dimension transitions, then reset."
+func_71253_a,setKeyPair,2,
+func_71267_a,saveAllWorlds,2,par1 indicates if a log message should be output.
+func_71326_a,saveProperties,2,Saves all of the server properties to the properties file.
+func_71359_d,getSaveLoader,0,Returns the save loader that is currently being used
+func_71497_f,getFile,0,Gets the file this crash report is saved into.
+func_72314_b,grow,2,"Creates a new {@link AxisAlignedBB} that has been contracted by the given amount in both directions. Negative values will shrink the AABB instead of expanding it.\n<br/>\nSide lengths will be increased by 2 times the value of the parameters, since both min and max are changed.\n<br/>\nIf contracting and the amount to contract by is larger than the length of a side, then the side will wrap (still creating a valid AABB - see last ample).\n \n<h3>Samples:</h3>\n<table>\n<tr><th>Input</th><th>Result</th></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 1, 1, 1).grow(2, 2, 2)</code></pre></td><td><pre><samp>box[-2.0, -2.0, -2.0 -> 3.0, 3.0, 3.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 6, 6, 6).grow(-2, -2, -2)</code></pre></td><td><pre><samp>box[2.0, 2.0, 2.0 -> 4.0, 4.0, 4.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(5, 5, 5, 7, 7, 7).grow(0, 1, -1)</code></pre></td><td><pre><samp>box[5.0, 4.0, 6.0 -> 7.0, 8.0, 6.0]</samp></pre></td></tr>\n<tr><td><pre><code>new AxisAlignedBB(1, 1, 1, 3, 3, 3).grow(-4, -2, -3)</code></pre></td><td><pre><samp>box[-1.0, 1.0, 0.0 -> 5.0, 3.0, 4.0]</samp></pre></td></tr>\n</table>\n \n<h3>See Also:</h3>\n<ul>\n<li>{@link #expand(double, double, double)} - expands in only one direction.</li>\n<li>{@link #contract(double, double, double)} - contracts in only one direction.</li>\n<lu>{@link #grow(double)} - version of this that expands in all directions from one parameter.</li>\n<li>{@link #shrink(double)} - contracts in all directions</li>\n</ul>\n \n@return A modified bounding box."
+func_72321_a,expand,2,"Creates a new {@link AxisAlignedBB} that has been expanded by the given amount, with positive changes increasing max values and negative changes decreasing min values.\n\n<h3>Samples:</h3>\n<table>\n<tr><th>Input</th><th>Result</th></tr>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 1, 1, 1).expand(2, 2, 2)</code></pre></td><td><pre><samp>box[0, 0, 0 -> 3, 3, 3]</samp></pre></td><td>\n<tr><td><pre><code>new AxisAlignedBB(0, 0, 0, 1, 1, 1).expand(-2, -2, -2)</code></pre></td><td><pre><samp>box[-2, -2, -2 -> 1, 1, 1]</samp></pre></td><td>\n<tr><td><pre><code>new AxisAlignedBB(5, 5, 5, 7, 7, 7).expand(0, 1, -1)</code></pre></td><td><pre><samp>box[5, 5, 4, 7, 8, 7]</samp></pre></td><td>\n</table>\n\n<h3>See Also:</h3>\n<ul>\n<li>{@link #contract(double, double, double)} - like this, except for shrinking.</li>\n<li>{@link #grow(double, double, double)} and {@link #grow(double)} - expands in all directions.</li>\n<li>{@link #shrink(double)} - contracts in all directions (like {@link #grow(double)})</li>\n</ul>\n\n@return A modified bounding box that will always be equal or greater in volume to this bounding box."
+func_72389_g,saveAllPlayerData,2,Saves all of the players' current states.
+func_72419_u,saveOpsList,2,
+func_72421_w,saveWhiteList,2,
+func_72669_b,reset,2,Resets the byte array output.
+func_72860_G,getSaveHandler,2,Returns this world's current save handler
+func_73042_a,saveLevel,2,Saves the chunks to disk.
+func_73044_a,saveAllChunks,2,Saves all chunks to disk while updating progress bar.
+func_73051_P,resetRainAndThunder,2,Clears the current rain and thunder weather states.
+func_73242_b,saveChunkData,2,
+func_73668_b,saveProperties,2,Writes the properties to the properties file.
+func_74297_c,getKeyBinding,0,Gets a key binding.
+func_74303_b,saveOptions,0,Saves the options to the options file.
+func_74508_b,resetKeyBindingArrayAndHash,0,
+func_75251_c,resetTask,2,Reset the task's internal state. Called when this task is interrupted by another one
+func_75466_d,resetDoorOpeningRestrictionCounter,2,
+func_75743_a,getUniqueDataId,2,Returns an unique new data id for the given prefix and saves the idCounts map to the 'idcounts' file.
+func_75744_a,save,2,
+func_75747_a,saveData,2,Saves the given MapDataBase to disk.
+func_75755_a,saveWorldInfoWithPlayer,2,Saves the given World Info with the given NBTTagCompound as the Player.
+func_75761_a,saveWorldInfo,2,used to update level.dat from old format to MCRegion format
+func_75762_c,checkSessionLock,2,Checks the session lock to prevent save collisions
+func_75788_b,getDisplayName,0,return the display name of the save
+func_75816_a,saveChunk,2,
+func_76078_e,setSaveVersion,2,Sets the save version of the world
+func_76088_k,getSaveVersion,2,Returns the save version of this world
+func_76185_a,markDirty,2,"Marks this MapDataBase dirty, to be saved to disk when the level next saves."
+func_76549_c,getChunkInputStream,2,Gets an input stream for the chunk at the specified location.
+func_76601_a,needsSaving,2,Returns true if this Chunk needs to be saved
+func_76613_n,resetRelightChecks,0,Resets the relight check index to 0 for this Chunk.
+func_76657_c,setSkyLight,2,Sets the saved Sky-light value in the extended block storage structure.
+func_76670_c,getSkyLight,2,Gets the saved Sky-light value in the extended block storage structure.
+func_76674_d,getBlockLight,2,Gets the saved Block-light value in the extended block storage structure.
+func_76677_d,setBlockLight,2,Sets the saved Block-light value in the extended block storage structure.
+func_76704_a,getChunkDataInputStream,2,Returns an uncompressed chunk stream from the region file.
+func_76709_c,isChunkSaved,2,Checks if a chunk has been saved.
+func_78262_a,trimStringToWidth,0,"Trims a string to a specified width, optionally starting from the end and working backwards.\n<h3>Samples:</h3>\n(Assuming that {@link #getCharWidth(char)} returns <code>6</code> for all of the characters in\n<code>0123456789</code> on the current resource pack)\n<table>\n<tr><th>Input</th><th>Returns</th></tr>\n<tr><td><code>trimStringToWidth(""0123456789"", 1, false)</code></td><td><samp>""""</samp></td></tr>\n<tr><td><code>trimStringToWidth(""0123456789"", 6, false)</code></td><td><samp>""0""</samp></td></tr>\n<tr><td><code>trimStringToWidth(""0123456789"", 29, false)</code></td><td><samp>""0123""</samp></td></tr>\n<tr><td><code>trimStringToWidth(""0123456789"", 30, false)</code></td><td><samp>""01234""</samp></td></tr>\n<tr><td><code>trimStringToWidth(""0123456789"", 9001, false)</code></td><td><samp>""0123456789""</samp></td></tr>\n<tr><td><code>trimStringToWidth(""0123456789"", 1, true)</code></td><td><samp>""""</samp></td></tr>\n<tr><td><code>trimStringToWidth(""0123456789"", 6, true)</code></td><td><samp>""9""</samp></td></tr>\n<tr><td><code>trimStringToWidth(""0123456789"", 29, true)</code></td><td><samp>""6789""</samp></td></tr>\n<tr><td><code>trimStringToWidth(""0123456789"", 30, true)</code></td><td><samp>""56789""</samp></td></tr>\n<tr><td><code>trimStringToWidth(""0123456789"", 9001, true)</code></td><td><samp>""0123456789""</samp></td></tr>\n</table>"
+func_78381_a,draw,0,Draws the data set up in this tessellator and resets the state to prepare for new drawing.
+func_78767_c,resetBlockRemoving,0,Resets current block damage
+func_78855_b,saveServerList,0,"Runs getNBTCompound on each ServerData instance, puts everything into a ""servers"" NBT list and writes it to servers.dat."
+func_82644_b,getWorldFeatures,2,Return the list of world features enabled on this preset.
+func_82647_a,setBiome,2,Set the biome used on this preset.
+func_82648_a,getBiome,2,Return the biome used on this preset.
+func_82650_c,getFlatLayers,2,Return the list of layers on this preset.
+func_82742_i,resetUpdateEntityTick,2,Resets the updateEntityTick field to 0
+func_82744_b,setCloudUpdateTick,0,saves the current Cloud update tick into the PartiallyDestroyedBlock
+func_82848_d,updateRepairOutput,2,"called when the Anvil Input Slot changes, calculates the new result and puts it in the output slot"
+func_85069_a,firstTwoElementsOfStackTraceMatch,2,"Do the deepest two elements of our saved stack trace match the given elements, in order from the deepest?"
+func_94533_d,resetDrag,2,Reset the drag fields
+func_94542_g,resetFallSuffix,2,
+func_94549_h,reset,2,Resets this trackers list of combat entries
+func_96301_b,isFancyStyling,2,False if this is just changing the color or resetting; true otherwise.
+func_98273_j,resetTimer,2,
+::endgroup::
