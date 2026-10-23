@@ -35,6 +35,7 @@ pub const SERVER_CAPABILITIES: &[&str] = &[
     "scope_attestation",
     "groups",
     "group_paging",
+    "group_directory",
 ];
 
 /// Voice groups (spec 6.12).
@@ -138,6 +139,8 @@ pub struct Ping {
 
 #[derive(Debug, Deserialize)]
 pub struct GroupList {
+    pub details: Option<bool>,
+    pub server_only: Option<bool>,
     pub query: Option<String>,
     pub limit: Option<u32>,
     pub cursor: Option<String>,
@@ -373,6 +376,9 @@ fn validate(m: &ClientMsg) -> Result<(), ControlError> {
             }
         }
         ClientMsg::GroupList(g) => {
+            if (g.details.unwrap_or(false) || g.server_only.unwrap_or(false)) && g.limit.is_none() {
+                return Err(bad("group directory requires paging"));
+            }
             if g.limit.is_some_and(|n| n == 0 || n > GROUP_PAGE_MAX)
                 || g.limit.is_some() != g.request_id.is_some()
                 || g.cursor.as_deref().is_some_and(|c| g.limit.is_none() || !is_group_id(c))
