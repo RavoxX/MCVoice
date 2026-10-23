@@ -1,6 +1,7 @@
 package dev.mcvoice.client.ui;
 
 import java.util.List;
+import dev.mcvoice.client.proximity.GroupType;
 
 import dev.mcvoice.client.platform.ui.UiCanvas;
 import dev.mcvoice.client.ui.widget.Button;
@@ -18,6 +19,8 @@ public final class GroupScreen extends BaseScreen {
     private long searchChangedMs;
     private long lastRequestMs;
     private int scroll;
+    private int memberScroll, membersPerPage;
+    private GroupType createType = GroupType.NORMAL;
     /** the state the widgets were laid out for: group id, "" = not in a group, null = unavailable */
     private String laidOutFor = "?"; // never a real state
     private int laidOutMembers = -1;
@@ -92,7 +95,7 @@ public final class GroupScreen extends BaseScreen {
     protected void layout(int width, int height) {
         Button done = Button.of(200, "Done", new Button.Action() {
             public void run() {
-                v.closeScreen();
+                v.openVoiceMenu();
             }
         });
         add(done, (width - 200) / 2, height - 27);
@@ -110,8 +113,10 @@ public final class GroupScreen extends BaseScreen {
 
     private void layoutBrowse(int width, int height) {
         int left = panelX;
-        int y = panelY + 4;
-        int searchW = panelW - 104;
+        int y = panelY + (height < 250 ? -6 : 4);
+        boolean compact = height < 250 && panelW >= 280;
+        int refreshW = compact ? 96 : 100;
+        int searchW = compact ? panelW - refreshW - 112 - 8 : panelW - 104;
         add(new TextField(searchW, "Search by group code", 5, TextField.GROUP_CODE, true, new TextField.Model() {
             public String get() {
                 return search;
@@ -123,7 +128,7 @@ public final class GroupScreen extends BaseScreen {
                 scroll = 0;
             }
         }), left, y);
-        add(Button.of(100, "Refresh", new Button.Action() {
+        add(Button.of(refreshW, "Refresh", new Button.Action() {
             public void run() {
                 scroll = 0;
                 v.requestGroups(search);
@@ -131,8 +136,8 @@ public final class GroupScreen extends BaseScreen {
                 lastRequestMs = System.currentTimeMillis();
             }
         }), left + searchW + 4, y);
-        y += ROW + 2;
-        add(new Button(panelW, 20, new Button.Label() {
+        if (!compact) y += ROW + 2;
+        add(new Button(compact ? 112 : panelW, 20, new Button.Label() {
             public String get() { return v.config().groupServerOnly ? "Show: This Server" : "Show: All Groups"; }
         }, new Button.Action() {
             public void run() {
@@ -140,11 +145,12 @@ public final class GroupScreen extends BaseScreen {
                 scroll = 0;
                 sentQuery = null;
             }
-        }), left, y);
+        }), compact ? left + searchW + refreshW + 8 : left, y);
         y += 24;
-        int bottom = height - 27 - 4 - 20 - 14; // above: notice line, password/create row
-        final int groupHeight = panelW < 230 ? 62 : 48;
-        int n = Math.max(0, (bottom - y) / (groupHeight + 2));
+        int bottom = height - 27 - 4 - 20 - 24 - 14;
+        final int headSize = height < 210 ? 8 : 12, headCell = headSize + 2;
+        final int groupHeight = (height < 210 ? 28 : 34) + headCell * ((20 + Math.max(1, (panelW - 12) / headCell) - 1) / Math.max(1, (panelW - 12) / headCell));
+        int n = Math.max(0, (bottom - y + 2) / (groupHeight + 2));
         slots = new Button[n];
         for (int i = 0; i < n; i++) {
             final int slot = i;
@@ -174,15 +180,15 @@ public final class GroupScreen extends BaseScreen {
                     }
                     if (g.roster.size() > 2) names += ", ...";
                     c.text(ellipsize(c, g.id + names, w - 12), x + 6, y + 5, Theme.LABEL, true);
-                    int columns = Math.max(1, (w - 12) / 14);
+                    int columns = Math.max(1, (w - 12) / headCell);
                     for (int j = 0; j < g.roster.size(); j++) {
                         VoiceControls.Member member = g.roster.get(j);
-                        int hx = x + 6 + j % columns * 14, hy = y + 17 + j / columns * 14;
-                        if (hy + 12 > y + h - 13) break;
-                        c.playerHead(member.uuid, hx, hy, 12);
-                        if (mx >= hx && mx < hx + 12 && my >= hy && my < hy + 12) hoveredMember = member;
+                        int hx = x + 6 + j % columns * headCell, hy = y + 17 + j / columns * headCell;
+                        if (hy + headSize > y + h - 13) break;
+                        c.playerHead(member.uuid, hx, hy, headSize);
+                        if (mx >= hx && mx < hx + headSize && my >= hy && my < hy + headSize) hoveredMember = member;
                     }
-                    String status = g.members + "/" + g.max + (g.password ? "  Password" : "  Open");
+                    String status = g.members + "/" + g.max + "  " + g.type.label + (g.password ? "  Password" : "");
                     c.text(ellipsize(c, status, w - 12), x + 6, y + h - 11, Theme.LABEL, true);
                 }
             };
@@ -190,6 +196,11 @@ public final class GroupScreen extends BaseScreen {
             add(b, left, y + i * (groupHeight + 2));
         }
         int row = height - 27 - 4 - 20;
+        add(new Button(panelW, 20, new Button.Label() {
+            public String get() { return "Group Type: " + createType.label; }
+        }, new Button.Action() {
+            public void run() { createType = GroupType.values()[(createType.ordinal() + 1) % GroupType.values().length]; }
+        }), left, row - 24);
         int pwW = (panelW - 4) / 2;
         TextField pw = new TextField(pwW, "Password (optional)", 32, TextField.PRINTABLE_ASCII, false, new TextField.Model() {
             public String get() {
@@ -204,7 +215,7 @@ public final class GroupScreen extends BaseScreen {
         add(pw, left, row);
         add(Button.of(panelW - pwW - 4, "Create Group", new Button.Action() {
             public void run() {
-                v.createGroup(password);
+                v.createGroup(password, createType);
             }
         }), left + pwW + 4, row);
     }
@@ -225,12 +236,12 @@ public final class GroupScreen extends BaseScreen {
         int colW = (panelW - 10) / 2;
         add(new Button(panelW, 20, new Button.Label() {
             public String get() {
-                return v.config().groupActivationMode == dev.mcvoice.client.config.ClientConfig.ActivationMode.PUSH_TO_TALK
-                    ? "Group Mic: Push to Talk (" + v.pushToTalkKey() + ")" : "Group Mic: Voice Activation";
+                return v.config().activationMode == dev.mcvoice.client.config.ClientConfig.ActivationMode.PUSH_TO_TALK
+                    ? "Microphone: Push to Talk (" + v.pushToTalkKey() + ")" : "Microphone: Voice Activation";
             }
         }, new Button.Action() {
             public void run() {
-                v.setGroupActivationMode(v.config().groupActivationMode == dev.mcvoice.client.config.ClientConfig.ActivationMode.PUSH_TO_TALK
+                v.setActivationMode(v.config().activationMode == dev.mcvoice.client.config.ClientConfig.ActivationMode.PUSH_TO_TALK
                     ? dev.mcvoice.client.config.ClientConfig.ActivationMode.VOICE_ACTIVATION
                     : dev.mcvoice.client.config.ClientConfig.ActivationMode.PUSH_TO_TALK);
             }
@@ -238,8 +249,10 @@ public final class GroupScreen extends BaseScreen {
         int y = panelY + 52;
         int bottom = height - 27 - 4 - 20 - 4;
         int rows = Math.max(1, (bottom - y) / 22);
-        for (int i = 0; i < g.members.size() && i < rows * 2; i++) {
-            final VoiceControls.Member m = g.members.get(i);
+        membersPerPage = rows * 2;
+        memberScroll = Math.max(0, Math.min(memberScroll, g.members.size() - membersPerPage));
+        for (int i = 0; i + memberScroll < g.members.size() && i < membersPerPage; i++) {
+            final VoiceControls.Member m = g.members.get(i + memberScroll);
             Button b = Button.of(colW, m.name, new Button.Action() {
                 public void run() {
                     v.openPlayerMenu(m.uuid, m.name);
@@ -256,6 +269,10 @@ public final class GroupScreen extends BaseScreen {
 
     @Override
     public void mouseScrolled(int x, int y, double amount) {
+        if (v.group() != null && amount != 0) {
+            memberScroll = Math.max(0, Math.min(Math.max(0, v.group().members.size() - membersPerPage), memberScroll + (amount > 0 ? -2 : 2)));
+            relayout(); return;
+        }
         if (!"".equals(state()) || amount == 0 || !search.equals(sentQuery)) return;
         int max = Math.max(0, v.groupList().size() - slots.length);
         scroll = Math.max(0, Math.min(max, scroll + (amount > 0 ? -1 : 1)));
@@ -288,11 +305,11 @@ public final class GroupScreen extends BaseScreen {
         } else {
             VoiceControls.Group g = v.group();
             if (g != null) {
-                String head = "Group " + g.id + "  -  " + g.members.size() + "/" + g.max + (g.password ? "  -  Password" : "  -  Open");
+                String head = g.type.label + " Group " + g.id + "  -  " + g.members.size() + "/" + g.max + (g.password ? "  -  Password" : "");
                 c.text(head, cx - c.textWidth(head) / 2, panelY + 4, Theme.LABEL, true);
-                String hint = v.config().groupActivationMode == dev.mcvoice.client.config.ClientConfig.ActivationMode.PUSH_TO_TALK
-                    ? "Hold " + v.pushToTalkKey() + " to speak to your group and nearby players."
-                    : "Your group hears you while your microphone is on.";
+                String hint = g.type == GroupType.OPEN ? "Nearby players can also hear your group."
+                    : g.type == GroupType.ISOLATED ? "Only your group is heard. No nearby voice." : "You hear nearby players; they cannot hear your group.";
+                while (c.textWidth(hint) > panelW && hint.length() > 3) hint = hint.substring(0, hint.length() - 4) + "...";
                 c.text(hint, cx - c.textWidth(hint) / 2, panelY + 16, Theme.LABEL_DIM, true);
             }
         }
@@ -303,7 +320,7 @@ public final class GroupScreen extends BaseScreen {
             noticeColor = Theme.LABEL_DIM;
         }
         if (!notice.isEmpty()) {
-            int ny = st.isEmpty() ? c.height() - 27 - 4 - 20 - 12 : c.height() - 27 - 24 - 12;
+            int ny = st.isEmpty() ? c.height() - 27 - 4 - 20 - 24 - 12 : c.height() - 27 - 24 - 12;
             c.text(notice, cx - c.textWidth(notice) / 2, ny, noticeColor, true);
         }
     }

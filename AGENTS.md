@@ -91,7 +91,7 @@ python3 protocol/test-vectors/generate.py --check           # vectors reproducib
 python3 tools/versions/matrix.py validate
 (cd backend/go && gofmt -l . && go vet ./... && go test -race ./...)
 (cd backend/rust && cargo fmt --check && cargo clippy --all-targets --release -- -D warnings && cargo test --release)
-# conformance (41 scenarios) against either backend binary
+# conformance (43 scenarios) against either backend binary
 backend/go/mcvoice-conformance -name rust -- backend/rust/target/release/mcvoice-backend
 # client core + headless end-to-end tests (needs a backend binary)
 (cd client && MCVOICE_BACKEND_BIN=$PWD/../dist/mcvoice-backend-go ./gradlew build)
@@ -221,7 +221,7 @@ git show FETCH_HEAD:<path>`).
   Recipients come from the sender's visible set via the UUID index.
 
 **Voice groups (protocol 1.1)**
-* Backend-only state (`backend/*/…/groups`), up to 15 members, 5-char ids
+* Backend-only state (`backend/*/…/groups`), up to 20 members, 5-char ids
   from `ABCDEFGHJKLMNPQRSTUVWXYZ23456789`, optional password (salted SHA-256,
   constant-time compare, 5 wrong tries/min), search via `group_list.query`.
   `group_paging` adds id-ordered pages (limit 1–20, cursor, request_id); legacy
@@ -234,9 +234,13 @@ git show FETCH_HEAD:<path>`).
 * One frame serves both channels: mode 2 = group only, flag bit 1 on mode
   0/1 = also to the group. Proximity routing skips members of the sender's
   group when group delivery applied (no double audio).
-* Client: group channel = open mic gated by VAD while unmuted; proximity
-  keeps push-to-talk. Group frames are mixed centred and validated against
-  the current member list (`PlaybackValidator` mode 2).
+* Client: one activation mode controls nearby and group speech. Normal groups
+  send only to members but hear nearby outsiders; Open also sends nearby;
+  Isolated sends/plays only group audio, including SVC interop. `group_modes`
+  negotiates types; omitted create type is legacy Open. Normal/Isolated require
+  capable members. Backend-owned policy restricts positional routing even when
+  group flags are absent; every positional playback check remains mandatory.
+  Group audio stays centred and checked against current members on every frame.
 * HUD clicks: `GuiAdapter.chatPointer()` polls the cursor while the chat is
   open (Mojang `mouseHandler.xpos/ypos/isLeftPressed` stable 1.14.4-26.3;
   1.13.2 `mouseHelper.getMouseX/isLeftDown`; legacy LWJGL 2 `Mouse`).
@@ -288,6 +292,14 @@ git show FETCH_HEAD:<path>`).
   same change.
 
 ## Current state and next work (keep this section updated)
+
+* **0.1.12-dev, unreleased:** SVC-style voice menu and default bindings, one
+  shared microphone mode, native keyboard/mouse binding capture (SDL on 26.3),
+  Normal/Open/Isolated group policies and a 20-member cap. Old default V/B
+  bindings migrate once; non-default custom bindings remain. Group type is
+  enforced by both backends and every client transport, with fail-closed
+  fallback for unknown policies. See `docs/svc-style-controls.md`. Validation
+  is in progress; the public backend and released jars remain on 0.1.11.
 
 * **Stable 0.1.11 released:** paged `group_directory`
   previews include public UUID/name rosters (password groups included) without

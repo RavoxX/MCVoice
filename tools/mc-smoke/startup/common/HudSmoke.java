@@ -50,14 +50,14 @@ public final class HudSmoke {
                 ClientConfig config = new ClientConfig();
                 java.util.ArrayList<VoiceControls.Member> members = new java.util.ArrayList<>();
                 members.add(new VoiceControls.Member(self,mc.player.getName().getString()));
-                for (int i=1;i<15;i++) members.add(new VoiceControls.Member(new UUID(0,i),"Player"+i));
+                for (int i=1;i<20;i++) members.add(new VoiceControls.Member(new UUID(0,i),"Player"+i));
                 VoiceControls browser = (VoiceControls)Proxy.newProxyInstance(VoiceControls.class.getClassLoader(),new Class<?>[]{VoiceControls.class},
                     (proxy,method,args) -> {
                         return switch(method.getName()) {
                             case "config" -> config;
                             case "groupsAvailable", "groupDirectoryAvailable" -> true;
                             case "group" -> null;
-                            case "groupList" -> List.of(new VoiceControls.GroupInfo("ABCDE",15,15,true,members));
+                            case "groupList" -> List.of(new VoiceControls.GroupInfo("ABCDE",20,20,true,members));
                             case "groupNotice" -> "";
                             case "availableUpdate" -> "0.1.12";
                             case "updateReleaseUrl" -> "https://github.com/RavoxX/MCVoice/releases/tag/v0.1.12-mc26.3";

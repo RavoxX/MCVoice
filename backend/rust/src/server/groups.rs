@@ -1,4 +1,4 @@
-//! Voice groups (spec 6.12): up to 15 sessions that hear each other non-positionally,
+//! Voice groups (spec 6.12): up to 20 sessions that hear each other non-positionally,
 //! across worlds and Minecraft servers. State lives in the hub, under its lock.
 
 use std::sync::Arc;
@@ -49,6 +49,7 @@ impl GroupLimits {
 
 pub(crate) struct Group {
     pub id: String,
+    group_type: String,
     /// salt, SHA-256(salt || password); never logged, never sent
     password: Option<([u8; 16], [u8; 32])>,
     /// connection ids in join order
@@ -63,13 +64,14 @@ fn hash(salt: &[u8; 16], password: &str) -> [u8; 32] {
 }
 
 impl Group {
-    fn new(id: String, password: Option<&str>) -> Group {
+    fn new(id: String, password: Option<&str>, group_type: String) -> Group {
         let password = password.map(|p| {
             let salt: [u8; 16] = rand::thread_rng().gen();
             (salt, hash(&salt, p))
         });
         Group {
             id,
+            group_type,
             password,
             members: Vec::new(),
         }
@@ -90,6 +92,7 @@ struct GroupEntry {
     members: usize,
     max: usize,
     password: bool,
+    group_type: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     roster: Option<Vec<Value>>,
 }
@@ -159,6 +162,7 @@ impl Hub {
     pub(crate) fn leave_group(&mut self, conn: u64, reason: Option<&str>) {
         let Some(ps) = self.peers.get_mut(&conn) else { return };
         let id = std::mem::take(&mut ps.peer.group);
+        ps.peer.group_policy = crate::routing::GroupPolicy::Open;
         if id.is_empty() {
             return;
         }
@@ -181,8 +185,11 @@ impl Hub {
     }
 
     fn join_group(&mut self, conn: u64, id: &str) {
+        let Some(g) = self.groups.get(id) else { return };
+        let policy = crate::routing::GroupPolicy::from_name(&g.group_type);
         if let Some(ps) = self.peers.get_mut(&conn) {
             ps.peer.group = id.to_string();
+            ps.peer.group_policy = policy;
         }
         let Some(g) = self.groups.get_mut(id) else { return };
         if !g.members.contains(&conn) {
@@ -190,7 +197,7 @@ impl Hub {
         }
         let g = &self.groups[id];
         let joined = json!({"type": "group_joined", "group": {
-            "id": g.id, "max": GROUP_MAX_MEMBERS, "password": g.password.is_some(), "members": self.members_json(g)
+            "id": g.id, "max": GROUP_MAX_MEMBERS, "password": g.password.is_some(), "group_type": g.group_type, "members": self.members_json(g)
         }})
         .to_string();
         self.queue(conn, joined);
@@ -236,6 +243,7 @@ impl Server {
                 members: g.members.len(),
                 max: GROUP_MAX_MEMBERS,
                 password: g.password.is_some(),
+                group_type: g.group_type.clone(),
                 roster: None,
             })
             .collect();
@@ -269,6 +277,11 @@ impl Server {
         if !self.group_session_ok(sess, &hub) {
             return;
         }
+        if m.group_type.is_some() && !hub.peers.get(&sess.conn_id).is_some_and(|p| p.group_modes_cap) {
+            drop(hub);
+            sess.send(error_frame(code::BAD_MESSAGE, "group_modes capability required", false));
+            return;
+        }
         if !hub.peers.get(&sess.conn_id).is_some_and(|p| p.peer.in_world) {
             drop(hub);
             sess.send(error_frame(code::NOT_IN_WORLD, "join a server first", false));
@@ -276,7 +289,10 @@ impl Server {
         }
         hub.leave_group(sess.conn_id, Some("replaced"));
         let id = hub.new_group_id();
-        hub.groups.insert(id.clone(), Group::new(id.clone(), m.password.as_deref()));
+        hub.groups.insert(
+            id.clone(),
+            Group::new(id.clone(), m.password.as_deref(), m.group_type.unwrap_or_else(|| "open".into())),
+        );
         hub.join_group(sess.conn_id, &id);
         let out = hub.take_outbox();
         drop(hub);
@@ -301,8 +317,10 @@ impl Server {
             return;
         }
         let already = ps.peer.group == id;
+        let modes = ps.group_modes_cap;
         let err = match hub.groups.get(&id) {
             None => Some((code::GROUP_NOT_FOUND, "no such group")),
+            Some(g) if g.group_type != "open" && !modes => Some((code::BAD_MESSAGE, "update your client to join this group type")),
             Some(_) if already => None,
             Some(g) if g.members.len() >= GROUP_MAX_MEMBERS => Some((code::GROUP_FULL, "group is full")),
             Some(g) if !g.password_ok(m.password.as_deref()) => Some((code::GROUP_PASSWORD, "wrong or missing password")),
@@ -380,7 +398,10 @@ mod tests {
             cursor: None,
             request_id: Some(1),
         });
-        let create = ClientMsg::GroupCreate(GroupCreate { password: None });
+        let create = ClientMsg::GroupCreate(GroupCreate {
+            password: None,
+            group_type: None,
+        });
         let join = ClientMsg::GroupJoin(GroupJoin {
             id: Some("ABCDE".into()),
             password: None,

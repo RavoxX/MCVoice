@@ -91,7 +91,14 @@ public final class StartupSmoke {
         Map<String, KeyMapping> keys = Arrays.stream(mc.options.keyMappings)
             .filter(k -> k.getName().startsWith("key.mcvoice."))
             .collect(Collectors.toMap(KeyMapping::getName, k -> k));
-        require(keys.size() == 7, "Expected seven registered MCVoice mappings");
+        require(keys.size() == 9, "Expected nine registered MCVoice mappings");
+        require(keys.get("key.mcvoice.open_menu").saveString().equals("key.keyboard.v"), "V must open the voice menu");
+        require(keys.get("key.mcvoice.toggle_icons").saveString().equals("key.keyboard.h"), "H must hide voice icons");
+        if (!UPGRADE) {
+            require(keys.get("key.mcvoice.push_to_talk").isUnbound(), "Choose the PTT key explicitly");
+            require(keys.get("key.mcvoice.whisper").isUnbound(), "Whisper must be unbound initially");
+            require(keys.get("key.mcvoice.open_groups").isUnbound(), "Groups must be unbound on 26.3");
+        }
         KeyMapping settings = keys.get("key.mcvoice.open_settings");
         KeyMapping status = keys.get("key.mcvoice.open_status");
         require(settings.isUnbound(), "Settings must be unbound (including saved -1)");

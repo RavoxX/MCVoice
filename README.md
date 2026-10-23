@@ -7,6 +7,10 @@ can still be heard on servers that run the Simple Voice Chat plugin.
 
 <img src="docs/images/icon.png" width="96" alt="MCVoice icon">
 
+Development **0.1.12-dev** changes the controls and group behavior described below.
+The published 0.1.11 release and public backend remain unchanged until a new
+release/deployment. See [controls, migration and compatibility](docs/svc-style-controls.md).
+
 * Positional 3D audio (equal-power stereo panning, distance attenuation),
   Opus at 48 kHz in 20 ms frames, a jitter buffer and a whisper mode.
 * **The local entity rule.** Positional voice from a speaker is played only
@@ -22,13 +26,15 @@ can still be heard on servers that run the Simple Voice Chat plugin.
   SVC client protocol reaches SVC-only players. MCVoice users connected both
   ways are heard exactly once (sender-aware deduplication), and the mod falls
   back to SVC when the cloud is unreachable. See [SVC interop](docs/svc-interop.md).
-* **Voice groups.** Up to 15 players hear each other everywhere, even on
+* **Voice groups.** Up to 20 players hear each other everywhere, even on
   different servers: search and join active groups, or create one with an
-  optional password (hotkey **G**). The menu loads 20 groups at a time and
+  optional password (Voice Chat > Groups). The menu loads 20 groups at a time and
   fetches more as you scroll; searching starts a fresh page of matching codes.
-  Groups default to voice activation while your microphone is on. The group's
-  **Group Mic** button independently switches to push-to-talk with **V**.
-  Nearby players keep their own activation mode, and nobody hears you twice.
+  Groups use the same push-to-talk or voice-activation mode as nearby speaking.
+  **Normal** groups keep your speech inside the group while letting you hear
+  nearby outsiders; **Open** groups also speak nearby; **Isolated** groups hear
+  only their members. Normal is the default. These choices require an updated
+  backend; older backends retain explicitly selected legacy Open groups.
 * Two interchangeable backends, in **Rust** (Tokio/axum) and **Go**, that
   pass the same black-box conformance suite.
 * Minecraft **1.8 → 26.3** on Forge, Fabric and Legacy Fabric (gaps listed with reasons). Every
@@ -62,14 +68,18 @@ Download the jar for your Minecraft version and loader from
    Legacy Fabric API on the versions that have it (1.8, 1.8.9, 1.9.4, 1.10.2,
    1.11.2, 1.12.2); on 1.8.1–1.8.8 the mod works without it.
 2. Join any server. Nothing is needed on the server.
-3. Default keys:
-   * **V**: push to talk;
-   * **B**: hold to whisper (works without holding V);
-   * **M**: mute;
-   * **N**: deafen;
-   * **G**: voice groups.
+3. Press **V** for the voice menu. Select your audio devices in Settings > Audio
+   and choose push-to-talk or voice activation in Settings > General. In
+   **Key Bindings**, choose your talk key and optionally a whisper key; keyboard
+   and mouse buttons are supported. Talk and whisper start unbound.
+   * **M**: mute/unmute in voice-activation mode;
+   * **N**: disable/enable voice chat (both speaking and listening);
+   * **H**: hide/show voice icons;
+   * **G**: groups on Minecraft 1.21.5 and earlier; unbound on 1.21.6+.
 
-   Settings and status screens can be bound in Controls.
+   All bindings also appear in Minecraft's Controls. Joining a group does not
+   automatically turn on voice activation. Whisper uses the same group routing
+   policy: it never makes a Normal/Isolated group audible to nearby outsiders.
 4. The HUD shows who is talking top left, including yourself when your microphone
    detects voice while transmitting. Your microphone appears bottom right while
    push-to-talk is held or voice activation is enabled (including group open mic):

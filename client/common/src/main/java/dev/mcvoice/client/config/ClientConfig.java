@@ -50,8 +50,6 @@ public final class ClientConfig {
 
     // --- transmission
     public volatile ActivationMode activationMode = ActivationMode.PUSH_TO_TALK;
-    /** Independent group microphone mode; preserve open microphone for existing users. */
-    public volatile ActivationMode groupActivationMode = ActivationMode.VOICE_ACTIVATION;
     /** Voice activation threshold in dBFS (-60..0). */
     public volatile double voiceActivationThresholdDb = -45;
     public volatile double micGain = 1.0;
@@ -69,6 +67,8 @@ public final class ClientConfig {
 
     // --- ui / diagnostics
     public volatile boolean showHud = true;
+    public volatile boolean hideVoiceIcons = false;
+    public volatile int controlsVersion;
     public volatile boolean showGroupHud = true;
     public volatile boolean groupServerOnly = false;
     public volatile boolean checkForUpdates = true;
@@ -159,9 +159,6 @@ public final class ClientConfig {
             outputDevice = out;
         }
         String mode = Json.str(m, "activationMode");
-        String groupMode = Json.str(m, "groupActivationMode");
-        if ("PUSH_TO_TALK".equals(groupMode)) groupActivationMode = ActivationMode.PUSH_TO_TALK;
-        else if ("VOICE_ACTIVATION".equals(groupMode)) groupActivationMode = ActivationMode.VOICE_ACTIVATION;
         if ("VOICE_ACTIVATION".equals(mode)) {
             activationMode = ActivationMode.VOICE_ACTIVATION;
         } else if ("PUSH_TO_TALK".equals(mode)) {
@@ -199,6 +196,8 @@ public final class ClientConfig {
             }
         }
         showHud = Json.bool(m, "showHud", showHud);
+        hideVoiceIcons = Json.bool(m, "hideVoiceIcons", hideVoiceIcons);
+        controlsVersion = (int) Json.lng(m, "controlsVersion", 0);
         showGroupHud = Json.bool(m, "showGroupHud", showGroupHud);
         hudLayout = HudLayout.fromJson(Json.objAt(m, "hudLayout"));
         showDebugOverlay = Json.bool(m, "showDebugOverlay", showDebugOverlay);
@@ -218,7 +217,6 @@ public final class ClientConfig {
         m.put("inputDevice", inputDevice);
         m.put("outputDevice", outputDevice);
         m.put("activationMode", activationMode.name());
-        m.put("groupActivationMode", groupActivationMode.name());
         m.put("voiceActivationThresholdDb", voiceActivationThresholdDb);
         m.put("micGain", micGain);
         m.put("noiseSuppression", noiseSuppression);
@@ -239,6 +237,8 @@ public final class ClientConfig {
         }
         m.put("mutedPlayers", mp);
         m.put("showHud", showHud);
+        m.put("hideVoiceIcons", hideVoiceIcons);
+        m.put("controlsVersion", controlsVersion);
         m.put("showGroupHud", showGroupHud);
         m.put("groupServerOnly", groupServerOnly);
         m.put("checkForUpdates", checkForUpdates);
