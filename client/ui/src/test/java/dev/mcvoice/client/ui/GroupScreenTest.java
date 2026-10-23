@@ -8,6 +8,40 @@ import org.junit.jupiter.api.Test;
 import dev.mcvoice.client.platform.ui.UiCanvas;
 
 class GroupScreenTest {
+    @Test void normalIsTheExplicitCreationDefaultAndAllTwentyMembersRemainReachable() {
+        dev.mcvoice.client.config.ClientConfig cfg=new dev.mcvoice.client.config.ClientConfig();
+        dev.mcvoice.client.proximity.GroupType[] created={null}; VoiceControls.Group[] group={null};
+        VoiceControls v=(VoiceControls)Proxy.newProxyInstance(getClass().getClassLoader(),new Class<?>[]{VoiceControls.class},(p,m,a)->{
+            switch(m.getName()) {
+            case "config": return cfg;
+            case "groupsAvailable": case "groupModesAvailable": return true;
+            case "group": return group[0];
+            case "groupList": return java.util.Collections.emptyList();
+            case "groupNotice": return "";
+            case "pushToTalkKey": return "P";
+            case "createGroup": created[0]=(dev.mcvoice.client.proximity.GroupType)a[1]; return null;
+            case "setActivationMode": cfg.activationMode=(dev.mcvoice.client.config.ClientConfig.ActivationMode)a[0]; return null;
+            default: return false;
+            }
+        });
+        SettingsPlayersTest.Canvas c=new SettingsPlayersTest.Canvas(); c.height=220;
+        GroupScreen screen=new GroupScreen(v); screen.render(c,0,0,0);
+        dev.mcvoice.client.ui.widget.Widget create=screen.widgets.get(screen.widgets.size()-1), type=screen.widgets.get(screen.widgets.size()-3);
+        screen.mouseClicked(create.x+1,create.y+1,0); assertEquals(dev.mcvoice.client.proximity.GroupType.NORMAL,created[0]);
+        screen.mouseClicked(type.x+1,type.y+1,0); screen.mouseClicked(create.x+1,create.y+1,0);
+        assertEquals(dev.mcvoice.client.proximity.GroupType.OPEN,created[0]);
+        List<VoiceControls.Member> members=new ArrayList<>();
+        for(int i=0;i<20;i++) members.add(new VoiceControls.Member(new java.util.UUID(0,i+1),"Player"+i));
+        group[0]=new VoiceControls.Group("ABCDE",false,20,members,dev.mcvoice.client.proximity.GroupType.ISOLATED);
+        screen.render(c,0,0,0);
+        dev.mcvoice.client.ui.widget.Widget microphone=screen.widgets.get(1);
+        screen.mouseClicked(microphone.x+1,microphone.y+1,0);
+        assertEquals(dev.mcvoice.client.config.ClientConfig.ActivationMode.VOICE_ACTIVATION,cfg.activationMode);
+        c.texts.clear(); screen.render(c,0,0,0); assertFalse(c.texts.contains("Player19"));
+        for(int i=0;i<20;i++) { screen.mouseScrolled(100,100,-1); c.texts.clear(); screen.render(c,0,0,0); }
+        assertTrue(c.texts.contains("Player19"),"the twentieth member must remain accessible on a short screen");
+    }
+
     @Test void rosterHeadsSummaryHoverAndFilterAreKeptTogether() {
         dev.mcvoice.client.config.ClientConfig config = new dev.mcvoice.client.config.ClientConfig();
         List<VoiceControls.Member> roster = new ArrayList<>();

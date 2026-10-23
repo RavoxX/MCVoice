@@ -131,7 +131,8 @@ type GroupList struct {
 }
 
 type GroupCreate struct {
-	Password *string `json:"password"`
+	Password  *string `json:"password"`
+	GroupType *string `json:"group_type"`
 }
 
 type GroupJoin struct {
@@ -142,7 +143,7 @@ type GroupJoin struct {
 type GroupLeave struct{}
 
 const (
-	GroupMaxMembers = 15
+	GroupMaxMembers = 20
 	GroupListMax    = 100
 	GroupPageMax    = 20
 	GroupIDAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
@@ -343,6 +344,9 @@ func validate(m any) *ControlError {
 			return bad("invalid group query")
 		}
 	case *GroupCreate:
+		if v.GroupType != nil && *v.GroupType != "normal" && *v.GroupType != "open" && *v.GroupType != "isolated" {
+			return bad("invalid group type")
+		}
 		if v.Password != nil && !validGroupPassword(*v.Password) {
 			return bad("invalid group password")
 		}
@@ -484,4 +488,4 @@ type Simple struct {
 }
 
 // Capabilities advertised by both backend implementations.
-var ServerCapabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "scope_attestation", "groups", "group_paging", "group_directory"}
+var ServerCapabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "scope_attestation", "groups", "group_paging", "group_directory", "group_modes"}
