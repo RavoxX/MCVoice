@@ -1,5 +1,8 @@
 # Rust 0.1.10 production deployment
 
+Superseded in production by [Rust 0.1.11 on 2026-10-23](deployment-0.1.11.md).
+The 0.1.10 image is retained for rollback.
+
 Deployed on **2026-10-19 at 16:36:35 UTC**, after the user authorized the new
 release and backend update. Only MCVoice on the existing shared host was
 recreated. All **30 other running containers** retained their identities.
