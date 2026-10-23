@@ -24,7 +24,10 @@ replay checks remain mandatory.
   Enabling trust without CIDRs fails startup. Do not use
   broad private-network ranges when an exact gateway/peer address is available.
 * Saturated limiter tables retain existing identities and use a bounded shared
-  overflow budget. Evicting live identities would restore attack budgets and
+  overflow budget. Unseen identities still share that stricter fallback budget
+  during saturation, so high-cardinality floods can throttle legitimate new
+  clients. This is bounded abuse handling, not a general DoS-capacity proof.
+  Evicting live identities would restore attack budgets and
   was deliberately avoided. Authentication-failure overflow no longer fails
   open. Group wrong-password budgets follow authenticated UUIDs across resumes
   and replacement. General group operation buckets remain connection scoped as
@@ -85,7 +88,7 @@ passing results.
 Local verification passed: protocol vector reproducibility, version matrix,
 Go formatting/vet/race tests, strict Rust release Clippy and release tests,
 40/40 cross-implementation scenarios against Rust, and the complete Java 8
-client build against each new backend (111 tests each, zero skipped/failing).
+client build against each final backend (112 tests each, zero skipped/failing).
 Four publication/download boundary tests, three release-report layout tests,
 workflow syntax via actionlint 1.7.12 (without external shellcheck/pyflakes),
 and staged/history Gitleaks scans passed. The Windows jar validator accepts
@@ -97,16 +100,37 @@ paths: the SVC downloader's working-directory path and lost build status after
 early Maven setup failure. Both were corrected; the latter has a regression
 test. Every expected loader is now required before GitHub asset publication.
 
-Remote CI `39280761322`, 26.3 runtime `39280764577`, and SVC 1.21.4 interop
-`39280767193` were dispatched. As of 2026-10-19 16:00 UTC they are queued during
-GitHub's Actions incident; these pending runs are not validation passes.
+Final-source `c10a847` CI [39284820030](https://github.com/RavoxX/MCVoice/actions/runs/39284820030)
+completed successfully across all six jobs, including both 40/40 conformance
+suites, fuzz/load smoke, Java 8 bytecode and secret checks. Minecraft 26.3
+[39284987176](https://github.com/RavoxX/MCVoice/actions/runs/39284987176)
+passes both loaders' input, HUD, fresh/saved-key, world-focus and shutdown checks.
+The Fabric jar compiles against updated official API 0.164.0+26.3 and runs with
+the harness's pinned 0.163.0+26.3 dependency. Aggregate API status lagged behind
+completed logs during GitHub's Actions incident; logs and run conclusions are
+kept separate.
+
+The first real-SVC runs `39280767193` and `39284263840` failed: the one-byte ACK
+assumption rejected a valid 256-byte authenticated server buffer. They are
+retained as regression evidence. Corrected SVC 1.21.4
+[39284820339](https://github.com/RavoxX/MCVoice/actions/runs/39284820339)
+returns `ok:true`, compatibility 20, GCM, CONNECTED, one online voice player and
+zero rejected packets. Existing negative tests were retained and extended.
+
+All 62 generated branches contain the final source. Stable all-version release
+[39285852532](https://github.com/RavoxX/MCVoice/actions/runs/39285852532)
+completed successfully: all 260 jobs, 102 validated jars, 62 GitHub Releases,
+102 Maven publications and both images. Every release asset digest matches its
+byte-verified Maven jar; both 26.3 jars match the runtime-tested artifacts.
+See [verification evidence](release-0.1.10-verification.json) and the
+[production deployment](deployment-0.1.10.md).
 
 ## Before/after measurements
 
 [Raw samples and binary provenance](benchmarks/2026-10-19-hardening.json)
 compare 0.1.9 (`0fef0da`) with measured 0.1.10 source (`b451681`, before the
-additional repeated-XFF parsing correction; measured audio/presence paths are
-unchanged by that correction). Windows
+additional repeated-XFF and SVC handshake corrections; measured audio/presence
+paths are unchanged by those cold-path corrections). Windows
 x64, Ryzen 7 5800X3D, one loopback host, three repetitions; no concurrent builds
 during retained measurements. UDP runs alternate order, use four workers,
 200 clients/60 talkers at 50 Hz, 5s ramp and 10s measurement. Values below are
