@@ -30,14 +30,14 @@ Executing steps
  > Running 'listLibraries'
  > Running 'rename'
 Stopping at requested step: /home/runner/.gradle/caches/forge_gradle/mcp_repo/de/oceanlabs/mcp/mcp_config/1.21.6-20250618.020446/joined/rename/output.jar
-[18:48:41] [main/INFO]: Writing debug log file accesstransform.log
-[18:48:41] [main/INFO]: Access Transformer processor running version 8.2.14
-[18:48:41] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9/forge-1.21.6-56.0.9-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9_mapped_official_1.21.6/forge-1.21.6-56.0.9_mapped_official_1.21.6.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg]
-[18:48:41] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9/forge-1.21.6-56.0.9-injected.jar
-[18:48:41] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9_mapped_official_1.21.6/forge-1.21.6-56.0.9_mapped_official_1.21.6.jar
-[18:48:41] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg
-[18:48:41] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9_mapped_official_1.21.6/forge-1.21.6-56.0.9_mapped_official_1.21.6.jar, overwriting
-[18:48:44] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9_mapped_official_1.21.6/forge-1.21.6-56.0.9_mapped_official_1.21.6.jar
+[20:06:15] [main/INFO]: Writing debug log file accesstransform.log
+[20:06:15] [main/INFO]: Access Transformer processor running version 8.2.14
+[20:06:15] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9/forge-1.21.6-56.0.9-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9_mapped_official_1.21.6/forge-1.21.6-56.0.9_mapped_official_1.21.6.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg]
+[20:06:15] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9/forge-1.21.6-56.0.9-injected.jar
+[20:06:15] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9_mapped_official_1.21.6/forge-1.21.6-56.0.9_mapped_official_1.21.6.jar
+[20:06:15] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg
+[20:06:15] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9_mapped_official_1.21.6/forge-1.21.6-56.0.9_mapped_official_1.21.6.jar, overwriting
+[20:06:19] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.6-56.0.9_mapped_official_1.21.6/forge-1.21.6-56.0.9_mapped_official_1.21.6.jar
 Creating SRG -> MCP TSRG
 Note: /home/runner/work/MCVoice/MCVoice/client/core/src/main/java/dev/mcvoice/client/core/ReleaseChecker.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
@@ -53,7 +53,7 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792781234157.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792785881451.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/MCVoice/MCVoice/minecraft/forge/build/reports/problems/problems-report.html
 
@@ -63,9 +63,9 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.12.1/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 1m 56s
+BUILD SUCCESSFUL in 2m 11s
 4 actionable tasks: 4 executed
-valid: mcvoice-0.1.12-dev-mc1.21.6-forge.jar (418 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.12-mc1.21.6-forge.jar (418 classes, 18 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
