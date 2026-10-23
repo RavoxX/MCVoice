@@ -40,6 +40,17 @@ class GroupScreenTest {
         dev.mcvoice.client.ui.widget.Widget row=screen.widgets.get(4);
         text.clear(); heads.clear(); screen.render(canvas,row.x+7,row.y+18,0);
         assertTrue(text.contains("Alice"), "hover reveals the corresponding head's name");
+        UiCanvas styled = new UiCanvas() {
+            public int width(){return 400;} public int height(){return 300;}
+            public void fill(int x1,int y1,int x2,int y2,int argb){}
+            public void text(String value,int x,int y,int argb,boolean shadow){}
+            public int textWidth(String value){return value.length()*6;} public int fontHeight(){return 9;}
+            public int playerNameWidth(java.util.UUID uuid,String fallback){return 140;}
+            public void playerName(java.util.UUID uuid,String fallback,int x,int y,int argb,boolean shadow,int maxWidth){
+                assertTrue(maxWidth>=140,"hover reserves the full styled name, including server prefixes");
+            }
+        };
+        screen.render(styled,row.x+7,row.y+18,0);
         screen.mouseClicked(row.x+3,row.y+3,0); assertEquals("ABCDE",joined[0]);
         dev.mcvoice.client.ui.widget.Widget filter=screen.widgets.get(3);
         screen.mouseClicked(filter.x+2,filter.y+2,0); assertTrue(config.groupServerOnly);

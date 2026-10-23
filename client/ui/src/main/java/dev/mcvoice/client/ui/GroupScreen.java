@@ -70,7 +70,7 @@ public final class GroupScreen extends BaseScreen {
         super.render(c, mouseX, mouseY, partialTicks);
         if (hoveredMember != null) {
             String name = hoveredMember.name;
-            int w = c.textWidth(name) + 8;
+            int w = Math.min(c.width() - 8, c.playerNameWidth(hoveredMember.uuid, name) + 8);
             int x = Math.max(2, Math.min(mouseX + 8, c.width() - w - 2));
             int y = Math.max(2, Math.min(mouseY + 12, c.height() - c.fontHeight() - 10));
             c.fill(x, y, x + w, y + c.fontHeight() + 6, 0xF0100010);

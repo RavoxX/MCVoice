@@ -49,7 +49,7 @@ public final class HudSmoke {
             if (directory == null) {
                 ClientConfig config = new ClientConfig();
                 java.util.ArrayList<VoiceControls.Member> members = new java.util.ArrayList<>();
-                members.add(new VoiceControls.Member(self,"Alice"));
+                members.add(new VoiceControls.Member(self,mc.player.getName().getString()));
                 for (int i=1;i<15;i++) members.add(new VoiceControls.Member(new UUID(0,i),"Player"+i));
                 VoiceControls browser = (VoiceControls)Proxy.newProxyInstance(VoiceControls.class.getClassLoader(),new Class<?>[]{VoiceControls.class},
                     (proxy,method,args) -> {
