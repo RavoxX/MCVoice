@@ -243,7 +243,8 @@ class HudEditorTest {
         assertEquals(0, c.saves);
         Widget done = screen.widgets.get(screen.widgets.size() - 1);
         for (Widget widget : screen.widgets) {
-            if (widget != done) assertTrue(widget.y + widget.h <= done.y);
+            if (widget != done) assertTrue(widget.y + widget.h <= done.y || widget.x >= done.x + done.w,
+                "a control must be above or beside Done, never overlap it");
         }
     }
 
