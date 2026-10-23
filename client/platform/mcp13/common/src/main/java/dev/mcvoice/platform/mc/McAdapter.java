@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.lwjgl.glfw.GLFW;
+import net.minecraft.client.util.InputMappings;
 
 import dev.mcvoice.client.platform.AudioAdapter;
 import dev.mcvoice.client.platform.GuiAdapter;
@@ -46,10 +47,12 @@ public final class McAdapter implements MinecraftAdapter {
         this.mcVersion = mcVersion;
         this.loader = loader;
         this.configDir = configDir;
-        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", GLFW.GLFW_KEY_V));
-        keys.put(InputAdapter.Action.WHISPER, key("whisper", GLFW.GLFW_KEY_B));
+        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", GLFW.GLFW_KEY_UNKNOWN));
+        keys.put(InputAdapter.Action.WHISPER, key("whisper", GLFW.GLFW_KEY_UNKNOWN));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", GLFW.GLFW_KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", GLFW.GLFW_KEY_N));
+        keys.put(InputAdapter.Action.OPEN_MENU, key("open_menu", GLFW.GLFW_KEY_V));
+        keys.put(InputAdapter.Action.TOGGLE_ICONS, key("toggle_icons", GLFW.GLFW_KEY_H));
         keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", -1));
         keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", -1));
         keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", GLFW.GLFW_KEY_G));
@@ -217,6 +220,28 @@ public final class McAdapter implements MinecraftAdapter {
         public String keyName(Action a) {
             KeyBinding k = keys.get(a);
             return k == null ? "?" : k.getLocalizedName();
+        }
+
+        @Override public boolean isBound(Action a) { return keys.get(a) != null && !keys.get(a).isInvalid(); }
+        @Override public boolean bindKey(Action a, int code, boolean mouse) {
+            KeyBinding k = keys.get(a); if (k == null) return false;
+            k.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, mouse ? InputMappings.getInputByName("key.mouse." + (code + 1))
+                : code < 0 ? InputMappings.getInputByName("key.keyboard.unknown") : InputMappings.getInputByCode(code, 0));
+            KeyBinding.resetKeyBindingArrayAndHash(); mc().gameSettings.saveOptions(); return true;
+        }
+        @Override public void migrateControls() {
+            if (legacyDefault(Action.PUSH_TO_TALK, "key.keyboard.v")) bindKey(Action.PUSH_TO_TALK, -1, false);
+            if (legacyDefault(Action.WHISPER, "key.keyboard.b")) bindKey(Action.WHISPER, -1, false);
+            for (Action action : new Action[]{Action.OPEN_MENU, Action.TOGGLE_ICONS}) {
+                KeyBinding k = keys.get(action);
+                for (KeyBinding other : keys.values()) if (other != k && !k.isInvalid() && k.conflicts(other)) {
+                    bindKey(action, -1, false); break;
+                }
+            }
+        }
+        private boolean legacyDefault(Action action, String value) {
+            KeyBinding k = keys.get(action);
+            return k.getKeyModifier() == net.minecraftforge.client.settings.KeyModifier.NONE && value.equals(k.getKey().getName());
         }
     };
 
