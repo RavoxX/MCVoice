@@ -297,7 +297,10 @@ git show FETCH_HEAD:<path>`).
   default. The Java 8 client checks public stable GitHub releases off the game
   and voice-network threads, matches exact Minecraft/loader assets, and offers
   a release link plus opt-out under Settings > Updates. See
-  `docs/group-directory-and-updates.md` for coverage and limitations.
+  `docs/group-directory-and-updates.md` for coverage and limitations. Source
+  `d70ea5d` passes CI `39960283850` (six jobs) and 26.3 runtime `39960281089`
+  (Fabric + Forge, including real menu screenshots and native SDL controls).
+  No 0.1.11 release or production deployment has occurred.
 
 * **Stable 0.1.10 released:** replay/rotation, trusted proxy identity,
   reconnect password budgets, admission/moderation, concurrent config, group

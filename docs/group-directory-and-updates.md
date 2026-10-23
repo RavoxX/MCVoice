@@ -63,5 +63,27 @@ exact game/loader matching, multi-page searches, missing/malformed/API failures,
 link host pinning, preferences and small-GUI layout. The 26.3 startup harness
 also exercises native SDL events for the directory filter and update link.
 
-CI/runtime results are recorded after validation. This document does not claim
-a release, supported-version rebuild or production backend deployment.
+Validated source `d70ea5d2686d4f8e1a7f84f4763d0d83aeba7b19` passes
+[CI 39960283850](https://github.com/RavoxX/MCVoice/actions/runs/39960283850)
+(all six jobs, including Java 8 bytecode, e2e with both backends and the shared
+41-scenario conformance suite). Both backend images pass their non-publishing
+PR build/smoke checks. Local Go vet/race, Rust release tests/strict Clippy,
+complete client builds, protocol reproducibility, matrix and Gitleaks passed.
+
+[26.3 runtime 39960281089](https://github.com/RavoxX/MCVoice/actions/runs/39960281089)
+passes Fabric and Forge: fresh menu/world, existing keybindings/Quick Play,
+negative control, SDL settings/text input, group filter and update-link actions,
+native extractor rendering, mouse focus and shutdown. Its artifact screenshots
+include `group-directory.png` (15 heads, complete hover name) and `updates.png`.
+They are controlled test scenes; the displayed 0.1.12 update is a fixture,
+not an actual publication. Fabric screenshots were visually inspected locally.
+
+The initial runtime attempts exposed an outdated player-search test proxy
+returning a Boolean for the new String update field; it was corrected without
+skipping assertions. Screenshot review also caught a tooltip sized to the plain
+username instead of the styled name; the production width and a regression
+covering prefixes were added before the final successful run. The original
+small-GUI checks now verify that the new footer button is beside Done while
+all existing rows remain above it; overlapping rectangles still fail.
+
+This does not claim an all-version release or production backend deployment.
