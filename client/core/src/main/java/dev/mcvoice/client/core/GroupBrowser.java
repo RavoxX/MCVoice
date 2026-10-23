@@ -13,7 +13,7 @@ import dev.mcvoice.client.ui.VoiceControls.GroupInfo;
 final class GroupBrowser {
     static final int PAGE_SIZE = 20;
     interface Sender {
-        boolean send(String query, String cursor, long requestId, boolean paged);
+        boolean send(String query, String cursor, long requestId, boolean paged, boolean serverOnly);
     }
 
     private List<GroupInfo> entries = Collections.emptyList();
@@ -21,12 +21,18 @@ final class GroupBrowser {
     private String query = "", cursor;
     private long generation, sentGeneration, sequence, requestId, sentAt, nextRequestAt;
     private boolean wanted, pending, pagedRequest;
+    private boolean serverOnly;
 
     synchronized List<GroupInfo> entries() { return entries; }
     synchronized boolean loading() { return wanted || pending; }
     synchronized boolean hasMore() { return cursor != null || entries.size() < legacy.size(); }
 
     synchronized void search(String value) {
+        search(value, false);
+    }
+
+    synchronized void search(String value, boolean onlyServer) {
+        serverOnly = onlyServer;
         query = value == null ? "" : value.toUpperCase(Locale.ROOT);
         generation++;
         entries = Collections.emptyList();
@@ -64,7 +70,11 @@ final class GroupBrowser {
         pagedRequest = paged;
         pending = true;
         wanted = false;
-        if (!sender.send(query, cursor, requestId, paged)) pending = false;
+        if (!sender.send(query, cursor, requestId, paged, serverOnly)) pending = false;
+    }
+
+    synchronized void scopeChanged() {
+        if (wanted || pending || !entries.isEmpty()) search(query, serverOnly);
     }
 
     synchronized void receive(long id, String nextCursor, List<GroupInfo> page) {
