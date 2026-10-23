@@ -49,10 +49,12 @@ public final class McAdapter implements MinecraftAdapter {
         this.mcVersion = mcVersion;
         this.loader = loader;
         this.configDir = configDir;
-        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", Keyboard.KEY_V));
-        keys.put(InputAdapter.Action.WHISPER, key("whisper", Keyboard.KEY_B));
+        keys.put(InputAdapter.Action.PUSH_TO_TALK, key("push_to_talk", Keyboard.KEY_NONE));
+        keys.put(InputAdapter.Action.WHISPER, key("whisper", Keyboard.KEY_NONE));
         keys.put(InputAdapter.Action.TOGGLE_MUTE, key("toggle_mute", Keyboard.KEY_M));
         keys.put(InputAdapter.Action.TOGGLE_DEAFEN, key("toggle_deafen", Keyboard.KEY_N));
+        keys.put(InputAdapter.Action.OPEN_MENU, key("open_menu", Keyboard.KEY_V));
+        keys.put(InputAdapter.Action.TOGGLE_ICONS, key("toggle_icons", Keyboard.KEY_H));
         keys.put(InputAdapter.Action.OPEN_SETTINGS, key("open_settings", Keyboard.KEY_NONE));
         keys.put(InputAdapter.Action.OPEN_DEBUG, key("open_status", Keyboard.KEY_NONE));
         keys.put(InputAdapter.Action.OPEN_GROUPS, key("open_groups", Keyboard.KEY_G));
@@ -266,6 +268,34 @@ public final class McAdapter implements MinecraftAdapter {
         public String keyName(Action a) {
             KeyBinding k = keys.get(a);
             return k == null ? "?" : GameSettings.getKeyDisplayString(k.getKeyCode());
+        }
+
+        @Override public boolean isBound(Action a) { return keys.get(a) != null && keys.get(a).getKeyCode() != 0; }
+        @Override public boolean bindKey(Action a, int code, boolean mouse) {
+            KeyBinding k = keys.get(a); if (k == null) return false;
+
+            k.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, mouse ? code - 100 : code < 0 ? 0 : code);
+
+
+
+            KeyBinding.resetKeyBindingArrayAndHash(); mc().gameSettings.saveOptions(); return true;
+        }
+        @Override public void migrateControls() {
+            if (legacyDefault(Action.PUSH_TO_TALK, Keyboard.KEY_V)) bindKey(Action.PUSH_TO_TALK, -1, false);
+            if (legacyDefault(Action.WHISPER, Keyboard.KEY_B)) bindKey(Action.WHISPER, -1, false);
+            for (Action action : new Action[]{Action.OPEN_MENU, Action.TOGGLE_ICONS}) {
+                KeyBinding k = keys.get(action);
+                for (KeyBinding other : keys.values()) if (other != k && k.getKeyCode() != 0 && k.getKeyCode() == other.getKeyCode()) {
+                    bindKey(action, -1, false); break;
+                }
+            }
+        }
+        private boolean legacyDefault(Action action, int code) {
+            KeyBinding k = keys.get(action);
+
+            if (k.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE) return false;
+
+            return k.getKeyCode() == code;
         }
     };
 
