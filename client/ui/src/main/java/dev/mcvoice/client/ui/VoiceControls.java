@@ -93,6 +93,19 @@ public interface VoiceControls {
     /** Ask the backend for the group list; query (id part) may be empty. */
     void requestGroups(String query);
 
+    default boolean groupDirectoryAvailable() { return false; }
+
+    default void setGroupServerOnly(boolean value) {
+        config().groupServerOnly = value;
+    }
+
+    default String availableUpdate() { return ""; }
+
+    default String updateReleaseUrl() { return ""; }
+
+    default void openUpdateRelease() { }
+    default void openUpdates() { }
+
     /** Request the next batch, if available; duplicate requests are coalesced. */
     void loadMoreGroups();
 
@@ -174,10 +187,17 @@ public interface VoiceControls {
         public final boolean password;
 
         public GroupInfo(String id, int members, int max, boolean password) {
+            this(id, members, max, password, java.util.Collections.<Member>emptyList());
+        }
+
+        public final List<Member> roster;
+
+        public GroupInfo(String id, int members, int max, boolean password, List<Member> roster) {
             this.id = id;
             this.members = members;
             this.max = max;
             this.password = password;
+            this.roster = java.util.Collections.unmodifiableList(new java.util.ArrayList<Member>(roster));
         }
     }
 
