@@ -6,6 +6,18 @@ import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.settings.KeyModifier;
 
 final class LoaderChecks {
+    static void modifiedDefaults(dev.mcvoice.client.core.VoiceClient client, KeyMapping key) {
+        InputConstants.Key original = InputConstants.getKey(key.saveString());
+        KeyModifier modifier = key.getKeyModifier();
+        key.setKeyModifierAndCode(KeyModifier.CONTROL, InputConstants.getKey("key.keyboard.v"));
+        client.config().controlsVersion = 0;
+        client.clientTick();
+        require(key.saveString().equals("key.keyboard.v") && key.getKeyModifier() == KeyModifier.CONTROL,
+            "Control+V was mistaken for the old unmodified V default");
+        key.setKeyModifierAndCode(modifier, original);
+        client.bindKey(dev.mcvoice.client.platform.InputAdapter.Action.OPEN_MENU, InputConstants.KEY_V, false);
+        com.mojang.logging.LogUtils.getLogger().info("MCVOICE_SMOKE modified-defaults PASS");
+    }
     static void check(Map<String, KeyMapping> keys, boolean upgrade) {
         if (upgrade) {
             require(keys.get("key.mcvoice.push_to_talk").getKeyModifier() == KeyModifier.CONTROL, "Saved Control modifier lost");

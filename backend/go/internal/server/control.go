@@ -197,6 +197,9 @@ func (s *Server) HandleControl(w http.ResponseWriter, r *http.Request) {
 		if cp == "groups" {
 			sess.groupsCap = true
 		}
+		if cp == "group_modes" {
+			sess.groupModesCap = true
+		}
 	}
 	sess.lastSeen.Store(now.UnixMilli())
 	if code := s.register(sess); code != "" {
