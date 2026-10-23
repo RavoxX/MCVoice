@@ -50,6 +50,7 @@ fn unregistered_player(srv: &Server, id: u8) -> (Arc<Session>, PeerState, mpsc::
         admin_muted: false,
         has_scope: true,
         groups_cap: true,
+        group_modes_cap: true,
         out_of_world_since: None,
     };
     (sess, ps, rx)
@@ -147,7 +148,13 @@ async fn group_and_proximity_remain_disjoint_and_current() {
     let (nearby, _rx3) = player(&srv, 3);
     visible(&srv, &sender, &member);
     visible(&srv, &sender, &nearby);
-    srv.group_create(&sender, GroupCreate { password: None });
+    srv.group_create(
+        &sender,
+        GroupCreate {
+            password: None,
+            group_type: None,
+        },
+    );
     let id = srv.hub.read().unwrap().peers[&sender.conn_id].peer.group.clone();
     srv.group_join(
         &member,
