@@ -178,15 +178,28 @@ func (s *Server) groupsAllowed(sess *Session) bool {
 	return sess.groupsCap
 }
 
+func groupOnNetwork(g *group, sess *Session) bool {
+	if !sess.peer.InWorld || sess.networkID == "" {
+		return false
+	}
+	for _, member := range g.members {
+		if member.peer.InWorld && member.networkID == sess.networkID {
+			return true
+		}
+	}
+	return false
+}
+
 func (s *Server) groupList(sess *Session, m *protocol.GroupList) {
 	if !s.groupsAllowed(sess) {
 		return
 	}
 	type entry struct {
-		ID       string `json:"id"`
-		Members  int    `json:"members"`
-		Max      int    `json:"max"`
-		Password bool   `json:"password"`
+		ID       string       `json:"id"`
+		Members  int          `json:"members"`
+		Max      int          `json:"max"`
+		Password bool         `json:"password"`
+		Roster   []memberJSON `json:"roster,omitempty"`
 	}
 	s.mu.RLock()
 	l := make([]entry, 0, len(s.groups))
@@ -199,10 +212,10 @@ func (s *Server) groupList(sess *Session, m *protocol.GroupList) {
 		cursor = strings.ToUpper(*m.Cursor)
 	}
 	for _, g := range s.groups {
-		if !strings.Contains(g.id, q) || g.id <= cursor {
+		if !strings.Contains(g.id, q) || g.id <= cursor || (m.ServerOnly && !groupOnNetwork(g, sess)) {
 			continue
 		}
-		l = append(l, entry{g.id, len(g.members), protocol.GroupMaxMembers, g.pwHash != nil})
+		l = append(l, entry{ID: g.id, Members: len(g.members), Max: protocol.GroupMaxMembers, Password: g.pwHash != nil})
 	}
 	s.mu.RUnlock()
 	sort.Slice(l, func(i, j int) bool {
@@ -223,6 +236,24 @@ func (s *Server) groupList(sess *Session, m *protocol.GroupList) {
 	}
 	if len(l) > limit {
 		l = l[:limit]
+	}
+	// Copy at most one page of public identities; never allocate rosters for the whole directory.
+	if m.Details || m.ServerOnly {
+		s.mu.RLock()
+		page := l[:0]
+		for _, e := range l {
+			g := s.groups[e.ID]
+			if g == nil || (m.ServerOnly && !groupOnNetwork(g, sess)) {
+				continue
+			}
+			e.Members = len(g.members)
+			if m.Details {
+				e.Roster = membersJSON(g)
+			}
+			page = append(page, e)
+		}
+		l = page
+		s.mu.RUnlock()
 	}
 	response["groups"] = l
 	sess.send(marshal(response))

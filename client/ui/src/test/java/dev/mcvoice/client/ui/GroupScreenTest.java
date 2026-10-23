@@ -8,6 +8,44 @@ import org.junit.jupiter.api.Test;
 import dev.mcvoice.client.platform.ui.UiCanvas;
 
 class GroupScreenTest {
+    @Test void rosterHeadsSummaryHoverAndFilterAreKeptTogether() {
+        dev.mcvoice.client.config.ClientConfig config = new dev.mcvoice.client.config.ClientConfig();
+        List<VoiceControls.Member> roster = new ArrayList<>();
+        for (String name : new String[]{"Alice", "Bob", "Charlie"}) roster.add(new VoiceControls.Member(java.util.UUID.randomUUID(), name));
+        List<String> text = new ArrayList<>(); List<java.util.UUID> heads = new ArrayList<>();
+        int[] requests = {0}; String[] joined = {null};
+        VoiceControls v = (VoiceControls) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{VoiceControls.class}, (p,m,a) -> {
+            switch(m.getName()) {
+            case "config": return config;
+            case "groupsAvailable": case "groupDirectoryAvailable": return true;
+            case "group": return null;
+            case "groupList": return java.util.Collections.singletonList(new VoiceControls.GroupInfo("ABCDE",3,15,false,roster));
+            case "requestGroups": requests[0]++; return null;
+            case "setGroupServerOnly": config.groupServerOnly = (Boolean)a[0]; return null;
+            case "groupNotice": return "";
+            case "joinGroup": joined[0]=(String)a[0]; return null;
+            default: return false;
+            }
+        });
+        UiCanvas canvas = new UiCanvas() {
+            public int width(){return 400;} public int height(){return 300;}
+            public void fill(int x1,int y1,int x2,int y2,int argb){}
+            public void text(String value,int x,int y,int argb,boolean shadow){text.add(value);}
+            public int textWidth(String value){return value.length()*6;} public int fontHeight(){return 9;}
+            public void playerHead(java.util.UUID uuid,int x,int y,int size){heads.add(uuid);}
+        };
+        GroupScreen screen = new GroupScreen(v); screen.render(canvas,0,0,0);
+        assertTrue(text.contains("ABCDE  Alice, Bob, ..."));
+        assertEquals(3,heads.size());
+        dev.mcvoice.client.ui.widget.Widget row=screen.widgets.get(4);
+        text.clear(); heads.clear(); screen.render(canvas,row.x+7,row.y+18,0);
+        assertTrue(text.contains("Alice"), "hover reveals the corresponding head's name");
+        screen.mouseClicked(row.x+3,row.y+3,0); assertEquals("ABCDE",joined[0]);
+        dev.mcvoice.client.ui.widget.Widget filter=screen.widgets.get(3);
+        screen.mouseClicked(filter.x+2,filter.y+2,0); assertTrue(config.groupServerOnly);
+        text.clear(); heads.clear(); screen.render(canvas,0,0,0);
+        assertEquals(2,requests[0]); assertTrue(text.contains("Show: This Server"));
+    }
     @Test void scrollingLoadsNextPageOnceAndSearchDoesNotLoadOldResults() {
         List<VoiceControls.GroupInfo> groups = new ArrayList<VoiceControls.GroupInfo>();
         for (int i = 0; i < 20; i++) groups.add(new VoiceControls.GroupInfo("ABCDE", 1, 15, false));
@@ -15,6 +53,7 @@ class GroupScreenTest {
         VoiceControls controls = (VoiceControls) Proxy.newProxyInstance(VoiceControls.class.getClassLoader(),
             new Class<?>[] {VoiceControls.class}, (proxy, method, args) -> {
                 switch (method.getName()) {
+                case "config": return new dev.mcvoice.client.config.ClientConfig();
                 case "groupsAvailable": case "hasMoreGroups": return true;
                 case "group": return null;
                 case "groupList": return groups;

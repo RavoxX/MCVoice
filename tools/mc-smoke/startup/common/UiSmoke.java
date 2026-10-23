@@ -10,6 +10,8 @@ import dev.mcvoice.client.config.ClientConfig;
 import dev.mcvoice.client.platform.ui.UiCanvas;
 import dev.mcvoice.client.platform.ui.UiScreen;
 import dev.mcvoice.client.ui.SettingsScreen;
+import dev.mcvoice.client.ui.GroupScreen;
+import dev.mcvoice.client.ui.UpdateScreen;
 import dev.mcvoice.client.ui.HudEditorScreen;
 import dev.mcvoice.client.config.HudLayout;
 import dev.mcvoice.client.ui.HudRenderer;
@@ -33,11 +35,52 @@ final class UiSmoke {
         testTextField();
         testGroupHudEditor();
         testPlayerSearch();
+        testDirectoryAndUpdates();
         LogUtils.getLogger().info("MCVOICE_SMOKE settings-input PASS");
     }
 
     private static MouseButtonEvent mouse(int x, int y, int button) {
         return new MouseButtonEvent(x, y, new MouseButtonInfo(button, 0));
+    }
+
+    private static void testDirectoryAndUpdates() {
+        ClientConfig config = new ClientConfig();
+        List<VoiceControls.Member> members = List.of(new VoiceControls.Member(UUID.randomUUID(), "Alice"),
+            new VoiceControls.Member(UUID.randomUUID(), "Bob"), new VoiceControls.Member(UUID.randomUUID(), "Charlie"));
+        int[] requests = {0}, links = {0};
+        VoiceControls controls = (VoiceControls) Proxy.newProxyInstance(VoiceControls.class.getClassLoader(), new Class<?>[]{VoiceControls.class},
+            (proxy, method, args) -> {
+                switch (method.getName()) {
+                case "config": return config;
+                case "groupsAvailable": case "groupDirectoryAvailable": return true;
+                case "group": return null;
+                case "groupList": return List.of(new VoiceControls.GroupInfo("ABCDE",3,15,false,members));
+                case "requestGroups": requests[0]++; return null;
+                case "setGroupServerOnly": config.groupServerOnly = (Boolean)args[0]; return null;
+                case "availableUpdate": return config.checkForUpdates ? "0.1.12" : "";
+                case "updateReleaseUrl": return config.checkForUpdates ? "https://github.com/RavoxX/MCVoice/releases/tag/v0.1.12-mc26.3" : "";
+                case "openUpdateRelease": links[0]++; return null;
+                default:
+                    if (method.getReturnType() == String.class) return "";
+                    if (method.getReturnType() == void.class) return null;
+                    return false;
+                }
+            });
+        Canvas canvas = new Canvas(); GroupScreen groups = new GroupScreen(controls); McScreen groupScreen = new McScreen(groups);
+        canvas.draw(groups);
+        canvas.find("ABCDE  Alice, Bob, ...");
+        require(canvas.heads.size() == 3, "Group preview did not draw every member head");
+        Head head = canvas.heads.get(0);
+        groups.render(canvas, head.x + 1, head.y + 1, 0);
+        canvas.find("Alice");
+        click(groupScreen, canvas.find("Show: All Groups")); canvas.draw(groups);
+        require(config.groupServerOnly && requests[0] == 2, "SDL directory filter did not request a fresh page");
+        UpdateScreen updates = new UpdateScreen(controls); McScreen updateScreen = new McScreen(updates);
+        canvas.draw(updates); click(updateScreen, canvas.find("Open 0.1.12 on GitHub"));
+        require(links[0] == 1, "SDL release link did not activate");
+        click(updateScreen, canvas.find("Update checks: On")); canvas.draw(updates);
+        require(!config.checkForUpdates, "SDL update preference did not change");
+        canvas.find("Automatic checks are off.");
     }
 
     private static void testSettings() {
@@ -225,16 +268,19 @@ final class UiSmoke {
     }
 
     private record Text(String value, int x, int y) {}
+    private record Head(UUID uuid, int x, int y) {}
 
     private static final class Canvas implements UiCanvas {
         final List<Text> texts = new ArrayList<>();
+        final List<Head> heads = new ArrayList<>();
+        public void playerHead(UUID uuid, int x, int y, int size) { heads.add(new Head(uuid,x,y)); }
         public int width() { return 474; }
         public int height() { return 318; }
         public void fill(int x1, int y1, int x2, int y2, int color) {}
         public void text(String text, int x, int y, int color, boolean shadow) { texts.add(new Text(text, x, y)); }
         public int textWidth(String text) { return text.length() * 6; }
         public int fontHeight() { return 9; }
-        void draw(UiScreen ui) { texts.clear(); ui.render(this, 0, 0, 0); }
+        void draw(UiScreen ui) { texts.clear(); heads.clear(); ui.render(this, 0, 0, 0); }
         Text find(String prefix) { return texts.stream().filter(t -> t.value.startsWith(prefix)).findFirst().orElseThrow(); }
     }
 

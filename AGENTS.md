@@ -289,6 +289,16 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
+* **0.1.11 group directory / updates (unreleased):** paged `group_directory`
+  previews include public UUID/name rosters (password groups included) without
+  granting membership/playback. Both backends filter before paging using the
+  latest in-world address hash; network ids remain absent from routing checks.
+  Group rows show heads/tooltips and two-name summaries; All Groups is the saved
+  default. The Java 8 client checks public stable GitHub releases off the game
+  and voice-network threads, matches exact Minecraft/loader assets, and offers
+  a release link plus opt-out under Settings > Updates. See
+  `docs/group-directory-and-updates.md` for coverage and limitations.
+
 * **Stable 0.1.10 released:** replay/rotation, trusted proxy identity,
   reconnect password budgets, admission/moderation, concurrent config, group
   transport isolation and protocol edge cases have regression coverage. CI

@@ -198,6 +198,8 @@ impl Session {
 
 /// Routing-relevant state of a session, guarded by the hub lock.
 pub struct PeerState {
+    /// Directory filter only; never used by audio routing.
+    pub network_id: String,
     pub peer: Peer,
     pub peers_rev: u32,
     pub presence: HashSet<String>,
