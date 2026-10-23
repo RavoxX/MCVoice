@@ -171,6 +171,7 @@ fn routing_vectors() {
                 world_id: s["world_id"].as_str().unwrap().into(),
                 attested: s["attested"].as_str().unwrap().into(),
                 group: s["group"].as_str().unwrap().into(),
+                group_policy: mcvoice_backend::routing::GroupPolicy::from_name(s["group_type"].as_str().unwrap_or("open")),
                 epoch: s["epoch"].as_u64().unwrap() as u32,
                 pos: s["pos"]
                     .as_array()

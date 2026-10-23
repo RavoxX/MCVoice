@@ -1,4 +1,4 @@
-# Group directory and update notifications (0.1.11, unreleased)
+# Group directory and update notifications (0.1.11)
 
 When outside a group, **G** lists each group's code, the first two member names
 (followed by `, ...` for additional members), its member heads, count and password
@@ -76,7 +76,7 @@ negative control, SDL settings/text input, group filter and update-link actions,
 native extractor rendering, mouse focus and shutdown. Its artifact screenshots
 include `group-directory.png` (15 heads, complete hover name) and `updates.png`.
 They are controlled test scenes; the displayed 0.1.12 update is a fixture,
-not an actual publication. Fabric screenshots were visually inspected locally.
+not an actual publication. Both loaders' screenshots were visually inspected locally.
 
 The initial runtime attempts exposed an outdated player-search test proxy
 returning a Boolean for the new String update field; it was corrected without
@@ -86,4 +86,7 @@ covering prefixes were added before the final successful run. The original
 small-GUI checks now verify that the new footer button is beside Done while
 all existing rows remain above it; overlapping rectangles still fail.
 
-This does not claim an all-version release or production backend deployment.
+Stable 0.1.11 is [released for all 62 supported Minecraft versions](release-0.1.11.md)
+(102 validated jars). Every GitHub asset digest matches its byte-verified Maven
+jar; the published 26.3 jars match the runtime-tested artifacts byte for byte.
+Rust 0.1.11 is [deployed on the public backend](deployment-0.1.11.md).
