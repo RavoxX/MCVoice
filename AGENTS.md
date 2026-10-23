@@ -298,8 +298,12 @@ git show FETCH_HEAD:<path>`).
   Normal/Open/Isolated group policies and a 20-member cap. Old default V/B
   bindings migrate once; non-default custom bindings remain. Group type is
   enforced by both backends and every client transport, with fail-closed
-  fallback for unknown policies. See `docs/svc-style-controls.md`. Validation
-  is in progress; the public backend and released jars remain on 0.1.11.
+  fallback for unknown policies. Runtime source `18c1fa7` passes all six CI jobs
+  (`40007617453`), both backend container checks and 26.3 builds. The client has
+  126 passing tests against each backend; shared conformance is 43/43. Thirteen
+  representative Minecraft versions built successfully. See
+  `docs/svc-style-controls.md` for exact revisions, native runtime evidence and
+  limitations. The public backend and released jars remain on 0.1.11.
 
 * **Stable 0.1.11 released:** paged `group_directory`
   previews include public UUID/name rosters (password groups included) without

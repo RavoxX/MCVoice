@@ -97,4 +97,47 @@ closed. The type is backend-owned routing state, never trusted from audio flags.
 
 This is an unreleased development change. The deployed public backend and
 published 0.1.11 clients retain [their recorded behavior](release-0.1.11.md).
-Regression/runtime and build results will be recorded after validation.
+
+## Validation
+
+Runtime source `18c1fa7` passes [CI 40007617453](https://github.com/RavoxX/MCVoice/actions/runs/40007617453)
+(all six jobs), [backend container checks 40007617458](https://github.com/RavoxX/MCVoice/actions/runs/40007617458)
+and [26.3 builds 40007631849](https://github.com/RavoxX/MCVoice/actions/runs/40007631849).
+The local Java 8 client suite passes 126 tests with no failures or skips against
+each backend. Go passes race tests and vet; Rust passes strict Clippy, 15 unit
+tests and seven vector suites. Both backends pass all 43 shared conformance
+scenarios, including admission through member twenty, rejection of member
+twenty-one, capability downgrade refusal and encrypted UDP group policies.
+Client tests cover real group/proximity delivery, private-group SVC suppression,
+isolated SVC playback, encoding-time group changes, migration and native binding
+capture. Full twenty-group/twenty-member directory pages fit the unchanged
+64-KiB control limit in both backends.
+
+All loaders built and validated for these representative versions at `711282e`:
+1.8 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005903438)),
+1.8.9 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005906877)),
+1.9 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005910611)),
+1.12.2 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005913356)),
+1.13.2 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005916623)),
+1.14.4 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005919990)),
+1.16.5 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005923212)),
+1.20.1 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005926447)),
+1.21.5 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005929188)),
+1.21.6 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005932613)),
+1.21.9 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005935726)),
+26.2 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005938655)) and
+26.3 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005941659)).
+The later runtime change adds only the shared member-scroll hint; adapter code
+is identical. This is representative API coverage, not a new all-version release
+or an update to the generated stable support matrix.
+
+The initial [26.3 native runtime run](https://github.com/RavoxX/MCVoice/actions/runs/40005944132)
+passes Fabric and Forge. Final input/rendering evidence for `18c1fa7` is collected
+in [run 40007635099](https://github.com/RavoxX/MCVoice/actions/runs/40007635099):
+fresh and saved options, native SDL text fields, actual registered keyboard/mouse
+rebinding and clearing, custom Forge modifiers, and clean shutdown. Its separate
+test mod captures the production Voice Chat, Key Bindings, group-directory and
+twenty-member group screens through Minecraft's real GUI extractor. Screenshots
+are fixture-driven visual evidence; they do not demonstrate twenty live people
+or real microphone hardware. Real audio delivery and policy enforcement are
+covered by the independent client/backend regression suites above.
