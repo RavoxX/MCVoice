@@ -19,6 +19,7 @@ class SettingsPlayersTest {
             case "transportStatus": return TransportStatus.HYBRID;
             case "players": return players;
             case "pushToTalkKey": return "V";
+            case "availableUpdate": return "";
             case "setPlayerMuted": muted = (UUID) args[0]; return null;
             default: return false;
             }
@@ -95,7 +96,8 @@ class SettingsPlayersTest {
         Canvas c = new Canvas(); c.height = 220;
         SettingsScreen screen = open(c);
         Widget done = screen.widgets.get(screen.widgets.size() - 1);
-        for (Widget w : screen.widgets) if (w != done) assertTrue(w.y + w.h <= done.y);
+        for (Widget w : screen.widgets) if (w != done) assertTrue(w.y + w.h <= done.y || w.x >= done.x + done.w,
+            "player rows/search stay above Done; the update button stays beside it");
         assertEquals(c.names.size(), c.texts.stream().filter(t -> t.equals("Mute")).count());
     }
 }
