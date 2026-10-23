@@ -7,6 +7,18 @@ import org.junit.jupiter.api.Test;
 import dev.mcvoice.client.ui.VoiceControls.GroupInfo;
 
 class GroupBrowserTest {
+    @Test void filterOrScopeChangeDiscardsAnInflightPageAndKeepsTheRequestedFilter() {
+        GroupBrowser b = new GroupBrowser();
+        boolean[] sentFilter = {false}; long[] id = {0};
+        GroupBrowser.Sender sender = (q, c, requestId, paged, serverOnly) -> { sentFilter[0] = serverOnly; id[0] = requestId; return true; };
+        b.search("", false); b.tick(sender, true, 1000); long old = id[0];
+        b.search("", true);
+        b.receive(old, null, page(0, 1)); assertTrue(b.entries().isEmpty());
+        b.tick(sender, true, 1500); assertTrue(sentFilter[0]); old = id[0];
+        b.scopeChanged(); b.receive(old, null, page(0, 1)); assertTrue(b.entries().isEmpty());
+        b.tick(sender, true, 2000); assertTrue(sentFilter[0]);
+        b.receive(id[0], null, page(1, 1)); assertEquals("00001", b.entries().get(0).id);
+    }
     private static List<GroupInfo> page(int start, int count) {
         List<GroupInfo> out = new ArrayList<GroupInfo>();
         for (int i = start; i < start + count; i++) out.add(new GroupInfo(String.format("%05d", i), 1, 15, false));
@@ -17,7 +29,7 @@ class GroupBrowserTest {
         int calls;
         String query, cursor;
         long id;
-        public boolean send(String q, String c, long requestId, boolean paged) {
+        public boolean send(String q, String c, long requestId, boolean paged, boolean serverOnly) {
             calls++; query = q; cursor = c; id = requestId; return true;
         }
     }
