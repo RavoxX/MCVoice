@@ -14,6 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class ClientConfigTest {
+    @Test void directoryFilterAndUpdatePreferenceDefaultAndPersist() throws Exception {
+        ClientConfig c = load("{}");
+        assertEquals(false, c.groupServerOnly); assertEquals(true, c.checkForUpdates);
+        c.groupServerOnly=true; c.checkForUpdates=false; c.save();
+        ClientConfig reloaded=ClientConfig.load(dir.toFile());
+        assertEquals(true,reloaded.groupServerOnly); assertEquals(false,reloaded.checkForUpdates);
+    }
     @TempDir
     Path dir;
 
