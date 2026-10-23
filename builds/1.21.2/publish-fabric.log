@@ -3,7 +3,7 @@ Daemon will be stopped at the end of the build
 > Task :generatePomFileForModPublication
 > Task :publishModPublicationToMavenRepository
 > Task :publish
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1792765570143.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run-1792785723059.json
 
-BUILD SUCCESSFUL in 28s
+BUILD SUCCESSFUL in 26s
 2 actionable tasks: 2 executed
