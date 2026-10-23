@@ -11,7 +11,8 @@ public enum PlaybackDecision {
     NOT_TRACKED("reject:not_tracked"),
     OTHER_WORLD("reject:other_world"),
     OUT_OF_RANGE("reject:out_of_range"),
-    NOT_IN_GROUP("reject:not_in_group");
+    NOT_IN_GROUP("reject:not_in_group"),
+    GROUP_ISOLATED("reject:group_isolated");
 
     public final String code;
 
