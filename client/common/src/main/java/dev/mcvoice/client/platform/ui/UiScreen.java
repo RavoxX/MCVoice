@@ -25,6 +25,10 @@ public interface UiScreen {
     /** Normalized (GLFW-style) key code; returns true if handled. ESC closes unless handled. */
     boolean keyPressed(int key);
 
+    /** Binding capture receives the unmodified platform key before normal UI navigation. */
+    default boolean bindingKeyPressed(int nativeKey, int normalizedKey) { return false; }
+    default boolean bindingMouseClicked(int nativeButton) { return false; }
+
     void charTyped(char c);
 
     /** Whether the platform should accept native text/IME input for this screen. */

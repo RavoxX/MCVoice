@@ -1,6 +1,6 @@
 package server
 
-// Voice groups (spec 6.12): up to 15 sessions that hear each other non-positionally,
+// Voice groups (spec 6.12): up to 20 sessions that hear each other non-positionally,
 // across worlds and Minecraft servers. State is guarded by s.mu.
 
 import (
@@ -47,10 +47,11 @@ func (l *groupLimits) check(msg any, now time.Time) string {
 }
 
 type group struct {
-	id      string
-	salt    []byte
-	pwHash  []byte // SHA-256(salt || password); nil = open. Never logged, never sent.
-	members []*Session
+	id        string
+	groupType string
+	salt      []byte
+	pwHash    []byte // SHA-256(salt || password); nil = open. Never logged, never sent.
+	members   []*Session
 }
 
 type outMsg struct {
@@ -125,6 +126,7 @@ func (s *Server) leaveGroupLocked(sess *Session, reason string) {
 		return
 	}
 	sess.peer.Group = ""
+	sess.peer.GroupType = ""
 	if reason != "" {
 		s.queueLocked(sess, marshal(map[string]any{"type": "group_left", "id": id, "reason": reason}))
 	}
@@ -147,6 +149,7 @@ func (s *Server) leaveGroupLocked(sess *Session, reason string) {
 
 func (s *Server) joinGroupLocked(sess *Session, g *group) {
 	sess.peer.Group = g.id
+	sess.peer.GroupType = g.groupType
 	found := false
 	for _, m := range g.members {
 		if m == sess {
@@ -157,7 +160,7 @@ func (s *Server) joinGroupLocked(sess *Session, g *group) {
 		g.members = append(g.members, sess)
 	}
 	s.queueLocked(sess, marshal(map[string]any{"type": "group_joined", "group": map[string]any{
-		"id": g.id, "max": protocol.GroupMaxMembers, "password": g.pwHash != nil, "members": membersJSON(g)}}))
+		"id": g.id, "max": protocol.GroupMaxMembers, "password": g.pwHash != nil, "group_type": g.groupType, "members": membersJSON(g)}}))
 	s.announceLocked(g, sess)
 }
 
@@ -195,11 +198,12 @@ func (s *Server) groupList(sess *Session, m *protocol.GroupList) {
 		return
 	}
 	type entry struct {
-		ID       string       `json:"id"`
-		Members  int          `json:"members"`
-		Max      int          `json:"max"`
-		Password bool         `json:"password"`
-		Roster   []memberJSON `json:"roster,omitempty"`
+		ID        string       `json:"id"`
+		Members   int          `json:"members"`
+		Max       int          `json:"max"`
+		Password  bool         `json:"password"`
+		GroupType string       `json:"group_type"`
+		Roster    []memberJSON `json:"roster,omitempty"`
 	}
 	s.mu.RLock()
 	l := make([]entry, 0, len(s.groups))
@@ -215,7 +219,7 @@ func (s *Server) groupList(sess *Session, m *protocol.GroupList) {
 		if !strings.Contains(g.id, q) || g.id <= cursor || (m.ServerOnly && !groupOnNetwork(g, sess)) {
 			continue
 		}
-		l = append(l, entry{ID: g.id, Members: len(g.members), Max: protocol.GroupMaxMembers, Password: g.pwHash != nil})
+		l = append(l, entry{ID: g.id, Members: len(g.members), Max: protocol.GroupMaxMembers, Password: g.pwHash != nil, GroupType: g.groupType})
 	}
 	s.mu.RUnlock()
 	sort.Slice(l, func(i, j int) bool {
@@ -264,6 +268,10 @@ func (s *Server) groupCreate(sess *Session, m *protocol.GroupCreate) {
 	if !s.groupsAllowed(sess) {
 		return
 	}
+	if m.GroupType != nil && !sess.groupModesCap {
+		sess.send(errorFrame(protocol.CodeBadMessage, "group_modes capability required", false))
+		return
+	}
 	s.mu.Lock()
 	if !sess.peer.InWorld {
 		s.mu.Unlock()
@@ -272,6 +280,10 @@ func (s *Server) groupCreate(sess *Session, m *protocol.GroupCreate) {
 	}
 	s.leaveGroupLocked(sess, "replaced")
 	g := &group{id: s.newGroupIDLocked()}
+	g.groupType = "open"
+	if m.GroupType != nil {
+		g.groupType = *m.GroupType
+	}
 	if m.Password != nil {
 		g.salt = randomBytes(16)
 		g.pwHash = pwHash(g.salt, *m.Password)
@@ -305,6 +317,9 @@ func (s *Server) groupJoin(sess *Session, m *protocol.GroupJoin, now time.Time) 
 	switch {
 	case g == nil:
 		fail(protocol.CodeGroupNotFound, "no such group")
+		return
+	case g.groupType != "open" && !sess.groupModesCap:
+		fail(protocol.CodeBadMessage, "update your client to join this group type")
 		return
 	case already:
 	case len(g.members) >= protocol.GroupMaxMembers:

@@ -46,6 +46,12 @@ public final class PlaybackValidator {
     public static PlaybackDecision check(WorldSnapshot s, UUID sender, long recipientEpoch, int mode,
                                          double normalRange, double whisperRange, Set<UUID> muted, boolean deafened,
                                          Set<UUID> group) {
+        return check(s, sender, recipientEpoch, mode, normalRange, whisperRange, muted, deafened, group, false);
+    }
+
+    public static PlaybackDecision check(WorldSnapshot s, UUID sender, long recipientEpoch, int mode,
+                                         double normalRange, double whisperRange, Set<UUID> muted, boolean deafened,
+                                         Set<UUID> group, boolean isolated) {
         if (mode == MODE_GROUP) {
             if (sender == null || (s != null && sender.equals(s.localUuid))) {
                 return PlaybackDecision.SELF;
@@ -84,6 +90,7 @@ public final class PlaybackValidator {
         if (s.distanceTo(p) > range) {
             return PlaybackDecision.OUT_OF_RANGE;
         }
+        if (isolated) return PlaybackDecision.GROUP_ISOLATED;
         return PlaybackDecision.ACCEPT;
     }
 }
