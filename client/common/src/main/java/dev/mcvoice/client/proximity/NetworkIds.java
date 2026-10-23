@@ -15,9 +15,6 @@ public final class NetworkIds {
      */
     public static String of(String address) {
         String a = address == null ? "" : address.trim().toLowerCase(Locale.ROOT);
-        if (a.endsWith(".")) {
-            a = a.substring(0, a.length() - 1);
-        }
         String host = a;
         int port = 25565;
         if (a.startsWith("[")) {
@@ -35,6 +32,7 @@ public final class NetworkIds {
                 port = parsePort(a.substring(c + 1), port);
             }
         }
+        if (host.endsWith(".")) host = host.substring(0, host.length() - 1);
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] h = md.digest((host + ":" + port).getBytes(Charset.forName("UTF-8")));

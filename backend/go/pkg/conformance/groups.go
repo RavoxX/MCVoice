@@ -4,6 +4,7 @@ package conformance
 
 import (
 	"context"
+	"encoding/json"
 	"sort"
 	"time"
 
@@ -11,6 +12,89 @@ import (
 )
 
 const groupWait = 3 * time.Second
+
+func scGroupDirectory(e *Env) error {
+	ps, err := e.groupPlayers(3)
+	if err != nil {
+		return err
+	}
+	a, b, viewer := ps[0], ps[1], ps[2]
+	id, err := createGroup(a, "secret")
+	if err != nil {
+		return err
+	}
+	other, err := createGroup(b, "")
+	if err != nil {
+		return err
+	}
+	scope := func(c *voiceclient.Client, network string, in bool) error {
+		if _, err := c.Scope(in, network, "minecraft:overworld"); err != nil {
+			return err
+		}
+		return c.Sync(groupWait)
+	}
+	same := "n1:11111111111111111111111111111111"
+	different := "n1:22222222222222222222222222222222"
+	if err := scope(a, same, true); err != nil {
+		return err
+	}
+	if err := scope(b, different, true); err != nil {
+		return err
+	}
+	if err := scope(viewer, same, true); err != nil {
+		return err
+	}
+	request := uint32(0)
+	list := func(serverOnly, details bool) (voiceclient.GroupEvent, error) {
+		request++
+		raw, _ := json.Marshal(map[string]any{"type": "group_list", "limit": 20, "request_id": request, "details": details, "server_only": serverOnly})
+		if err := viewer.SendRaw(raw); err != nil {
+			return voiceclient.GroupEvent{}, err
+		}
+		return viewer.NextGroupEvent("group_list", groupWait)
+	}
+	all, err := list(false, true)
+	if err != nil {
+		return err
+	}
+	if len(all.Groups) != 2 {
+		return errorf("all directory: %+v", all)
+	}
+	for _, g := range all.Groups {
+		if len(g.Roster) != 1 || g.Roster[0].Name == "" || len(g.Roster[0].UUID) != 36 {
+			return errorf("missing public roster: %+v", g)
+		}
+	}
+	local, err := list(true, true)
+	if err != nil {
+		return err
+	}
+	if len(local.Groups) != 1 || local.Groups[0].ID != id || !local.Groups[0].Password {
+		return errorf("server filter: %+v", local)
+	}
+	if err := scope(viewer, different, true); err != nil {
+		return err
+	}
+	moved, err := list(true, false)
+	if err != nil {
+		return err
+	}
+	if len(moved.Groups) != 1 || moved.Groups[0].ID != other || len(moved.Groups[0].Roster) != 0 {
+		return errorf("scope change/legacy metadata: %+v", moved)
+	}
+	// The fourth request still fits the initial list burst.
+	if err := scope(viewer, "", false); err != nil {
+		return err
+	}
+	empty, err := list(true, true)
+	if err != nil {
+		return err
+	}
+	if len(empty.Groups) != 0 {
+		return errorf("out-of-world directory leaked server matches")
+	}
+	return nil
+}
 
 // inWorld gives c a world scope (groups require one) and syncs.
 func inWorld(c *voiceclient.Client, p placement) error {
