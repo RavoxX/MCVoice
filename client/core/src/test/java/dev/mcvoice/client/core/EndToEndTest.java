@@ -352,6 +352,9 @@ class EndToEndTest {
         vb.setGroupServerOnly(false);
         vb.joinGroup(id, "");
         waitFor("both in the group", () -> vb.group() != null && va.group() != null && va.group().members.size() == 2, 5000);
+        assertEquals(dev.mcvoice.client.proximity.GroupType.NORMAL, va.group().type);
+        assertEquals(20, va.group().max);
+        va.setGroupActivationMode(ClientConfig.ActivationMode.VOICE_ACTIVATION);
         assertTrue(va.players().stream().anyMatch(p -> p.uuid.equals(b.uuid) && p.via.equals("group")), "remote group members remain searchable without a local entity");
 
         long t0 = System.currentTimeMillis();
@@ -397,11 +400,59 @@ class EndToEndTest {
         assertEquals(0.0, loudness(b, t2), 1.0, "no group audio after leaving");
     }
 
-    /**
-     * A = MCVoice, B = MCVoice, C = ordinary Simple Voice Chat user, on an
-     * SVC-enabled server. A/B use the cloud path with each other and reach C
-     * through SVC interop; A never hears B twice.
-     */
+    /** Group privacy is enforced on actual encoded audio, in both directions. */
+    @Test void groupTypesControlActualNearbyAudioInBothDirections() throws Exception {
+        FakeMinecraft a=player("PolicyA"),b=player("PolicyB"),c=player("PolicyC");
+        b.x=3; c.x=5;
+        a.track(b); a.track(c); b.track(a); b.track(c); c.track(a); c.track(b);
+        VoiceClient va=start(a),vb=start(b),vc=start(c);
+        waitFor("all policy clients connected",()->va.transportStatus()==TransportStatus.CLOUD && vb.transportStatus()==TransportStatus.CLOUD && vc.transportStatus()==TransportStatus.CLOUD,20000);
+        waitFor("group modes negotiated",()->va.groupModesAvailable() && vb.groupModesAvailable(),5000);
+        waitFor("server has received all world scopes and tracked peers",()->va.selector().isCloudPeer(b.uuid) && va.selector().isCloudPeer(c.uuid) && vc.selector().isCloudPeer(a.uuid),5000);
+        for(dev.mcvoice.client.proximity.GroupType type:dev.mcvoice.client.proximity.GroupType.values()) {
+            va.createGroup("",type);
+            waitFor("created "+type,()->va.group()!=null && va.group().type==type,5000);
+            String id=va.group().id; vb.joinGroup(id,"");
+            waitFor("joined "+type,()->vb.group()!=null && vb.group().id.equals(id) && va.group().members.size()==2,5000);
+            a.ptt=true; Thread.sleep(350); long outbound=System.currentTimeMillis();
+            waitFor("group member hears "+type,()->loudness(b,outbound)>300,5000);
+            if(type==dev.mcvoice.client.proximity.GroupType.OPEN) waitFor("open group heard nearby",()->loudness(c,outbound)>300,5000);
+            else { Thread.sleep(400); assertEquals(0.0,loudness(c,outbound),1.0,"normal/isolated must not reach nearby outsiders"); }
+            a.ptt=false; Thread.sleep(350); c.ptt=true; Thread.sleep(350); long inbound=System.currentTimeMillis();
+            if(type==dev.mcvoice.client.proximity.GroupType.ISOLATED) {
+                Thread.sleep(450); assertEquals(0.0,loudness(a,inbound),1.0); assertEquals(0.0,loudness(b,inbound),1.0);
+            } else {
+                waitFor("group owner hears outsider",()->loudness(a,inbound)>300,5000);
+                waitFor("group member hears outsider",()->loudness(b,inbound)>300,5000);
+            }
+            c.ptt=false; Thread.sleep(300);
+        }
+    }
+
+    @Test void voiceMenuMuteDisableAndIconHotkeysRespectTheCurrentScreenAndMode() throws Exception {
+        FakeMinecraft a=player("Controls"); VoiceClient v=start(a);
+        a.presses.add(dev.mcvoice.client.platform.InputAdapter.Action.OPEN_MENU);
+        waitFor("voice menu opens",()->a.currentScreen instanceof dev.mcvoice.client.ui.VoiceMenuScreen,3000);
+        a.presses.add(dev.mcvoice.client.platform.InputAdapter.Action.TOGGLE_MUTE); Thread.sleep(200);
+        assertFalse(v.micMuted(),"typing in a menu must not toggle microphone state");
+        a.gui().close();
+        a.presses.add(dev.mcvoice.client.platform.InputAdapter.Action.TOGGLE_MUTE); Thread.sleep(200);
+        assertFalse(v.micMuted(),"mute hotkey applies to voice activation only");
+        v.setActivationMode(ClientConfig.ActivationMode.VOICE_ACTIVATION);
+        a.presses.add(dev.mcvoice.client.platform.InputAdapter.Action.TOGGLE_MUTE);
+        waitFor("M mutes voice activation",v::micMuted,3000);
+        a.presses.add(dev.mcvoice.client.platform.InputAdapter.Action.TOGGLE_DEAFEN);
+        waitFor("N disables voice chat",v::deafened,3000);
+        a.presses.add(dev.mcvoice.client.platform.InputAdapter.Action.TOGGLE_ICONS);
+        waitFor("H hides icons",()->v.config().hideVoiceIcons,3000);
+        assertTrue(v.config().showHud && v.config().showGroupHud,"H must preserve individual HUD preferences");
+        a.presses.add(dev.mcvoice.client.platform.InputAdapter.Action.TOGGLE_ICONS);
+        waitFor("H restores icons",()->!v.config().hideVoiceIcons,3000);
+        synchronized(clients) { clients.remove(v); }
+        v.shutdown();
+    }
+
+    /** MCVoice peers prefer cloud audio; SVC-only players remain reachable without duplicates. */
     @Test
     void hybridCloudAndSvcWithoutDuplicates() throws Exception {
         final FakeSvcServer svcServer = new FakeSvcServer();
@@ -485,6 +536,21 @@ class EndToEndTest {
             Thread.sleep(1500);
             a.ptt = false;
             assertTrue(heardByC.contains(a.uuid), "C heard A via SVC");
+            Thread.sleep(400);
+            va.createGroup("",dev.mcvoice.client.proximity.GroupType.NORMAL);
+            waitFor("normal group on hybrid client",()->va.group()!=null && va.group().type==dev.mcvoice.client.proximity.GroupType.NORMAL,5000);
+            heardByC.clear(); a.ptt=true; Thread.sleep(700); a.ptt=false; Thread.sleep(300);
+            assertFalse(heardByC.contains(a.uuid),"normal group microphone must never be forwarded through SVC proximity");
+            va.createGroup("",dev.mcvoice.client.proximity.GroupType.ISOLATED);
+            waitFor("isolated group on hybrid client",()->va.group()!=null && va.group().type==dev.mcvoice.client.proximity.GroupType.ISOLATED,5000);
+            long isolatedRejects=va.rejectedCount(PlaybackDecision.GROUP_ISOLATED);
+            Thread.sleep(300); long isolatedSince=System.currentTimeMillis();
+            for(int f=0;f<30;f++) {
+                short[] pcm=new short[960]; for(int i=0;i<pcm.length;i++) pcm[i]=(short)(Math.sin(2*Math.PI*330*(f*960+i)/48000.0)*12000);
+                int n=enc.encode(pcm,pkt); c.sendMic(pkt,0,n,false); Thread.sleep(20);
+            }
+            waitFor("isolated client rejects authenticated SVC audio",()->va.rejectedCount(PlaybackDecision.GROUP_ISOLATED)>isolatedRejects,3000);
+            assertEquals(0.0,loudness(a,isolatedSince),1.0,"isolated group must stay silent for tracked SVC outsiders");
             c.close();
         } finally {
             svcServer.close();
