@@ -246,6 +246,11 @@ class SvcCompatTest {
             client.tick(now+60001);
             assertEquals(SvcCompat.Status.FAILED, client.status());
             assertTrue(client.detail().contains("fresh key"));
+            client.setEnabled(false);
+            int sent = adapter.sent.size();
+            client.onRenewalRequired(); client.tick(now+61000);
+            assertEquals(SvcCompat.Status.DISABLED, client.status());
+            assertEquals(sent, adapter.sent.size(), "late UDP renewal cannot enable disabled interop");
         } finally { client.reset(false); first.close(); rotated.close(); }
     }
 
