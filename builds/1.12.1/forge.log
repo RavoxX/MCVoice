@@ -16,40 +16,37 @@ Daemon will be stopped at the end of the build
 > Configure project :
 Architectury Loom: 0.10.0.5
 :generating dummy intermediary
-:generated dummy intermediary in 804.6 ms
+:generated dummy intermediary in 720.6 ms
 :patching forge
-:patched forge in 23.87 s
+:patched forge in 14.54 s
 :patching jars
-:patched jars in 9.742 s
+:patched jars in 8.440 s
 :access transforming minecraft
-[19:40:05] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
-[19:40:05] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-at-patched.jar, --atFile, /tmp/at-conf541244485755889158.cfg]
-[19:40:05] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-patched.jar
-[19:40:05] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-at-patched.jar
-[19:40:05] [main/INFO]: Transformer file /tmp/at-conf541244485755889158.cfg
-[19:40:05] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-at-patched.jar, overwriting
-[19:40:07] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-at-patched.jar
-:access transformed minecraft in 6.390 s
+[18:51:04] [main/INFO]: Access Transformer processor running version 3.0.1+61+master.47bca0e
+[18:51:04] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-patched.jar, --outJar, /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-at-patched.jar, --atFile, /tmp/at-conf13700893233865478366.cfg]
+[18:51:04] [main/INFO]: Reading from /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-patched.jar
+[18:51:04] [main/INFO]: Writing to /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-at-patched.jar
+[18:51:04] [main/INFO]: Transformer file /tmp/at-conf13700893233865478366.cfg
+[18:51:04] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-at-patched.jar, overwriting
+[18:51:05] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/essential-loom/1.12.1/forge/1.12.1-14.22.1.2478/merged-at-patched.jar
+:access transformed minecraft in 6.052 s
 :remapping minecraft (TinyRemapper, official -> intermediary)
-:remapped minecraft (TinyRemapper, official -> intermediary) in 1.565 s
+:remapped minecraft (TinyRemapper, official -> intermediary) in 1.442 s
 :remapping minecraft (TinyRemapper, official -> srg)
 
 Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
 Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
 Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
+Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
+Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
+Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
 
 > Configure project :
 Fixing access for 1 classes and 0 members.
-:remapped minecraft (TinyRemapper, official -> srg) in 1.423 s
+:remapped minecraft (TinyRemapper, official -> srg) in 1.125 s
 :remapping minecraft (TinyRemapper, official -> named)
-
-Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
-Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
-Invalid access from method instruction in net/minecraft/client/network/NetHandlerPlayClient to package-private class net/minecraft/client/gui/MapItemRenderer$Instance after remapping.
-
-> Configure project :
 Fixing access for 1 classes and 0 members.
-:remapped minecraft (TinyRemapper, official -> named) in 1.311 s
+:remapped minecraft (TinyRemapper, official -> named) in 1.068 s
 
 > Task :compileJava
 Note: SpongePowered MIXIN Annotation Processor Version=0.8.5
@@ -74,7 +71,7 @@ Note: Recompile with -Xlint:deprecation for details.
 :remapping sources
 
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792784329497.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792867801968.json
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
 
@@ -82,9 +79,9 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 2m 19s
+BUILD SUCCESSFUL in 1m 43s
 6 actionable tasks: 6 executed
-valid: mcvoice-0.1.12-mc1.12.1-forge.jar (419 classes, 16 platform classes, metadata ['mcmod.info'])
+valid: mcvoice-0.1.13-mc1.12.1-forge.jar (421 classes, 16 platform classes, metadata ['mcmod.info'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$Events
   platform: dev/mcvoice/platform/mc/LegacyNameTagIcon
