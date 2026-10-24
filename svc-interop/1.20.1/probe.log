@@ -4,16 +4,110 @@ bot: server registered voicechat:leave_group,voicechat:request_secret,voicechat:
 handshake: REQUESTED (compatibility 20)
 [INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
 bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:state (33 bytes)
+bot: state observation voicechat:state 0001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
 bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
 bot: <- voicechat:secret (56 bytes)
 [INFO][SVC] received SVC secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000, groups=true, host=''} (compatibility 20)
 handshake: SECRET_RECEIVED (compatibility 20)
 secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000, groups=true, host=''} voiceHost=''
 bot: -> voicechat:update_state (1 bytes)
+wire-control: AUTH_ACK length=256
 [INFO][SVC] SVC voice server authenticated us (GCM_IV12)
 udp: AUTHENTICATED (GCM_IV12)
 bot: <- voicechat:state (33 bytes)
+bot: state observation voicechat:state 0001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+wire-control: CONNECTION_CHECK_ACK length=256
 [INFO][SVC] SVC voice connection established with 127.0.0.1:24454
 udp: CONNECTED
 bot: <- voicechat:state (33 bytes)
+bot: state observation voicechat:state 0000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+wire-control: KEEP_ALIVE length=256
+wire-control: KEEP_ALIVE length=256
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+bot: <- voicechat:secret (56 bytes)
+bot: <- voicechat:state (33 bytes)
+bot: state observation voicechat:state 0001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+[INFO][SVC] received SVC secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000, groups=true, host=''} (compatibility 20)
+handshake: SECRET_RECEIVED (compatibility 20)
+wire-renewal: key_changed=true
+secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000, groups=true, host=''} voiceHost=''
+bot: -> voicechat:update_state (1 bytes)
+wire-control: AUTH_ACK length=256
+[INFO][SVC] SVC voice server authenticated us (GCM_IV12)
+udp: AUTHENTICATED (GCM_IV12)
+bot: <- voicechat:state (33 bytes)
+bot: state observation voicechat:state 0001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+wire-control: CONNECTION_CHECK_ACK length=256
+[INFO][SVC] SVC voice connection established with 127.0.0.1:24454
+udp: CONNECTED
+bot: <- voicechat:state (33 bytes)
+bot: state observation voicechat:state 0000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+wire-control: KEEP_ALIVE length=256
+wire-control: KEEP_ALIVE length=256
+wire-control: KEEP_ALIVE length=256
+wire-control: KEEP_ALIVE length=256
+wire-control: KEEP_ALIVE length=256
 bot: probe exited with 0
