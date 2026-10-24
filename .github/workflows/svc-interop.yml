@@ -18,6 +18,8 @@ on:
   push:
     branches: [main]
     paths: ["client/svc-compat/**", "client/build.gradle", "tools/svc-interop/**", ".github/workflows/svc-interop.yml"]
+  pull_request:
+    paths: ["client/svc-compat/**", "client/build.gradle", "tools/svc-interop/**", ".github/workflows/svc-interop.yml"]
   schedule:
     - cron: "17 4 * * 1"   # weekly: catches new SVC releases
 
@@ -74,8 +76,9 @@ jobs:
           set -o pipefail
           npm ci --no-audit --no-fund
           cp=$(tail -1 ../../probe-classpath.txt)
-          node bot.js 127.0.0.1 25565 "$MC" -- java -cp "$cp" dev.mcvoice.client.svc.tools.SvcProbe 127.0.0.1 90 \
+          node bot.js 127.0.0.1 25565 "$MC" -- java -Dprobe.renew=true -cp "$cp" dev.mcvoice.client.svc.tools.SvcProbe 127.0.0.1 90 \
             2> >(tee ../../probe.log >&2) | tee ../../svc-interop-result.json
+          python3 reconnect.py "$MC" "$cp" | tee ../../svc-reconnect-result.json
       - name: Report
         if: always()
         run: |
@@ -92,6 +95,9 @@ jobs:
           path: |
             svc-interop-result.json
             probe.log
+            mcvoice_*.log
+            mcvoice_*.json
+            svc-reconnect-result.json
             server/server.log
       - name: Stage diagnostic data
         if: always()
@@ -100,6 +106,9 @@ jobs:
           if [ -f svc-interop-result.json ]; then cp svc-interop-result.json pub/result.json; else echo '{"ok":false,"error":"no result"}' > pub/result.json; fi
           tail -c 200000 server/server.log > pub/server.log || true
           tail -c 200000 probe.log > pub/probe.log || true
+          for f in mcvoice_*.log mcvoice_*.json svc-reconnect-result.json; do
+            if [ -f "$f" ]; then tail -c 200000 "$f" > "pub/$f"; fi
+          done
           printf '%s\n' "${SVC_VERSION:-?}" > pub/svc-version.txt
       - uses: actions/upload-artifact@v5
         if: always()
@@ -109,7 +118,7 @@ jobs:
 
   diagnostics:
     needs: probe
-    if: always()
+    if: always() && github.event_name != 'pull_request'
     permissions:
       contents: write
     uses: ./.github/workflows/publish-diagnostics.yml
