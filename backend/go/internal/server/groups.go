@@ -273,6 +273,10 @@ func (s *Server) groupCreate(sess *Session, m *protocol.GroupCreate) {
 		return
 	}
 	s.mu.Lock()
+	if !s.currentSessionLocked(sess) {
+		s.mu.Unlock()
+		return
+	}
 	if !sess.peer.InWorld {
 		s.mu.Unlock()
 		sess.send(errorFrame(protocol.CodeNotInWorld, "join a server first", false))
@@ -299,6 +303,10 @@ func (s *Server) groupJoin(sess *Session, m *protocol.GroupJoin, now time.Time) 
 	}
 	id := strings.ToUpper(*m.ID)
 	s.mu.Lock()
+	if !s.currentSessionLocked(sess) {
+		s.mu.Unlock()
+		return
+	}
 	fail := func(code, msg string) {
 		s.mu.Unlock()
 		sess.send(errorFrame(code, msg, false))
@@ -342,6 +350,10 @@ func (s *Server) groupLeave(sess *Session) {
 		return
 	}
 	s.mu.Lock()
+	if !s.currentSessionLocked(sess) {
+		s.mu.Unlock()
+		return
+	}
 	s.leaveGroupLocked(sess, "left")
 	s.unlockAndFlush()
 }
