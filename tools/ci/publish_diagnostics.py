@@ -18,10 +18,14 @@ def stage(source, destination):
         (destination / file.name).write_bytes(data)
 
 
+def relative_target(category, minecraft):
+    return Path(minecraft) if category == 'probe' else Path(category) / minecraft
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("source", type=Path)
-    p.add_argument("category", choices=["builds", "smoke", "svc-interop"])
+    p.add_argument("category", choices=["builds", "smoke", "svc-interop", "probe"])
     p.add_argument("minecraft")
     a = p.parse_args()
     if not re.fullmatch(r"[0-9]+(?:\.[0-9]+){1,2}", a.minecraft):
@@ -31,10 +35,11 @@ def main():
     git("fetch", "origin", "tooling/probe-output")
     git("worktree", "add", "--detach", "diagnostic-output", "FETCH_HEAD")
     checkout = Path("diagnostic-output")
-    stage(a.source, checkout / a.category / a.minecraft)
+    target = relative_target(a.category, a.minecraft)
+    stage(a.source, checkout / target)
     git("-C", str(checkout), "config", "user.name", "github-actions[bot]")
     git("-C", str(checkout), "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com")
-    git("-C", str(checkout), "add", "--", a.category)
+    git("-C", str(checkout), "add", "--", str(target))
     if subprocess.run(["git", "-C", str(checkout), "diff", "--cached", "--quiet"]).returncode == 0:
         return
     git("-C", str(checkout), "commit", "-m", f"diagnostics {a.category} {a.minecraft}")
