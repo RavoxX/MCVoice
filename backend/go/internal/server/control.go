@@ -369,6 +369,10 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 			}
 		}
 		s.mu.Lock()
+		if !s.currentSessionLocked(sess) {
+			s.mu.Unlock()
+			return false
+		}
 		if sess.hasScope && *m.Epoch <= sess.peer.Epoch {
 			s.mu.Unlock()
 			sess.send(errorFrame(protocol.CodeStaleEpoch, "epoch must increase", false))
@@ -400,6 +404,10 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 			return false // above position_hz_max, dropped silently
 		}
 		s.mu.Lock()
+		if !s.currentSessionLocked(sess) {
+			s.mu.Unlock()
+			return false
+		}
 		if *m.Epoch == sess.peer.Epoch && sess.peer.InWorld {
 			sess.lastPos = now
 			sess.peer.HasPos, sess.peer.X, sess.peer.Y, sess.peer.Z = true, *m.X, *m.Y, *m.Z
@@ -417,12 +425,20 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 			}
 		}
 		s.mu.Lock()
+		if !s.currentSessionLocked(sess) {
+			s.mu.Unlock()
+			return false
+		}
 		if *m.Epoch == sess.peer.Epoch {
 			sess.peer.Visible, sess.peersRev = v, *m.Rev
 		}
 		s.mu.Unlock()
 	case *protocol.PeersDelta:
 		s.mu.Lock()
+		if !s.currentSessionLocked(sess) {
+			s.mu.Unlock()
+			return false
+		}
 		if *m.Epoch != sess.peer.Epoch {
 			s.mu.Unlock()
 			return false
@@ -455,6 +471,10 @@ func (s *Server) dispatch(sess *Session, msg any, now time.Time, log interface {
 		s.mu.Unlock()
 	case *protocol.State:
 		s.mu.Lock()
+		if !s.currentSessionLocked(sess) {
+			s.mu.Unlock()
+			return false
+		}
 		sess.selfMuted = *m.Muted
 		sess.peer.Muted = sess.selfMuted || sess.adminMute
 		sess.peer.Deafened = *m.Deafened
