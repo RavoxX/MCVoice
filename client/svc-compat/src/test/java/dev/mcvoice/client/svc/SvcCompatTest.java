@@ -90,8 +90,16 @@ class SvcCompatTest {
         }
 
         void send(byte[] plain) throws Exception {
-            byte[] enc = cipher.encrypt(mode, plain, 0, plain.length);
-            byte[] dg = SvcBuf.writer().writeByte(0xFF).writeByteArray(enc, 0, enc.length).toByteArray();
+            sendRaw(frame(plain));
+        }
+
+        byte[] frame(byte[] plain) throws Exception {
+            byte[] enc = mode == SvcCipher.Mode.CBC_IV16 ? SvcCbcFixture.encrypt(SvcBuf.writer().writeUuid(secret).toByteArray(), plain)
+                : cipher.encrypt(mode, plain, 0, plain.length);
+            return SvcBuf.writer().writeByte(0xFF).writeByteArray(enc, 0, enc.length).toByteArray();
+        }
+
+        void sendRaw(byte[] dg) throws Exception {
             socket.send(new DatagramPacket(dg, dg.length, client));
         }
 
@@ -107,7 +115,8 @@ class SvcCompatTest {
                     }
                     UUID player = r.readUuid();
                     byte[] enc = r.readByteArray(4096);
-                    byte[] plain = cipher.decrypt(mode, enc, 0, enc.length);
+                    byte[] plain = mode == SvcCipher.Mode.CBC_IV16 ? SvcCbcFixture.decrypt(SvcBuf.writer().writeUuid(secret).toByteArray(), enc)
+                        : cipher.decrypt(mode, enc, 0, enc.length);
                     if (plain == null || !player.equals(PLAYER)) {
                         continue; // wrong encryption mode: ignore silently, like a real server
                     }
@@ -216,8 +225,19 @@ class SvcCompatTest {
     }
 
     @Test
-    void connectsWithCbcServer() throws Exception {
-        fullSession(SvcCipher.Mode.CBC_IV16);
+    void cbcOnlyServerNeverReceivesAuthenticationCredentials() throws Exception {
+        FakeVoiceServer server = new FakeVoiceServer(UUID.randomUUID(), SvcCipher.Mode.CBC_IV16);
+        FakeAdapter adapter = new FakeAdapter();
+        adapter.serverChannels.add("voicechat:request_secret");
+        adapter.answerForVersion = SvcProtocols.CANDIDATES[0];
+        adapter.secretPayload = secretPayload(server.secret, server.port(), "127.0.0.1");
+        SvcCompat client = compat(adapter, 25565);
+        try {
+            client.reset(true); client.tick(System.currentTimeMillis());
+            Thread.sleep(1300); // Covers several authentication retries; never a CBC probe.
+            assertFalse(client.connected());
+            assertTrue(server.packetIds.isEmpty(), "legacy peer decrypted secret-bearing CBC credentials");
+        } finally { client.reset(false); server.close(); }
     }
 
     @Test

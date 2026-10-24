@@ -94,6 +94,11 @@ func errorFrame(code, msg string, fatal bool) []byte {
 	return marshal(protocol.ErrorMsg{Type: "error", Code: code, Message: msg, Fatal: fatal})
 }
 
+// currentSessionLocked requires ownership of both indexes under the hub lock.
+func (s *Server) currentSessionLocked(sess *Session) bool {
+	return s.byConn[sess.connID] == sess && s.byUUID[sess.ident.UUID] == sess
+}
+
 // register adds a session, replacing any older session for the same player.
 func (s *Server) register(sess *Session) string {
 	s.mu.Lock()

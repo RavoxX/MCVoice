@@ -3,12 +3,23 @@ package dev.mcvoice.client.svc.transport;
 import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.lang.reflect.Method;
+import java.net.DatagramSocket;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import dev.mcvoice.client.svc.SvcCbcFixture;
 import dev.mcvoice.client.svc.protocol.SecretInfo;
 import dev.mcvoice.client.svc.protocol.SvcProtocols;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SvcModeSafetyTest {
+    @Test void unsupportedOrMissingCipherModesCannotFallThroughToCbc() throws Exception {
+        SvcCipher cipher = new SvcCipher(new byte[16]);
+        for (SvcCipher.Mode mode : new SvcCipher.Mode[]{null, SvcCipher.Mode.CBC_IV16}) {
+            assertThrows(IllegalArgumentException.class, () -> cipher.encrypt(mode, new byte[]{6}, 0, 1));
+            assertNull(cipher.decrypt(mode, SvcCbcFixture.encrypt(new byte[16], new byte[]{6}), 0, 32));
+        }
+    }
     @Test void paddingAndUnexpectedPlaintextDoNotCommitCipherMode() throws Exception {
         SecretInfo secret=new SecretInfo(UUID.randomUUID(),24454,UUID.randomUUID(),0,1024,48,1000,false,"",false);
         SvcUdpClient c=new SvcUdpClient(secret,new InetSocketAddress("127.0.0.1",24454),SvcProtocols.V1,new SvcUdpClient.Listener() {
@@ -20,8 +31,8 @@ class SvcModeSafetyTest {
             SvcCipher cipher=new SvcCipher(secret.keyBytes());
             Method decrypt=SvcUdpClient.class.getDeclaredMethod("decrypt",byte[].class);decrypt.setAccessible(true);
             byte[] padded=new byte[256];padded[0]=6;
-            for (byte[] p:new byte[][]{{99},{6,99},{8},padded}) {
-                byte[] encrypted=cipher.encrypt(SvcCipher.Mode.CBC_IV16,p,0,p.length);
+            for (byte[] p:new byte[][]{{99},{6},{6,99},{8},padded}) {
+                byte[] encrypted=SvcCbcFixture.encrypt(secret.keyBytes(),p);
                 assertNull(decrypt.invoke(c,(Object)encrypted));
                 assertNull(c.cipherMode());
             }
@@ -29,6 +40,39 @@ class SvcModeSafetyTest {
             assertArrayEquals(new byte[]{6},(byte[])decrypt.invoke(c,(Object)ack));
             assertEquals(SvcCipher.Mode.GCM_IV12,c.cipherMode());
         } finally { c.close(); }
+    }
+
+    @Test void negotiationNeverSendsCbcCredentials() throws Exception {
+        try (DatagramSocket server = new DatagramSocket(0, InetAddress.getLoopbackAddress())) {
+            server.setSoTimeout(2500);
+            SecretInfo secret = new SecretInfo(UUID.randomUUID(), server.getLocalPort(), UUID.randomUUID(), 0, 1024, 48, 1000, false, "", false);
+            SvcUdpClient client = new SvcUdpClient(secret, new InetSocketAddress(InetAddress.getLoopbackAddress(), server.getLocalPort()), SvcProtocols.V1, listener());
+            try {
+                client.start();
+                SvcCipher cipher = new SvcCipher(secret.keyBytes());
+                for (int i = 0; i < 3; i++) {
+                    byte[] bytes = new byte[4096]; DatagramPacket packet = new DatagramPacket(bytes, bytes.length);
+                    server.receive(packet);
+                    byte[] encrypted = SvcUdpClient.unframe(clientPacket(bytes, packet.getLength()), packet.getLength() - 16);
+                    assertFalse(java.util.Arrays.equals(SvcProtocols.V1.authenticate(secret.playerUuid, secret.secret),
+                        SvcCbcFixture.decrypt(secret.keyBytes(), encrypted)), "authentication credential was sent using CBC");
+                    assertNotNull(cipher.decrypt(SvcCipher.Mode.GCM_IV12, encrypted, 0, encrypted.length));
+                }
+            } finally { client.close(); }
+        }
+    }
+
+    private static byte[] clientPacket(byte[] bytes, int length) {
+        byte[] result = new byte[length - 16]; result[0] = bytes[0];
+        System.arraycopy(bytes, 17, result, 1, length - 17); return result;
+    }
+
+    private static SvcUdpClient.Listener listener() {
+        return new SvcUdpClient.Listener() {
+            public void onState(SvcUdpClient.State state, String detail) {}
+            public void onPlayerSound(UUID sender, long seq, boolean whisper, float distance, byte[] data) {}
+            public void onLocationSound(UUID sender, long seq, double x, double y, double z, float distance, byte[] data) {}
+        };
     }
 
     @Test void authenticatedBukkitBackingBufferAckCanCommitMode() throws Exception {

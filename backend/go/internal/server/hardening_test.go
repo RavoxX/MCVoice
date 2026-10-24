@@ -114,6 +114,9 @@ func TestStalePositionAndOverflowDeltaDoNotConsumeCurrentState(t *testing.T) {
 	s := hardeningServer()
 	p := admissionPlayer(1, "00000000-0000-4000-8000-000000000001")
 	p.peer.Epoch = 2
+	if code := s.register(p); code != "" {
+		t.Fatal(code)
+	}
 	now := time.Now()
 	old, current := uint32(1), uint32(2)
 	x := 1.0
@@ -154,5 +157,41 @@ func TestReplyCounterExhaustionClosesWithoutNonceWrap(t *testing.T) {
 	s.reply(p, protocol.TypePong, 0)
 	if p.closeCode != "key_exhausted" || p.cur.sendCounter != ^uint64(0) {
 		t.Fatal("reply counter wrapped or session remained open")
+	}
+}
+
+func TestAuthenticatedMaximumCounterDoesNotBlockNextDatagram(t *testing.T) {
+	s := hardeningServer()
+	s.cfg.MaxSessions = 2
+	p := admissionPlayer(1, "00000000-0000-4000-8000-000000000001")
+	other := admissionPlayer(2, "00000000-0000-4000-8000-000000000002")
+	for _, sess := range []*Session{p, other} {
+		sess.cur = newKeySlot(0, time.Hour, s.now())
+		if code := s.register(sess); code != "" {
+			t.Fatal(code)
+		}
+	}
+	packet := func(sess *Session, counter uint64) []byte {
+		return sess.cur.aead.Seal(nil, protocol.DirC2S, protocol.Header{Type: protocol.TypePing, ConnectionID: sess.connID, Counter: counter}, make([]byte, 8))
+	}
+	from := netip.MustParseAddrPort("127.0.0.1:24455")
+	done := make(chan struct{})
+	go func() {
+		scratch := &udpScratch{}
+		s.handleDatagram(packet(p, ^uint64(0)-1), from, nil, scratch)
+		bad := packet(p, ^uint64(0))
+		bad[len(bad)-1] ^= 1
+		s.handleDatagram(bad, from, nil, scratch)
+		s.handleDatagram(packet(p, ^uint64(0)), from, nil, scratch)
+		s.handleDatagram(packet(other, 1), from, nil, scratch)
+		close(done)
+	}()
+	select {
+	case <-done:
+		if p.cur.window.Check(^uint64(0)) || other.cur.window.Check(1) {
+			t.Fatal("authenticated packet or subsequent session did not progress")
+		}
+	case <-time.After(time.Second):
+		t.Fatal("authenticated counter stalled UDP handling")
 	}
 }

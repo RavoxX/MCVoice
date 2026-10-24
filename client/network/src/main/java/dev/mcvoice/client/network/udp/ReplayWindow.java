@@ -4,10 +4,16 @@ package dev.mcvoice.client.network.udp;
 public final class ReplayWindow {
     public static final int SIZE = 1024;
     private long top;
+    private final boolean allowZero;
     private final long[] bitmap = new long[SIZE / 64];
 
+    public ReplayWindow() { this(false); }
+
+    /** SVC sound sequences start at zero; MCVoice datagram counters do not. */
+    public ReplayWindow(boolean allowZero) { this.allowZero = allowZero; }
+
     public boolean check(long c) {
-        if (c == 0) {
+        if (c == 0 && !allowZero) {
             return false;
         }
         if (Long.compareUnsigned(c, top) > 0) {

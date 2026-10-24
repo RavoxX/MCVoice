@@ -23,8 +23,8 @@ import dev.mcvoice.client.svc.protocol.SvcProtocol;
  *
  * <p>Datagram framing: client -> server {@code 0xFF, playerUUID, VarInt len, encrypted};
  * server -> client {@code 0xFF, VarInt len, encrypted} (a variant that also carries
- * a UUID is accepted). Encryption is one of {@link SvcCipher.Mode}; the mode that
- * the server acknowledges during authentication is locked in.
+ * a UUID is accepted). Every packet requires authenticated GCM; no cipher
+ * downgrade or unauthenticated fallback is attempted.
  */
 public final class SvcUdpClient {
     public static final byte MAGIC = (byte) 0xFF;
@@ -48,6 +48,7 @@ public final class SvcUdpClient {
     private final SvcCipher cipher;
     private final DatagramSocket socket;
     private final Object sendLock = new Object();
+    private final SvcReplayGuard replay = new SvcReplayGuard();
 
     private volatile SvcCipher.Mode mode; // null until the server acknowledged one
     private volatile State state = State.CONNECTING;
@@ -116,15 +117,10 @@ public final class SvcUdpClient {
     }
 
     private void handshakeLoop() {
-        SvcCipher.Mode[] modes = SvcCipher.Mode.values();
         long start = System.currentTimeMillis();
-        int attempt = 0;
         try {
             while (running && state == State.CONNECTING) {
-                // Alternate encryption constructions until the server acknowledges one.
-                SvcCipher.Mode m = modes[attempt % modes.length];
-                sendPlain(protocol.authenticate(secret.playerUuid, secret.secret), m);
-                attempt++;
+                sendPlain(protocol.authenticate(secret.playerUuid, secret.secret), SvcCipher.Mode.GCM_IV12);
                 Thread.sleep(400);
                 if (System.currentTimeMillis() - start > 10000) {
                     setState(State.FAILED, "no authentication ack from " + serverAddress()
@@ -185,18 +181,15 @@ public final class SvcUdpClient {
         if (locked != null) {
             return cipher.decrypt(locked, enc, 0, enc.length);
         }
-        for (SvcCipher.Mode m : SvcCipher.Mode.values()) {
-            byte[] p = cipher.decrypt(m, enc, 0, enc.length);
-            if (m == SvcCipher.Mode.GCM_IV12 && p != null) {
-                authenticationReply = "authenticated packet type " + (p.length == 0 ? -1 : p[0] & 0xFF) + ", length " + p.length;
-            }
-            // Real Bukkit 2.6.24 ACKs occupy a 256-byte buffer.
-            // Only authenticated GCM may use that form; CBC padding proves no identity.
-            if (state == State.CONNECTING && p != null && p.length > 0 && p[0] == 0x06
-                    && (p.length == 1 || (m == SvcCipher.Mode.GCM_IV12 && p.length == 256))) {
-                mode = m;
-                return p;
-            }
+        byte[] p = cipher.decrypt(SvcCipher.Mode.GCM_IV12, enc, 0, enc.length);
+        if (p != null) {
+            authenticationReply = "authenticated packet type " + (p.length == 0 ? -1 : p[0] & 0xFF) + ", length " + p.length;
+        }
+        // Real Bukkit 2.6.24 ACKs occupy a 256-byte authenticated backing buffer.
+        if (state == State.CONNECTING && p != null && p.length > 0 && p[0] == 0x06
+                && (p.length == 1 || p.length == 256)) {
+            mode = SvcCipher.Mode.GCM_IV12;
+            return p;
         }
         return null;
     }
@@ -250,6 +243,13 @@ public final class SvcUdpClient {
                 if (!protocol.parseServerPacket(plain, 0, plain.length, in)) {
                     continue;
                 }
+                if (!stateAllows(in.kind)) throw new SvcFormatException("packet not allowed in current state");
+                SvcReplayGuard.Result freshness = replay.accept(in, enc);
+                if (freshness == SvcReplayGuard.Result.EXHAUSTED) {
+                    setState(State.FAILED, "SVC replay tracking is full; reconnect to renew the voice session");
+                    running = false; socket.close(); return;
+                }
+                if (freshness == SvcReplayGuard.Result.REPLAY) { rejected++; continue; }
                 lastRxMs = System.currentTimeMillis();
                 received++;
                 handle(in);
@@ -296,6 +296,16 @@ public final class SvcUdpClient {
                 break;
             default:
                 break; // group audio is not supported yet
+        }
+    }
+
+    private boolean stateAllows(SvcIncoming.Kind kind) {
+        switch (kind) {
+            case AUTH_ACK: return state == State.CONNECTING;
+            case CONNECTION_CHECK_ACK: return state == State.AUTHENTICATED;
+            case KEEP_ALIVE: case PING: return state == State.AUTHENTICATED || state == State.CONNECTED;
+            case PLAYER_SOUND: case LOCATION_SOUND: return state == State.CONNECTED;
+            default: return false;
         }
     }
 
