@@ -5,55 +5,114 @@ Starting org.bukkit.craftbukkit.Main
 *** Please download a new build as per instructions from https://papermc.io/downloads ***
 System Info: Java 21 (OpenJDK 64-Bit Server VM 21.0.12.1+1-LTS) Host: Linux 6.17.0-1022-azure (amd64)
 Loading libraries, please wait...
-2026-10-19 12:29:42,585 ServerMain WARN Advanced terminal features are not available in this environment
-[12:29:45 INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
-[12:29:45 INFO]: Found new data pack file/bukkit, loading it automatically
-[12:29:46 INFO]: Loaded 7 recipes
-[12:29:47 INFO]: Starting minecraft server version 1.18.2
-[12:29:47 INFO]: Loading properties
-[12:29:47 INFO]: This server is running Paper version git-Paper-388 (MC: 1.18.2) (Implementing API version 1.18.2-R0.1-SNAPSHOT) (Git: fc9ee65 on ver/1.18.2)
-[12:29:47 INFO]: Server Ping Player Sample Count: 12
-[12:29:47 INFO]: Using 4 threads for Netty based IO
-[12:29:47 INFO]: Default game type: SURVIVAL
-[12:29:47 INFO]: Generating keypair
-[12:29:47 INFO]: Starting Minecraft server on *:25565
-[12:29:47 INFO]: Using epoll channel type
-[12:29:47 INFO]: Paper: Using libdeflate (Linux x86_64) compression from Velocity.
-[12:29:47 INFO]: Paper: Using Java cipher from Velocity.
-[12:29:47 INFO]: [voicechat] Loading voicechat v2.6.24
-[12:29:47 WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
-[12:29:47 WARN]: The server will make no attempt to authenticate usernames. Beware.
-[12:29:47 WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
-[12:29:47 WARN]: To change this, set "online-mode" to "true" in the server.properties file.
-[12:29:47 INFO]: Preparing level "world"
-[12:29:52 INFO]: Preparing start region for dimension minecraft:overworld
-[12:29:52 INFO]: Preparing spawn area: 1%
-[12:29:52 INFO]: Time elapsed: 139 ms
-[12:29:52 INFO]: Preparing start region for dimension minecraft:the_end
-[12:29:52 INFO]: Time elapsed: 63 ms
-[12:29:52 INFO]: Preparing start region for dimension minecraft:the_nether
-[12:29:52 INFO]: Time elapsed: 62 ms
-[12:29:52 INFO]: [voicechat] Enabling voicechat v2.6.24
-[12:29:52 INFO]: [voicechat] Initializing compatibility for version 1.18.2-R0.1
-[12:29:53 INFO]: [voicechat] Compatibility version 20
-[12:29:53 INFO]: [voicechat] Successfully initialized commodore command completion
-[12:29:53 INFO]: Running delayed init tasks
-[12:29:53 INFO]: [voicechat] Loading plugins
-[12:29:53 INFO]: [voicechat] Loaded 0 plugin(s)
-[12:29:53 INFO]: [voicechat] Initializing plugins
-[12:29:53 INFO]: [voicechat] Initialized 0 plugin(s)
-[12:29:53 WARN]: [voicechat] Running in offline mode - Voice chat encryption is not secure!
-[12:29:53 INFO]: Done (6.202s)! For help, type "help"
-[12:29:53 INFO]: Timings Reset
-[12:29:53 INFO]: [voicechat] Voice chat server started at port 24454
-[12:30:09 INFO]: UUID of player mcvoice_probe is 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[12:30:09 INFO]: mcvoice_probe joined the game
-[12:30:09 INFO]: mcvoice_probe[/127.0.0.1:43834] logged in with entity id 62 at ([world]-30.5, 80.0, -36.5)
-[12:30:09 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[12:30:09 INFO]: [voicechat] Sent secret to mcvoice_probe
-[12:30:09 INFO]: [voicechat] Successfully authenticated player 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[12:30:09 INFO]: [voicechat] Successfully validated connection of player 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[12:30:09 INFO]: [voicechat] Player mcvoice_probe (505ae21d-a3e5-3a31-941c-a3df5dab234e) successfully connected to voice chat
-[12:30:15 INFO]: mcvoice_probe lost connection: Disconnected
-[12:30:15 INFO]: [voicechat] Disconnecting client mcvoice_probe
-[12:30:15 INFO]: mcvoice_probe left the game
+2026-10-24 18:38:47,275 ServerMain WARN Advanced terminal features are not available in this environment
+[18:38:51 INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[18:38:51 INFO]: Found new data pack file/bukkit, loading it automatically
+[18:38:53 INFO]: Loaded 7 recipes
+[18:38:54 INFO]: Starting minecraft server version 1.18.2
+[18:38:54 INFO]: Loading properties
+[18:38:54 INFO]: This server is running Paper version git-Paper-388 (MC: 1.18.2) (Implementing API version 1.18.2-R0.1-SNAPSHOT) (Git: fc9ee65 on ver/1.18.2)
+[18:38:54 INFO]: Server Ping Player Sample Count: 12
+[18:38:54 INFO]: Using 4 threads for Netty based IO
+[18:38:54 INFO]: Default game type: SURVIVAL
+[18:38:54 INFO]: Generating keypair
+[18:38:54 INFO]: Starting Minecraft server on *:25565
+[18:38:54 INFO]: Using epoll channel type
+[18:38:54 INFO]: Paper: Using libdeflate (Linux x86_64) compression from Velocity.
+[18:38:54 INFO]: Paper: Using Java cipher from Velocity.
+[18:38:55 INFO]: [voicechat] Loading voicechat v2.6.26
+[18:38:55 WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[18:38:55 WARN]: The server will make no attempt to authenticate usernames. Beware.
+[18:38:55 WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[18:38:55 WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[18:38:55 INFO]: Preparing level "world"
+[18:39:02 INFO]: Preparing start region for dimension minecraft:overworld
+[18:39:02 INFO]: Preparing spawn area: 1%
+[18:39:02 INFO]: Time elapsed: 147 ms
+[18:39:02 INFO]: Preparing start region for dimension minecraft:the_nether
+[18:39:02 INFO]: Time elapsed: 121 ms
+[18:39:02 INFO]: Preparing start region for dimension minecraft:the_end
+[18:39:03 INFO]: Time elapsed: 79 ms
+[18:39:03 INFO]: [voicechat] Enabling voicechat v2.6.26
+[18:39:03 INFO]: [voicechat] Initializing compatibility for version 1.18.2-R0.1
+[18:39:03 INFO]: [voicechat] Compatibility version 20
+[18:39:03 INFO]: [voicechat] Successfully initialized commodore command completion
+[18:39:03 INFO]: Running delayed init tasks
+[18:39:03 INFO]: [voicechat] Loading plugins
+[18:39:03 INFO]: [voicechat] Loaded 0 plugin(s)
+[18:39:03 INFO]: [voicechat] Initializing plugins
+[18:39:03 INFO]: [voicechat] Initialized 0 plugin(s)
+[18:39:03 WARN]: [voicechat] Running in offline mode - Voice chat encryption is not secure!
+[18:39:03 INFO]: Done (8.919s)! For help, type "help"
+[18:39:03 INFO]: Timings Reset
+[18:39:03 INFO]: [voicechat] Voice chat server started at port 24454
+[18:39:24 INFO]: UUID of player mcvoice_probe is 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[18:39:24 INFO]: mcvoice_probe joined the game
+[18:39:25 INFO]: mcvoice_probe[/127.0.0.1:35128] logged in with entity id 66 at ([world]12.5, 72.0, 14.5)
+[18:39:25 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:25 INFO]: [voicechat] Sent secret to mcvoice_probe
+[18:39:25 INFO]: [voicechat] Successfully authenticated player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[18:39:25 INFO]: [voicechat] Successfully validated connection of player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[18:39:25 INFO]: [voicechat] Player mcvoice_probe (505ae21d-a3e5-3a31-941c-a3df5dab234e) successfully connected to voice chat
+[18:39:27 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:27 WARN]: [voicechat] Player already requested secret - ignoring
+[18:39:28 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:28 WARN]: [voicechat] Player already requested secret - ignoring
+[18:39:29 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:29 WARN]: [voicechat] Player already requested secret - ignoring
+[18:39:30 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:30 WARN]: [voicechat] Player already requested secret - ignoring
+[18:39:31 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:31 WARN]: [voicechat] Player already requested secret - ignoring
+[18:39:32 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:32 WARN]: [voicechat] Player already requested secret - ignoring
+[18:39:33 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:33 WARN]: [voicechat] Player already requested secret - ignoring
+[18:39:34 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:34 WARN]: [voicechat] Player already requested secret - ignoring
+[18:39:35 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:35 WARN]: [voicechat] Player already requested secret - ignoring
+[18:39:36 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:36 WARN]: [voicechat] Player already requested secret - ignoring
+[18:39:37 INFO]: [voicechat] Player 505ae21d-a3e5-3a31-941c-a3df5dab234e timed out
+[18:39:37 INFO]: [voicechat] Reconnecting player mcvoice_probe
+[18:39:37 INFO]: [voicechat] Sent secret to mcvoice_probe
+[18:39:37 INFO]: [voicechat] Successfully authenticated player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[18:39:38 INFO]: [voicechat] Successfully validated connection of player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[18:39:38 INFO]: [voicechat] Player mcvoice_probe (505ae21d-a3e5-3a31-941c-a3df5dab234e) successfully connected to voice chat
+[18:39:43 INFO]: mcvoice_probe lost connection: Disconnected
+[18:39:43 INFO]: [voicechat] Disconnecting client mcvoice_probe
+[18:39:43 INFO]: mcvoice_probe left the game
+[18:39:44 INFO]: UUID of player mcvoice_probe is 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[18:39:44 INFO]: mcvoice_probe joined the game
+[18:39:44 INFO]: mcvoice_probe[/127.0.0.1:60898] logged in with entity id 386 at ([world]12.5, 72.0, 14.5)
+[18:39:44 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[18:39:44 INFO]: [voicechat] Sent secret to mcvoice_probe
+[18:39:44 INFO]: [voicechat] Successfully authenticated player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[18:39:45 INFO]: [voicechat] Successfully validated connection of player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[18:39:45 INFO]: [voicechat] Player mcvoice_probe (505ae21d-a3e5-3a31-941c-a3df5dab234e) successfully connected to voice chat
+[18:39:45 INFO]: UUID of player mcvoice_sender is 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[18:39:45 INFO]: mcvoice_sender joined the game
+[18:39:45 INFO]: mcvoice_sender[/127.0.0.1:60914] logged in with entity id 387 at ([world]11.5, 72.0, 17.5)
+[18:39:46 INFO]: [voicechat] Received secret request of mcvoice_sender (20)
+[18:39:46 INFO]: [voicechat] Sent secret to mcvoice_sender
+[18:39:46 INFO]: [voicechat] Successfully authenticated player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[18:39:46 INFO]: [voicechat] Successfully validated connection of player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[18:39:46 INFO]: [voicechat] Player mcvoice_sender (0e29f872-0cb2-34ab-94b9-8d6e2f980b53) successfully connected to voice chat
+[18:39:51 INFO]: mcvoice_sender lost connection: Disconnected
+[18:39:51 INFO]: [voicechat] Disconnecting client mcvoice_sender
+[18:39:52 INFO]: mcvoice_sender left the game
+[18:39:53 INFO]: UUID of player mcvoice_sender is 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[18:39:53 INFO]: mcvoice_sender joined the game
+[18:39:53 INFO]: mcvoice_sender[/127.0.0.1:35142] logged in with entity id 484 at ([world]11.5, 72.0, 17.5)
+[18:39:53 INFO]: [voicechat] Received secret request of mcvoice_sender (20)
+[18:39:53 INFO]: [voicechat] Sent secret to mcvoice_sender
+[18:39:54 INFO]: [voicechat] Successfully authenticated player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[18:39:54 INFO]: [voicechat] Successfully validated connection of player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[18:39:54 INFO]: [voicechat] Player mcvoice_sender (0e29f872-0cb2-34ab-94b9-8d6e2f980b53) successfully connected to voice chat
+[18:39:59 INFO]: mcvoice_sender lost connection: Disconnected
+[18:39:59 INFO]: [voicechat] Disconnecting client mcvoice_sender
+[18:39:59 INFO]: mcvoice_sender left the game
+[18:40:07 INFO]: mcvoice_probe lost connection: Disconnected
+[18:40:07 INFO]: [voicechat] Disconnecting client mcvoice_probe
+[18:40:07 INFO]: mcvoice_probe left the game
