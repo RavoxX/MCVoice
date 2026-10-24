@@ -53,7 +53,14 @@ child.on('exit', (code) => {
   process.exit(code === null ? 1 : code);
 });
 
-client = mc.createClient({ host, port: Number(port), username: 'mcvoice_probe', auth: 'offline', version });
+client = mc.createClient({ host, port: Number(port), username: process.env.MCVOICE_PROBE_NAME || 'mcvoice_probe', auth: 'offline', version });
+client.on('position', (packet) => {
+  client.write('teleport_confirm', { teleportId: packet.teleportId });
+  client.write('position_look', {
+    x: packet.x, y: packet.y, z: packet.z, yaw: packet.yaw, pitch: packet.pitch,
+    onGround: true, flags: { onGround: true, hasHorizontalCollision: false }
+  });
+});
 client.on('custom_payload', (packet) => {
   const channel = packet.channel;
   const data = packet.data || Buffer.alloc(0);
