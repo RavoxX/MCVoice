@@ -7,9 +7,10 @@ can still be heard on servers that run the Simple Voice Chat plugin.
 
 <img src="docs/images/icon.png" width="96" alt="MCVoice icon">
 
-Release preparation **0.1.12** changes the controls and group behavior described below.
-The published 0.1.11 release and public backend remain unchanged until a new
-release/deployment. See [controls, migration and compatibility](docs/svc-style-controls.md).
+Stable **[0.1.12](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.12)** adds
+SVC-style controls, one microphone mode and twenty-member group policies.
+The public backend is updated. See [controls and migration](docs/svc-style-controls.md)
+and [release verification](docs/release-0.1.12.md).
 
 * Positional 3D audio (equal-power stereo panning, distance attenuation),
   Opus at 48 kHz in 20 ms frames, a jitter buffer and a whisper mode.
@@ -42,14 +43,11 @@ release/deployment. See [controls, migration and compatibility](docs/svc-style-c
 
 ## Supported Minecraft versions
 
-**[0.1.11](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.11)** adds member
-heads/name tooltips and a saved **All Groups /
-This Server** directory filter, plus optional background update notifications
-linking to the stable GitHub release for your Minecraft version and loader.
-These changes require the new client; directory previews/filtering also require
-an updated voice backend. The public backend runs 0.1.11. See
-[behavior and verification](docs/group-directory-and-updates.md) and the
-[release report](docs/release-0.1.11.md).
+**[0.1.12](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.12)** is published
+for all 62 supported Minecraft versions (102 validated jars). Both backend
+images and byte-verified Maven packages are published. The public Rust backend
+runs 0.1.12 with Normal/Open/Isolated groups and a twenty-member limit.
+See [the release report](docs/release-0.1.12.md).
 
 The authoritative, CI-generated matrix is
 [`versions/supported.md`](versions/supported.md) (machine-readable:
