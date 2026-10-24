@@ -1,6 +1,6 @@
 bot: joined (play state)
-bot: server registered voicechat:leave_group,voicechat:request_secret,voicechat:create_group,voicechat:set_group,voicechat:update_state
 handshake: WAITING
+bot: server registered voicechat:leave_group,voicechat:request_secret,voicechat:create_group,voicechat:set_group,voicechat:update_state
 handshake: REQUESTED (compatibility 20)
 [INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
 bot: -> voicechat:request_secret (4 bytes)
@@ -23,7 +23,16 @@ bot: <- voicechat:state (33 bytes)
 bot: state observation voicechat:state 0000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
 wire-control: KEEP_ALIVE length=256
 wire-control: KEEP_ALIVE length=256
+handshake: WAITING
+handshake: REQUESTED (compatibility 20)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
+bot: -> voicechat:request_secret (4 bytes)
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
 wire-control: KEEP_ALIVE length=256
 wire-control: KEEP_ALIVE length=256
+handshake: REQUESTED (compatibility 19)
+[INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 19)
+bot: -> voicechat:request_secret (4 bytes)
 wire-control: KEEP_ALIVE length=256
-bot: probe exited with 0
+bot: probe exited with 1
