@@ -26,7 +26,7 @@ channel. Only a different key starts new history. A server returning the same
 key cannot clear the old ledger. If no new key arrives within 60 seconds, SVC
 fails closed and asks the user to rejoin; cloud voice remains independent.
 
-This renewal briefly interrupts SVC audio. In the real Paper 1.21.4 / SVC 2.6.24
+This renewal briefly interrupts SVC audio. In the real Paper 1.21.4 / SVC 2.6.26
 observation the server ignored secret requests while UDP was connected and
 provided a different key about nine seconds after UDP was stopped. At one
 50-frame/s incoming stream the renewal threshold is about 16 minutes; several
