@@ -19,9 +19,9 @@ bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d6
 wire-control: CONNECTION_CHECK_ACK length=256
 [INFO][SVC] SVC voice connection established with 127.0.0.1:24454
 udp: CONNECTED
+wire-control: KEEP_ALIVE length=256
 bot: <- voicechat:state (34 bytes)
 bot: state observation voicechat:state 00000e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
-wire-control: KEEP_ALIVE length=256
 wire-control: KEEP_ALIVE length=256
 wire-control: KEEP_ALIVE length=256
 wire-control: KEEP_ALIVE length=256

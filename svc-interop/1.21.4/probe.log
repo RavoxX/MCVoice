@@ -103,4 +103,9 @@ wire-control: CONNECTION_CHECK_ACK length=256
 udp: CONNECTED
 bot: <- voicechat:state (33 bytes)
 bot: state observation voicechat:state 0000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
-bot: probe exited with 1
+wire-control: KEEP_ALIVE length=256
+wire-control: KEEP_ALIVE length=256
+wire-control: KEEP_ALIVE length=256
+wire-control: KEEP_ALIVE length=256
+wire-control: KEEP_ALIVE length=256
+bot: probe exited with 0
