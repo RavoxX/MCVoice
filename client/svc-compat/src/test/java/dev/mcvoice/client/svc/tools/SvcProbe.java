@@ -177,9 +177,13 @@ public final class SvcProbe {
         long connectedSince = -1;
         boolean ok = false;
         boolean renewalRequested = false;
+        long renewalAttempt = 0;
         byte[] silence = {(byte) 0xF8, (byte) 0xFF, (byte) 0xFE}; // an Opus silence frame
         while (System.currentTimeMillis() - start < timeoutMs) {
             hs.tick(System.currentTimeMillis());
+            if (renewalRequested && renewals.get() == 0 && System.currentTimeMillis()-renewalAttempt > 1000) {
+                renewalAttempt = System.currentTimeMillis(); hs.reset(true);
+            }
             SvcUdpClient u = udp.get();
             if (u != null && u.state() == SvcUdpClient.State.CONNECTED) {
                 if (connectedSince < 0) {
@@ -187,15 +191,15 @@ public final class SvcProbe {
                 }
                 if (!receiveOnly) u.sendMic(silence, 0, silence.length, false);
                 if (Boolean.getBoolean("probe.renew") && !renewalRequested && System.currentTimeMillis()-connectedSince > 2000) {
-                    renewalRequested = true; hs.reset(true);
+                    renewalRequested = true; renewalAttempt = System.currentTimeMillis(); u.close(); hs.reset(true);
                 }
-                if (System.currentTimeMillis() - connectedSince > durationMs) {
+                if (System.currentTimeMillis() - connectedSince > durationMs && (!renewalRequested || renewals.get() > 0)) {
                     ok = u.state() == SvcUdpClient.State.CONNECTED && states.online().containsValue(playerName)
                         && (!receiveOnly || zeroFrames.get() >= 2)
                         && (!Boolean.getBoolean("probe.renew") || renewals.get() > 0);
                     break;
                 }
-            } else if (u != null && (u.state() == SvcUdpClient.State.FAILED || u.state() == SvcUdpClient.State.CLOSED)) {
+            } else if (u != null && (u.state() == SvcUdpClient.State.FAILED || u.state() == SvcUdpClient.State.CLOSED) && !renewalRequested) {
                 break;
             }
             String h = handshakeState.get();
