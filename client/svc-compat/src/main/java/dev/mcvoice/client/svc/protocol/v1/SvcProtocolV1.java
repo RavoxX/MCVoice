@@ -124,15 +124,19 @@ public final class SvcProtocolV1 implements SvcProtocol {
                 }
                 return true;
             case AUTHENTICATE_ACK:
+                controlLength(len, 1);
                 o.kind = SvcIncoming.Kind.AUTH_ACK;
                 return true;
             case CONNECTION_CHECK_ACK:
+                controlLength(len, 1);
                 o.kind = SvcIncoming.Kind.CONNECTION_CHECK_ACK;
                 return true;
             case KEEP_ALIVE:
+                controlLength(len, 1);
                 o.kind = SvcIncoming.Kind.KEEP_ALIVE;
                 return true;
             case PING:
+                controlLength(len, 25);
                 o.kind = SvcIncoming.Kind.PING;
                 o.pingId = r.readUuid();
                 o.pingTimestamp = r.readLong();
@@ -141,6 +145,11 @@ public final class SvcProtocolV1 implements SvcProtocol {
                 o.kind = SvcIncoming.Kind.OTHER;
                 return false;
         }
+    }
+
+    private static void controlLength(int length, int exact) throws SvcFormatException {
+        // Authenticated Bukkit packets may expose the complete backing buffer.
+        if (length != exact && length != 256) throw new SvcFormatException("invalid control packet length");
     }
 
     /**
