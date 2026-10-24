@@ -293,19 +293,21 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **0.1.12, release preparation:** SVC-style voice menu and default bindings, one
-  shared microphone mode, native keyboard/mouse binding capture (SDL on 26.3),
-  Normal/Open/Isolated group policies and a 20-member cap. Old default V/B
-  bindings migrate once; non-default custom bindings remain. Group type is
-  enforced by both backends and every client transport, with fail-closed
-  fallback for unknown policies. Runtime source `18c1fa7` passes all six CI jobs
-  (`40007617453`), both backend container checks and 26.3 builds. The client has
-  126 passing tests against each backend; shared conformance is 43/43. Thirteen
-  representative Minecraft versions built successfully. See
-  `docs/svc-style-controls.md` for exact revisions, native runtime evidence and
-  limitations. The public backend and released jars remain on 0.1.11.
+* **Stable 0.1.12 released:** SVC-style menu/default hotkeys, shared microphone
+  mode, native keyboard/mouse bindings and Normal/Open/Isolated groups with a
+  20-member cap. Per-frame routing/playback checks and legacy Open compatibility
+  remain enforced. Release `40012401858` passes: 102/102 jars, 62/62 Minecraft
+  releases, 102/102 byte-verified Maven publications and both backend images.
+  Every GitHub jar digest matches Maven; both 26.3 jars match exact-version
+  runtime `40010481218` byte for byte (Fabric + Forge). Main source `39d375f`
+  passes CI `40011188162`; the client has 126 passing tests against each backend
+  and shared conformance is 43/43. Rust 0.1.12 is deployed after isolated staging;
+  local/public/workstation checks pass and unrelated services were unchanged.
+  See `docs/svc-style-controls.md`, `docs/release-0.1.12.md` and
+  `docs/deployment-0.1.12.md` for public evidence. Operational rollback details
+  are retained locally, with the previous 0.1.11 image and protected backup.
 
-* **Stable 0.1.11 released:** paged `group_directory`
+* **Earlier stable 0.1.11:** paged `group_directory`
   previews include public UUID/name rosters (password groups included) without
   granting membership/playback. Both backends filter before paging using the
   latest in-world address hash; network ids remain absent from routing checks.
@@ -436,18 +438,19 @@ git show FETCH_HEAD:<path>`).
   1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
   (`release-report-run36115472419.md`). Maven: every jar is in GitHub
   Packages; re-runs record `exists`. Backend images `0.1.0`/`latest` pushed.
-* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.11,
-  source `45b0962`, image selected by `MCVOICE_VERSION=0.1.11` in
+* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.12,
+  source `39d375f`, image selected by `MCVOICE_VERSION=0.1.12` in
   `/opt/mcvoice/.env` on 5.83.145.152). Published digest
-  `sha256:ae72f8cd7efae7a4b28a2682f887c1f20bf4c45f5bb2fa90b6c08d7bdd96af70`.
-  Deployed 2026-10-23 14:08:14 UTC after isolated staging and image verification.
+  `sha256:b9ffcd1352976765ae04f4c2bed2d14bcfcc65276b061aa7c02470413afcea83`.
+  Deployed after isolated staging and image verification.
   Exact gateway `172.24.0.1/32` remains trusted; Mojang auth and ports preserved.
   Local/public readiness and protocol 1.1 (`groups`, `group_paging`,
-  `group_directory`) pass; all 30 unrelated container IDs unchanged.
-  The published 0.1.10 image and mode-600 environment backup remain for rollback:
-  `sh /opt/mcvoice/candidates/0.1.11/rollback.sh`. See
-  `docs/deployment-0.1.11.md` for digests and checks. Earlier deployment details
-  remain in `docs/deployment-0.1.10.md` and `docs/deployment-2026-10-19.md`.
+  `group_directory`, `group_modes`) pass; all 30 unrelated container ids unchanged.
+  The published 0.1.11 image and protected environment backup remain for rollback;
+  current operational instructions are retained locally. See
+  `docs/deployment-0.1.12.md` for digests and checks. Earlier deployment details
+  remain in `docs/deployment-0.1.11.md`, `docs/deployment-0.1.10.md` and
+  `docs/deployment-2026-10-19.md`.
   Host nginx vhost `mcvoice.ravoxx.dev` → `127.0.0.1:18455`, certbot
   `dns-cloudflare` certificate, DNS not proxied. UDP 24455 is opened in the
   host's `vpn_hardening` nftables firewall via
