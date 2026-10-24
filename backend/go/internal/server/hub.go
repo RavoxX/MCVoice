@@ -20,7 +20,7 @@ import (
 	"github.com/RavoxX/MCVoice/backend/go/internal/routing"
 )
 
-const Version = "0.1.12"
+const Version = "0.1.13"
 
 // Server is the combined control service and voice relay.
 type Server struct {
@@ -92,6 +92,11 @@ func marshal(v any) []byte {
 
 func errorFrame(code, msg string, fatal bool) []byte {
 	return marshal(protocol.ErrorMsg{Type: "error", Code: code, Message: msg, Fatal: fatal})
+}
+
+// currentSessionLocked requires ownership of both indexes under the hub lock.
+func (s *Server) currentSessionLocked(sess *Session) bool {
+	return s.byConn[sess.connID] == sess && s.byUUID[sess.ident.UUID] == sess
 }
 
 // register adds a session, replacing any older session for the same player.
