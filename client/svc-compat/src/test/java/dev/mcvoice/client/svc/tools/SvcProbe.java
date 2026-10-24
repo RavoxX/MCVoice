@@ -51,6 +51,8 @@ public final class SvcProbe {
         final boolean receiveOnly = Boolean.getBoolean("probe.receiveOnly");
         final AtomicInteger soundFrames = new AtomicInteger();
         final AtomicInteger zeroFrames = new AtomicInteger();
+        final AtomicReference<UUID> previousSecret = new AtomicReference<>();
+        final AtomicInteger renewals = new AtomicInteger();
         final PrintStream out = new PrintStream(System.out, true, "UTF-8");
         System.setOut(System.err); // everything except the protocol lines goes to stderr
         VoiceLog.setSink((level, category, message, error) -> {
@@ -89,6 +91,12 @@ public final class SvcProbe {
         final SvcHandshake hs = new SvcHandshake(adapter, new SvcHandshake.Listener() {
             @Override
             public void onSecret(SecretInfo secret, int compatibilityVersion, SvcProtocol protocol) {
+                UUID previous = previousSecret.getAndSet(secret.secret);
+                if (previous != null) {
+                    boolean changed = !previous.equals(secret.secret);
+                    System.err.println("wire-renewal: key_changed=" + changed);
+                    if (changed) renewals.incrementAndGet();
+                }
                 compat[0] = compatibilityVersion;
                 try {
                     String vh = secret.voiceHost == null ? "" : secret.voiceHost.trim();
@@ -111,7 +119,8 @@ public final class SvcProbe {
                             public void onLocationSound(UUID sender, long sequence, double x, double y, double z, float distance, byte[] data) {
                             }
                         });
-                    udp.set(u);
+                    SvcUdpClient old = udp.getAndSet(u);
+                    if (old != null) old.close();
                     u.start();
                     if (serverChannels.contains(SvcHandshake.UPDATE_STATE)) {
                         adapter.send(SvcHandshake.UPDATE_STATE, protocol.updateState(false));
@@ -167,6 +176,7 @@ public final class SvcProbe {
         long start = System.currentTimeMillis();
         long connectedSince = -1;
         boolean ok = false;
+        boolean renewalRequested = false;
         byte[] silence = {(byte) 0xF8, (byte) 0xFF, (byte) 0xFE}; // an Opus silence frame
         while (System.currentTimeMillis() - start < timeoutMs) {
             hs.tick(System.currentTimeMillis());
@@ -176,9 +186,13 @@ public final class SvcProbe {
                     connectedSince = System.currentTimeMillis();
                 }
                 if (!receiveOnly) u.sendMic(silence, 0, silence.length, false);
+                if (Boolean.getBoolean("probe.renew") && !renewalRequested && System.currentTimeMillis()-connectedSince > 2000) {
+                    renewalRequested = true; hs.reset(true);
+                }
                 if (System.currentTimeMillis() - connectedSince > durationMs) {
                     ok = u.state() == SvcUdpClient.State.CONNECTED && states.online().containsValue(playerName)
-                        && (!receiveOnly || zeroFrames.get() >= 2);
+                        && (!receiveOnly || zeroFrames.get() >= 2)
+                        && (!Boolean.getBoolean("probe.renew") || renewals.get() > 0);
                     break;
                 }
             } else if (u != null && (u.state() == SvcUdpClient.State.FAILED || u.state() == SvcUdpClient.State.CLOSED)) {

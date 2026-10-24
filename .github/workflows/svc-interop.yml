@@ -76,7 +76,7 @@ jobs:
           set -o pipefail
           npm ci --no-audit --no-fund
           cp=$(tail -1 ../../probe-classpath.txt)
-          node bot.js 127.0.0.1 25565 "$MC" -- java -cp "$cp" dev.mcvoice.client.svc.tools.SvcProbe 127.0.0.1 90 \
+          node bot.js 127.0.0.1 25565 "$MC" -- java -Dprobe.renew=true -cp "$cp" dev.mcvoice.client.svc.tools.SvcProbe 127.0.0.1 90 \
             2> >(tee ../../probe.log >&2) | tee ../../svc-interop-result.json
           python3 reconnect.py "$MC" "$cp" | tee ../../svc-reconnect-result.json
       - name: Report
