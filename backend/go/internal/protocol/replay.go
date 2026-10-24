@@ -32,8 +32,9 @@ func (w *ReplayWindow) Update(c uint64) (newTop bool) {
 		if diff >= WindowSize {
 			w.bitmap = [WindowSize / 64]uint64{}
 		} else {
-			for i := w.top + 1; i <= c; i++ {
-				idx := i % WindowSize
+			// Bound iteration by the small advance, including when c is MaxUint64.
+			for step := uint64(1); step <= diff; step++ {
+				idx := (w.top + step) % WindowSize
 				w.bitmap[idx/64] &^= 1 << (idx % 64)
 			}
 		}
