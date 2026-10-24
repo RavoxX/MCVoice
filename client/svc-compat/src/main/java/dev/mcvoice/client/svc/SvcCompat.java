@@ -40,6 +40,10 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
     private final ServerAddress serverAddress;
     private volatile AudioSink sink;
     private volatile SvcUdpClient udp;
+    private SvcUdpClient replaySession;
+    private volatile boolean renewalPending;
+    private boolean renewing;
+    private long renewalSince, renewalAttempt;
     private volatile SecretInfo secret;
     private volatile Status status = Status.DISABLED;
     private volatile String detail = "";
@@ -60,6 +64,10 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
     }
 
     public void setEnabled(boolean enabled) {
+        if (!enabled) {
+            renewalPending = false;
+            renewing = false;
+        }
         handshake.setEnabled(enabled);
         if (!enabled) {
             playerStates.clear();
@@ -69,6 +77,8 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
 
     /** Call when a new Minecraft server session starts or ends. */
     public void reset(boolean inMultiplayerWorld) {
+        renewalPending = false;
+        renewing = false;
         playerStates.clear();
         closeUdp();
         secret = null;
@@ -78,6 +88,30 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
 
     public void tick(long now) {
         try {
+            if (renewalPending) {
+                renewalPending = false;
+                SvcUdpClient current = udp;
+                if (current != null && current.state() == SvcUdpClient.State.CONNECTED
+                        && handshake.state() == SvcHandshake.State.SECRET_RECEIVED) {
+                    renewing = true;
+                    renewalSince = now;
+                    renewalAttempt = now;
+                    closeUdp();
+                    status = Status.CONNECTING;
+                    detail = "Renewing SVC voice session for replay protection";
+                    handshake.reset(true);
+                }
+            }
+            if (renewing && now - renewalSince > 60000) {
+                renewing = false;
+                status = Status.FAILED;
+                detail = "SVC server did not provide a fresh key; rejoin the Minecraft server to renew voice";
+                return;
+            }
+            if (renewing && now - renewalAttempt > 1000) {
+                renewalAttempt = now;
+                handshake.reset(true);
+            }
             handshake.tick(now);
         } catch (RuntimeException e) {
             VoiceLog.warn(Category.SVC, "SVC handshake error", e);
@@ -114,6 +148,9 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
 
     @Override
     public void onHandshakeState(SvcHandshake.State s, String d) {
+        if (renewing) {
+            return;
+        }
         switch (s) {
             case DISABLED:
             case IDLE:
@@ -144,6 +181,11 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
 
     @Override
     public void onSecret(SecretInfo s, int compatibilityVersion, SvcProtocol protocol) {
+        if (renewing && secret != null && secret.secret.equals(s.secret)) {
+            detail = "SVC server did not renew its key; replay history retained";
+            return;
+        }
+        renewing = false;
         secret = s;
         compatVersion = compatibilityVersion;
         closeUdp();
@@ -154,7 +196,8 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
             return;
         }
         try {
-            SvcUdpClient u = new SvcUdpClient(s, target, protocol, this);
+            SvcUdpClient u = new SvcUdpClient(s, target, protocol, this, replaySession);
+            replaySession = u;
             udp = u;
             u.start();
             if (adapter.serverAcceptsChannel(SvcHandshake.UPDATE_STATE)) {
@@ -196,6 +239,11 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
             VoiceLog.warn(Category.SVC, "cannot resolve SVC voice host: " + e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public void onRenewalRequired() {
+        renewalPending = true; // The Minecraft tick sends the plugin message, never the UDP thread.
     }
 
     @Override
