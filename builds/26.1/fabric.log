@@ -23,14 +23,14 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :validateAccessWidener NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792786411543.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1792869623396.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/MCVoice/MCVoice/minecraft/fabric/build/reports/problems/problems-report.html
 
-BUILD SUCCESSFUL in 56s
+BUILD SUCCESSFUL in 41s
 5 actionable tasks: 5 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.8.0/userguide/configuration_cache_enabling.html
-valid: mcvoice-0.1.12-mc26.1-fabric.jar (419 classes, 19 platform classes, metadata ['fabric.mod.json'])
+valid: mcvoice-0.1.13-mc26.1-fabric.jar (421 classes, 19 platform classes, metadata ['fabric.mod.json'])
   platform: dev/mcvoice/platform/fabric/McVoiceFabric
   platform: dev/mcvoice/platform/fabric/McVoiceFabric$FabricSvcChannels
   platform: dev/mcvoice/platform/fabric/mixin/NameTagMixin
