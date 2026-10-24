@@ -1,0 +1,1 @@
+{"ok":false,"compatibility_version":20,"online_voice_players":2,"sound_frames":246,"zero_frames":1,"handshake":"SECRET_RECEIVED (compatibility 20)","udp":"CONNECTED","cipher":"GCM_IV12","sent":24,"received":270,"rejected":246,"server_channels":"voicechat:leave_group,voicechat:request_secret,voicechat:create_group,voicechat:set_group,voicechat:update_state"}
