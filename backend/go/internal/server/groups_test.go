@@ -10,6 +10,59 @@ import (
 	"time"
 )
 
+func TestDetachedSessionsCannotMutateGroups(t *testing.T) {
+	for _, removed := range []string{"replaced", "unregistered"} {
+		for _, operation := range []string{"create", "join", "leave"} {
+			t.Run(removed+"/"+operation, func(t *testing.T) {
+				s := hardeningServer()
+				s.cfg.MaxSessions = 3
+				old := admissionPlayer(1, "00000000-0000-4000-8000-000000000001")
+				owner := admissionPlayer(2, "00000000-0000-4000-8000-000000000002")
+				if code := s.register(old); code != "" {
+					t.Fatal(code)
+				}
+				if code := s.register(owner); code != "" {
+					t.Fatal(code)
+				}
+				s.groupCreate(owner, &protocol.GroupCreate{})
+				id := owner.peer.Group
+				s.groupJoin(old, &protocol.GroupJoin{ID: &id}, time.Now())
+				if len(s.groups[id].members) != 2 {
+					t.Fatal("live join failed")
+				}
+				if removed == "replaced" {
+					next := admissionPlayer(3, old.ident.UUID)
+					if code := s.register(next); code != "" {
+						t.Fatal(code)
+					}
+					s.groupJoin(next, &protocol.GroupJoin{ID: &id}, time.Now())
+				} else {
+					s.unregister(old)
+				}
+				before := len(s.groups[id].members)
+				// Represents an old command parsed before removal, reaching its hub mutation afterwards.
+				switch operation {
+				case "create":
+					s.groupCreate(old, &protocol.GroupCreate{})
+				case "join":
+					s.groupJoin(old, &protocol.GroupJoin{ID: &id}, time.Now())
+				case "leave":
+					s.groupLeave(old)
+				}
+				s.unregister(old)
+				if len(s.groups) != 1 || len(s.groups[id].members) != before || old.peer.Group != "" {
+					t.Fatal("detached session changed group state or created an orphan")
+				}
+				for _, member := range s.groups[id].members {
+					if member == old {
+						t.Fatal("ghost member survived cleanup")
+					}
+				}
+			})
+		}
+	}
+}
+
 func TestFullTwentyMemberDirectoryPageFitsControlFrame(t *testing.T) {
 	s := &Server{groups: map[string]*group{}}
 	for i := 0; i < 20; i++ {
