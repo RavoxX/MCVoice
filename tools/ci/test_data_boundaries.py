@@ -21,6 +21,11 @@ downloader = load('download_server', ROOT / 'tools/svc-interop/download-server.p
 
 
 class DataBoundaries(unittest.TestCase):
+    def test_probe_keeps_existing_output_path_and_other_categories_stay_scoped(self):
+        self.assertEqual(publisher.relative_target('probe', '26.3'), Path('26.3'))
+        for category in ('builds', 'smoke', 'svc-interop'):
+            self.assertEqual(publisher.relative_target(category, '26.3'), Path(category)/'26.3')
+
     def test_early_publication_failure_preserves_build_truth(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

@@ -1,4 +1,4 @@
-# Speaking controls and group types (0.1.12, release preparation)
+# Speaking controls and group types (0.1.12)
 
 The controls follow Simple Voice Chat's documented user model, implemented with
 MCVoice's own code, widgets and artwork. No SVC source, assets or sounds are
@@ -95,8 +95,9 @@ new client requires explicitly selecting Open; it refuses to silently create
 Normal/Isolated groups as open broadcasts. Unknown/malformed policies fail
 closed. The type is backend-owned routing state, never trusted from audio flags.
 
-This is an unreleased development change. The deployed public backend and
-published 0.1.11 clients retain [their recorded behavior](release-0.1.11.md).
+Stable 0.1.12 is [released for all 62 supported Minecraft versions](release-0.1.12.md)
+(102 jars), and the public Rust backend is [updated](deployment-0.1.12.md).
+Older 0.1.11 clients retain [their recorded behavior](release-0.1.11.md).
 
 ## Validation
 
@@ -128,8 +129,9 @@ All loaders built and validated for these representative versions at `711282e`:
 26.2 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005938655)) and
 26.3 ([run](https://github.com/RavoxX/MCVoice/actions/runs/40005941659)).
 The later runtime change adds only the shared member-scroll hint; adapter code
-is identical. This is representative API coverage, not a new all-version release
-or an update to the generated stable support matrix.
+is identical. These were representative pre-release checks. The [stable release](release-0.1.12.md)
+subsequently built and published every supported version, and its generated
+support matrix records those completed CI builds.
 
 The initial [26.3 native runtime run](https://github.com/RavoxX/MCVoice/actions/runs/40005944132)
 passes Fabric and Forge. Final input/rendering evidence for `18c1fa7` is collected
@@ -141,3 +143,8 @@ twenty-member group screens through Minecraft's real GUI extractor. Screenshots
 are fixture-driven visual evidence; they do not demonstrate twenty live people
 or real microphone hardware. Real audio delivery and policy enforcement are
 covered by the independent client/backend regression suites above.
+
+Stable-version [runtime 40010481218](https://github.com/RavoxX/MCVoice/actions/runs/40010481218)
+also passes both loaders. Both published 26.3 jars match those exact tested
+production jars byte for byte; all GitHub jar digests match the byte-verified
+Maven publications. See [the release evidence](release-0.1.12-verification.json).
