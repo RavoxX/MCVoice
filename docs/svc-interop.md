@@ -44,9 +44,11 @@ probe checks that its synthetic player becomes visible after voice authenticatio
 `transport/SvcUdpClient`: authenticate, then connection check, then connected.
 It answers keep-alives and pings, sends microphone packets, and receives
 player-sound packets. Encryption uses the per-player secret from the
-handshake. Two candidate AES constructions are implemented
-(`SvcCipher.Mode`); the one the server acknowledges during authentication is
-locked in. Location sounds are received but currently ignored, and group
+handshake. Only authenticated AES-128-GCM with a 12-byte IV is accepted;
+there is no CBC fallback. Accepted packet nonces are retained across idle audio
+and same-key reconnects. Bounded replay history renews through a different
+server key, with a brief SVC interruption; see [security boundaries and
+limits](security-0.1.13.md). Location sounds are received but currently ignored, and group
 audio is not supported yet.
 
 ## Versioning and failure
@@ -74,7 +76,7 @@ check first.
 
 | Check | Status |
 |---|---|
-| Unit tests vs in-process fake SVC server (both cipher modes, fail-safe paths) | automated, passing |
+| Unit tests vs in-process fake SVC server (GCM, CBC rejection, replay, renewal and fail-safe paths) | automated |
 | Headless 3-player hybrid test (A, B MCVoice + C SVC-only through a fake SVC relay; no duplicates) | automated, passing |
 | Real SVC server (`.github/workflows/svc-interop.yml`): plugin-channel handshake, UDP authentication, connection check, 5 s of keep-alives and microphone packets | **passing** against Simple Voice Chat 2.6.24 (Bukkit) on Paper 1.18.2, 1.19.4, 1.20.1 and 1.21.4: compatibility version 20, cipher `GCM_IV12`, 0 rejected packets. Recorded in `SvcProtocols.VERIFIED`; re-run weekly |
 | Older compatibility versions 19-16 | implemented with the same v1 wire format and tried as fallbacks, **not verified** against a real server |
@@ -85,9 +87,10 @@ compatibility claim comes from the CI probe against the unmodified SVC server
 (the server plugin is downloaded from Modrinth at run time, and nothing of it
 is stored in this repository). A protocol-level bot (`tools/svc-interop/bot.js`)
 provides the Minecraft connection, and every SVC byte is produced and checked
-by MCVoice's own code (`SvcProbe` → `SvcHandshake` + `SvcUdpClient`). Receiving
-another player's voice from the real server and two full Minecraft clients
-are still covered by the manual test below.
+by MCVoice's own code (`SvcProbe` → `SvcHandshake` + `SvcUdpClient`). The
+additional two-bot probe checks incoming synthetic audio and a sender restart;
+two full Minecraft clients and audible playback remain covered by the manual
+test below.
 
 ## Manual integration test (full Minecraft instances)
 
