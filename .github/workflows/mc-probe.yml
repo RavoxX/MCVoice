@@ -54,8 +54,11 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
     steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -107,7 +110,9 @@ jobs:
           set -uo pipefail
           cd work
           exec > >(tee -a ../probe-output.txt) 2>&1
-          for c in $CLASSES; do
+          python3 "$GITHUB_WORKSPACE/tools/ci/probe_classes.py" validate > requested-classes.txt || exit 1
+          while IFS= read -r c; do
+            [ -n "$c" ] || continue
             echo "::group::$c"
             if [ -f client.txt ]; then
               awk -v cls="$c" '
@@ -116,10 +121,10 @@ jobs:
               ' client.txt | sed 's/ -> [^ ]*$//; s/^\( *\)[0-9]*:[0-9]*:/\1/' | head -3000
               awk -v cls="$c" '/^[^ ]/ && $1 == cls {found=1} END {if (!found) print "NOT FOUND in mappings: " cls}' client.txt
             else
-              javap -cp "client.jar:$(ls libs/*.jar 2>/dev/null | tr '\n' ':')" "-$ACCESS" "$c" 2>&1 | head -3000 || true
+              python3 "$GITHUB_WORKSPACE/tools/ci/probe_classes.py" javap "client.jar:$(ls libs/*.jar 2>/dev/null | tr '\n' ':')" "$c" "$ACCESS"
             fi
             echo "::endgroup::"
-          done
+          done < requested-classes.txt
       - name: Inspect extra jars
         if: always() && inputs.jars != ''
         continue-on-error: true
@@ -136,12 +141,12 @@ jobs:
           for u in $JARS; do
             i=$((i+1)); curl -sSfL "$u" -o "j$i.jar" || { echo "download failed: $u"; continue; }
             echo "downloaded $u: $(file -b "j$i.jar") $(stat -c %s "j$i.jar") bytes"
-            mkdir -p "x$i" && (cd "x$i" && unzip -q -o "../j$i.jar") || echo "unzip failed: $u"
+            python3 "$GITHUB_WORKSPACE/tools/ci/probe_classes.py" extract "j$i.jar" "x$i" || { echo "unzip failed: $u"; continue; }
             # unpack nested (jar-in-jar) modules
-            find "x$i" -name '*.jar' | while read -r n; do d="${n%.jar}_x"; mkdir -p "$d"; (cd "$d" && unzip -q -o "$OLDPWD/$n"); done
+            find "x$i" -name '*.jar' -print0 | while IFS= read -r -d '' n; do d="${n%.jar}_x"; python3 "$GITHUB_WORKSPACE/tools/ci/probe_classes.py" extract "$n" "$d"; done
           done
           if [ -n "$MAPPINGS" ]; then
-            for m in $(find . -name '*.tiny'); do
+            while IFS= read -r -d '' m; do
               # tiny v2: print whole class blocks (fields/methods with named descriptors) for matching classes
               echo "::group::mappings $m"
               awk -v re="$MAPPINGS" -F'\t' '
@@ -149,18 +154,12 @@ jobs:
                 inside && /^\t[mf]\t/ { print "  " $2 " " $3 " " $4 " -> " $NF }
               ' "$m" | head -3000
               echo "::endgroup::"
-            done
-            for m in $(find . -name '*.csv' -o -name '*.srg' -o -name '*.tsrg'); do
+            done < <(find . -name '*.tiny' -print0)
+            while IFS= read -r -d '' m; do
               echo "::group::mappings $m"; grep -E "$MAPPINGS" "$m" | head -400; echo "::endgroup::"
-            done
+            done < <(find . \( -name '*.csv' -o -name '*.srg' -o -name '*.tsrg' \) -print0)
           fi
-          find . -name '*.class' | sed 's|^\./x[0-9]*/||; s|^.*_x/||; s|\.class$||; s|/|.|g' | grep -E "$FILTER" | sort -u | head -150 > classes.txt
-          cat classes.txt
-          while read -r c; do
-            f=$(find . -path "*/$(echo "$c" | tr . /).class" | head -1)
-            root=${f%/$(echo "$c" | tr . /).class}
-            echo "::group::$c"; javap -cp "$root:../client.jar" -public "$c" 2>&1 | head -120; echo "::endgroup::"
-          done < classes.txt
+          python3 "$GITHUB_WORKSPACE/tools/ci/probe_classes.py" archive
       - name: Forge MDK
         if: always() && inputs.mdk != ''
         continue-on-error: true
@@ -173,21 +172,31 @@ jobs:
           url="https://maven.minecraftforge.net/net/minecraftforge/forge/$MDK/forge-$MDK-mdk.zip"
           echo "### MDK $url"
           curl -sSfL "$url" -o mdk.zip || { echo "no MDK at $url"; exit 0; }
-          unzip -q -o mdk.zip
-          for f in $(find . -name '*.gradle' -o -name '*.gradle.kts' -o -name 'gradle.properties' -o -name 'gradle-wrapper.properties' -o -name 'mods.toml' -o -name '*.java' -o -name 'pack.mcmeta' -o -name 'mcmod.info' | grep -v '/build/' | sort); do
-            echo "::group::FILE $f"; cat "$f"; echo; echo "::endgroup::"
-          done
-      - name: Publish output to tooling/probe-output branch
+          python3 "$GITHUB_WORKSPACE/tools/ci/probe_classes.py" extract mdk.zip .
+          while IFS= read -r -d '' f; do
+            echo "::group::FILE $f"; cat -- "$f"; echo; echo "::endgroup::"
+          done < <(find . \( -name '*.gradle' -o -name '*.gradle.kts' -o -name 'gradle.properties' -o -name 'gradle-wrapper.properties' -o -name 'mods.toml' -o -name '*.java' -o -name 'pack.mcmeta' -o -name 'mcmod.info' \) -not -path '*/build/*' -print0 | sort -z)
+      - name: Stage plain diagnostic data
         if: always()
         env:
           MC: ${{ inputs.minecraft }}
         run: |
           set -eu
           f=probe-output.txt; [ -f "$f" ] || exit 0
-          git init -q out && cd out
-          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-          if git fetch -q origin tooling/probe-output 2>/dev/null; then git checkout -q -b tooling/probe-output FETCH_HEAD; else git checkout -q --orphan tooling/probe-output; fi
-          mkdir -p "$MC"; cp "../$f" "$MC/${{ github.run_id }}.txt"; cp "../$f" "$MC/latest.txt"
-          git add -A && git commit -q -m "probe $MC run ${{ github.run_id }}"
-          for i in 1 2 3 4 5; do git push -q origin HEAD:tooling/probe-output && break; sleep $((i * 3)); git fetch -q origin tooling/probe-output && git rebase -q FETCH_HEAD || true; done
+          mkdir -p pub; cp "$f" "pub/${{ github.run_id }}.txt"; cp "$f" pub/latest.txt
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: probe-diagnostic-data
+          path: pub/
+
+  diagnostics:
+    needs: probe
+    if: always()
+    permissions:
+      contents: write
+    uses: ./.github/workflows/publish-diagnostics.yml
+    with:
+      artifact: probe-diagnostic-data
+      category: probe
+      minecraft: ${{ inputs.minecraft }}
