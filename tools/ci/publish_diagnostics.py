@@ -18,6 +18,10 @@ def stage(source, destination):
         (destination / file.name).write_bytes(data)
 
 
+def relative_target(category, minecraft):
+    return Path(minecraft) if category == 'probe' else Path(category) / minecraft
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("source", type=Path)
@@ -31,7 +35,7 @@ def main():
     git("fetch", "origin", "tooling/probe-output")
     git("worktree", "add", "--detach", "diagnostic-output", "FETCH_HEAD")
     checkout = Path("diagnostic-output")
-    target = Path(a.minecraft) if a.category == 'probe' else Path(a.category) / a.minecraft
+    target = relative_target(a.category, a.minecraft)
     stage(a.source, checkout / target)
     git("-C", str(checkout), "config", "user.name", "github-actions[bot]")
     git("-C", str(checkout), "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com")

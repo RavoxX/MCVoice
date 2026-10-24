@@ -42,12 +42,16 @@ class SvcReplaySafetyTest {
             SvcCompatTest.waitFor(() -> client.rejectedCount() >= rejectedAudio + 2, 3000);
             assertEquals(2, delivered.get()); assertEquals(before, activity.getLong(client));
             assertEquals(JitterBuffer.Result.EMPTY, buffer.poll(), "underrun must not renew replay freshness");
-            // Re-encryption cannot reuse a sequence in an established authenticated channel.
+            // Real SVC reuses channel UUIDs and restarts sequences when speakers reconnect.
+            // A new GCM nonce is fresh; the attacker cannot produce it without the key.
             server.send(sound(channel, 0));
+            SvcCompatTest.waitFor(() -> delivered.get() == 3, 3000);
+            assertEquals(3, delivered.get());
+            server.sendRaw(zero);
             SvcCompatTest.waitFor(() -> client.rejectedCount() >= rejectedAudio + 3, 3000);
-            assertEquals(2, delivered.get());
+            assertEquals(3, delivered.get(), "restart cannot reaccept the captured old ciphertext");
             server.send(sound(UUID.randomUUID(), 0)); // A distinct channel legitimately starts at zero.
-            SvcCompatTest.waitFor(() -> delivered.get() == 3, 3000); assertEquals(3, delivered.get());
+            SvcCompatTest.waitFor(() -> delivered.get() == 4, 3000); assertEquals(4, delivered.get());
             byte[] keepAlive = server.frame(new byte[]{8});
             server.sendRaw(keepAlive); SvcCompatTest.waitFor(() -> server.packetIds.contains(8), 3000);
             long accepted = client.receivedCount(); before = activity.getLong(client);

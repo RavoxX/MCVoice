@@ -32,6 +32,8 @@ public final class SvcUdpClient {
     public enum State { CONNECTING, AUTHENTICATED, CONNECTED, FAILED, CLOSED }
 
     public interface Listener {
+        /** Request a fresh Minecraft-channel secret before replay metadata fills. */
+        default void onRenewalRequired() { }
         void onState(State state, String detail);
 
         /** Positional player audio. {@code data} is owned by the callee. */
@@ -48,7 +50,8 @@ public final class SvcUdpClient {
     private final SvcCipher cipher;
     private final DatagramSocket socket;
     private final Object sendLock = new Object();
-    private final SvcReplayGuard replay = new SvcReplayGuard();
+    private final SvcReplayGuard replay;
+    private boolean renewalRequested;
 
     private volatile SvcCipher.Mode mode; // null until the server acknowledged one
     private volatile State state = State.CONNECTING;
@@ -60,10 +63,16 @@ public final class SvcUdpClient {
     private Thread rx, handshake;
 
     public SvcUdpClient(SecretInfo secret, InetSocketAddress server, SvcProtocol protocol, Listener listener) throws IOException {
+        this(secret, server, protocol, listener, null);
+    }
+
+    /** Preserve replay history if the server returns the same key during a reconnect. */
+    public SvcUdpClient(SecretInfo secret, InetSocketAddress server, SvcProtocol protocol, Listener listener, SvcUdpClient previous) throws IOException {
         this.secret = secret;
         this.server = server;
         this.protocol = protocol;
         this.listener = listener;
+        this.replay = previous != null && previous.secret.secret.equals(secret.secret) ? previous.replay : new SvcReplayGuard();
         this.cipher = new SvcCipher(secret.keyBytes());
         this.socket = new DatagramSocket();
         this.socket.connect(server);
@@ -244,7 +253,7 @@ public final class SvcUdpClient {
                     continue;
                 }
                 if (!stateAllows(in.kind)) throw new SvcFormatException("packet not allowed in current state");
-                SvcReplayGuard.Result freshness = replay.accept(in, enc);
+                SvcReplayGuard.Result freshness = replay.accept(enc);
                 if (freshness == SvcReplayGuard.Result.EXHAUSTED) {
                     setState(State.FAILED, "SVC replay tracking is full; reconnect to renew the voice session");
                     running = false; socket.close(); return;
@@ -253,6 +262,10 @@ public final class SvcUdpClient {
                 lastRxMs = System.currentTimeMillis();
                 received++;
                 handle(in);
+                if (!renewalRequested && replay.needsRenewal()) {
+                    renewalRequested = true;
+                    listener.onRenewalRequired();
+                }
             } catch (SvcFormatException e) {
                 rejected++;
                 VoiceLog.every(30000, "svc-rx-" + e.getMessage(), LogSink.Level.DEBUG, Category.SVC,

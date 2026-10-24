@@ -13,6 +13,47 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SvcModeSafetyTest {
+    @Test void sameKeyReconnectRetainsHistoryAndDifferentKeyStartsFresh() throws Exception {
+        SecretInfo secret = new SecretInfo(UUID.randomUUID(), 24454, UUID.randomUUID(), 0, 1024, 48, 1000, false, "", false);
+        SvcUdpClient first = new SvcUdpClient(secret, new InetSocketAddress("127.0.0.1", 24454), SvcProtocols.V1, listener());
+        SvcUdpClient same = null, fresh = null;
+        try {
+            java.lang.reflect.Field field = SvcUdpClient.class.getDeclaredField("replay"); field.setAccessible(true);
+            byte[] packet = new byte[28];
+            assertEquals(SvcReplayGuard.Result.ACCEPT, ((SvcReplayGuard)field.get(first)).accept(packet));
+            first.close();
+            same = new SvcUdpClient(secret, new InetSocketAddress("127.0.0.1", 24454), SvcProtocols.V1, listener(), first);
+            assertEquals(SvcReplayGuard.Result.REPLAY, ((SvcReplayGuard)field.get(same)).accept(packet));
+            SecretInfo rotated = new SecretInfo(UUID.randomUUID(), 24454, secret.playerUuid, 0, 1024, 48, 1000, false, "", false);
+            fresh = new SvcUdpClient(rotated, new InetSocketAddress("127.0.0.1", 24454), SvcProtocols.V1, listener(), same);
+            assertEquals(SvcReplayGuard.Result.ACCEPT, ((SvcReplayGuard)field.get(fresh)).accept(packet));
+        } finally { first.close(); if (same != null) same.close(); if (fresh != null) fresh.close(); }
+    }
+    @Test void controlsHaveBoundedAuthenticatedShapesAndStateTransitions() throws Exception {
+        for (int id : new int[]{6, 8, 10, 7}) {
+            int exact = id == 7 ? 25 : 1;
+            for (int length : new int[]{0, 2, 24, 26, 255, 257}) {
+                if (length == 0) continue;
+                byte[] bytes = new byte[length]; bytes[0] = (byte) id;
+                assertThrows(dev.mcvoice.client.svc.protocol.SvcFormatException.class, () ->
+                    SvcProtocols.V1.parseServerPacket(bytes, 0, bytes.length, new dev.mcvoice.client.svc.protocol.SvcIncoming()));
+            }
+            for (int length : new int[]{exact, 256}) {
+                byte[] bytes = new byte[length]; bytes[0] = (byte) id;
+                assertTrue(SvcProtocols.V1.parseServerPacket(bytes, 0, bytes.length, new dev.mcvoice.client.svc.protocol.SvcIncoming()));
+            }
+        }
+        SecretInfo secret = new SecretInfo(UUID.randomUUID(), 24454, UUID.randomUUID(), 0, 1024, 48, 1000, false, "", false);
+        SvcUdpClient client = new SvcUdpClient(secret, new InetSocketAddress("127.0.0.1", 24454), SvcProtocols.V1, listener());
+        try {
+            Method allows = SvcUdpClient.class.getDeclaredMethod("stateAllows", dev.mcvoice.client.svc.protocol.SvcIncoming.Kind.class);
+            allows.setAccessible(true);
+            assertEquals(true, allows.invoke(client, dev.mcvoice.client.svc.protocol.SvcIncoming.Kind.AUTH_ACK));
+            assertEquals(false, allows.invoke(client, dev.mcvoice.client.svc.protocol.SvcIncoming.Kind.PING));
+            assertEquals(false, allows.invoke(client, dev.mcvoice.client.svc.protocol.SvcIncoming.Kind.KEEP_ALIVE));
+            assertEquals(false, allows.invoke(client, dev.mcvoice.client.svc.protocol.SvcIncoming.Kind.PLAYER_SOUND));
+        } finally { client.close(); }
+    }
     @Test void unsupportedOrMissingCipherModesCannotFallThroughToCbc() throws Exception {
         SvcCipher cipher = new SvcCipher(new byte[16]);
         for (SvcCipher.Mode mode : new SvcCipher.Mode[]{null, SvcCipher.Mode.CBC_IV16}) {

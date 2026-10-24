@@ -175,6 +175,7 @@ public final class SvcProbe {
 
         long start = System.currentTimeMillis();
         long connectedSince = -1;
+        SvcUdpClient connectedClient = null;
         boolean ok = false;
         boolean renewalRequested = false;
         long renewalAttempt = 0;
@@ -186,7 +187,8 @@ public final class SvcProbe {
             }
             SvcUdpClient u = udp.get();
             if (u != null && u.state() == SvcUdpClient.State.CONNECTED) {
-                if (connectedSince < 0) {
+                if (u != connectedClient) {
+                    connectedClient = u;
                     connectedSince = System.currentTimeMillis();
                 }
                 if (!receiveOnly) u.sendMic(silence, 0, silence.length, false);

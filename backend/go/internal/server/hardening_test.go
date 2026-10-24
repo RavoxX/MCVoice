@@ -195,3 +195,33 @@ func TestAuthenticatedMaximumCounterDoesNotBlockNextDatagram(t *testing.T) {
 		t.Fatal("authenticated counter stalled UDP handling")
 	}
 }
+
+func TestDetachedControlMessagesCannotChangePublishedPeerState(t *testing.T) {
+	s := hardeningServer()
+	old := admissionPlayer(1, "00000000-0000-4000-8000-000000000001")
+	if code := s.register(old); code != "" {
+		t.Fatal(code)
+	}
+	next := admissionPlayer(2, old.ident.UUID)
+	if code := s.register(next); code != "" {
+		t.Fatal(code)
+	}
+	epoch, rev, base := uint32(1), uint32(1), uint32(0)
+	yes, no, coordinate, scope := true, false, 1.0, "world"
+	for _, message := range []any{
+		&protocol.Scope{Epoch: &epoch, InWorld: &yes, NetworkID: &scope, WorldID: &scope},
+		&protocol.Pos{Epoch: &epoch, X: &coordinate, Y: &coordinate, Z: &coordinate},
+		&protocol.Peers{Epoch: &epoch, Rev: &rev, Full: []string{next.ident.UUID}},
+		&protocol.PeersDelta{Epoch: &epoch, Base: &base, Rev: &rev, Add: []string{next.ident.UUID}},
+		&protocol.State{Muted: &yes, Deafened: &yes},
+	} {
+		s.dispatch(old, message, time.Now(), s.log)
+	}
+	if old.hasScope || old.peer.HasPos || old.peer.Muted || old.peer.Deafened || len(old.peer.Visible) != 0 {
+		t.Fatal("detached session changed peer state")
+	}
+	s.dispatch(next, &protocol.State{Muted: &yes, Deafened: &no}, time.Now(), s.log)
+	if !next.peer.Muted || next.peer.Deafened {
+		t.Fatal("current control session stopped working")
+	}
+}

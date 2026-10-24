@@ -225,6 +225,31 @@ class SvcCompatTest {
     }
 
     @Test
+    void replayHistoryRenewsOnlyAfterReceivingADifferentSecret() throws Exception {
+        FakeVoiceServer first = new FakeVoiceServer(UUID.randomUUID(), SvcCipher.Mode.GCM_IV12);
+        FakeVoiceServer rotated = new FakeVoiceServer(UUID.randomUUID(), SvcCipher.Mode.GCM_IV12);
+        FakeAdapter adapter = new FakeAdapter();
+        adapter.serverChannels.add("voicechat:request_secret");
+        adapter.answerForVersion = SvcProtocols.CANDIDATES[0];
+        adapter.secretPayload = secretPayload(first.secret, first.port(), "127.0.0.1");
+        SvcCompat client = compat(adapter, 25565);
+        try {
+            client.reset(true); client.tick(System.currentTimeMillis());
+            waitFor(client::connected, 3000); assertTrue(client.connected());
+            client.onRenewalRequired(); client.tick(System.currentTimeMillis());
+            assertFalse(client.connected(), "same secret cannot clear replay history");
+            assertTrue(client.detail().contains("history retained"));
+            adapter.secretPayload = secretPayload(rotated.secret, rotated.port(), "127.0.0.1");
+            client.tick(System.currentTimeMillis()+1100);
+            waitFor(client::connected, 3000); assertTrue(client.connected(), client.detail());
+            client.onRenewalRequired(); long now = System.currentTimeMillis(); client.tick(now);
+            client.tick(now+60001);
+            assertEquals(SvcCompat.Status.FAILED, client.status());
+            assertTrue(client.detail().contains("fresh key"));
+        } finally { client.reset(false); first.close(); rotated.close(); }
+    }
+
+    @Test
     void cbcOnlyServerNeverReceivesAuthenticationCredentials() throws Exception {
         FakeVoiceServer server = new FakeVoiceServer(UUID.randomUUID(), SvcCipher.Mode.CBC_IV16);
         FakeAdapter adapter = new FakeAdapter();
