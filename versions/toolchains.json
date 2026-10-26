@@ -1,9 +1,7 @@
 {
   "fabric-loom": {
-    "latest": "1.19.1",
+    "latest": "1.19.3",
     "recent": [
-      "1.18.0-alpha.15",
-      "1.18.0-alpha.16",
       "1.17.20",
       "1.18.0-alpha.17",
       "1.18.0-alpha.18",
@@ -26,14 +24,14 @@
       "1.19.0-alpha.6",
       "1.19.0-alpha.7",
       "1.19.1",
-      "1.19-SNAPSHOT"
+      "1.19-SNAPSHOT",
+      "1.19.2",
+      "1.19.3"
     ]
   },
   "fabric-loom-legacy-id": {
-    "latest": "1.19.1",
+    "latest": "1.19.3",
     "recent": [
-      "1.18.0-alpha.15",
-      "1.18.0-alpha.16",
       "1.17.20",
       "1.18.0-alpha.17",
       "1.18.0-alpha.18",
@@ -56,14 +54,14 @@
       "1.19.0-alpha.6",
       "1.19.0-alpha.7",
       "1.19-SNAPSHOT",
-      "1.19.1"
+      "1.19.1",
+      "1.19.2",
+      "1.19.3"
     ]
   },
   "fabric-loom-remap": {
-    "latest": "1.19.1",
+    "latest": "1.19.3",
     "recent": [
-      "1.18.0-alpha.15",
-      "1.18.0-alpha.16",
       "1.17.20",
       "1.18.0-alpha.17",
       "1.18.0-alpha.18",
@@ -86,7 +84,9 @@
       "1.19.0-alpha.6",
       "1.19.0-alpha.7",
       "1.19.1",
-      "1.19-SNAPSHOT"
+      "1.19-SNAPSHOT",
+      "1.19.2",
+      "1.19.3"
     ]
   },
   "forgegradle": {
@@ -241,87 +241,57 @@
   },
   "simple-voice-chat": [
     {
-      "version": "fabric-2.6.24+26.4-snapshot-4",
+      "version": "fabric-2.6.26+26.4-snapshot-5",
       "loaders": [
         "fabric"
       ],
       "game_versions": [
-        "26.4-snapshot-4"
+        "26.4-snapshot-5"
       ],
-      "published": "2026-10-13T17:31:14.689672Z"
+      "published": "2026-10-24T09:52:52.014899Z"
     },
     {
-      "version": "fabric-2.6.24+26.4-snapshot-3",
-      "loaders": [
-        "fabric"
-      ],
-      "game_versions": [
-        "26.4-snapshot-3"
-      ],
-      "published": "2026-10-06T19:01:38.362409Z"
-    },
-    {
-      "version": "fabric-2.6.24+26.4-snapshot-2",
-      "loaders": [
-        "fabric"
-      ],
-      "game_versions": [
-        "26.4-snapshot-2"
-      ],
-      "published": "2026-09-29T15:29:52.410196Z"
-    },
-    {
-      "version": "fabric-2.6.24+26.4-snapshot-1",
-      "loaders": [
-        "fabric"
-      ],
-      "game_versions": [
-        "26.4-snapshot-1"
-      ],
-      "published": "2026-09-23T06:25:58.853866Z"
-    },
-    {
-      "version": "fabric-2.6.24+26.3",
+      "version": "fabric-2.6.26+26.3",
       "loaders": [
         "fabric"
       ],
       "game_versions": [
         "26.3"
       ],
-      "published": "2026-09-20T08:02:04.832095Z"
+      "published": "2026-10-24T09:51:33.931496Z"
     },
     {
-      "version": "neoforge-2.6.24+26.3",
+      "version": "neoforge-2.6.26+26.3",
       "loaders": [
         "neoforge"
       ],
       "game_versions": [
         "26.3"
       ],
-      "published": "2026-09-20T08:01:00.881171Z"
+      "published": "2026-10-24T09:50:21.403706Z"
     },
     {
-      "version": "forge-2.6.24+26.3",
+      "version": "forge-2.6.26+26.3",
       "loaders": [
         "forge"
       ],
       "game_versions": [
         "26.3"
       ],
-      "published": "2026-09-20T08:00:06.500522Z"
+      "published": "2026-10-24T09:49:20.718373Z"
     },
     {
-      "version": "quilt-2.6.24+26.3",
+      "version": "quilt-2.6.26+26.3",
       "loaders": [
         "quilt"
       ],
       "game_versions": [
         "26.3"
       ],
-      "published": "2026-09-20T07:58:36.743097Z"
+      "published": "2026-10-24T09:48:20.492787Z"
     },
     {
-      "version": "bukkit-2.6.24",
+      "version": "bukkit-2.6.26",
       "loaders": [
         "bukkit",
         "folia",
@@ -334,50 +304,75 @@
         "26.2",
         "26.3"
       ],
-      "published": "2026-09-20T07:57:47.681341Z"
+      "published": "2026-10-24T09:47:24.651984Z"
     },
     {
-      "version": "fabric-2.6.24+26.2",
+      "version": "velocity-2.6.26",
+      "loaders": [
+        "velocity"
+      ],
+      "game_versions": [
+        "26.1.2",
+        "26.2",
+        "26.3"
+      ],
+      "published": "2026-10-24T09:46:32.334300Z"
+    },
+    {
+      "version": "bungeecord-2.6.26",
+      "loaders": [
+        "bungeecord",
+        "waterfall"
+      ],
+      "game_versions": [
+        "26.1.2",
+        "26.2",
+        "26.3"
+      ],
+      "published": "2026-10-24T09:45:47.514145Z"
+    },
+    {
+      "version": "fabric-2.6.26+26.2",
       "loaders": [
         "fabric"
       ],
       "game_versions": [
         "26.2"
       ],
-      "published": "2026-09-20T07:56:42.246960Z"
+      "published": "2026-10-24T09:44:55.248727Z"
     },
     {
-      "version": "neoforge-2.6.24+26.2",
+      "version": "neoforge-2.6.26+26.2",
       "loaders": [
         "neoforge"
       ],
       "game_versions": [
         "26.2"
       ],
-      "published": "2026-09-20T07:55:40.305259Z"
+      "published": "2026-10-24T09:43:48.373917Z"
     },
     {
-      "version": "forge-2.6.24+26.2",
+      "version": "forge-2.6.26+26.2",
       "loaders": [
         "forge"
       ],
       "game_versions": [
         "26.2"
       ],
-      "published": "2026-09-20T07:54:43.874700Z"
+      "published": "2026-10-24T09:42:45.310399Z"
     },
     {
-      "version": "quilt-2.6.24+26.2",
+      "version": "quilt-2.6.26+26.2",
       "loaders": [
         "quilt"
       ],
       "game_versions": [
         "26.2"
       ],
-      "published": "2026-09-20T07:53:51.248729Z"
+      "published": "2026-10-24T09:41:45.477540Z"
     },
     {
-      "version": "fabric-2.6.24+26.1.2",
+      "version": "fabric-2.6.26+26.1.2",
       "loaders": [
         "fabric"
       ],
@@ -386,10 +381,10 @@
         "26.1.1",
         "26.1.2"
       ],
-      "published": "2026-09-20T07:52:41.268181Z"
+      "published": "2026-10-24T09:40:44.984449Z"
     },
     {
-      "version": "neoforge-2.6.24+26.1.2",
+      "version": "neoforge-2.6.26+26.1.2",
       "loaders": [
         "neoforge"
       ],
@@ -398,10 +393,10 @@
         "26.1.1",
         "26.1.2"
       ],
-      "published": "2026-09-20T07:51:39.119316Z"
+      "published": "2026-10-24T09:39:37.922263Z"
     },
     {
-      "version": "forge-2.6.24+26.1.2",
+      "version": "forge-2.6.26+26.1.2",
       "loaders": [
         "forge"
       ],
@@ -410,10 +405,10 @@
         "26.1.1",
         "26.1.2"
       ],
-      "published": "2026-09-20T07:50:43.628517Z"
+      "published": "2026-10-24T09:38:39.067792Z"
     },
     {
-      "version": "quilt-2.6.24+26.1.2",
+      "version": "quilt-2.6.26+26.1.2",
       "loaders": [
         "quilt"
       ],
@@ -422,210 +417,210 @@
         "26.1.1",
         "26.1.2"
       ],
-      "published": "2026-09-20T07:49:50.815335Z"
+      "published": "2026-10-24T09:37:40.648420Z"
     },
     {
-      "version": "fabric-1.21.11-2.6.24",
+      "version": "fabric-1.21.11-2.6.26",
       "loaders": [
         "fabric"
       ],
       "game_versions": [
         "1.21.11"
       ],
-      "published": "2026-09-20T07:48:47.513661Z"
+      "published": "2026-10-24T09:36:44.561575Z"
     },
     {
-      "version": "neoforge-1.21.11-2.6.24",
+      "version": "neoforge-1.21.11-2.6.26",
       "loaders": [
         "neoforge"
       ],
       "game_versions": [
         "1.21.11"
       ],
-      "published": "2026-09-20T07:47:39.183449Z"
+      "published": "2026-10-24T09:35:34.703232Z"
     },
     {
-      "version": "forge-1.21.11-2.6.24",
+      "version": "forge-1.21.11-2.6.26",
       "loaders": [
         "forge"
       ],
       "game_versions": [
         "1.21.11"
       ],
-      "published": "2026-09-20T07:46:36.781030Z"
+      "published": "2026-10-24T09:34:34.788085Z"
     },
     {
-      "version": "quilt-1.21.11-2.6.24",
+      "version": "quilt-1.21.11-2.6.26",
       "loaders": [
         "quilt"
       ],
       "game_versions": [
         "1.21.11"
       ],
-      "published": "2026-09-20T07:45:35.928555Z"
+      "published": "2026-10-24T09:33:36.350113Z"
     },
     {
-      "version": "fabric-1.21.10-2.6.24",
+      "version": "fabric-1.21.10-2.6.26",
       "loaders": [
         "fabric"
       ],
       "game_versions": [
         "1.21.10"
       ],
-      "published": "2026-09-20T07:44:24.120593Z"
+      "published": "2026-10-24T09:32:36.820765Z"
     },
     {
-      "version": "neoforge-1.21.10-2.6.24",
+      "version": "neoforge-1.21.10-2.6.26",
       "loaders": [
         "neoforge"
       ],
       "game_versions": [
         "1.21.10"
       ],
-      "published": "2026-09-20T07:43:09.052498Z"
+      "published": "2026-10-24T09:31:26.665273Z"
     },
     {
-      "version": "forge-1.21.10-2.6.24",
+      "version": "forge-1.21.10-2.6.26",
       "loaders": [
         "forge"
       ],
       "game_versions": [
         "1.21.10"
       ],
-      "published": "2026-09-20T07:42:11.338832Z"
+      "published": "2026-10-24T09:30:25.688383Z"
     },
     {
-      "version": "quilt-1.21.10-2.6.24",
+      "version": "quilt-1.21.10-2.6.26",
       "loaders": [
         "quilt"
       ],
       "game_versions": [
         "1.21.10"
       ],
-      "published": "2026-09-20T07:41:16.528163Z"
+      "published": "2026-10-24T09:29:27.847111Z"
     },
     {
-      "version": "fabric-1.21.8-2.6.24",
+      "version": "fabric-1.21.8-2.6.26",
       "loaders": [
         "fabric"
       ],
       "game_versions": [
         "1.21.8"
       ],
-      "published": "2026-09-20T07:40:07.558472Z"
+      "published": "2026-10-24T09:28:32.040280Z"
     },
     {
-      "version": "neoforge-1.21.8-2.6.24",
+      "version": "neoforge-1.21.8-2.6.26",
       "loaders": [
         "neoforge"
       ],
       "game_versions": [
         "1.21.8"
       ],
-      "published": "2026-09-20T07:38:57.874990Z"
+      "published": "2026-10-24T09:27:18.304354Z"
     },
     {
-      "version": "forge-1.21.8-2.6.24",
+      "version": "forge-1.21.8-2.6.26",
       "loaders": [
         "forge"
       ],
       "game_versions": [
         "1.21.8"
       ],
-      "published": "2026-09-20T07:37:58.582223Z"
+      "published": "2026-10-24T09:26:18.349627Z"
     },
     {
-      "version": "quilt-1.21.8-2.6.24",
+      "version": "quilt-1.21.8-2.6.26",
       "loaders": [
         "quilt"
       ],
       "game_versions": [
         "1.21.8"
       ],
-      "published": "2026-09-20T07:37:02.157566Z"
+      "published": "2026-10-24T09:25:19.880001Z"
     },
     {
-      "version": "fabric-1.21.5-2.6.24",
+      "version": "fabric-1.21.5-2.6.26",
       "loaders": [
         "fabric"
       ],
       "game_versions": [
         "1.21.5"
       ],
-      "published": "2026-09-20T07:35:09.712099Z"
+      "published": "2026-10-24T09:24:22.885327Z"
     },
     {
-      "version": "neoforge-1.21.5-2.6.24",
+      "version": "neoforge-1.21.5-2.6.26",
       "loaders": [
         "neoforge"
       ],
       "game_versions": [
         "1.21.5"
       ],
-      "published": "2026-09-20T07:34:03.885920Z"
+      "published": "2026-10-24T09:23:13.195991Z"
     },
     {
-      "version": "forge-1.21.5-2.6.24",
+      "version": "forge-1.21.5-2.6.26",
       "loaders": [
         "forge"
       ],
       "game_versions": [
         "1.21.5"
       ],
-      "published": "2026-09-20T07:33:04.310012Z"
+      "published": "2026-10-24T09:22:08.711421Z"
     },
     {
-      "version": "quilt-1.21.5-2.6.24",
+      "version": "quilt-1.21.5-2.6.26",
       "loaders": [
         "quilt"
       ],
       "game_versions": [
         "1.21.5"
       ],
-      "published": "2026-09-20T07:31:16.567394Z"
+      "published": "2026-10-24T09:21:08.873242Z"
     },
     {
-      "version": "fabric-1.21.4-2.6.24",
+      "version": "fabric-1.21.4-2.6.26",
       "loaders": [
         "fabric"
       ],
       "game_versions": [
         "1.21.4"
       ],
-      "published": "2026-09-20T07:30:14.422672Z"
+      "published": "2026-10-24T09:20:10.253273Z"
     },
     {
-      "version": "neoforge-1.21.4-2.6.24",
+      "version": "neoforge-1.21.4-2.6.26",
       "loaders": [
         "neoforge"
       ],
       "game_versions": [
         "1.21.4"
       ],
-      "published": "2026-09-20T07:29:09.982374Z"
+      "published": "2026-10-24T09:19:01.014643Z"
     },
     {
-      "version": "forge-1.21.4-2.6.24",
+      "version": "forge-1.21.4-2.6.26",
       "loaders": [
         "forge"
       ],
       "game_versions": [
         "1.21.4"
       ],
-      "published": "2026-09-20T07:28:11.595515Z"
+      "published": "2026-10-24T09:17:59.502367Z"
     },
     {
-      "version": "quilt-1.21.4-2.6.24",
+      "version": "quilt-1.21.4-2.6.26",
       "loaders": [
         "quilt"
       ],
       "game_versions": [
         "1.21.4"
       ],
-      "published": "2026-09-20T07:27:14.541774Z"
+      "published": "2026-10-24T09:17:02.096963Z"
     },
     {
-      "version": "fabric-1.21.1-2.6.24",
+      "version": "fabric-1.21.1-2.6.26",
       "loaders": [
         "fabric"
       ],
@@ -633,10 +628,10 @@
         "1.21",
         "1.21.1"
       ],
-      "published": "2026-09-20T07:24:50.061559Z"
+      "published": "2026-10-24T09:16:04.881861Z"
     },
     {
-      "version": "neoforge-1.21.1-2.6.24",
+      "version": "neoforge-1.21.1-2.6.26",
       "loaders": [
         "neoforge"
       ],
@@ -644,17 +639,27 @@
         "1.21",
         "1.21.1"
       ],
-      "published": "2026-09-20T07:23:47.412337Z"
+      "published": "2026-10-24T09:14:57.816399Z"
     },
     {
-      "version": "forge-1.21.1-2.6.24",
+      "version": "forge-1.21.1-2.6.26",
       "loaders": [
         "forge"
       ],
       "game_versions": [
         "1.21.1"
       ],
-      "published": "2026-09-20T07:22:52.158598Z"
+      "published": "2026-10-24T09:13:59.499459Z"
+    },
+    {
+      "version": "quilt-1.21.1-2.6.26",
+      "loaders": [
+        "quilt"
+      ],
+      "game_versions": [
+        "1.21.1"
+      ],
+      "published": "2026-10-24T09:13:02.301838Z"
     }
   ]
 }

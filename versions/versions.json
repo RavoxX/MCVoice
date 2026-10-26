@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-19T16:02:30Z",
+  "generated_at": "2026-10-26T10:09:32Z",
   "range": {
     "min": "1.8",
     "max": "26.3",
@@ -30,7 +30,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": "1.13.5+1.8",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -51,7 +51,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -72,7 +72,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -93,7 +93,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -114,7 +114,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -135,7 +135,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -156,7 +156,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -177,7 +177,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -199,7 +199,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -221,7 +221,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": "1.13.5+1.8.9",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -316,7 +316,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": "1.13.5+1.9.4",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -375,7 +375,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": "1.13.5+1.10.2",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -434,7 +434,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": "1.13.5+1.11.2",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -494,7 +494,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": "1.13.5+1.12.2",
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -552,7 +552,7 @@
         "fabric": {
           "available": true,
           "flavor": "legacyfabric",
-          "loader": "0.20.0",
+          "loader": "0.20.1",
           "legacy_fabric_api": null,
           "note": "Legacy Fabric (community project, not official FabricMC)"
         }
@@ -573,7 +573,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -594,7 +594,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -616,7 +616,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -638,7 +638,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -660,7 +660,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.28.5+1.14",
           "note": null
         }
@@ -682,7 +682,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -704,7 +704,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -726,7 +726,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.28.5+1.15",
           "note": null
         }
@@ -747,7 +747,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -769,7 +769,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -791,7 +791,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -813,7 +813,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -835,7 +835,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -857,7 +857,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.42.0+1.16",
           "note": null
         }
@@ -878,7 +878,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -900,7 +900,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.46.1+1.17",
           "note": null
         }
@@ -922,7 +922,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.46.6+1.18",
           "note": null
         }
@@ -944,7 +944,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": null,
           "note": "Fabric API has no build for this version; the mod must not depend on it"
         }
@@ -966,7 +966,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.77.0+1.18.2",
           "note": null
         }
@@ -988,7 +988,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.58.0+1.19",
           "note": null
         }
@@ -1010,7 +1010,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.58.5+1.19.1",
           "note": null
         }
@@ -1032,7 +1032,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.77.0+1.19.2",
           "note": null
         }
@@ -1054,7 +1054,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.76.1+1.19.3",
           "note": null
         }
@@ -1076,7 +1076,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.87.2+1.19.4",
           "note": null
         }
@@ -1098,7 +1098,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.83.0+1.20",
           "note": null
         }
@@ -1114,13 +1114,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "1.20.1-47.4.10",
+          "version": "1.20.1-47.4.28",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.92.12+1.20.1",
           "note": null
         }
@@ -1142,7 +1142,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.91.6+1.20.2",
           "note": null
         }
@@ -1164,7 +1164,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.91.1+1.20.3",
           "note": null
         }
@@ -1180,13 +1180,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "1.20.4-49.2.0",
+          "version": "1.20.4-49.2.13",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.97.3+1.20.4",
           "note": null
         }
@@ -1207,7 +1207,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.97.8+1.20.5",
           "note": null
         }
@@ -1223,13 +1223,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "1.20.6-50.2.0",
+          "version": "1.20.6-50.2.14",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.100.8+1.20.6",
           "note": null
         }
@@ -1251,7 +1251,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.102.0+1.21",
           "note": null
         }
@@ -1267,13 +1267,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "1.21.1-52.1.0",
+          "version": "1.21.1-52.1.20",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.116.17+1.21.1",
           "note": null
         }
@@ -1294,7 +1294,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.106.1+1.21.2",
           "note": null
         }
@@ -1310,13 +1310,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "1.21.3-53.1.0",
+          "version": "1.21.3-53.1.16",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.114.1+1.21.3",
           "note": null
         }
@@ -1332,13 +1332,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "1.21.4-54.1.14",
+          "version": "1.21.4-54.1.22",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.119.4+1.21.4",
           "note": null
         }
@@ -1354,13 +1354,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "1.21.5-55.1.0",
+          "version": "1.21.5-55.1.18",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.128.2+1.21.5",
           "note": null
         }
@@ -1382,7 +1382,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.128.2+1.21.6",
           "note": null
         }
@@ -1404,7 +1404,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.129.0+1.21.7",
           "note": null
         }
@@ -1420,13 +1420,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "1.21.8-58.1.0",
+          "version": "1.21.8-58.1.26",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.136.1+1.21.8",
           "note": null
         }
@@ -1448,7 +1448,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.134.1+1.21.9",
           "note": null
         }
@@ -1464,13 +1464,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "1.21.10-60.1.0",
+          "version": "1.21.10-60.1.18",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.138.4+1.21.10",
           "note": null
         }
@@ -1486,13 +1486,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "1.21.11-61.2.0",
+          "version": "1.21.11-61.2.4",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.141.6+1.21.11",
           "note": null
         }
@@ -1514,7 +1514,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.145.1+26.1",
           "note": null
         }
@@ -1536,7 +1536,7 @@
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.145.4+26.1.1",
           "note": null
         }
@@ -1552,13 +1552,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "26.1.2-64.1.0",
+          "version": "26.1.2-64.1.5",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.155.3+26.1.2",
           "note": null
         }
@@ -1574,13 +1574,13 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "26.2-65.1.0",
+          "version": "26.2-65.1.5",
           "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
+          "loader": "0.20.1",
           "fabric_api": "0.161.0+26.2",
           "note": null
         }
@@ -1596,14 +1596,14 @@
       "loaders": {
         "forge": {
           "available": true,
-          "version": "26.3-66.0.13",
-          "channel": "latest"
+          "version": "26.3-66.1.0",
+          "channel": "recommended"
         },
         "fabric": {
           "available": true,
           "flavor": "fabric",
-          "loader": "0.19.5",
-          "fabric_api": "0.164.0+26.3",
+          "loader": "0.20.1",
+          "fabric_api": "0.165.0+26.3",
           "note": null
         }
       }
