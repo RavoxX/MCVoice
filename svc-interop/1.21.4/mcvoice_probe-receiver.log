@@ -26,7 +26,6 @@ bot: <- voicechat:state (34 bytes)
 bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
 bot: <- voicechat:state (34 bytes)
 bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
-wire-control: KEEP_ALIVE length=256
 wire-audio: channel=0e29f872-0cb2-34ab-94b9-8d6e2f980b53 sender=0e29f872-0cb2-34ab-94b9-8d6e2f980b53 sequence=0
 wire-audio: channel=0e29f872-0cb2-34ab-94b9-8d6e2f980b53 sender=0e29f872-0cb2-34ab-94b9-8d6e2f980b53 sequence=1
 bot: <- voicechat:state (34 bytes)
@@ -36,13 +35,14 @@ wire-control: KEEP_ALIVE length=256
 wire-control: KEEP_ALIVE length=256
 wire-control: KEEP_ALIVE length=256
 wire-control: KEEP_ALIVE length=256
+wire-control: KEEP_ALIVE length=256
 bot: <- voicechat:remove_state (16 bytes)
 wire-control: KEEP_ALIVE length=256
+bot: <- voicechat:state (34 bytes)
+bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
+bot: <- voicechat:state (34 bytes)
+bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
 wire-control: KEEP_ALIVE length=256
-bot: <- voicechat:state (34 bytes)
-bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
-bot: <- voicechat:state (34 bytes)
-bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
 wire-audio: channel=0e29f872-0cb2-34ab-94b9-8d6e2f980b53 sender=0e29f872-0cb2-34ab-94b9-8d6e2f980b53 sequence=0
 bot: <- voicechat:state (34 bytes)
 bot: state observation voicechat:state 00000e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200

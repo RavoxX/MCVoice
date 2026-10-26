@@ -3,147 +3,148 @@ Applying patches
 Starting org.bukkit.craftbukkit.Main
 *** Warning, you've not updated in a while! ***
 *** Please download a new build from https://papermc.io/downloads/paper ***
-2026-10-24T18:35:24.523771802Z ServerMain WARN Advanced terminal features are not available in this environment
-[18:35:24 INFO]: [bootstrap] Running Java 21 (OpenJDK 64-Bit Server VM 21.0.12.1+1-LTS; Eclipse Adoptium Temurin-21.0.12.1+1) on Linux 6.17.0-1022-azure (amd64)
-[18:35:24 INFO]: [bootstrap] Loading Paper 1.21.4-232-ver/1.21.4@12d8fe0 (2025-06-09T10:15:42Z) for Minecraft 1.21.4
-[18:35:25 INFO]: [PluginInitializerManager] Initializing plugins...
-[18:35:25 INFO]: [ReobfServer] Remapping server...
-[18:35:30 INFO]: [ReobfServer] Done remapping server in 4629ms.
-[18:35:30 INFO]: [PluginRemapper] Remapping plugin 'plugins/voicechat-bukkit.jar'...
-[18:35:30 INFO]: [PluginRemapper] Done remapping plugin 'plugins/voicechat-bukkit.jar' in 202ms.
-[18:35:30 INFO]: [PluginInitializerManager] Initialized 1 plugin
-[18:35:30 INFO]: [PluginInitializerManager] Bukkit plugins (1):
+2026-10-26T10:09:49.985266136Z ServerMain WARN Advanced terminal features are not available in this environment
+[10:09:50 INFO]: [bootstrap] Running Java 21 (OpenJDK 64-Bit Server VM 21.0.12.1+1-LTS; Eclipse Adoptium Temurin-21.0.12.1+1) on Linux 6.17.0-1022-azure (amd64)
+[10:09:50 INFO]: [bootstrap] Loading Paper 1.21.4-232-ver/1.21.4@12d8fe0 (2025-06-09T10:15:42Z) for Minecraft 1.21.4
+[10:09:50 INFO]: [PluginInitializerManager] Initializing plugins...
+[10:09:51 INFO]: [ReobfServer] Remapping server...
+[10:09:57 INFO]: [ReobfServer] Done remapping server in 5897ms.
+[10:09:57 INFO]: [PluginRemapper] Remapping plugin 'plugins/voicechat-bukkit.jar'...
+[10:09:57 INFO]: [PluginRemapper] Done remapping plugin 'plugins/voicechat-bukkit.jar' in 243ms.
+[10:09:58 INFO]: [PluginInitializerManager] Initialized 1 plugin
+[10:09:58 INFO]: [PluginInitializerManager] Bukkit plugins (1):
  - voicechat (2.6.26)
-[18:35:34 INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
-[18:35:34 INFO]: Found new data pack file/bukkit, loading it automatically
-[18:35:34 INFO]: Found new data pack paper, loading it automatically
-[18:35:35 INFO]: No existing world data, creating new world
-[18:35:35 ERROR]: No key layers in MapLike[{}]
-[18:35:36 INFO]: Loaded 1370 recipes
-[18:35:36 INFO]: Loaded 1481 advancements
-[18:35:36 INFO]: [MCTypeRegistry] Initialising converters for DataConverter...
-[18:35:36 INFO]: [MCTypeRegistry] Finished initialising converters for DataConverter in 177.6ms
-[18:35:36 INFO]: Starting minecraft server version 1.21.4
-[18:35:36 INFO]: Loading properties
-[18:35:36 INFO]: This server is running Paper version 1.21.4-232-ver/1.21.4@12d8fe0 (2025-06-09T10:15:42Z) (Implementing API version 1.21.4-R0.1-SNAPSHOT)
-[18:35:36 INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
-[18:35:36 INFO]: Server Ping Player Sample Count: 12
-[18:35:36 INFO]: Using 4 threads for Netty based IO
-[18:35:37 INFO]: [MoonriseCommon] Paper is using 1 worker threads, 1 I/O threads
-[18:35:37 INFO]: [ChunkTaskScheduler] Chunk system is using population gen parallelism: true
-[18:35:37 INFO]: Default game type: SURVIVAL
-[18:35:37 INFO]: Generating keypair
-[18:35:37 INFO]: Starting Minecraft server on *:25565
-[18:35:37 INFO]: Using epoll channel type
-[18:35:37 INFO]: Paper: Using libdeflate (Linux x86_64) compression from Velocity.
-[18:35:37 INFO]: Paper: Using OpenSSL 3.x.x (Linux x86_64) cipher from Velocity.
-[18:35:37 INFO]: [voicechat] Loading server plugin voicechat v2.6.26
-[18:35:37 WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
-[18:35:37 WARN]: The server will make no attempt to authenticate usernames. Beware.
-[18:35:37 WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
-[18:35:37 WARN]: To change this, set "online-mode" to "true" in the server.properties file.
-[18:35:37 INFO]: Preparing level "world"
-[18:35:37 ERROR]: No key layers in MapLike[{}]
-[18:35:38 ERROR]: No key layers in MapLike[{}]
-[18:35:39 ERROR]: No key layers in MapLike[{}]
-[18:35:39 INFO]: Preparing start region for dimension minecraft:overworld
-[18:35:39 INFO]: Preparing spawn area: 2%
-[18:35:39 INFO]: Time elapsed: 175 ms
-[18:35:39 INFO]: Preparing start region for dimension minecraft:the_nether
-[18:35:39 INFO]: Preparing spawn area: 4%
-[18:35:40 INFO]: Preparing spawn area: 4%
-[18:35:40 INFO]: Preparing spawn area: 18%
-[18:35:41 INFO]: Preparing spawn area: 61%
-[18:35:41 INFO]: Time elapsed: 1764 ms
-[18:35:41 INFO]: Preparing start region for dimension minecraft:the_end
-[18:35:41 INFO]: Preparing spawn area: 2%
-[18:35:41 INFO]: Time elapsed: 417 ms
-[18:35:41 INFO]: [voicechat] Enabling voicechat v2.6.26
-[18:35:41 INFO]: [voicechat] Initializing compatibility for version 1.21.4-R0.1
-[18:35:41 INFO]: [voicechat] Compatibility version 20
-[18:35:41 INFO]: [voicechat] Successfully initialized commodore command completion
-[18:35:42 INFO]: [spark] Starting background profiler...
-[18:35:42 INFO]: Done preparing level "world" (5.238s)
-[18:35:42 INFO]: Running delayed init tasks
-[18:35:42 INFO]: Done (19.309s)! For help, type "help"
-[18:35:42 INFO]: *************************************************************************************
-[18:35:42 INFO]: This is the first time you're starting this server.
-[18:35:42 INFO]: It's recommended you read our 'Getting Started' documentation for guidance.
-[18:35:42 INFO]: View this and more helpful information here: https://docs.papermc.io/paper/next-steps
-[18:35:42 INFO]: *************************************************************************************
-[18:35:42 INFO]: [voicechat] Loading plugins
-[18:35:42 INFO]: [voicechat] Loaded 0 plugin(s)
-[18:35:42 INFO]: [voicechat] Initializing plugins
-[18:35:42 INFO]: [voicechat] Initialized 0 plugin(s)
-[18:35:42 WARN]: [voicechat] Running in offline mode - Voice chat encryption is not secure!
-[18:35:42 INFO]: [voicechat] Voice chat server started at port 24454
-[18:35:56 INFO]: UUID of player mcvoice_probe is 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[18:35:56 INFO]: mcvoice_probe joined the game
-[18:35:56 INFO]: mcvoice_probe[/127.0.0.1:56564] logged in with entity id 25 at ([world]9.5, -60.0, -1.5)
-[18:35:56 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:35:56 INFO]: [voicechat] Sent secret to mcvoice_probe
-[18:35:56 INFO]: [voicechat] Successfully authenticated player 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[18:35:57 INFO]: [voicechat] Successfully validated connection of player 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[18:35:57 INFO]: [voicechat] Player mcvoice_probe (505ae21d-a3e5-3a31-941c-a3df5dab234e) successfully connected to voice chat
-[18:35:59 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:35:59 WARN]: [voicechat] Player already requested secret - ignoring
-[18:36:00 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:36:00 WARN]: [voicechat] Player already requested secret - ignoring
-[18:36:01 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:36:01 WARN]: [voicechat] Player already requested secret - ignoring
-[18:36:02 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:36:02 WARN]: [voicechat] Player already requested secret - ignoring
-[18:36:03 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:36:03 WARN]: [voicechat] Player already requested secret - ignoring
-[18:36:04 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:36:04 WARN]: [voicechat] Player already requested secret - ignoring
-[18:36:05 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:36:05 WARN]: [voicechat] Player already requested secret - ignoring
-[18:36:06 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:36:06 WARN]: [voicechat] Player already requested secret - ignoring
-[18:36:07 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:36:07 WARN]: [voicechat] Player already requested secret - ignoring
-[18:36:08 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:36:08 WARN]: [voicechat] Player already requested secret - ignoring
-[18:36:09 INFO]: [voicechat] Player 505ae21d-a3e5-3a31-941c-a3df5dab234e timed out
-[18:36:09 INFO]: [voicechat] Reconnecting player mcvoice_probe
-[18:36:09 INFO]: [voicechat] Sent secret to mcvoice_probe
-[18:36:09 INFO]: [voicechat] Successfully authenticated player 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[18:36:09 INFO]: [voicechat] Successfully validated connection of player 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[18:36:09 INFO]: [voicechat] Player mcvoice_probe (505ae21d-a3e5-3a31-941c-a3df5dab234e) successfully connected to voice chat
-[18:36:14 INFO]: mcvoice_probe lost connection: Disconnected
-[18:36:14 INFO]: [voicechat] Disconnecting client mcvoice_probe
-[18:36:14 INFO]: mcvoice_probe left the game
-[18:36:15 INFO]: UUID of player mcvoice_probe is 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[18:36:15 INFO]: mcvoice_probe joined the game
-[18:36:15 INFO]: mcvoice_probe[/127.0.0.1:44780] logged in with entity id 48 at ([world]9.5, -60.0, -1.5)
-[18:36:15 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
-[18:36:15 INFO]: [voicechat] Sent secret to mcvoice_probe
-[18:36:15 INFO]: [voicechat] Successfully authenticated player 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[18:36:16 INFO]: [voicechat] Successfully validated connection of player 505ae21d-a3e5-3a31-941c-a3df5dab234e
-[18:36:16 INFO]: [voicechat] Player mcvoice_probe (505ae21d-a3e5-3a31-941c-a3df5dab234e) successfully connected to voice chat
-[18:36:16 INFO]: UUID of player mcvoice_sender is 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
-[18:36:16 INFO]: mcvoice_sender joined the game
-[18:36:16 INFO]: mcvoice_sender[/127.0.0.1:44782] logged in with entity id 49 at ([world]10.5, -60.0, 5.5)
-[18:36:16 INFO]: [voicechat] Received secret request of mcvoice_sender (20)
-[18:36:16 INFO]: [voicechat] Sent secret to mcvoice_sender
-[18:36:16 INFO]: [voicechat] Successfully authenticated player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
-[18:36:17 INFO]: [voicechat] Successfully validated connection of player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
-[18:36:17 INFO]: [voicechat] Player mcvoice_sender (0e29f872-0cb2-34ab-94b9-8d6e2f980b53) successfully connected to voice chat
-[18:36:22 INFO]: mcvoice_sender lost connection: Disconnected
-[18:36:22 INFO]: [voicechat] Disconnecting client mcvoice_sender
-[18:36:22 INFO]: mcvoice_sender left the game
-[18:36:24 INFO]: UUID of player mcvoice_sender is 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
-[18:36:24 INFO]: mcvoice_sender joined the game
-[18:36:24 INFO]: mcvoice_sender[/127.0.0.1:42162] logged in with entity id 56 at ([world]10.5, -60.0, 5.5)
-[18:36:24 INFO]: [voicechat] Received secret request of mcvoice_sender (20)
-[18:36:24 INFO]: [voicechat] Sent secret to mcvoice_sender
-[18:36:24 INFO]: [voicechat] Successfully authenticated player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
-[18:36:24 INFO]: [voicechat] Successfully validated connection of player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
-[18:36:24 INFO]: [voicechat] Player mcvoice_sender (0e29f872-0cb2-34ab-94b9-8d6e2f980b53) successfully connected to voice chat
-[18:36:30 INFO]: mcvoice_sender lost connection: Disconnected
-[18:36:30 INFO]: [voicechat] Disconnecting client mcvoice_sender
-[18:36:30 INFO]: mcvoice_sender left the game
-[18:36:38 INFO]: mcvoice_probe lost connection: Disconnected
-[18:36:38 INFO]: [voicechat] Disconnecting client mcvoice_probe
-[18:36:38 INFO]: mcvoice_probe left the game
+[10:10:02 INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[10:10:02 INFO]: Found new data pack file/bukkit, loading it automatically
+[10:10:02 INFO]: Found new data pack paper, loading it automatically
+[10:10:03 INFO]: No existing world data, creating new world
+[10:10:03 ERROR]: No key layers in MapLike[{}]
+[10:10:04 INFO]: Loaded 1370 recipes
+[10:10:04 INFO]: Loaded 1481 advancements
+[10:10:04 INFO]: [MCTypeRegistry] Initialising converters for DataConverter...
+[10:10:04 INFO]: [MCTypeRegistry] Finished initialising converters for DataConverter in 255.1ms
+[10:10:04 INFO]: Starting minecraft server version 1.21.4
+[10:10:04 INFO]: Loading properties
+[10:10:04 INFO]: This server is running Paper version 1.21.4-232-ver/1.21.4@12d8fe0 (2025-06-09T10:15:42Z) (Implementing API version 1.21.4-R0.1-SNAPSHOT)
+[10:10:04 INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
+[10:10:05 INFO]: Server Ping Player Sample Count: 12
+[10:10:05 INFO]: Using 4 threads for Netty based IO
+[10:10:05 INFO]: [MoonriseCommon] Paper is using 1 worker threads, 1 I/O threads
+[10:10:05 INFO]: [ChunkTaskScheduler] Chunk system is using population gen parallelism: true
+[10:10:05 INFO]: Default game type: SURVIVAL
+[10:10:05 INFO]: Generating keypair
+[10:10:05 INFO]: Starting Minecraft server on *:25565
+[10:10:05 INFO]: Using epoll channel type
+[10:10:05 INFO]: Paper: Using libdeflate (Linux x86_64) compression from Velocity.
+[10:10:05 INFO]: Paper: Using OpenSSL 3.x.x (Linux x86_64) cipher from Velocity.
+[10:10:06 INFO]: [voicechat] Loading server plugin voicechat v2.6.26
+[10:10:06 WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[10:10:06 WARN]: The server will make no attempt to authenticate usernames. Beware.
+[10:10:06 WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[10:10:06 WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[10:10:06 INFO]: Preparing level "world"
+[10:10:06 ERROR]: No key layers in MapLike[{}]
+[10:10:06 ERROR]: No key layers in MapLike[{}]
+[10:10:07 ERROR]: No key layers in MapLike[{}]
+[10:10:08 INFO]: Preparing start region for dimension minecraft:overworld
+[10:10:08 INFO]: Preparing spawn area: 2%
+[10:10:08 INFO]: Time elapsed: 359 ms
+[10:10:08 INFO]: Preparing start region for dimension minecraft:the_nether
+[10:10:08 INFO]: Preparing spawn area: 2%
+[10:10:09 INFO]: Preparing spawn area: 2%
+[10:10:09 INFO]: Preparing spawn area: 18%
+[10:10:10 INFO]: Preparing spawn area: 46%
+[10:10:10 INFO]: Time elapsed: 1929 ms
+[10:10:10 INFO]: Preparing start region for dimension minecraft:the_end
+[10:10:10 INFO]: Preparing spawn area: 2%
+[10:10:11 INFO]: Preparing spawn area: 51%
+[10:10:11 INFO]: Time elapsed: 587 ms
+[10:10:11 INFO]: [voicechat] Enabling voicechat v2.6.26
+[10:10:11 INFO]: [voicechat] Initializing compatibility for version 1.21.4-R0.1
+[10:10:11 INFO]: [voicechat] Compatibility version 20
+[10:10:11 INFO]: [voicechat] Successfully initialized commodore command completion
+[10:10:11 INFO]: [spark] Starting background profiler...
+[10:10:12 INFO]: Done preparing level "world" (6.196s)
+[10:10:12 INFO]: Running delayed init tasks
+[10:10:12 INFO]: Done (23.303s)! For help, type "help"
+[10:10:12 INFO]: *************************************************************************************
+[10:10:12 INFO]: This is the first time you're starting this server.
+[10:10:12 INFO]: It's recommended you read our 'Getting Started' documentation for guidance.
+[10:10:12 INFO]: View this and more helpful information here: https://docs.papermc.io/paper/next-steps
+[10:10:12 INFO]: *************************************************************************************
+[10:10:12 INFO]: [voicechat] Loading plugins
+[10:10:12 INFO]: [voicechat] Loaded 0 plugin(s)
+[10:10:12 INFO]: [voicechat] Initializing plugins
+[10:10:12 INFO]: [voicechat] Initialized 0 plugin(s)
+[10:10:12 WARN]: [voicechat] Running in offline mode - Voice chat encryption is not secure!
+[10:10:12 INFO]: [voicechat] Voice chat server started at port 24454
+[10:10:27 INFO]: UUID of player mcvoice_probe is 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[10:10:27 INFO]: mcvoice_probe joined the game
+[10:10:27 INFO]: mcvoice_probe[/127.0.0.1:38450] logged in with entity id 25 at ([world]-0.5, -60.0, 6.5)
+[10:10:27 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:27 INFO]: [voicechat] Sent secret to mcvoice_probe
+[10:10:27 INFO]: [voicechat] Successfully authenticated player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[10:10:28 INFO]: [voicechat] Successfully validated connection of player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[10:10:28 INFO]: [voicechat] Player mcvoice_probe (505ae21d-a3e5-3a31-941c-a3df5dab234e) successfully connected to voice chat
+[10:10:30 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:30 WARN]: [voicechat] Player already requested secret - ignoring
+[10:10:31 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:31 WARN]: [voicechat] Player already requested secret - ignoring
+[10:10:32 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:32 WARN]: [voicechat] Player already requested secret - ignoring
+[10:10:33 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:33 WARN]: [voicechat] Player already requested secret - ignoring
+[10:10:34 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:34 WARN]: [voicechat] Player already requested secret - ignoring
+[10:10:35 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:35 WARN]: [voicechat] Player already requested secret - ignoring
+[10:10:36 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:36 WARN]: [voicechat] Player already requested secret - ignoring
+[10:10:37 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:37 WARN]: [voicechat] Player already requested secret - ignoring
+[10:10:38 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:38 WARN]: [voicechat] Player already requested secret - ignoring
+[10:10:39 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:39 WARN]: [voicechat] Player already requested secret - ignoring
+[10:10:39 INFO]: [voicechat] Player 505ae21d-a3e5-3a31-941c-a3df5dab234e timed out
+[10:10:39 INFO]: [voicechat] Reconnecting player mcvoice_probe
+[10:10:39 INFO]: [voicechat] Sent secret to mcvoice_probe
+[10:10:39 INFO]: [voicechat] Successfully authenticated player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[10:10:39 INFO]: [voicechat] Successfully validated connection of player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[10:10:39 INFO]: [voicechat] Player mcvoice_probe (505ae21d-a3e5-3a31-941c-a3df5dab234e) successfully connected to voice chat
+[10:10:45 INFO]: mcvoice_probe lost connection: Disconnected
+[10:10:45 INFO]: [voicechat] Disconnecting client mcvoice_probe
+[10:10:45 INFO]: mcvoice_probe left the game
+[10:10:45 INFO]: UUID of player mcvoice_probe is 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[10:10:46 INFO]: mcvoice_probe joined the game
+[10:10:46 INFO]: mcvoice_probe[/127.0.0.1:41884] logged in with entity id 113 at ([world]-0.5, -60.0, 6.5)
+[10:10:46 INFO]: [voicechat] Received secret request of mcvoice_probe (20)
+[10:10:46 INFO]: [voicechat] Sent secret to mcvoice_probe
+[10:10:46 INFO]: [voicechat] Successfully authenticated player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[10:10:46 INFO]: [voicechat] Successfully validated connection of player 505ae21d-a3e5-3a31-941c-a3df5dab234e
+[10:10:46 INFO]: [voicechat] Player mcvoice_probe (505ae21d-a3e5-3a31-941c-a3df5dab234e) successfully connected to voice chat
+[10:10:47 INFO]: UUID of player mcvoice_sender is 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[10:10:47 INFO]: mcvoice_sender joined the game
+[10:10:47 INFO]: mcvoice_sender[/127.0.0.1:41892] logged in with entity id 114 at ([world]-8.5, -60.0, -1.5)
+[10:10:47 INFO]: [voicechat] Received secret request of mcvoice_sender (20)
+[10:10:47 INFO]: [voicechat] Sent secret to mcvoice_sender
+[10:10:47 INFO]: [voicechat] Successfully authenticated player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[10:10:48 INFO]: [voicechat] Successfully validated connection of player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[10:10:48 INFO]: [voicechat] Player mcvoice_sender (0e29f872-0cb2-34ab-94b9-8d6e2f980b53) successfully connected to voice chat
+[10:10:53 INFO]: mcvoice_sender lost connection: Disconnected
+[10:10:53 INFO]: [voicechat] Disconnecting client mcvoice_sender
+[10:10:53 INFO]: mcvoice_sender left the game
+[10:10:55 INFO]: UUID of player mcvoice_sender is 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[10:10:55 INFO]: mcvoice_sender joined the game
+[10:10:55 INFO]: mcvoice_sender[/127.0.0.1:48646] logged in with entity id 115 at ([world]-8.5, -60.0, -1.5)
+[10:10:55 INFO]: [voicechat] Received secret request of mcvoice_sender (20)
+[10:10:55 INFO]: [voicechat] Sent secret to mcvoice_sender
+[10:10:55 INFO]: [voicechat] Successfully authenticated player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[10:10:55 INFO]: [voicechat] Successfully validated connection of player 0e29f872-0cb2-34ab-94b9-8d6e2f980b53
+[10:10:55 INFO]: [voicechat] Player mcvoice_sender (0e29f872-0cb2-34ab-94b9-8d6e2f980b53) successfully connected to voice chat
+[10:11:01 INFO]: mcvoice_sender lost connection: Disconnected
+[10:11:01 INFO]: [voicechat] Disconnecting client mcvoice_sender
+[10:11:01 INFO]: mcvoice_sender left the game
+[10:11:09 INFO]: mcvoice_probe lost connection: Disconnected
+[10:11:09 INFO]: [voicechat] Disconnecting client mcvoice_probe
+[10:11:09 INFO]: mcvoice_probe left the game
