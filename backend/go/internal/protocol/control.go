@@ -488,4 +488,4 @@ type Simple struct {
 }
 
 // Capabilities advertised by both backend implementations.
-var ServerCapabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "scope_attestation", "groups", "group_paging", "group_directory", "group_modes"}
+var ServerCapabilities = []string{"opus", "opus_fec", "whisper", "peers_delta", "presence", "key_rotation", "scope_attestation", "groups", "group_paging", "group_directory", "group_modes"}

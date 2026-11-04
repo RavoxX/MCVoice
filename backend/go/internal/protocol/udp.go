@@ -37,7 +37,8 @@ const (
 	ModeGroup byte = 2
 	FlagEOS   byte = 0x01
 	// FlagGroup on a normal/whisper frame: also deliver to the sender's group.
-	FlagGroup byte = 0x02
+	FlagGroup   byte = 0x02
+	FlagFECSafe byte = 0x04
 
 	voiceFixed = 15
 	relayFixed = 35
@@ -189,7 +190,7 @@ func ParseVoice(p []byte) (Voice, error) {
 }
 
 func checkVoiceFields(codec, mode, flags byte, n int) error {
-	if codec != CodecOpus || mode > ModeGroup || flags&^(FlagEOS|FlagGroup) != 0 ||
+	if codec != CodecOpus || mode > ModeGroup || flags&^(FlagEOS|FlagGroup|FlagFECSafe) != 0 ||
 		(mode == ModeGroup && flags&FlagGroup != 0) || n > MaxPayload {
 		return ErrBadPayload
 	}
