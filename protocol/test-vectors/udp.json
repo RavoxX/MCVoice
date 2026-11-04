@@ -243,6 +243,66 @@
    "datagram": "4d56011000001a2b3c4d5e6f70810000000000000009a127bbdd73371976b911c09d07edbc087da8acc8be10486bd5f6b765542a57"
   },
   {
+   "name": "voice_scope_safe_fec",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "c2s",
+   "type": 16,
+   "key_id": 0,
+   "connection_id": "1a2b3c4d5e6f7081",
+   "counter": 10,
+   "fields": {
+    "epoch": 7,
+    "sequence": 45,
+    "timestamp": 123456789,
+    "codec": 1,
+    "mode": 0,
+    "flags": 4,
+    "payload": "fcfffe"
+   },
+   "plaintext": "00000007002d075bcd150100040003fcfffe",
+   "datagram": "4d56011000001a2b3c4d5e6f7081000000000000000aa549ea30b78b4c10d849de4d85e7c27c2c54e04e6c4766cd6e728bce146fdea9197f"
+  },
+  {
+   "name": "voice_group_scope_safe_fec",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "c2s",
+   "type": 16,
+   "key_id": 0,
+   "connection_id": "1a2b3c4d5e6f7081",
+   "counter": 11,
+   "fields": {
+    "epoch": 7,
+    "sequence": 46,
+    "timestamp": 123456789,
+    "codec": 1,
+    "mode": 0,
+    "flags": 6,
+    "payload": "fcfffe"
+   },
+   "plaintext": "00000007002e075bcd150100060003fcfffe",
+   "datagram": "4d56011000001a2b3c4d5e6f7081000000000000000b06b685ae2f0f909d05fe4315caaf2b685c671f488eb939a9512ec05d4142f957b993"
+  },
+  {
+   "name": "voice_group_only_scope_safe_fec",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "c2s",
+   "type": 16,
+   "key_id": 0,
+   "connection_id": "1a2b3c4d5e6f7081",
+   "counter": 12,
+   "fields": {
+    "epoch": 7,
+    "sequence": 47,
+    "timestamp": 123456789,
+    "codec": 1,
+    "mode": 2,
+    "flags": 4,
+    "payload": "fcfffe"
+   },
+   "plaintext": "00000007002f075bcd150102040003fcfffe",
+   "datagram": "4d56011000001a2b3c4d5e6f7081000000000000000c179016b8b0c91f096296fd212e11ec475d46a0a81f38e32a5e8245e8ec77d559949c"
+  },
+  {
    "name": "voice_relay",
    "key": "000102030405060708090a0b0c0d0e0f",
    "direction": "s2c",
@@ -307,6 +367,28 @@
    },
    "plaintext": "e2b8c3d10f4a4c6e9b7d2a1f3e5c7b900000000400000009000c075bcd150102000003fcfffe",
    "datagram": "4d56011100001a2b3c4d5e6f7081000000000000000b613b44f45b7cab814d0721aa9f5b2776ca81c2a6116100f918047b7ae0cb9a084a6bab2bb078594b3e038da1fb4fca8da6d90d1c1e49"
+  },
+  {
+   "name": "voice_relay_scope_safe_fec",
+   "key": "000102030405060708090a0b0c0d0e0f",
+   "direction": "s2c",
+   "type": 17,
+   "key_id": 0,
+   "connection_id": "1a2b3c4d5e6f7081",
+   "counter": 12,
+   "fields": {
+    "sender_uuid": "853c80ef-3c37-49fd-aa49-938b674adae6",
+    "recipient_epoch": 3,
+    "sender_epoch": 7,
+    "sequence": 45,
+    "timestamp": 123456789,
+    "codec": 1,
+    "mode": 0,
+    "flags": 4,
+    "payload": "fcfffe"
+   },
+   "plaintext": "853c80ef3c3749fdaa49938b674adae60000000300000007002d075bcd150100040003fcfffe",
+   "datagram": "4d56011100001a2b3c4d5e6f7081000000000000000c07776f2cd8220be76b8ce76571cea8ef5df7b7d35682f33514c72da0e4f6c63656c01e98add528cc377b862802318779e26f6dc4ee65"
   }
  ],
  "invalid": [
@@ -444,10 +526,10 @@
    "error": "bad_payload"
   },
   {
-   "name": "bad_voice_flag_bit2",
+   "name": "bad_voice_flag_bit3",
    "key": "000102030405060708090a0b0c0d0e0f",
    "direction": "c2s",
-   "datagram": "4d56011000001a2b3c4d5e6f70810000000000000003678eb7fd7919269191148187f0b5b6fceea11ce1f3e86ce1117283b160925252",
+   "datagram": "4d56011000001a2b3c4d5e6f70810000000000000003678eb7fd7919269191148187fcb5b6fc60829dbad52d962dc8c9b8850c3d373f",
    "error": "bad_payload"
   },
   {
