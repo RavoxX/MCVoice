@@ -28,6 +28,7 @@ public final class VoiceProtocol {
     public static final int FLAG_EOS = 0x01;
     /** On a normal/whisper frame: also deliver to the sender's group. */
     public static final int FLAG_GROUP = 0x02;
+    public static final int FLAG_FEC_SAFE = dev.mcvoice.client.protocol.VoiceFlags.FEC_SAFE;
 
     public static final int VOICE_FIXED = 15;
     public static final int RELAY_FIXED = 35;
