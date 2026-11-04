@@ -11,19 +11,19 @@ bot: <- voicechat:secret (56 bytes)
 handshake: SECRET_RECEIVED (compatibility 20)
 secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000, groups=true, host=''} voiceHost=''
 bot: -> voicechat:update_state (1 bytes)
+bot: <- voicechat:state (33 bytes)
+bot: state observation voicechat:state 0001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
 wire-control: AUTH_ACK length=1
 [INFO][SVC] SVC voice server authenticated us (GCM_IV12)
 udp: AUTHENTICATED (GCM_IV12)
-bot: <- voicechat:state (33 bytes)
-bot: state observation voicechat:state 0001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
 wire-control: CONNECTION_CHECK_ACK length=1
 [INFO][SVC] SVC voice connection established with 127.0.0.1:24454
 udp: CONNECTED
 bot: <- voicechat:state (33 bytes)
 bot: state observation voicechat:state 0000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+wire-control: KEEP_ALIVE length=1
 bot: <- voicechat:state (34 bytes)
 bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
-wire-control: KEEP_ALIVE length=1
 bot: <- voicechat:state (34 bytes)
 bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
 bot: <- voicechat:state (34 bytes)
@@ -35,14 +35,14 @@ wire-control: KEEP_ALIVE length=1
 wire-control: KEEP_ALIVE length=1
 wire-control: KEEP_ALIVE length=1
 wire-control: KEEP_ALIVE length=1
+wire-control: KEEP_ALIVE length=1
 bot: <- voicechat:remove_state (16 bytes)
 wire-control: KEEP_ALIVE length=1
-wire-control: KEEP_ALIVE length=1
-bot: <- voicechat:state (34 bytes)
-bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
 bot: <- voicechat:state (34 bytes)
 bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
 wire-control: KEEP_ALIVE length=1
+bot: <- voicechat:state (34 bytes)
+bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
 bot: <- voicechat:state (34 bytes)
 bot: state observation voicechat:state 00000e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
 wire-audio: channel=0e29f872-0cb2-34ab-94b9-8d6e2f980b53 sender=0e29f872-0cb2-34ab-94b9-8d6e2f980b53 sequence=0
