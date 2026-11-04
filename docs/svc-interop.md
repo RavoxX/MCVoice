@@ -53,11 +53,11 @@ server key, with a brief SVC interruption; see [security boundaries and
 limits](security-0.1.13.md). Location sounds are received but currently ignored, and group
 audio is not supported yet.
 
-From 0.1.14, failed UDP sessions retry automatically with bounded backoff;
+From 0.1.15, failed UDP sessions retry automatically with bounded backoff;
 planned key renewal prefers a speech break while retaining a hard history
 bound. DNS/socket setup runs off the game thread and stale attempts cannot
 publish after leaving. Renewal can still pause SVC while the server expires the
-old session. See [recovery behavior and limits](audio-reliability-0.1.14.md).
+old session. See [recovery behavior and limits](audio-reliability-0.1.15.md).
 SVC traffic uses loss concealment rather than FEC because its encoder does not
 negotiate MCVoice's scope-safe redundancy guarantee.
 
