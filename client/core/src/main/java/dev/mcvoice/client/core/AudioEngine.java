@@ -21,7 +21,11 @@ final class AudioEngine {
         int TX_GROUP = 2;
 
         /** Called on the capture thread for each encoded frame while transmitting. */
-        void onEncoded(byte[] opus, int len, int txMask, boolean whisper);
+        void onEncoded(byte[] opus, int len, int txMask, boolean whisper, Object context, long epoch);
+
+        default Object transmissionContext() { return null; }
+
+        default long transmissionEpoch() { return 0; }
 
         /** Transmission stopped (send end-of-stream). */
         void onTransmitEnd();
@@ -184,6 +188,10 @@ final class AudioEngine {
     private void captureLoop() {
         short[] pcm = new short[OpusCodec.FRAME_SAMPLES];
         byte[] packet = new byte[OpusCodec.MAX_PACKET];
+        Object previousContext = null;
+        long previousEpoch = Long.MIN_VALUE;
+        int previousMask = 0;
+        boolean previousWhisper = false;
         while (running) {
             AudioAdapter.CaptureLine line;
             try {
@@ -213,13 +221,25 @@ final class AudioEngine {
                     int mask = m == null ? sink.transmitMask(voice) : 0;
                     boolean tx = mask != 0;
                     if (tx) {
+                        Object context = sink.transmissionContext();
+                        long epoch = sink.transmissionEpoch();
+                        boolean whisper = sink.whisper();
+                        if (mask != previousMask || context != previousContext || epoch != previousEpoch || whisper != previousWhisper) {
+                            // FEC/predictor history must never cross a recipient or privacy boundary.
+                            encoder.reset();
+                        }
+                        previousContext = context;
+                        previousEpoch = epoch;
+                        previousMask = mask;
+                        previousWhisper = whisper;
                         int n = encoder.encode(pcm, packet);
                         if (n > 0 && running) {
-                            sink.onEncoded(packet, n, mask, sink.whisper());
+                            sink.onEncoded(packet, n, mask, whisper, context, epoch);
                         }
                     } else if (transmitting) {
                         sink.onTransmitEnd();
                         encoder.reset();
+                        previousMask = 0;
                     }
                     transmitting = tx;
                 }
@@ -229,6 +249,8 @@ final class AudioEngine {
                 voiceDetected = false;
                 captureLine = null;
                 line.close();
+                encoder.reset();
+                previousMask = 0;
                 if (transmitting) {
                     sink.onTransmitEnd();
                     transmitting = false;
