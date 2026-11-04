@@ -293,15 +293,22 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **0.1.14 audio reliability in development:** optional `opus_fec` capability
+* **0.1.15 audio reliability in development:** optional `opus_fec` capability
   and scope-safe flag `0x04` in both backends and Java, receive-side lookahead
   recovery, encoder scope resets, jitter estimator corrections, automatic SVC
-  retry/quiet-period renewal and observed `remove_state` handling. Legacy/SVC
+  retry/quiet-period renewal and observed `remove_state` handling. Group delivery
+  always clears FEC because roster updates have no acknowledged generation. Legacy/SVC
   traffic retains concealment; exact replay history and all routing/playback
   checks remain mandatory. No release/deployment claim yet. See
-  `docs/audio-reliability-0.1.14.md` for all seven proposal decisions and the
+  `docs/audio-reliability-0.1.15.md` for all seven proposal decisions and the
   synthetic benchmark's limits. Complete CI, real-SVC and 26.3 runtime gates
   before publication.
+
+* **0.1.14 release attempt stopped:** run `41883070984` from `6492c6f6`
+  published partial Maven artifacts and both images before a conservative
+  group-FEC boundary review. No production deployment occurred; its loopback
+  candidate was removed. Publish 0.1.15 with group concealment and a fresh
+  immutable Maven version; do not replace 0.1.14 artifacts or claim a full release.
 
 * **Stable 0.1.13 released:** issues #17–#21 fixed in merged source `39acc90`:
   bounded Go replay advancement, current-session group/peer ownership,
