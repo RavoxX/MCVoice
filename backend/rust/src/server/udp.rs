@@ -201,7 +201,8 @@ impl Server {
         let now_ms = self.now_ms();
         let group_voice = Voice {
             mode: MODE_GROUP,
-            flags: v.flags & !FLAG_GROUP,
+            // Roster updates are asynchronous; group FEC needs an acknowledged generation.
+            flags: v.flags & !(FLAG_GROUP | FLAG_FEC_SAFE),
             ..*v
         };
         scratch.targets.clear();
