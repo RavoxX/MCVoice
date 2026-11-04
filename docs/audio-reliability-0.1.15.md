@@ -1,4 +1,4 @@
-# Audio reliability in 0.1.14
+# Audio reliability in 0.1.15
 
 This update targets demonstrated gaps rather than adding every proposed feature.
 The Java core remains Java 8. No voice is recorded or retained, and positional
@@ -7,7 +7,7 @@ frame. Group playback still requires current membership and remains centred.
 
 | Proposal | Decision and reason |
 |---|---|
-| Opus FEC / loss recovery | Implement receive-side FEC: the encoder already enabled it, but missing frames always used concealment. Only adjacent, already buffered packets with negotiated scope-safe metadata may supply redundancy. |
+| Opus FEC / loss recovery | Implement proximity receive-side FEC: the encoder already enabled it, but missing frames always used concealment. Only adjacent, already buffered packets with negotiated scope-safe metadata may supply redundancy. Groups retain concealment. |
 | SVC reconnect / key renewal | Implement automatic retry with bounded backoff, cancelled stale connection attempts, and planned renewal during a speech break where possible. Preserve authenticated GCM and exact same-key replay history. |
 | Noise suppression / echo cancellation | Retain the existing gain, high-pass filter, noise gate and optional AGC. A gate is not full denoising or echo cancellation. Reliable AEC needs a timed playback reference and platform/device testing; no new native dependency or unverified DSP is added. |
 | Rust scaling / latency | Retain the measured target-buffer reuse, short hub locks, presence diffing and bounded queues. Add only the FEC negotiation needed by this update in both backends. No new load evidence justifies an architectural rewrite or a latency claim. |
@@ -23,12 +23,20 @@ legacy receivers. Ordinary voice, group policies and all routing checks retain
 their existing behavior. Updated clients fall back to concealment with older
 backends, older senders and SVC packets.
 
+Both backends also clear the marker on every group delivery, including for
+capable members. Group membership changes can precede the sender receiving a
+roster update, so a capability alone cannot bind redundancy to the current
+membership. Group FEC is deferred until an acknowledged generation exists.
+The backend enforces this restriction without depending on roster-update timing.
+An interrupted 0.1.14 release attempt published some immutable Maven packages;
+0.1.15 uses a fresh version and does not replace those artifacts.
+
 This negotiation matters for privacy: a preceding frame might have been a
 whisper or private group transmission. The capture encoder resets across
 world epochs, group context, transport selection, normal/whisper transitions
 and new transmissions. A frame captured across a changed context is discarded.
 Receivers require adjacent sequence numbers, the same playback mode and sender
-epoch, plus current playback permission, before trying recovery. SVC has no
+epoch, plus current playback permission, before trying proximity recovery. SVC has no
 verified equivalent scope guarantee, so its packets cannot enable FEC.
 
 No extra playout delay is introduced: recovery only uses a following packet
@@ -82,7 +90,7 @@ Recorded lost-frame MSE fell from 23,983,056.28 (concealment) to 4,564,910.62
 (FEC), about 81%. This demonstrates recovery on that fixture, not perceptual
 speech quality, recovery availability in every codec mode, or a general CPU or
 latency improvement. No human voice was used. Timing is JIT-sensitive; raw
-measurements are in [the benchmark record](benchmarks/loss-recovery-0.1.14.json).
+measurements are in [the benchmark record](benchmarks/loss-recovery-0.1.15.json).
 
 Release/runtime/deployment results will be recorded after their checks finish.
 100,000 concurrent users remains a scaling target, not proven capacity. Shared
