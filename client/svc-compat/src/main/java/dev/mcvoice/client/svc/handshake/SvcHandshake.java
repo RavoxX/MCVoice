@@ -167,6 +167,20 @@ public final class SvcHandshake {
         }
     }
 
+    /** Retry only the already accepted protocol, without speculative version fallback. */
+    public synchronized void retry(long now, int version) {
+        SvcProtocol protocol = SvcProtocols.forCompatibilityVersion(version);
+        if (!enabled || adapter == null || !adapter.supported() || protocol == null
+                || !adapter.serverAcceptsChannel(REQUEST_SECRET)) return;
+        requestedVersion = version;
+        acceptedVersion = -1;
+        set(State.REQUESTED, "compatibility " + version);
+        since = now;
+        if (!adapter.send(REQUEST_SECRET, protocol.requestSecret(version)) && state == State.REQUESTED) {
+            set(State.FAILED, "could not send plugin message");
+        }
+    }
+
     /** Clientbound plugin payload on an SVC channel. */
     public synchronized void onPayload(String channel, byte[] payload) {
         if (!SECRET.equals(channel) || (state != State.REQUESTED && state != State.INCOMPATIBLE)) {
