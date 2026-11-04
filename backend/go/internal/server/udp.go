@@ -285,7 +285,9 @@ func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time, sc
 				rv.Flags &^= protocol.FlagFECSafe
 			}
 			if t.group {
-				rv.Mode, rv.Flags = protocol.ModeGroup, rv.Flags&^protocol.FlagGroup
+				// Membership can change before the sender observes the roster update.
+				// Group redundancy needs an acknowledged generation, not just a capability.
+				rv.Mode, rv.Flags = protocol.ModeGroup, rv.Flags&^(protocol.FlagGroup|protocol.FlagFECSafe)
 			}
 			plain := protocol.AppendRelay(scratch.plain[:0], sender.uuidB, t.epoch, rv)
 			t.sess.umu.Lock()
