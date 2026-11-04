@@ -12,8 +12,8 @@ five security boundaries in UDP replay, group ownership, SVC encryption/replay,
 and API probing. The public backend is updated. See [release verification](docs/release-0.1.13.md)
 and [SVC renewal behavior and limits](docs/security-0.1.13.md).
 
-Audio reliability work for 0.1.14 adds negotiated Opus loss recovery and safer
-automatic SVC reconnection. See [scope, compatibility and remaining limits](docs/audio-reliability-0.1.14.md).
+Audio reliability work for 0.1.15 adds negotiated Opus loss recovery and safer
+automatic SVC reconnection. See [scope, compatibility and remaining limits](docs/audio-reliability-0.1.15.md).
 
 * Positional 3D audio (equal-power stereo panning, distance attenuation),
   Opus at 48 kHz in 20 ms frames, a jitter buffer and a whisper mode.
