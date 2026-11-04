@@ -7,17 +7,27 @@ import java.util.UUID;
 
 /** Compatibility 20 player metadata, independently observed against the real server. */
 public final class SvcPlayerStates {
-    public static final String STATE = "voicechat:state", STATES = "voicechat:states";
+    public static final String STATE = "voicechat:state", STATES = "voicechat:states", REMOVE = "voicechat:remove_state";
     private Map<UUID, String> online = Collections.emptyMap();
 
     public static boolean channel(String channel) {
-        return STATE.equals(channel) || STATES.equals(channel);
+        return STATE.equals(channel) || STATES.equals(channel) || REMOVE.equals(channel);
     }
 
     public synchronized void receive(String channel, byte[] payload) throws SvcFormatException {
         if (!channel(channel)) return;
         if (payload == null || payload.length > 1048576) throw new SvcFormatException("invalid state packet size");
         SvcBuf in = SvcBuf.reader(payload);
+        if (REMOVE.equals(channel)) {
+            UUID removed = in.readUuid();
+            if (in.remaining() != 0) throw new SvcFormatException("trailing remove-state data");
+            if (online.containsKey(removed)) {
+                Map<UUID, String> next = new LinkedHashMap<UUID, String>(online);
+                next.remove(removed);
+                online = Collections.unmodifiableMap(next);
+            }
+            return;
+        }
         int count = STATES.equals(channel) ? in.readInt() : 1;
         if (count < 0 || count > 4096) throw new SvcFormatException("invalid player state count");
         Map<UUID, String> next = STATES.equals(channel) ? new LinkedHashMap<UUID, String>() : new LinkedHashMap<UUID, String>(online);
