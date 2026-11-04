@@ -458,11 +458,18 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             return whisperDown;
         }
 
-        public void onEncoded(byte[] opus, int len, int txMask, boolean whisper) {
+        public Object transmissionContext() { return group; }
+
+        public long transmissionEpoch() { return tracker.snapshot().epoch; }
+
+        public void onEncoded(byte[] opus, int len, int txMask, boolean whisper, Object context, long capturedEpoch) {
             Group current = group;
+            if (current != context || tracker.snapshot().epoch != capturedEpoch || whisper != whisperDown) return;
             txMask = TransmissionPolicy.restrictGroupMask(txMask, current == null ? null : current.type);
+            txMask &= TransmissionPolicy.mask(config, tracker.snapshot().inWorld, current == null ? null : current.type,
+                pttDown, whisperDown, true);
             if (txMask == 0) return;
-            long epoch = tracker.snapshot().epoch;
+            long epoch = capturedEpoch;
             seq = (seq + 1) & 0xFFFF;
             timestamp = (timestamp + 960) & 0xFFFFFFFFL;
             boolean proximity = (txMask & TX_PROXIMITY) != 0;
@@ -470,8 +477,10 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
             // one frame for both: the backend relays it to the group (mode 2) and to nearby non-members
             int mode = !proximity ? VoiceProtocol.MODE_GROUP : whisper ? VoiceProtocol.MODE_WHISPER : VoiceProtocol.MODE_NORMAL;
             int flags = proximity && toGroup ? VoiceProtocol.FLAG_GROUP : 0;
+            ControlClient transportControl = control;
+            if (transportControl != null && transportControl.serverSupports("opus_fec")) flags |= VoiceProtocol.FLAG_FEC_SAFE;
             lastTxMode = mode;
-            lastTxGroupFlag = flags;
+            lastTxGroupFlag = flags & VoiceProtocol.FLAG_GROUP;
             CloudVoiceChannel c = cloud;
             if (c != null && session != null && !scopeDirty) {
                 c.sendVoice(epoch & 0xFFFFFFFFL, seq, timestamp, mode, flags, opus, 0, len);
@@ -517,6 +526,8 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
         if (mode != PlaybackValidator.MODE_GROUP && !selector.accept(sender, TransportKind.CLOUD, now)) {
             return;
         }
+        ControlClient transportControl = control;
+        if (transportControl == null || !transportControl.serverSupports("opus_fec")) flags &= ~VoiceProtocol.FLAG_FEC_SAFE;
         mixer.enqueue(sender, senderEpoch, sequence, mode, flags, payload, off, len, now);
     }
 
