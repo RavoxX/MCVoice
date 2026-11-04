@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Render release-report.md from the artifacts of a release.yml run.
 
-    report.py <artifacts-dir>   (environment: VERSION, TEST_RESULT, BUILD_RESULT,
+    report.py <artifacts-dir> [--require-complete]
+                               (environment: VERSION, TEST_RESULT, BUILD_RESULT,
                                  IMAGES_RESULT, IMAGES_REQUESTED, LATEST, RUN_URL, GITHUB_REPOSITORY)
 
 Only facts found in the artifacts are reported: a jar, release or package that
 is not recorded as successful is listed as failed or missing, with the reason.
+--require-complete also requires EXPECTED_MINECRAFT (JSON array) and loader
+manifests; incomplete publications or validation gates return a failing exit.
 """
 import json
 import os

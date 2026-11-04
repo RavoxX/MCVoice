@@ -118,6 +118,7 @@ python3 tools/port-version/port.py 1.20.1           # writes ./minecraft/<loader
 | `svc-interop.yml` | svc-compat changes, weekly, dispatch `{minecraft}` | Paper + real SVC plugin, bot + `SvcProbe`; verdict JSON → job summary and `tooling/probe-output:svc-interop/<mc>/` |
 | `version-matrix.yml` | tools/versions changes, weekly | regenerates `versions/versions.json` and **commits to main** (pull before pushing!) |
 | `release.yml` | dispatch `{version, minecraft, prerelease, images}` | full release; see `docs/releasing.md` |
+| `release-report.yml` | dispatch `{run_id, version, minecraft}` | verifies/reconstructs an existing report; `supported` selects newest full-release records by timestamp and requires complete publication; never rebuilds runtime artifacts |
 
 Triggering from an agent session without `gh`: POST
 `https://api.github.com/repos/RavoxX/MCVoice/actions/workflows/<file>/dispatches`
