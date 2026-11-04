@@ -194,6 +194,9 @@ func (s *Server) HandleControl(w http.ResponseWriter, r *http.Request) {
 	sess.adminMute = s.isAdminMuted(ident.UUID)
 	sess.peer = routing.Peer{UUID: ident.UUID, Authenticated: true, Visible: map[string]struct{}{}, Muted: sess.adminMute}
 	for _, cp := range hello.Capabilities {
+		if cp == "opus_fec" {
+			sess.fecCap = true
+		}
 		if cp == "groups" {
 			sess.groupsCap = true
 		}

@@ -1,5 +1,8 @@
 # Rust 0.1.12 deployment verification
 
+Superseded in production by [Rust 0.1.13](deployment-0.1.13.md). The 0.1.12 image
+is retained for rollback.
+
 Rust 0.1.12 is deployed on the public MCVoice backend, following the owner's
 request to release and deploy. The release's six validation gates and both
 tested-image publications passed before switching production.
