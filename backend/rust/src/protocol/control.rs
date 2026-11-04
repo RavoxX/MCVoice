@@ -28,6 +28,7 @@ pub mod code {
 
 pub const SERVER_CAPABILITIES: &[&str] = &[
     "opus",
+    "opus_fec",
     "whisper",
     "peers_delta",
     "presence",
