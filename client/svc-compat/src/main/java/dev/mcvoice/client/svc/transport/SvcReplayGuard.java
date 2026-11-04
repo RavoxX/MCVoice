@@ -25,4 +25,6 @@ final class SvcReplayGuard {
     }
 
     synchronized boolean needsRenewal() { return nonces.size() >= capacity - capacity / 4; }
+
+    synchronized boolean renewalUrgent() { return nonces.size() >= capacity - capacity / 16; }
 }
