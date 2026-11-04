@@ -57,6 +57,7 @@ public final class SvcUdpClient {
     private volatile State state = State.CONNECTING;
     private volatile boolean running = true;
     private volatile long lastRxMs;
+    private volatile long lastSpeechMs = System.currentTimeMillis();
     private volatile long sequence;
     private volatile long sent, received, rejected;
     private volatile String authenticationReply = "";
@@ -92,7 +93,12 @@ public final class SvcUdpClient {
     }
 
     private void setState(State s, String detail) {
+        if (!running || state == State.CLOSED) return;
         state = s;
+        if (s == State.FAILED) {
+            running = false;
+            socket.close();
+        }
         try {
             listener.onState(s, detail);
         } catch (RuntimeException e) {
@@ -180,6 +186,7 @@ public final class SvcUdpClient {
         if (state != State.CONNECTED || m == null || len > secret.mtu) {
             return;
         }
+        lastSpeechMs = System.currentTimeMillis();
         SvcBuf p = SvcBuf.writer();
         protocol.writeMic(p, opus, off, len, sequence++, whispering);
         sendPlain(p.toByteArray(), m);
@@ -241,7 +248,8 @@ public final class SvcUdpClient {
                 if (!running) {
                     return;
                 }
-                continue;
+                setState(State.FAILED, "SVC UDP socket failed");
+                return;
             }
             try {
                 byte[] enc = unframe(buf, packet.getLength());
@@ -255,6 +263,7 @@ public final class SvcUdpClient {
                 if (!stateAllows(in.kind)) throw new SvcFormatException("packet not allowed in current state");
                 SvcReplayGuard.Result freshness = replay.accept(enc);
                 if (freshness == SvcReplayGuard.Result.EXHAUSTED) {
+                    listener.onRenewalRequired();
                     setState(State.FAILED, "SVC replay tracking is full; reconnect to renew the voice session");
                     running = false; socket.close(); return;
                 }
@@ -278,6 +287,9 @@ public final class SvcUdpClient {
     }
 
     private void handle(SvcIncoming in) {
+        if (in.kind == SvcIncoming.Kind.PLAYER_SOUND || in.kind == SvcIncoming.Kind.LOCATION_SOUND) {
+            lastSpeechMs = System.currentTimeMillis();
+        }
         switch (in.kind) {
             case AUTH_ACK:
                 if (state == State.CONNECTING) {
@@ -324,6 +336,11 @@ public final class SvcUdpClient {
 
     public long sentCount() {
         return sent;
+    }
+
+    /** Prefer a natural speech break, but keep enough room to fail closed under continuous speech. */
+    public boolean readyForRenewal(long now) {
+        return now - lastSpeechMs >= 2000 || replay.renewalUrgent();
     }
 
     public long receivedCount() {
