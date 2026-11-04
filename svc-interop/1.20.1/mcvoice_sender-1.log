@@ -11,17 +11,17 @@ bot: <- voicechat:secret (56 bytes)
 handshake: SECRET_RECEIVED (compatibility 20)
 secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000, groups=true, host=''} voiceHost=''
 bot: -> voicechat:update_state (1 bytes)
+bot: <- voicechat:state (34 bytes)
+bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
 wire-control: AUTH_ACK length=1
 [INFO][SVC] SVC voice server authenticated us (GCM_IV12)
 udp: AUTHENTICATED (GCM_IV12)
-bot: <- voicechat:state (34 bytes)
-bot: state observation voicechat:state 00010e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
 wire-control: CONNECTION_CHECK_ACK length=1
 [INFO][SVC] SVC voice connection established with 127.0.0.1:24454
 udp: CONNECTED
+wire-control: KEEP_ALIVE length=1
 bot: <- voicechat:state (34 bytes)
 bot: state observation voicechat:state 00000e29f8720cb234ab94b98d6e2f980b530e6d63766f6963655f73656e64657200
-wire-control: KEEP_ALIVE length=1
 wire-control: KEEP_ALIVE length=1
 wire-control: KEEP_ALIVE length=1
 wire-control: KEEP_ALIVE length=1
