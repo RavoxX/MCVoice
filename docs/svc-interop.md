@@ -38,6 +38,8 @@ UUID, VarInt-length name, and an optional group UUID. State is cleared on
 disconnect/reset; old audio packets are never treated as current presence.
 Malformed state packets cannot partially replace the current list. The real-server
 probe checks that its synthetic player becomes visible after voice authentication.
+The observed `voicechat:remove_state` UUID packet removes departed players;
+malformed removals leave current state unchanged.
 
 ## Voice session (UDP)
 
@@ -50,6 +52,14 @@ and same-key reconnects. Bounded replay history renews through a different
 server key, with a brief SVC interruption; see [security boundaries and
 limits](security-0.1.13.md). Location sounds are received but currently ignored, and group
 audio is not supported yet.
+
+From 0.1.14, failed UDP sessions retry automatically with bounded backoff;
+planned key renewal prefers a speech break while retaining a hard history
+bound. DNS/socket setup runs off the game thread and stale attempts cannot
+publish after leaving. Renewal can still pause SVC while the server expires the
+old session. See [recovery behavior and limits](audio-reliability-0.1.14.md).
+SVC traffic uses loss concealment rather than FEC because its encoder does not
+negotiate MCVoice's scope-safe redundancy guarantee.
 
 ## Versioning and failure
 
