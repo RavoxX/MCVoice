@@ -8,6 +8,20 @@ import dev.mcvoice.client.svc.protocol.*;
 class SvcPlayerStatesTest {
     private static final UUID ALICE = new UUID(0, 1), BOB = new UUID(0, 2);
 
+    @Test void realRemoveStateObservationImmediatelyRemovesQuietDisconnectedPlayers() throws Exception {
+        SvcPlayerStates states = new SvcPlayerStates();
+        UUID sender = UUID.fromString("0e29f872-0cb2-34ab-94b9-8d6e2f980b53");
+        states.receive(SvcPlayerStates.STATE, state(SvcBuf.writer(), sender, "mcvoice_sender", false, false, null).toByteArray());
+        // Independently observed in real-server sender reconnect run 40121371976.
+        states.receive(SvcPlayerStates.REMOVE, hex("0e29f8720cb234ab94b98d6e2f980b53"));
+        assertTrue(states.online().isEmpty());
+        states.receive(SvcPlayerStates.STATE, state(SvcBuf.writer(), sender, "mcvoice_sender", false, false, null).toByteArray());
+        assertThrows(SvcFormatException.class, () -> states.receive(SvcPlayerStates.REMOVE, new byte[15]));
+        assertThrows(SvcFormatException.class, () -> states.receive(SvcPlayerStates.REMOVE, new byte[17]));
+        assertEquals(Collections.singletonMap(sender, "mcvoice_sender"), states.online());
+        assertTrue(Arrays.asList(dev.mcvoice.client.platform.SvcChannelNames.CLIENTBOUND).contains(SvcPlayerStates.REMOVE));
+    }
+
     static SvcBuf state(SvcBuf out, UUID uuid, String name, boolean disabled, boolean disconnected, UUID group) {
         out.writeBoolean(disabled).writeBoolean(disconnected).writeUuid(uuid).writeString(name).writeBoolean(group != null);
         if (group != null) out.writeUuid(group);

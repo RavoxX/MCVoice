@@ -1,0 +1,15 @@
+{
+  "fixture": "synthetic 48kHz mono, 20kbps SILK wideband, FEC enabled, expected loss 30%; not production defaults",
+  "frames_per_iteration": 300,
+  "lost_frames_per_iteration": 28,
+  "iterations": 20,
+  "warmup_runs_per_strategy": 3,
+  "concealment_lost_frame_mse": 23983056.284635417,
+  "fec_lost_frame_mse": 4564910.618675595,
+  "observations_ms": [
+    {"concealment": 409.2624, "fec": 151.8594},
+    {"concealment": 308.2852, "fec": 152.8744},
+    {"concealment": 435.7373, "fec": 253.1412}
+  ],
+  "limitations": "Synthetic isolated-loss fixture, not a human speech/perceptual or capacity benchmark. Timings are JIT-sensitive and do not establish general CPU or latency improvement. No voice recording."
+}
