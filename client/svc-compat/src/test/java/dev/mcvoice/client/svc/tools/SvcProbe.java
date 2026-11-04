@@ -197,7 +197,7 @@ public final class SvcProbe {
                 }
                 if (System.currentTimeMillis() - connectedSince > durationMs && (!renewalRequested || renewals.get() > 0)) {
                     ok = u.state() == SvcUdpClient.State.CONNECTED && states.online().containsValue(playerName)
-                        && (!receiveOnly || zeroFrames.get() >= 2)
+                        && (!receiveOnly || (zeroFrames.get() >= 2 && !states.online().containsValue("mcvoice_sender")))
                         && (!Boolean.getBoolean("probe.renew") || renewals.get() > 0);
                     break;
                 }
