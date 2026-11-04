@@ -224,6 +224,97 @@ class SvcCompatTest {
         fullSession(SvcCipher.Mode.GCM_IV12);
     }
 
+    static dev.mcvoice.client.svc.transport.SvcUdpClient udp(SvcCompat client) throws Exception {
+        java.lang.reflect.Field field=SvcCompat.class.getDeclaredField("udp"); field.setAccessible(true);
+        return (dev.mcvoice.client.svc.transport.SvcUdpClient)field.get(client);
+    }
+
+    static Object field(Object owner,String name) throws Exception {
+        java.lang.reflect.Field field=owner.getClass().getDeclaredField(name); field.setAccessible(true); return field.get(owner);
+    }
+
+    @Test void stalledResolutionNeverBlocksTheGameOrPublishesAfterLeavingTheWorld() throws Exception {
+        FakeVoiceServer server=new FakeVoiceServer(UUID.randomUUID(),SvcCipher.Mode.GCM_IV12);
+        FakeAdapter adapter=new FakeAdapter(); adapter.serverChannels.add("voicechat:request_secret");
+        adapter.answerForVersion=SvcProtocols.CANDIDATES[0]; adapter.secretPayload=secretPayload(server.secret,server.port(),"127.0.0.1");
+        java.util.concurrent.CountDownLatch resolving=new java.util.concurrent.CountDownLatch(1),release=new java.util.concurrent.CountDownLatch(1);
+        SvcCompat client=new SvcCompat(adapter,()->new InetSocketAddress(InetAddress.getLoopbackAddress(),25565), (secret,minecraft)->{
+            resolving.countDown();
+            try { release.await(); } catch(InterruptedException e) { Thread.currentThread().interrupt(); }
+            return new InetSocketAddress(InetAddress.getLoopbackAddress(),server.port());
+        });
+        try {
+            client.reset(true);
+            org.junit.jupiter.api.Assertions.assertTimeoutPreemptively(java.time.Duration.ofMillis(500),()->client.tick(System.currentTimeMillis()));
+            assertTrue(resolving.await(3,java.util.concurrent.TimeUnit.SECONDS));
+            org.junit.jupiter.api.Assertions.assertTimeoutPreemptively(java.time.Duration.ofMillis(500),()->client.reset(false));
+            release.countDown();
+            ((java.util.concurrent.ThreadPoolExecutor)field(client,"connections")).submit(()->{}).get(3,java.util.concurrent.TimeUnit.SECONDS);
+            assertFalse(client.connected()); org.junit.jupiter.api.Assertions.assertNull(udp(client));
+            assertEquals(SvcCompat.Status.DISABLED,client.status());
+            assertTrue(server.packetIds.isEmpty(),"cancelled resolution must not start UDP authentication");
+        } finally { release.countDown(); client.reset(false); server.close(); }
+    }
+
+    @Test void socketFailureReconnectsWithBackoffAndPreservesSameKeyHistory() throws Exception {
+        FakeVoiceServer server=new FakeVoiceServer(UUID.randomUUID(),SvcCipher.Mode.GCM_IV12);
+        FakeAdapter adapter=new FakeAdapter(); adapter.serverChannels.add("voicechat:request_secret");
+        adapter.answerForVersion=SvcProtocols.CANDIDATES[0]; adapter.secretPayload=secretPayload(server.secret,server.port(),"127.0.0.1");
+        SvcCompat client=compat(adapter,25565);
+        try {
+            client.reset(true); client.tick(System.currentTimeMillis()); waitFor(client::connected,3000); assertTrue(client.connected());
+            dev.mcvoice.client.svc.transport.SvcUdpClient original=udp(client);
+            ((DatagramSocket)field(original,"socket")).close();
+            waitFor(() -> client.status()==SvcCompat.Status.FAILED,3000); assertEquals(SvcCompat.Status.FAILED,client.status());
+            long now=System.currentTimeMillis(); int sent=adapter.sent.size();
+            client.tick(now); client.tick(now+999); assertEquals(sent,adapter.sent.size());
+            client.tick(now+1000); waitFor(client::connected,3000); assertTrue(client.connected(),client.detail());
+            org.junit.jupiter.api.Assertions.assertNotSame(original,udp(client));
+            org.junit.jupiter.api.Assertions.assertSame(field(original,"replay"),field(udp(client),"replay"));
+            ((dev.mcvoice.client.svc.transport.SvcUdpClient.Listener)field(original,"listener"))
+                .onState(dev.mcvoice.client.svc.transport.SvcUdpClient.State.FAILED,"stale");
+            assertTrue(client.connected(),"retired callbacks cannot fail the replacement");
+            // Pause disabling after its volatile flag changes but before the socket closes.
+            java.lang.reflect.Field enabled=SvcCompat.class.getDeclaredField("enabled"); enabled.setAccessible(true); enabled.setBoolean(client,false);
+            dev.mcvoice.client.svc.transport.SvcUdpClient.Listener currentListener=
+                (dev.mcvoice.client.svc.transport.SvcUdpClient.Listener)field(udp(client),"listener");
+            currentListener.onState(dev.mcvoice.client.svc.transport.SvcUdpClient.State.FAILED,"racing disable");
+            currentListener.onRenewalRequired();
+            assertEquals(SvcCompat.Status.CONNECTED,client.status(),"disabled callbacks must not mutate lifecycle state");
+            assertFalse(client.connected());
+            assertEquals(Boolean.FALSE,field(client,"freshKeyRequired"));
+            long packets=udp(client).sentCount();
+            client.sendMic(new byte[]{1,2,3},0,3,false);
+            assertEquals(packets,udp(client).sentCount(),"disabled capture must not use a socket awaiting close");
+            client.setEnabled(false); assertEquals(SvcCompat.Status.DISABLED,client.status());
+            client.reset(false); sent=adapter.sent.size(); client.tick(now+120000); assertEquals(sent,adapter.sent.size());
+            assertFalse(client.connected());
+        } finally { client.reset(false); server.close(); }
+    }
+
+    @Test void renewalPrefersASpeechBreakAndEnablingInteropWorksWithoutRejoining() throws Exception {
+        FakeVoiceServer server=new FakeVoiceServer(UUID.randomUUID(),SvcCipher.Mode.GCM_IV12);
+        FakeAdapter adapter=new FakeAdapter(); adapter.serverChannels.add("voicechat:request_secret");
+        adapter.answerForVersion=SvcProtocols.CANDIDATES[0]; adapter.secretPayload=secretPayload(server.secret,server.port(),"127.0.0.1");
+        SvcCompat client=compat(adapter,25565);
+        try {
+            client.reset(true); client.tick(System.currentTimeMillis()); waitFor(client::connected,3000); assertTrue(client.connected());
+            client.setEnabled(false); client.setEnabled(true); client.tick(System.currentTimeMillis());
+            waitFor(client::connected,3000); assertTrue(client.connected(),"re-enable must not require leaving the Minecraft server");
+            client.sendMic(new byte[]{1,2,3},0,3,false);
+            long now=System.currentTimeMillis(); int sent=adapter.sent.size();
+            client.onRenewalRequired(); client.tick(now+1000);
+            assertTrue(client.connected(),"planned renewal must not cut active speech before headroom is needed");
+            assertEquals(sent,adapter.sent.size());
+            client.tick(now+2100); assertFalse(client.connected());
+            assertTrue(client.detail().contains("history retained"));
+            client.setEnabled(false); client.setEnabled(true); client.tick(now+2200);
+            waitFor(client::connected,3000); assertFalse(client.connected(),"a pending required key change survives disable/re-enable");
+            client.reset(false); client.reset(true); client.tick(now+2300);
+            waitFor(client::connected,3000); assertTrue(client.connected(),client.detail());
+        } finally { client.reset(false); server.close(); }
+    }
+
     @Test
     void replayHistoryRenewsOnlyAfterReceivingADifferentSecret() throws Exception {
         FakeVoiceServer first = new FakeVoiceServer(UUID.randomUUID(), SvcCipher.Mode.GCM_IV12);
@@ -236,19 +327,20 @@ class SvcCompatTest {
         try {
             client.reset(true); client.tick(System.currentTimeMillis());
             waitFor(client::connected, 3000); assertTrue(client.connected());
-            client.onRenewalRequired(); client.tick(System.currentTimeMillis());
+            long now = System.currentTimeMillis();
+            client.onRenewalRequired(); client.tick(now+2100);
             assertFalse(client.connected(), "same secret cannot clear replay history");
             assertTrue(client.detail().contains("history retained"));
             adapter.secretPayload = secretPayload(rotated.secret, rotated.port(), "127.0.0.1");
-            client.tick(System.currentTimeMillis()+1100);
+            client.tick(now+3200);
             waitFor(client::connected, 3000); assertTrue(client.connected(), client.detail());
-            client.onRenewalRequired(); long now = System.currentTimeMillis(); client.tick(now);
-            client.tick(now+60001);
+            client.onRenewalRequired(); client.tick(now+5400);
+            client.tick(now+65401);
             assertEquals(SvcCompat.Status.FAILED, client.status());
             assertTrue(client.detail().contains("fresh key"));
             client.setEnabled(false);
             int sent = adapter.sent.size();
-            client.onRenewalRequired(); client.tick(now+61000);
+            client.onRenewalRequired(); client.tick(now+66401);
             assertEquals(SvcCompat.Status.DISABLED, client.status());
             assertEquals(sent, adapter.sent.size(), "late UDP renewal cannot enable disabled interop");
         } finally { client.reset(false); first.close(); rotated.close(); }
