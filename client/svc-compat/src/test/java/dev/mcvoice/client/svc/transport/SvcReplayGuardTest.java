@@ -21,4 +21,15 @@ class SvcReplayGuardTest {
         assertEquals(SvcReplayGuard.Result.REPLAY, guard.accept(nonce(0)));
         assertEquals(SvcReplayGuard.Result.REPLAY, guard.accept(nonce(256)));
     }
+
+    @Test void continuousSpeechCannotDeferRenewalUntilHistoryIsFull() throws Exception {
+        SvcReplayGuard guard = new SvcReplayGuard(16);
+        for (int i=0; i<16; i++) {
+            assertEquals(SvcReplayGuard.Result.ACCEPT, guard.accept(nonce(i)));
+            assertEquals(i>=11, guard.needsRenewal());
+            assertEquals(i>=14, guard.renewalUrgent(), "urgent renewal must leave headroom without evicting history");
+        }
+        assertEquals(SvcReplayGuard.Result.EXHAUSTED, guard.accept(nonce(16)));
+        assertEquals(SvcReplayGuard.Result.REPLAY, guard.accept(nonce(0)));
+    }
 }

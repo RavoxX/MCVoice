@@ -188,7 +188,12 @@ pub(crate) async fn handle_socket(
         last_transit: None,
         last_voice: None,
     };
-    let sess = Arc::new(Session::new(ident.clone(), uuid_b, tx, udp));
+    let mut session = Session::new(ident.clone(), uuid_b, tx, udp);
+    session.fec_cap = hello
+        .capabilities
+        .as_ref()
+        .is_some_and(|caps| caps.iter().any(|cap| cap == "opus_fec"));
+    let sess = Arc::new(session);
     let admin_muted = srv.is_admin_muted(&ident.uuid);
     let ps = PeerState {
         network_id: String::new(),
