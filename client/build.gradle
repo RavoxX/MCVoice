@@ -43,6 +43,11 @@ project(':network') {
     }
 }
 project(':audio') {
+    tasks.register('lossRecoveryBenchmark', JavaExec) {
+        dependsOn 'testClasses'
+        classpath = sourceSets.test.runtimeClasspath
+        mainClass = 'dev.mcvoice.client.audio.LossRecoveryBenchmark'
+    }
     dependencies {
         api project(':common')
         testImplementation project(':common').sourceSets.test.output
