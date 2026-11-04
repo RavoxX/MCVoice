@@ -67,11 +67,20 @@ public final class OpusCodec {
 
         /** Decode a packet (or conceal a lost one when {@code data == null}); returns samples (960). */
         public int decode(byte[] data, int off, int len, short[] out) {
+            return decode(data, off, len, out, false);
+        }
+
+        /** Recover the preceding 20 ms from the next packet; Opus uses PLC when it has no FEC. */
+        public int decodeFec(byte[] next, int off, int len, short[] out) {
+            return decode(next, off, len, out, true);
+        }
+
+        private int decode(byte[] data, int off, int len, short[] out, boolean fec) {
             try {
                 if (data == null || len == 0) {
                     return dec.decode(null, 0, 0, out, 0, FRAME_SAMPLES, false);
                 }
-                return dec.decode(data, off, len, out, 0, FRAME_SAMPLES, false);
+                return dec.decode(data, off, len, out, 0, FRAME_SAMPLES, fec);
             } catch (OpusException e) {
                 java.util.Arrays.fill(out, 0, FRAME_SAMPLES, (short) 0);
                 return FRAME_SAMPLES;
