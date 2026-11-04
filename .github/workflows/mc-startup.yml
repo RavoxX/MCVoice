@@ -48,13 +48,15 @@ jobs:
           mkdir -p run/mods evidence
           cp "$jar" "minecraft/$LOADER/build/libs/mcvoice-startup-smoke.jar" run/mods/
           if [ "$LOADER" = fabric ]; then
-            curl -fsSL 'https://github.com/FabricMC/fabric-api/releases/download/0.163.0+26.3/fabric-api-0.163.0+26.3.jar' -o run/mods/fabric-api.jar
+            api=$(sed -n 's/^fabric_api=//p' minecraft/fabric/gradle.properties)
+            [[ "$api" =~ ^[0-9A-Za-z.+-]+$ ]]
+            curl -fsSL "https://github.com/FabricMC/fabric-api/releases/download/$api/fabric-api-$api.jar" -o run/mods/fabric-api.jar
           fi
       - uses: actions/cache@v4
         with:
           path: ~/.minecraft
           key: startup-26.3-${{ matrix.loader }}-hmc-2.10.0
-      - name: Install pinned launcher and loader
+      - name: Install pinned launcher and exact build loader
         env:
           LOADER: ${{ matrix.loader }}
         run: |
@@ -76,13 +78,17 @@ jobs:
             timeout 300 java -jar hmc.jar --command download 26.3
           fi
           if [ "$LOADER" = fabric ]; then
-            uid=0.19.5; installed="fabric-loader-$uid-26.3"
+            uid=$(sed -n 's/^fabric_loader=//p' minecraft/fabric/gradle.properties)
+            installed="fabric-loader-$uid-26.3"
           else
-            uid=66.0.10; installed="26.3-forge-$uid"
+            uid=$(sed -n 's/^forge_version=26\.3-//p' minecraft/forge/gradle.properties)
+            installed="26.3-forge-$uid"
           fi
+          [[ "$uid" =~ ^[0-9]+(\.[0-9]+)+$ ]]
           if [ ! -f "$HOME/.minecraft/versions/$installed/$installed.json" ]; then
             timeout 300 java -jar hmc.jar --command "$LOADER" 26.3 --uid "$uid"
           fi
+          echo "HMC_VERSION=$installed" >> "$GITHUB_ENV"
           printf 'onboardAccessibility:false\npauseOnLostFocus:false\nrenderDistance:2\nsimulationDistance:5\nmaxFps:60\n' > run/options.txt
       - name: Fresh options - main menu, world creation, mouse focus, shutdown
         env:
@@ -90,7 +96,7 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE: "true"
         run: |
           set -euo pipefail
-          timeout 600 xvfb-run -a java -Dhmc.check.xvfb=true -jar hmc.jar --command launch ".*$LOADER.*" -regex
+          timeout 600 xvfb-run -a java -Dhmc.check.xvfb=true -jar hmc.jar --command launch "$HMC_VERSION"
           test -f run/smoke-fresh.pass
           cp run/logs/latest.log evidence/fresh.log
           cp run/options.txt evidence/fresh-options.txt
@@ -120,7 +126,7 @@ jobs:
           cp run/options.txt evidence/upgrade-input.txt
           # --command joins/reparses argv, losing shell quotes around multi-word values.
           printf '\nhmc.jvmargs=-Djava.awt.headless=true -Dmcvoice.smoke.upgrade=true -Xmx3G\nhmc.gameargs=--quickPlaySingleplayer mcvoice-smoke\n' >> HeadlessMC/config.properties
-          timeout 600 xvfb-run -a java -Dhmc.check.xvfb=true -jar hmc.jar --command launch ".*$LOADER.*" -regex
+          timeout 600 xvfb-run -a java -Dhmc.check.xvfb=true -jar hmc.jar --command launch "$HMC_VERSION"
           test -f run/smoke-upgrade.pass
           cp run/logs/latest.log evidence/upgrade.log
           cp run/options.txt evidence/upgrade-output.txt
