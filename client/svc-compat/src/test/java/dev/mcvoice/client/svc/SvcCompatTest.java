@@ -274,6 +274,19 @@ class SvcCompatTest {
             ((dev.mcvoice.client.svc.transport.SvcUdpClient.Listener)field(original,"listener"))
                 .onState(dev.mcvoice.client.svc.transport.SvcUdpClient.State.FAILED,"stale");
             assertTrue(client.connected(),"retired callbacks cannot fail the replacement");
+            // Pause disabling after its volatile flag changes but before the socket closes.
+            java.lang.reflect.Field enabled=SvcCompat.class.getDeclaredField("enabled"); enabled.setAccessible(true); enabled.setBoolean(client,false);
+            dev.mcvoice.client.svc.transport.SvcUdpClient.Listener currentListener=
+                (dev.mcvoice.client.svc.transport.SvcUdpClient.Listener)field(udp(client),"listener");
+            currentListener.onState(dev.mcvoice.client.svc.transport.SvcUdpClient.State.FAILED,"racing disable");
+            currentListener.onRenewalRequired();
+            assertEquals(SvcCompat.Status.CONNECTED,client.status(),"disabled callbacks must not mutate lifecycle state");
+            assertFalse(client.connected());
+            assertEquals(Boolean.FALSE,field(client,"freshKeyRequired"));
+            long packets=udp(client).sentCount();
+            client.sendMic(new byte[]{1,2,3},0,3,false);
+            assertEquals(packets,udp(client).sentCount(),"disabled capture must not use a socket awaiting close");
+            client.setEnabled(false); assertEquals(SvcCompat.Status.DISABLED,client.status());
             client.reset(false); sent=adapter.sent.size(); client.tick(now+120000); assertEquals(sent,adapter.sent.size());
             assertFalse(client.connected());
         } finally { client.reset(false); server.close(); }

@@ -287,19 +287,19 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
             SvcUdpClient.Listener listener = new SvcUdpClient.Listener() {
                 public void onState(SvcUdpClient.State state, String detail) {
                     synchronized (connectionLock) {
-                        if (udp == owner[0]) SvcCompat.this.onState(state, detail);
+                        if (enabled && inWorld && udp == owner[0]) SvcCompat.this.onState(state, detail);
                     }
                 }
                 public void onRenewalRequired() {
                     synchronized (connectionLock) {
-                        if (udp == owner[0]) SvcCompat.this.onRenewalRequired();
+                        if (enabled && inWorld && udp == owner[0]) SvcCompat.this.onRenewalRequired();
                     }
                 }
                 public void onPlayerSound(UUID sender, long sequence, boolean whisper, float distance, byte[] data) {
-                    if (udp == owner[0]) SvcCompat.this.onPlayerSound(sender, sequence, whisper, distance, data);
+                    if (enabled && inWorld && udp == owner[0]) SvcCompat.this.onPlayerSound(sender, sequence, whisper, distance, data);
                 }
                 public void onLocationSound(UUID sender, long sequence, double x, double y, double z, float distance, byte[] data) {
-                    if (udp == owner[0]) SvcCompat.this.onLocationSound(sender, sequence, x, y, z, distance, data);
+                    if (enabled && inWorld && udp == owner[0]) SvcCompat.this.onLocationSound(sender, sequence, x, y, z, distance, data);
                 }
             };
             SvcUdpClient previous;
@@ -393,6 +393,7 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
 
     /** Send one encoded microphone frame through SVC (capture thread). */
     public void sendMic(byte[] opus, int off, int len, boolean whispering) {
+        if (!enabled || !inWorld) return;
         SvcUdpClient u = udp;
         if (u != null) {
             u.sendMic(opus, off, len, whispering);
@@ -400,7 +401,9 @@ public final class SvcCompat implements SvcHandshake.Listener, SvcUdpClient.List
     }
 
     public boolean connected() {
-        return status == Status.CONNECTED;
+        SvcUdpClient current = udp;
+        return enabled && inWorld && status == Status.CONNECTED && current != null
+            && current.state() == SvcUdpClient.State.CONNECTED;
     }
 
     /** Confirmed online, enabled voice users; never infer presence from old audio. */
