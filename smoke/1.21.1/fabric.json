@@ -1,1 +1,1 @@
-{"minecraft": "1.21.1", "loader": "fabric", "status": "pass", "reason": "", "mc_runtime_test": "4.5.1", "commit": "02c0708299a8c4cce88c369e7b8c32e4ba1ea462", "run": "https://github.com/RavoxX/MCVoice/actions/runs/41880239681"}
+{"minecraft": "1.21.1", "loader": "fabric", "status": "fail", "reason": "no fabric jar: the build of 1.21.1 failed (see the build job)", "mc_runtime_test": "4.5.1", "commit": "6492c6f6812a359b4fe5b5c6127335cf22933900", "run": "https://github.com/RavoxX/MCVoice/actions/runs/41886477921"}
