@@ -95,7 +95,7 @@ func scFECNegotiation(e *Env) error {
 	if err = a.SendVoice(4, 3840, 0, 6, opus); err != nil {
 		return err
 	}
-	if err = check(b, 2, 4); err != nil {
+	if err = check(b, 2, 0); err != nil {
 		return err
 	}
 	if err = check(c, 2, 0); err != nil {
@@ -104,6 +104,34 @@ func scFECNegotiation(e *Env) error {
 	for _, p := range []*voiceclient.Client{b, c} {
 		if err = expectNothing(p, 100*time.Millisecond); err != nil {
 			return errorf("duplicate group/proximity FEC: %v", err)
+		}
+	}
+	// A returning member may have sent an intervening frame to another group.
+	// No group-generation acknowledgement exists to authorize its redundancy.
+	if _, err = createGroup(b, "private"); err != nil {
+		return err
+	}
+	if err = b.SendVoice(5, 4800, 2, 4, opus); err != nil {
+		return err
+	}
+	for _, p := range []*voiceclient.Client{a, c} {
+		if err = expectNothing(p, 100*time.Millisecond); err != nil {
+			return err
+		}
+	}
+	if _, err = joinGroup(b, id, ""); err != nil {
+		return err
+	}
+	if err = b.SendVoice(6, 5760, 2, 4, opus); err != nil {
+		return err
+	}
+	for _, p := range []*voiceclient.Client{a, c} {
+		frame, err := expectFrom(p, b.Session.PlayerUUID, groupWait)
+		if err != nil {
+			return err
+		}
+		if frame.Mode != 2 || frame.Flags != 0 || !bytes.Equal(frame.Payload, opus) {
+			return errorf("returning group member retained unbound FEC: %+v", frame)
 		}
 	}
 	return nil
