@@ -233,3 +233,11 @@ jobs:
             gh release create "$tag" "$name" --target "$GITHUB_SHA" --title "MCVoice $VERSION" \
               --notes "Release overview: backend images, per-Minecraft-version releases (tags v$VERSION-mc<version>) and the release report." $flags
           fi
+      - name: Require complete publication records
+        env:
+          EXPECTED_MINECRAFT: ${{ needs.plan.outputs.matrix }}
+          TEST_RESULT: ${{ needs.test.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          IMAGES_RESULT: ${{ needs.images.result }}
+          IMAGES_REQUESTED: ${{ inputs.images }}
+        run: python3 tools/release/report.py artifacts --require-complete > /dev/null
