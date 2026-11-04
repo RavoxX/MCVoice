@@ -311,6 +311,7 @@ public final class ControlClient {
         if (!running) { w.abort(); return "stopped"; }
         List<Object> caps = new ArrayList<Object>();
         caps.add("opus");
+        caps.add("opus_fec");
         caps.add("whisper");
         caps.add("peers_delta");
         caps.add("presence");
