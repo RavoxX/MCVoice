@@ -192,6 +192,7 @@ func All() []Scenario {
 		{"distance_10_blocks_delivered_both_ways", "offline", scNearby},
 		{"distance_60_blocks_not_delivered", "offline", scFar},
 		{"whisper_mode_uses_whisper_range", "offline", scWhisper},
+		{"fec_marker_requires_negotiation_and_preserves_legacy_routing", "offline", scFECNegotiation},
 		{"different_dimension_same_coordinates_not_delivered", "offline", scDimension},
 		{"dimension_switch_stops_voice_immediately", "offline", scDimensionSwitch},
 		{"different_address_same_server_delivered_both_ways", "offline", scDifferentAddress},

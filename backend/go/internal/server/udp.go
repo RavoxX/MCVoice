@@ -241,6 +241,11 @@ func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time, sc
 	targets := scratch.targets[:0]
 
 	s.mu.RLock()
+	if !s.currentSessionLocked(sender) || (v.Flags&protocol.FlagFECSafe != 0 && !sender.fecCap) {
+		s.mu.RUnlock()
+		s.dropped("unnegotiated_or_stale_voice")
+		return
+	}
 	group := routing.GroupApplies(&sender.peer, v.Mode, v.Flags)
 	proximity := v.Mode != protocol.ModeGroup && routing.SenderEligible(&s.rcfg, nowMs, &sender.peer, v.Epoch)
 	if !group && !proximity {
@@ -276,8 +281,11 @@ func (s *Server) relayVoice(sender *Session, v protocol.Voice, now time.Time, sc
 	if len(targets) > 0 {
 		for _, t := range targets {
 			rv := v
+			if !t.sess.fecCap {
+				rv.Flags &^= protocol.FlagFECSafe
+			}
 			if t.group {
-				rv.Mode, rv.Flags = protocol.ModeGroup, v.Flags&^protocol.FlagGroup
+				rv.Mode, rv.Flags = protocol.ModeGroup, rv.Flags&^protocol.FlagGroup
 			}
 			plain := protocol.AppendRelay(scratch.plain[:0], sender.uuidB, t.epoch, rv)
 			t.sess.umu.Lock()

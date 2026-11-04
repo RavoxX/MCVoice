@@ -13,6 +13,7 @@ public final class SvcChannelNames {
         "voicechat:secret",
         "voicechat:state",
         "voicechat:states",
+        "voicechat:remove_state",
         "voicechat:player_state",
         "voicechat:player_states",
         "voicechat:joined_group",
