@@ -1,6 +1,6 @@
 bot: joined (play state)
-handshake: WAITING
 bot: server registered voicechat:leave_group,voicechat:request_secret,voicechat:create_group,voicechat:set_group,voicechat:update_state
+handshake: WAITING
 handshake: REQUESTED (compatibility 20)
 [INFO][SVC] Simple Voice Chat channels detected, requesting secret (compatibility 20)
 bot: -> voicechat:request_secret (4 bytes)
