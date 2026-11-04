@@ -492,7 +492,8 @@ Datagrams of any other type are dropped (counted as invalid).
 
 The backend copies sequence/timestamp/codec/mode/flags/payload unchanged,
 except for group deliveries (§8.1): those are relayed with mode `2` and flag
-bit 1 cleared, and bit 2 is cleared for recipients without `opus_fec`.
+bits 1 and 2 cleared. Bit 2 is also cleared for positional recipients without
+`opus_fec`.
 A frame with `payload_length = 0` and the end-of-transmission flag set is a
 valid "stop talking" marker.
 
@@ -501,6 +502,12 @@ it and the backend advertised `opus_fec`. The backend MUST drop marked voice
 from a sender that did not advertise this capability, and MUST clear the bit
 when relaying to a recipient that did not advertise it. All routing,
 authentication, replay and playback checks remain mandatory.
+
+Group deliveries MUST clear bit 2 even for capable recipients. Membership
+changes are authoritative on the backend before the sender necessarily sees
+the new roster. The current protocol has no acknowledged group generation to
+bind redundancy to that membership. Groups therefore retain concealment; a
+future group-FEC extension needs that additional binding.
 
 A marked packet asserts that encoder history cannot contain speech from a
 different transmission scope. The sender MUST reset its encoder before a
