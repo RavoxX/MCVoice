@@ -39,13 +39,14 @@ public final class JitterBuffer {
     public int outLen;
     public int outFlags;
     public int outMode;
+    public byte[] fecData;
+    public int fecLen;
 
     public synchronized void insert(long seq, byte[] buf, int off, int len, int mode, int flg, long arrivalMs) {
-        received++;
-        updateJitter(seq, arrivalMs);
-        if (len > OpusCodec.MAX_PACKET) {
+        if (buf == null || off < 0 || len < 0 || len > OpusCodec.MAX_PACKET || off > buf.length - len) {
             return;
         }
+        received++;
         if (started && seq < next) {
             late++;
             return;
@@ -64,6 +65,7 @@ public final class JitterBuffer {
             }
             count--;
         }
+        updateJitter(seq, arrivalMs);
         present[i] = true;
         seqs[i] = seq;
         System.arraycopy(buf, off, data[i], 0, len);
@@ -109,6 +111,8 @@ public final class JitterBuffer {
 
     /** Take the next 20 ms frame. FRAME fills out*, LOST means conceal, EMPTY means silence (idle). */
     public synchronized Result poll() {
+        fecData = null;
+        fecLen = 0;
         if (!started) {
             if (count == 0 || (count < targetDelay && !hasEos())) {
                 return Result.EMPTY;
@@ -130,13 +134,24 @@ public final class JitterBuffer {
             outMode = modes[i];
             if ((outFlags & 1) != 0) {
                 started = false; // end of transmission: next burst prebuffers again
+                lastArrival = -1; // a talk break is not network jitter
                 clearOlder();
             }
             return Result.FRAME;
         }
         if (count == 0 || concealed >= MAX_CONCEALED) {
             started = false; // underrun or long gap: stop and prebuffer again
+            lastArrival = -1;
             return Result.EMPTY;
+        }
+        int following = (int) ((next + 1) & (CAPACITY - 1));
+        if (present[following] && seqs[following] == next + 1 && lens[following] > 0
+                && (flags[following] & dev.mcvoice.client.protocol.VoiceFlags.FEC_SAFE) != 0
+                && modes[following] == outMode) {
+            // Do not consume it: the same packet decodes normally on the next poll.
+            // Never use redundancy across normal/whisper/group playback policies.
+            fecData = data[following];
+            fecLen = lens[following];
         }
         next++;
         concealed++;
@@ -158,6 +173,14 @@ public final class JitterBuffer {
         count = 0;
         started = false;
         concealed = 0;
+        fecData = null;
+        fecLen = 0;
+        outData = null;
+        outLen = outFlags = outMode = 0;
+        lastArrival = -1;
+        lastSeq = 0;
+        jitterMs = 0;
+        targetDelay = 3;
     }
 
     public synchronized int buffered() {
