@@ -99,6 +99,9 @@ def udp_vectors():
         ("voice_group_only", 7, 42, 2, 0, opus_small, 7, KEY, 0),
         ("voice_normal_also_group", 7, 43, 0, 2, opus_small, 8, KEY, 0),
         ("voice_group_end_of_stream", 7, 44, 2, 1, b"", 9, KEY, 0),
+        ("voice_scope_safe_fec", 7, 45, 0, 4, opus_small, 10, KEY, 0),
+        ("voice_group_scope_safe_fec", 7, 46, 0, 6, opus_small, 11, KEY, 0),
+        ("voice_group_only_scope_safe_fec", 7, 47, 2, 4, opus_small, 12, KEY, 0),
     ]:
         add(name, key, DIR_C2S, T_VOICE, kid, counter,
             {"epoch": epoch, "sequence": seq, "timestamp": ts, "codec": 1, "mode": mode, "flags": flags,
@@ -116,6 +119,11 @@ def udp_vectors():
         {"sender_uuid": UUID_D, "recipient_epoch": 4, "sender_epoch": 9, "sequence": 12, "timestamp": ts,
          "codec": 1, "mode": 2, "flags": 0, "payload": opus_small.hex()},
         relay_pt(UUID_D, 4, 9, 12, ts, 1, 2, 0, opus_small))
+
+    add("voice_relay_scope_safe_fec", KEY, DIR_S2C, T_VOICE_RELAY, 0, 12,
+        {"sender_uuid": UUID_B, "recipient_epoch": 3, "sender_epoch": 7, "sequence": 45, "timestamp": ts,
+         "codec": 1, "mode": 0, "flags": 4, "payload": opus_small.hex()},
+        relay_pt(UUID_B, 3, 7, 45, ts, 1, 0, 4, opus_small))
 
     good = bytes.fromhex(valid[4]["datagram"])  # voice_normal
     invalid = []
@@ -146,7 +154,7 @@ def udp_vectors():
     bad("bad_codec", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 9, 0, 0, b"\x01")), "bad_payload")
     bad("bad_mode", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 7, 0, b"\x01")), "bad_payload")
     bad("bad_voice_flags", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 0, 0x80, b"\x01")), "bad_payload")
-    bad("bad_voice_flag_bit2", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 0, 0x04, b"\x01")), "bad_payload")
+    bad("bad_voice_flag_bit3", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 0, 0x08, b"\x01")), "bad_payload")
     bad("group_mode_with_group_flag", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 3, voice_pt(1, 1, 1, 1, 2, 0x02, b"\x01")),
         "bad_payload")
     bad("zero_counter", seal(KEY, DIR_C2S, T_VOICE, 0, CONN, 0, voice_pt(1, 1, 1, 1, 0, 0, b"\x01")), "bad_counter")

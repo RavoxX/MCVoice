@@ -79,6 +79,8 @@ jobs:
           node bot.js 127.0.0.1 25565 "$MC" -- java -Dprobe.renew=true -cp "$cp" dev.mcvoice.client.svc.tools.SvcProbe 127.0.0.1 90 \
             2> >(tee ../../probe.log >&2) | tee ../../svc-interop-result.json
           python3 reconnect.py "$MC" "$cp" | tee ../../svc-reconnect-result.json
+          node bot.js 127.0.0.1 25565 "$MC" -- java -cp "$cp" dev.mcvoice.client.svc.tools.SvcRecoveryProbe 127.0.0.1 \
+            2> >(tee ../../svc-recovery.log >&2) | tee ../../svc-recovery-result.json
       - name: Report
         if: always()
         run: |
@@ -98,6 +100,8 @@ jobs:
             mcvoice_*.log
             mcvoice_*.json
             svc-reconnect-result.json
+            svc-recovery-result.json
+            svc-recovery.log
             server/server.log
       - name: Stage diagnostic data
         if: always()
@@ -106,7 +110,7 @@ jobs:
           if [ -f svc-interop-result.json ]; then cp svc-interop-result.json pub/result.json; else echo '{"ok":false,"error":"no result"}' > pub/result.json; fi
           tail -c 200000 server/server.log > pub/server.log || true
           tail -c 200000 probe.log > pub/probe.log || true
-          for f in mcvoice_*.log mcvoice_*.json svc-reconnect-result.json; do
+          for f in mcvoice_*.log mcvoice_*.json svc-reconnect-result.json svc-recovery-result.json svc-recovery.log; do
             if [ -f "$f" ]; then tail -c 200000 "$f" > "pub/$f"; fi
           done
           printf '%s\n' "${SVC_VERSION:-?}" > pub/svc-version.txt
