@@ -29,6 +29,7 @@ pub const MODE_GROUP: u8 = 2;
 pub const FLAG_EOS: u8 = 0x01;
 /// On a normal/whisper frame: also deliver to the sender's group.
 pub const FLAG_GROUP: u8 = 0x02;
+pub const FLAG_FEC_SAFE: u8 = 0x04;
 
 const VOICE_FIXED: usize = 15;
 const RELAY_FIXED: usize = 35;
@@ -191,7 +192,7 @@ pub fn parse_voice(p: &[u8]) -> Result<Voice<'_>, DecodeError> {
     let n = u16::from_be_bytes(p[13..15].try_into().unwrap()) as usize;
     if v.codec != CODEC_OPUS
         || v.mode > MODE_GROUP
-        || v.flags & !(FLAG_EOS | FLAG_GROUP) != 0
+        || v.flags & !(FLAG_EOS | FLAG_GROUP | FLAG_FEC_SAFE) != 0
         || (v.mode == MODE_GROUP && v.flags & FLAG_GROUP != 0)
         || n > MAX_PAYLOAD
     {

@@ -18,6 +18,7 @@ final class SpeakerStream {
     volatile boolean talking;
     volatile double levelDb = -100;
     boolean rejected;
+    int decoderMode = -1;
 
     SpeakerStream(UUID speaker) {
         this.speaker = speaker;
@@ -29,6 +30,7 @@ final class SpeakerStream {
         talking = false;
         jitter.reset();
         decoder.reset();
+        decoderMode = -1;
         unwrap.reset();
         senderEpoch = -1;
     }
