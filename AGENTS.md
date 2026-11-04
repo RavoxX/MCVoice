@@ -293,24 +293,32 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **0.1.15 audio reliability in development:** optional `opus_fec` capability
-  and scope-safe flag `0x04` in both backends and Java, receive-side lookahead
-  recovery, encoder scope resets, jitter estimator corrections, automatic SVC
-  retry/quiet-period renewal and observed `remove_state` handling. Group delivery
-  always clears FEC because roster updates have no acknowledged generation. Legacy/SVC
-  traffic retains concealment; exact replay history and all routing/playback
-  checks remain mandatory. No release/deployment claim yet. See
-  `docs/audio-reliability-0.1.15.md` for all seven proposal decisions and the
-  synthetic benchmark's limits. Complete CI, real-SVC and 26.3 runtime gates
-  before publication.
+* **Stable 0.1.15 released:** source `66b9f7a5` (PR #24/#25) adds negotiated
+  proximity Opus recovery, encoder context resets, corrected jitter estimation,
+  automatic SVC retry/speech-break renewal and observed `remove_state` handling.
+  Groups always clear FEC metadata; groups/SVC retain concealment. Exact replay
+  history and every routing/playback check remain mandatory. Main CI
+  `41889790792`, 145 client tests per backend, 44/44 shared conformance and
+  26.3 runtime `41888419707` pass. Both 26.3 release jars equal the preserved
+  runtime artifacts byte for byte. Real SVC 2.6.27 passes all four verified
+  Paper versions, including automatic recovery and fresh-key renewal. Release
+  `41891134610` passes with 102/102 jars, 62/62 Minecraft releases, 102/102
+  byte-verified Maven jars and both images. Full-report recovery `41903628934`
+  selects newest records by timestamp across reruns; completeness and artifact
+  selection have 16 regression tests. Rust 0.1.15 is deployed after
+  staging and complete release verification; all 33 unrelated container ids,
+  auth, proxy trust and ports are unchanged. Previous production 0.1.13 and
+  protected backup remain for rollback. See `docs/audio-reliability-0.1.15.md`,
+  `docs/release-0.1.15.md` and `docs/deployment-0.1.15.md`. No seamless SVC
+  renewal, new AEC, adaptive uplink bitrate or proven 100k capacity is claimed.
 
 * **0.1.14 release attempt stopped:** run `41883070984` from `6492c6f6`
   published partial Maven artifacts and both images before a conservative
   group-FEC boundary review. No production deployment occurred; its loopback
-  candidate was removed. Publish 0.1.15 with group concealment and a fresh
+  candidate was removed. 0.1.15 uses group concealment and a fresh
   immutable Maven version; do not replace 0.1.14 artifacts or claim a full release.
 
-* **Stable 0.1.13 released:** issues #17–#21 fixed in merged source `39acc90`:
+* **Earlier stable 0.1.13:** issues #17–#21 fixed in merged source `39acc90`:
   bounded Go replay advancement, current-session group/peer ownership,
   authenticated GCM-only SVC with exact nonce history/fresh-key renewal, and
   validated read-only API inspection with separate diagnostic publication.
@@ -472,19 +480,19 @@ git show FETCH_HEAD:<path>`).
   1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
   (`release-report-run36115472419.md`). Maven: every jar is in GitHub
   Packages; re-runs record `exists`. Backend images `0.1.0`/`latest` pushed.
-* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.13,
-  source `39acc90`, image selected by `MCVOICE_VERSION=0.1.13` in
+* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.15,
+  source `66b9f7a5`, image selected by `MCVOICE_VERSION=0.1.15` in
   `/opt/mcvoice/.env` on 5.83.145.152). Published digest
-  `sha256:f8e7d5c47690c96b6a6e14b9a5aaa2e9ce4751c07ab3c5f3a84a53458ed5f3c1`.
-  Deployed after isolated staging and image verification.
+  `sha256:bd8ab7606e3fadf8a270baa2c23c02ae5298e94cc7c31d7f9440bb757ceba987`.
+  Deployed after isolated staging, image verification and completed release checks.
   Exact gateway `172.24.0.1/32` remains trusted; Mojang auth and ports preserved.
-  Local/public readiness and protocol 1.1 (`groups`, `group_paging`,
-  `group_directory`, `group_modes`) pass; all 30 unrelated container ids unchanged.
-  The published 0.1.12 image and protected environment backup remain for rollback;
-  current operational instructions are retained locally. See
-  `docs/deployment-0.1.13.md` for public digests and checks. Earlier deployment
-  details remain in `docs/deployment-0.1.12.md`, `docs/deployment-0.1.11.md`,
-  `docs/deployment-0.1.10.md` and `docs/deployment-2026-10-19.md`.
+  Local/public/workstation readiness and protocol 1.1 (`opus_fec`, `groups`,
+  `group_paging`, `group_directory`, `group_modes`) pass; all 33 unrelated
+  container ids unchanged. Previous production 0.1.13 and protected environment
+  backup remain for rollback; operational instructions stay local. See
+  `docs/deployment-0.1.15.md` for public evidence. Earlier deployment details
+  remain in `docs/deployment-0.1.13.md`, `docs/deployment-0.1.12.md`,
+  `docs/deployment-0.1.11.md` and `docs/deployment-0.1.10.md`.
   Host nginx vhost `mcvoice.ravoxx.dev` → `127.0.0.1:18455`, certbot
   `dns-cloudflare` certificate, DNS not proxied. UDP 24455 is opened in the
   host's `vpn_hardening` nftables firewall via
@@ -494,7 +502,7 @@ git show FETCH_HEAD:<path>`).
   backend (`mcvoiceBackendUrl` in `client/gradle.properties`). Measurements and
   limits remain in `docs/rust-routing-performance.md` and
   `docs/hardening-0.1.10.md`; no general latency or 100k-capacity claim is made.
-* **SVC interop:** verified against SVC 2.6.24 on Paper 1.18.2, 1.19.4,
+* **SVC interop:** verified against SVC 2.6.27 (earlier 2.6.24/2.6.26) on Paper 1.18.2, 1.19.4,
   1.20.1 and 1.21.4 (compatibility 20, AES-GCM with 12-byte IV). Older
   compatibility versions (19–16) are not verified.
 * **Client runtime smoke test:** the owner approved it for 0.1.4. Run
