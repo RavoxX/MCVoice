@@ -47,7 +47,7 @@ public final class VoiceFrame {
         out.flags = p[off + 12] & 0xFF;
         int n = ((p[off + 13] & 0xFF) << 8) | (p[off + 14] & 0xFF);
         if (out.codec != VoiceProtocol.CODEC_OPUS || out.mode > VoiceProtocol.MODE_GROUP
-            || (out.flags & ~(VoiceProtocol.FLAG_EOS | VoiceProtocol.FLAG_GROUP)) != 0
+            || (out.flags & ~(VoiceProtocol.FLAG_EOS | VoiceProtocol.FLAG_GROUP | VoiceProtocol.FLAG_FEC_SAFE)) != 0
             || (out.mode == VoiceProtocol.MODE_GROUP && (out.flags & VoiceProtocol.FLAG_GROUP) != 0)
             || n > VoiceProtocol.MAX_PAYLOAD) {
             throw new DecodeException("bad_payload");
