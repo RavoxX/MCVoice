@@ -194,6 +194,10 @@ impl Server {
     }
 
     fn relay_voice(&self, sender: &Session, v: &Voice<'_>, scratch: &mut Scratch) {
+        if v.flags & FLAG_FEC_SAFE != 0 && !sender.fec_cap {
+            self.metrics.drop("unnegotiated_fec");
+            return;
+        }
         let now_ms = self.now_ms();
         let group_voice = Voice {
             mode: MODE_GROUP,
@@ -245,12 +249,11 @@ impl Server {
         let mut targets = std::mem::take(&mut scratch.targets);
         for (r, epoch, via_group) in targets.drain(..) {
             scratch.relay_plain.clear();
-            write_relay(
-                &mut scratch.relay_plain,
-                &sender.uuid_b,
-                epoch,
-                if via_group { &group_voice } else { v },
-            );
+            let mut routed = if via_group { group_voice } else { *v };
+            if !r.fec_cap {
+                routed.flags &= !FLAG_FEC_SAFE;
+            }
+            write_relay(&mut scratch.relay_plain, &sender.uuid_b, epoch, &routed);
             let mut out = scratch.buf();
             let mut u = r.udp.lock().unwrap();
             let Some(addr) = u.addr else {
