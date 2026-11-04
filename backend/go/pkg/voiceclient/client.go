@@ -172,7 +172,7 @@ func Dial(ctx context.Context, o Options) (*Client, error) {
 		o.Method = "offline"
 	}
 	if o.Capabilities == nil {
-		o.Capabilities = []string{"opus", "whisper", "peers_delta", "presence", "key_rotation", "groups", "group_modes"}
+		o.Capabilities = []string{"opus", "opus_fec", "whisper", "peers_delta", "presence", "key_rotation", "groups", "group_modes"}
 	}
 	c := &Client{opts: o, presence: map[string]bool{}, udpOK: make(chan struct{}),
 		relays: make(chan RelayFrame, 4096), errors: make(chan string, 64), pongs: make(chan uint64, 16),
