@@ -38,6 +38,8 @@ UUID, VarInt-length name, and an optional group UUID. State is cleared on
 disconnect/reset; old audio packets are never treated as current presence.
 Malformed state packets cannot partially replace the current list. The real-server
 probe checks that its synthetic player becomes visible after voice authentication.
+The observed `voicechat:remove_state` UUID packet removes departed players;
+malformed removals leave current state unchanged.
 
 ## Voice session (UDP)
 
@@ -50,6 +52,14 @@ and same-key reconnects. Bounded replay history renews through a different
 server key, with a brief SVC interruption; see [security boundaries and
 limits](security-0.1.13.md). Location sounds are received but currently ignored, and group
 audio is not supported yet.
+
+From 0.1.14, failed UDP sessions retry automatically with bounded backoff;
+planned key renewal prefers a speech break while retaining a hard history
+bound. DNS/socket setup runs off the game thread and stale attempts cannot
+publish after leaving. Renewal can still pause SVC while the server expires the
+old session. See [recovery behavior and limits](audio-reliability-0.1.14.md).
+SVC traffic uses loss concealment rather than FEC because its encoder does not
+negotiate MCVoice's scope-safe redundancy guarantee.
 
 ## Versioning and failure
 
@@ -76,9 +86,9 @@ check first.
 
 | Check | Status |
 |---|---|
-| Unit tests vs in-process fake SVC server (GCM, CBC rejection, replay, renewal and fail-safe paths) | automated |
+| Unit tests vs in-process fake SVC server (GCM, CBC rejection, replay, renewal and fail-safe paths) | automated, passing |
 | Headless 3-player hybrid test (A, B MCVoice + C SVC-only through a fake SVC relay; no duplicates) | automated, passing |
-| Real SVC server (`.github/workflows/svc-interop.yml`): plugin-channel handshake, UDP authentication, connection check, 5 s of keep-alives and microphone packets | **passing** against Simple Voice Chat 2.6.24 (Bukkit) on Paper 1.18.2, 1.19.4, 1.20.1 and 1.21.4: compatibility version 20, cipher `GCM_IV12`, 0 rejected packets. Recorded in `SvcProtocols.VERIFIED`; re-run weekly |
+| Real SVC server (`.github/workflows/svc-interop.yml`): handshake, GCM UDP, keepalives, incoming synthetic speech, sender disconnect/rejoin and fresh-key renewal | **passing** against Simple Voice Chat 2.6.26 (Bukkit) on Paper 1.18.2, 1.19.4, 1.20.1 and 1.21.4: compatibility version 20, cipher `GCM_IV12`. Earlier probes also verified 2.6.24; re-run weekly |
 | Older compatibility versions 19-16 | implemented with the same v1 wire format and tried as fallbacks, **not verified** against a real server |
 | Two real Minecraft clients (one with the SVC mod) | manual test plan below |
 
@@ -91,6 +101,12 @@ by MCVoice's own code (`SvcProbe` → `SvcHandshake` + `SvcUdpClient`). The
 additional two-bot probe checks incoming synthetic audio and a sender restart;
 two full Minecraft clients and audible playback remain covered by the manual
 test below.
+
+The 0.1.13 source passes real-server runs
+[1.18.2](https://github.com/RavoxX/MCVoice/actions/runs/40121617258),
+[1.19.4](https://github.com/RavoxX/MCVoice/actions/runs/40121620451),
+[1.20.1](https://github.com/RavoxX/MCVoice/actions/runs/40121623642) and
+[1.21.4](https://github.com/RavoxX/MCVoice/actions/runs/40121371976).
 
 ## Manual integration test (full Minecraft instances)
 
