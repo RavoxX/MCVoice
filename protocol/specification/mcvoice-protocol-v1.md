@@ -53,6 +53,7 @@ that is a bug that has to be fixed before release.
 | capability          | meaning |
 |---------------------|---------|
 | `opus`              | Opus 48 kHz mono voice frames (mandatory in 1.x) |
+| `opus_fec`          | optional scope-safe Opus redundancy marker and receive-side recovery (§7.3); added after 1.1 |
 | `whisper`           | whisper voice mode |
 | `peers_delta`       | incremental visible-peer updates (§6.5) |
 | `presence`          | backend reports which visible peers are MCVoice cloud peers (§6.7) |
@@ -470,7 +471,7 @@ Datagrams of any other type are dropped (counted as invalid).
 | 6 | 4 | timestamp (u32, 48 kHz sample clock, wraps) |
 | 10 | 1 | codec (`1` = Opus) |
 | 11 | 1 | mode (`0` normal, `1` whisper, `2` group only — §8.1) |
-| 12 | 1 | flags (bit 0 = end of transmission; bit 1 = also deliver to the sender's group, only with mode `0`/`1`; others MUST be 0) |
+| 12 | 1 | flags (bit 0 = end of transmission; bit 1 = also deliver to the sender's group, only with mode `0`/`1`; bit 2 = scope-safe FEC, negotiated via `opus_fec`; others MUST be 0) |
 | 13 | 2 | payload_length (u16, ≤ 1000) |
 | 15 | n | Opus payload (exactly payload_length bytes) |
 
@@ -491,9 +492,28 @@ Datagrams of any other type are dropped (counted as invalid).
 
 The backend copies sequence/timestamp/codec/mode/flags/payload unchanged,
 except for group deliveries (§8.1): those are relayed with mode `2` and flag
-bit 1 cleared.
+bit 1 cleared, and bit 2 is cleared for recipients without `opus_fec`.
 A frame with `payload_length = 0` and the end-of-transmission flag set is a
 valid "stop talking" marker.
+
+**Optional scope-safe FEC.** A client MUST NOT set bit 2 (`0x04`) unless both
+it and the backend advertised `opus_fec`. The backend MUST drop marked voice
+from a sender that did not advertise this capability, and MUST clear the bit
+when relaying to a recipient that did not advertise it. All routing,
+authentication, replay and playback checks remain mandatory.
+
+A marked packet asserts that encoder history cannot contain speech from a
+different transmission scope. The sender MUST reset its encoder before a
+world/epoch, group membership or policy, proximity/group transport selection,
+or normal/whisper change, and when starting a new transmission. A receiver MAY
+recover one lost frame using the immediately following, already buffered,
+marked nonempty packet only within the same playback mode and sender epoch.
+It MUST validate the lost frame's current playback permission before decoding.
+The following packet is then decoded normally once; recovery adds no waiting.
+If the packet lacks usable redundancy, Opus performs concealment. Unmarked
+packets, including SVC interoperability traffic, MUST use concealment instead
+of FEC: legacy encoders do not provide this scope guarantee. The marker on an
+empty end-of-transmission packet has no effect.
 
 ### 7.4 AEAD
 
