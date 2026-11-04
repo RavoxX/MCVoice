@@ -60,7 +60,7 @@ public final class SpatialMixer {
     private final int[] mix = new int[OpusCodec.FRAME_SAMPLES * 2];
     private final short[] out = new short[OpusCodec.FRAME_SAMPLES * 2];
     private final double[] g = new double[2];
-    private volatile long decodedFrames, concealedFrames;
+    private volatile long decodedFrames, concealedFrames, fecAttempts;
 
     /** Queue an Opus frame for a speaker (network threads). */
     public void enqueue(UUID speaker, long senderEpoch, int seq16, int mode, int flags, byte[] data, int off, int len, long nowMs) {
@@ -83,6 +83,9 @@ public final class SpatialMixer {
             if (s.senderEpoch != senderEpoch) {
                 // the speaker changed world session: its sequence numbers restart
                 s.jitter.reset();
+                s.decoder.reset();
+                s.decoderMode = -1;
+                s.gainL = s.gainR = 0;
                 s.unwrap.reset();
                 s.senderEpoch = senderEpoch;
             }
@@ -177,11 +180,20 @@ public final class SpatialMixer {
                     continue;
                 }
                 s.rejected = false;
+                if (s.decoderMode != mode) {
+                    s.decoder.reset();
+                    s.decoderMode = mode;
+                }
                 if (r == JitterBuffer.Result.FRAME) {
                     s.decoder.decode(s.jitter.outData, 0, s.jitter.outLen, s.pcm);
                     decodedFrames++;
                 } else {
-                    s.decoder.decode(null, 0, 0, s.pcm);
+                    if (s.jitter.fecLen > 0) {
+                        s.decoder.decodeFec(s.jitter.fecData, 0, s.jitter.fecLen, s.pcm);
+                        fecAttempts++;
+                    } else {
+                        s.decoder.decode(null, 0, 0, s.pcm);
+                    }
                     concealedFrames++;
                 }
                 double tl = 0, tr = 0;
@@ -299,6 +311,10 @@ public final class SpatialMixer {
 
     public long concealedFrames() {
         return concealedFrames + (groups == null ? 0 : groups.concealedFrames());
+    }
+
+    public long fecAttempts() {
+        return fecAttempts + (groups == null ? 0 : groups.fecAttempts());
     }
 
     public int streamCount() {
