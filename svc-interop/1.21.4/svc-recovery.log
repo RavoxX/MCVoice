@@ -41,9 +41,6 @@ bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab
 bot: -> voicechat:request_secret (4 bytes)
 bot: <- voicechat:states (37 bytes)
 bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
-bot: -> voicechat:request_secret (4 bytes)
-bot: <- voicechat:states (37 bytes)
-bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
 bot: <- voicechat:states (37 bytes)
 bot: state observation voicechat:states 000000010001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
 bot: <- voicechat:secret (56 bytes)
@@ -90,11 +87,11 @@ bot: state observation voicechat:states 000000010000505ae21da3e53a31941ca3df5dab
 bot: -> voicechat:request_secret (4 bytes)
 bot: <- voicechat:states (37 bytes)
 bot: state observation voicechat:states 000000010001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
+bot: <- voicechat:states (37 bytes)
+bot: state observation voicechat:states 000000010001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
 bot: <- voicechat:secret (56 bytes)
 bot: <- voicechat:state (33 bytes)
 bot: state observation voicechat:state 0001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
-bot: <- voicechat:states (37 bytes)
-bot: state observation voicechat:states 000000010001505ae21da3e53a31941ca3df5dab234e0d6d63766f6963655f70726f626500
 [MCVoice/SVC] INFO received SVC secret: SecretInfo{port=24454, codec=0, mtu=1275, distance=48.0, keepAlive=1000, groups=true, host=''} (compatibility 20)
 bot: -> voicechat:update_state (1 bytes)
 [MCVoice/SVC] INFO SVC voice server authenticated us (GCM_IV12)
