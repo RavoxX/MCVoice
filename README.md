@@ -7,13 +7,11 @@ can still be heard on servers that run the Simple Voice Chat plugin.
 
 <img src="docs/images/icon.png" width="96" alt="MCVoice icon">
 
-Stable **[0.1.13](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.13)** fixes
-five security boundaries in UDP replay, group ownership, SVC encryption/replay,
-and API probing. The public backend is updated. See [release verification](docs/release-0.1.13.md)
-and [SVC renewal behavior and limits](docs/security-0.1.13.md).
-
-Audio reliability work for 0.1.15 adds negotiated Opus loss recovery and safer
-automatic SVC reconnection. See [scope, compatibility and remaining limits](docs/audio-reliability-0.1.15.md).
+Stable **[0.1.15](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.15)** adds
+proximity Opus loss recovery, automatic SVC reconnection, speech-break key
+renewal and jitter fixes. The public backend is updated. See
+[release verification](docs/release-0.1.15.md) and
+[the seven proposal decisions and remaining limits](docs/audio-reliability-0.1.15.md).
 
 * Positional 3D audio (equal-power stereo panning, distance attenuation),
   Opus at 48 kHz in 20 ms frames, a jitter buffer and a whisper mode.
@@ -46,10 +44,11 @@ automatic SVC reconnection. See [scope, compatibility and remaining limits](docs
 
 ## Supported Minecraft versions
 
-**[0.1.13](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.13)** is published
+**[0.1.15](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.15)** is published
 for all 62 supported Minecraft versions (102 validated jars), with both backend
-images and 102 byte-verified Maven publications. The public Rust backend runs
-0.1.13. See [the release evidence](docs/release-0.1.13.md).
+images and 102 byte-verified Maven jars. The public Rust backend runs
+0.1.15. See [the release evidence](docs/release-0.1.15.md).
+Fabric 26.3 requires Fabric Loader **0.20.1 or newer** and Fabric API.
 
 The authoritative, CI-generated matrix is
 [`versions/supported.md`](versions/supported.md) (machine-readable:
