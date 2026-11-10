@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-11-02T12:27:24Z",
+  "generated_at": "2026-11-09T12:54:06Z",
   "range": {
     "min": "1.8",
     "max": "26.3",
@@ -1603,7 +1603,7 @@
           "available": true,
           "flavor": "fabric",
           "loader": "0.20.1",
-          "fabric_api": "0.165.0+26.3",
+          "fabric_api": "0.165.2+26.3",
           "note": null
         }
       }
