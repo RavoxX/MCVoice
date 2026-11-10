@@ -1,7 +1,7 @@
 name: release-report
 run-name: "release-report ${{ inputs.run_id }}"
 
-# Recover/verify a report from an existing completed client-only release.
+# Recover/verify a report from an existing completed release.
 # Never builds or republishes jars, Maven packages, or backend images.
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
         description: Already published version
         required: true
       minecraft:
-        description: Single Minecraft version from that run
+        description: Single Minecraft version, or supported for the full release
         required: true
 
 permissions:
@@ -23,6 +23,7 @@ permissions:
 
 jobs:
   report:
+    if: inputs.minecraft != 'supported'
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
@@ -117,3 +118,97 @@ jobs:
           path: |
             release-report-run*.md
             maven-verification.txt
+
+  full-report:
+    if: inputs.minecraft == 'supported'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RUN_ID: ${{ inputs.run_id }}
+      VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Test report and artifact selection
+        run: python3 -m unittest discover -s tools/release
+      - id: facts
+        name: Validate original source, release plan and all validation gates
+        run: |
+          set -euo pipefail
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]]
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          gh api "repos/$GH_REPO/actions/runs/$RUN_ID" > run.json
+          source=$(python3 -c 'import json;print(json.load(open("run.json"))["head_sha"])')
+          gh api "repos/$GH_REPO/releases/tags/v$VERSION" > overview.json
+          gh api "repos/$GH_REPO/contents/versions/build-status.json?ref=$source" > original-plan.json
+          gh api --paginate --slurp "repos/$GH_REPO/actions/runs/$RUN_ID/jobs?per_page=25" > jobs.json
+          python3 - <<'PY'
+          import base64, json, os
+          run = json.load(open('run.json'))
+          assert run['path'] == '.github/workflows/release.yml'
+          assert run['status'] == 'completed' and run['conclusion'] == 'success'
+          assert run['head_branch'] == 'main'
+          assert run['name'] == 'release v' + os.environ['VERSION']
+          overview = json.load(open('overview.json'))
+          assert overview['tag_name'] == 'v' + os.environ['VERSION']
+          assert not overview['draft'] and not overview['prerelease']
+          status = json.loads(base64.b64decode(json.load(open('original-plan.json'))['content']))['results']
+          expected = [mc for mc, rows in status.items() if rows and all(r.get('status') == 'pass' for r in rows.values())]
+          assert expected
+          jobs = [j for page in json.load(open('jobs.json')) for j in page['jobs']]
+          tests = [j for j in jobs if j['name'].startswith('test / ')]
+          assert len(tests) == 6 and all(j['conclusion'] == 'success' for j in tests)
+          for mc in expected:
+              for suffix in ('build', 'maven', 'diagnostics / publish'):
+                  rows = [j for j in jobs if j['name'] == f'build ({mc}) / {suffix}']
+                  assert len(rows) == 1 and rows[0]['conclusion'] == 'success'
+          images = [j for j in jobs if j['name'].startswith('images / ')]
+          if images:
+              assert {j['name'] for j in images} == {f'images / {stage} ({impl})' for stage in ('image', 'publish') for impl in ('rust', 'go')}
+              assert all(j['conclusion'] == 'success' for j in images)
+          else:
+              assert next(j for j in jobs if j['name'] == 'images')['conclusion'] == 'skipped'
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('source=' + run['head_sha'] + '\n')
+              output.write('expected=' + json.dumps(expected) + '\n')
+              output.write('images=' + ('true' if images else 'false') + '\n')
+          PY
+      - name: Download newest records by creation time
+        env:
+          SOURCE_SHA: ${{ steps.facts.outputs.source }}
+        run: python3 tools/release/download_records.py "$RUN_ID" artifacts
+      - name: Verify recorded source and render complete report
+        env:
+          SOURCE_SHA: ${{ steps.facts.outputs.source }}
+          EXPECTED_MINECRAFT: ${{ steps.facts.outputs.expected }}
+          TEST_RESULT: success
+          BUILD_RESULT: success
+          IMAGES_RESULT: success
+          IMAGES_REQUESTED: ${{ steps.facts.outputs.images }}
+          LATEST: "true"
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          for path in Path('artifacts').rglob('*.json'):
+              row = json.loads(path.read_text())
+              if 'loader' in row:
+                  assert row['commit'] == os.environ['SOURCE_SHA']
+                  assert row['run'] == f"https://github.com/{os.environ['GH_REPO']}/actions/runs/{os.environ['RUN_ID']}"
+                  assert row['jar'] == f"mcvoice-{os.environ['VERSION']}-mc{row['minecraft']}-{row['loader']}.jar"
+          PY
+          export RUN_URL="https://github.com/$GH_REPO/actions/runs/$RUN_ID"
+          python3 tools/release/report.py artifacts --require-complete > release-report.md
+          printf '\n## Report recovery\n\nOriginal source: `%s`. Newest records selected by creation time across all attempts. No jars, Maven packages or images were rebuilt/replaced. Recovery: https://github.com/%s/actions/runs/%s\n' \
+            "$SOURCE_SHA" "$GH_REPO" "$GITHUB_RUN_ID" >> release-report.md
+          cat release-report.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Attach verified report to the existing overview
+        run: gh release upload "v$VERSION" release-report.md --clobber
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: verified-full-release-report
+          path: |
+            release-report.md
+            artifacts/artifact-selection.json

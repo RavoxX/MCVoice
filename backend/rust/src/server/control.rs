@@ -10,9 +10,9 @@ use futures_util::{SinkExt, StreamExt};
 use tokio::sync::mpsc;
 use tracing::{debug, info};
 
-use super::session::{random_bytes, KeySlot, PeerState, Session, TokenBucket, UdpState};
+use super::session::{random_bytes, wait_closed, PeerState, Session, TokenBucket, UdpState};
 use super::Server;
-use crate::auth::{self, AuthError, Identity};
+use crate::auth::{self, Identity};
 use crate::protocol::control::*;
 use crate::protocol::udp::{MAJOR, MINOR};
 use crate::routing::Peer;
@@ -80,13 +80,7 @@ fn hex_u64(v: u64) -> String {
     hex::encode(v.to_be_bytes())
 }
 
-pub(crate) async fn handle_socket(
-    srv: Arc<Server>,
-    socket: WebSocket,
-    ip: String,
-    host: String,
-    permit: tokio::sync::OwnedSemaphorePermit,
-) {
+pub(crate) async fn handle_socket(srv: Arc<Server>, socket: WebSocket, ip: String, host: String, permit: super::PendingAuth) {
     let (mut sink, mut stream) = socket.split();
     let tag = srv.ip_tag(&ip);
 
@@ -128,11 +122,14 @@ pub(crate) async fn handle_socket(
         Ok(f) => f,
         Err(_) => return fail(&mut sink, code::AUTH_REQUIRED, "expected auth").await,
     };
-    let auth_failed = |srv: &Server| {
+    // `count` is false when the failure is not the client's fault (session server outage).
+    let auth_failed = |srv: &Server, count: bool| {
         srv.metrics.auth_failures.fetch_add(1, Relaxed);
-        srv.auth_fail_limiter.allow(&ip, Instant::now());
+        if count {
+            srv.auth_fail_limiter.allow(&ip, Instant::now());
+        }
     };
-    let ident: Identity = match parse_control(frame.as_bytes()) {
+    let (ident, auth_time): (Identity, i64) = match parse_control(frame.as_bytes()) {
         Err(e) => return fail(&mut sink, e.code, e.message).await,
         Ok(ClientMsg::Auth(a)) => {
             let method = a.method.unwrap();
@@ -145,30 +142,42 @@ pub(crate) async fn handle_socket(
             }
             if method == "mojang" {
                 match srv.mojang.verify(&username, &challenge).await {
-                    Ok(id) => id,
+                    Ok(id) => (id, unix_now()),
                     Err(e) => {
-                        auth_failed(&srv);
+                        auth_failed(&srv, e.is_client_fault());
                         info!(category = "control", ip = %tag, error = ?e, "authentication failed");
-                        return fail(&mut sink, code::AUTH_FAILED, "could not verify Minecraft session").await;
+                        let msg = if e.is_client_fault() {
+                            "could not verify Minecraft session"
+                        } else {
+                            "Minecraft session server unavailable; try again shortly"
+                        };
+                        return fail(&mut sink, code::AUTH_FAILED, msg).await;
                     }
                 }
             } else {
-                Identity {
-                    uuid: a.uuid.unwrap(),
-                    username,
-                }
+                (
+                    Identity {
+                        uuid: a.uuid.unwrap(),
+                        username,
+                    },
+                    unix_now(),
+                )
             }
         }
-        Ok(ClientMsg::Resume(r)) => match auth::verify_resume(&srv.cfg.jwt_signing_secret, &r.resume_token.unwrap(), unix_now()) {
-            Some(id) => id,
+        Ok(ClientMsg::Resume(r)) => match auth::verify_resume(
+            &srv.cfg.jwt_signing_secret,
+            &r.resume_token.unwrap(),
+            unix_now(),
+            srv.cfg.resume_max_lifetime,
+        ) {
+            Some(v) => v,
             None => {
-                auth_failed(&srv);
+                auth_failed(&srv, true);
                 return fail(&mut sink, code::SESSION_EXPIRED, "resume token invalid or expired").await;
             }
         },
         Ok(_) => return fail(&mut sink, code::AUTH_REQUIRED, "authenticate first").await,
     };
-    let _ = AuthError::Rejected; // variants used by verify()
     if srv.is_banned(&ident.uuid) {
         return fail(&mut sink, code::BANNED, "banned").await;
     }
@@ -177,17 +186,7 @@ pub(crate) async fn handle_socket(
     let ttl = srv.key_ttl();
     let (tx, mut rx) = mpsc::channel::<String>(128);
     let uuid_b = uuid_bytes(&ident.uuid).expect("validated uuid");
-    let udp = UdpState {
-        cur: KeySlot::new(0, ttl, now),
-        prev: None,
-        send_with_new: false,
-        addr: None,
-        udp_ok_sent: false,
-        voice_bucket: TokenBucket::new(srv.cfg.rate_voice_per_sec, srv.cfg.rate_voice_burst),
-        jitter: 0.0,
-        last_transit: None,
-        last_voice: None,
-    };
+    let udp = UdpState::new(ttl, now, srv.cfg.rate_voice_per_sec, srv.cfg.rate_voice_burst);
     let mut session = Session::new(ident.clone(), uuid_b, tx, udp);
     session.fec_cap = hello
         .capabilities
@@ -234,7 +233,8 @@ pub(crate) async fn handle_socket(
         session_id: sess.id.clone(),
         player_uuid: ident.uuid.clone(),
         username: ident.username.clone(),
-        resume_token: auth::issue_resume(&srv.cfg.jwt_signing_secret, &ident, srv.cfg.resume_token_ttl, unix_now()),
+        // auth_time is carried over on resume, so renewals cannot outlive RESUME_MAX_LIFETIME_SECONDS.
+        resume_token: auth::issue_resume(&srv.cfg.jwt_signing_secret, &ident, srv.cfg.resume_token_ttl, unix_now(), auth_time),
         voice: VoiceInfo {
             host: if srv.cfg.public_hostname.is_empty() {
                 host
@@ -273,7 +273,7 @@ pub(crate) async fn handle_socket(
                     Some(m) => if !send_text(&mut sink, m).await { wsess.close("write_failed"); return; },
                     None => return,
                 },
-                _ = closed.changed() => {
+                _ = wait_closed(&mut closed) => {
                     while let Ok(m) = rx.try_recv() {
                         if !send_text(&mut sink, m).await { return; }
                     }
@@ -297,7 +297,7 @@ pub(crate) async fn handle_socket(
         loop {
             tokio::select! {
                 _ = t.tick() => rsrv.rotate_session(&rsess),
-                _ = closed.changed() => return,
+                _ = wait_closed(&mut closed) => return,
             }
         }
     });
@@ -311,7 +311,7 @@ pub(crate) async fn handle_socket(
     let reason: &'static str = loop {
         let frame = tokio::select! {
             r = read_text(&mut stream, timeout) => r,
-            _ = closed.changed() => break "closed",
+            _ = wait_closed(&mut closed) => break "closed",
         };
         let frame = match frame {
             Ok(f) => f,
@@ -331,7 +331,6 @@ pub(crate) async fn handle_socket(
         };
         srv.metrics.control_messages.fetch_add(1, Relaxed);
         let now = Instant::now();
-        sess.last_seen.store(unix_ms(), Relaxed);
         if now.duration_since(strike_window) > Duration::from_secs(10) {
             strikes = 0;
             strike_window = now;
