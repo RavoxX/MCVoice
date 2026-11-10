@@ -3,7 +3,14 @@
 use std::fmt::Write;
 use std::sync::atomic::{AtomicI64, AtomicU64, Ordering::Relaxed};
 
-pub const DROP_REASONS: &[&str] = &["no_hello", "not_routable", "rate_limited", "replay", "stale_epoch"];
+pub const DROP_REASONS: &[&str] = &[
+    "no_hello",
+    "not_routable",
+    "rate_limited",
+    "replay",
+    "stale_epoch",
+    "unnegotiated_fec",
+];
 pub const INVALID_REASONS: &[&str] = &[
     "auth_failed",
     "bad_counter",
@@ -31,8 +38,8 @@ pub struct Metrics {
     pub bytes_sent: AtomicU64,
     pub auth_failures: AtomicU64,
     pub control_messages: AtomicU64,
-    dropped: [AtomicU64; 5],
-    invalid: [AtomicU64; 12],
+    dropped: [AtomicU64; DROP_REASONS.len()],
+    invalid: [AtomicU64; INVALID_REASONS.len()],
     latency_buckets: [AtomicU64; 9],
     latency_sum_ns: AtomicU64,
     latency_count: AtomicU64,

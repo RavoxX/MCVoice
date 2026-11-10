@@ -1,6 +1,6 @@
 [package]
 name = "mcvoice-backend"
-version = "0.1.15"
+version = "0.1.16"
 edition = "2021"
 rust-version = "1.80"
 description = "MCVoice proximity voice backend (Rust implementation)"
@@ -42,6 +42,10 @@ rustls-pemfile = "2"
 tokio = { version = "1", features = ["full"] }
 
 [profile.release]
+# A panic while a lock is held would poison it and leave a process that is up
+# but serves nothing (and a panicking UDP worker would silently stop). Exit
+# instead, so the supervisor restarts the backend.
+panic = "abort"
 lto = "thin"
 codegen-units = 1
 strip = true
