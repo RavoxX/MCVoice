@@ -10,9 +10,10 @@ mod udp;
 use std::collections::{HashMap, HashSet};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex, OnceLock, RwLock};
-use std::time::{Instant, SystemTime};
+use std::time::Instant;
 
 use serde::Deserialize;
+use sha2::{Digest, Sha256};
 use tokio::net::UdpSocket;
 use tracing::{info, warn};
 
@@ -91,7 +92,36 @@ impl Hub {
 struct Bans {
     banned: HashSet<String>,
     muted: HashSet<String>,
-    mtime: Option<SystemTime>,
+    /// SHA-256 of the file that was loaded. Timestamps are not compared: a
+    /// restored or quickly rewritten file can carry an old or equal one.
+    digest: Option<[u8; 32]>,
+}
+
+/// Connections that have not finished authenticating, across all addresses.
+pub(crate) const PENDING_AUTH_MAX: usize = 1024;
+
+pub(crate) enum AuthBusy {
+    Server,
+    Address,
+}
+
+/// One connection between upgrade and registration. Dropping it frees the slot.
+pub(crate) struct PendingAuth {
+    srv: Arc<Server>,
+    key: String,
+    _permit: tokio::sync::OwnedSemaphorePermit,
+}
+
+impl Drop for PendingAuth {
+    fn drop(&mut self) {
+        let mut pending = self.srv.pending_by_ip.lock().unwrap();
+        if let Some(n) = pending.get_mut(&self.key) {
+            *n -= 1;
+            if *n == 0 {
+                pending.remove(&self.key);
+            }
+        }
+    }
 }
 
 pub(crate) struct IpLimiter {
@@ -155,6 +185,9 @@ pub struct Server {
     pub(crate) hub: RwLock<Hub>,
     bans: RwLock<Bans>,
     pub(crate) pending_auth: Arc<tokio::sync::Semaphore>,
+    pending_by_ip: Mutex<HashMap<String, u32>>,
+    /// Unauthenticated connections one address may hold at once (0 = unlimited).
+    pending_per_ip: u32,
     pub(crate) group_failures: IpLimiter,
     pub(crate) connect_limiter: IpLimiter,
     pub(crate) auth_fail_limiter: IpLimiter,
@@ -175,7 +208,13 @@ impl Server {
         };
         Arc::new(Server {
             mojang: MojangVerifier::new(&cfg.mojang_session_url),
-            pending_auth: Arc::new(tokio::sync::Semaphore::new(256)),
+            pending_auth: Arc::new(tokio::sync::Semaphore::new(PENDING_AUTH_MAX)),
+            pending_by_ip: Mutex::new(HashMap::new()),
+            // Follows the connect budget, so test setups that raise or disable it are not capped.
+            pending_per_ip: match cfg.rate_connect_per_min {
+                0 => 0,
+                n => (n / 4).max(4),
+            },
             group_failures: IpLimiter::new(groups::PASSWORD_FAILS_PER_MIN),
             connect_limiter: IpLimiter::new(cfg.rate_connect_per_min),
             auth_fail_limiter: IpLimiter::new(cfg.rate_auth_fail_per_min),
@@ -198,6 +237,22 @@ impl Server {
 
     pub(crate) fn ip_tag(&self, ip: &str) -> String {
         ip_tag(&self.cfg.session_secret, ip)
+    }
+
+    /// Reserve a pre-authentication slot for the address behind `key`.
+    pub(crate) fn begin_auth(self: &Arc<Self>, key: &str) -> Result<PendingAuth, AuthBusy> {
+        let permit = self.pending_auth.clone().try_acquire_owned().map_err(|_| AuthBusy::Server)?;
+        let mut pending = self.pending_by_ip.lock().unwrap();
+        let n = pending.entry(key.to_string()).or_insert(0);
+        if self.pending_per_ip != 0 && *n >= self.pending_per_ip {
+            return Err(AuthBusy::Address);
+        }
+        *n += 1;
+        Ok(PendingAuth {
+            srv: self.clone(),
+            key: key.to_string(),
+            _permit: permit,
+        })
     }
 
     pub(crate) fn is_banned(&self, uuid: &str) -> bool {
@@ -241,6 +296,7 @@ impl Server {
 
     fn forget_udp(&self, sess: &Session) {
         let mut u = sess.udp.lock().unwrap();
+        u.gone = true;
         if u.addr.take().is_some() {
             self.metrics.active_voice_sessions.fetch_sub(1, Ordering::Relaxed);
         }
@@ -267,12 +323,12 @@ impl Server {
         if self.cfg.bans_file.is_empty() {
             return;
         }
-        let Ok(meta) = std::fs::metadata(&self.cfg.bans_file) else {
+        let Ok(bytes) = std::fs::read(&self.cfg.bans_file) else {
             warn!(category = "moderation", "bans file unreadable");
             return;
         };
-        let mtime = meta.modified().ok();
-        if mtime.is_some() && self.bans.read().unwrap().mtime >= mtime {
+        let digest: [u8; 32] = Sha256::digest(&bytes).into();
+        if self.bans.read().unwrap().digest == Some(digest) {
             return;
         }
         #[derive(Deserialize, Default)]
@@ -282,7 +338,6 @@ impl Server {
             #[serde(default)]
             muted: Vec<String>,
         }
-        let Ok(bytes) = std::fs::read(&self.cfg.bans_file) else { return };
         let f: F = match serde_json::from_slice(&bytes) {
             Ok(f) => f,
             Err(e) => {
@@ -299,7 +354,7 @@ impl Server {
             *self.bans.write().unwrap() = Bans {
                 banned: banned.clone(),
                 muted: muted.clone(),
-                mtime,
+                digest: Some(digest),
             };
             let Hub { by_conn, peers, .. } = &mut *hub;
             for (conn, s) in by_conn.iter() {
