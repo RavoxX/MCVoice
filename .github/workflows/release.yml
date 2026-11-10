@@ -168,33 +168,16 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: write
     steps:
       - uses: actions/checkout@v5
-      # only the small status/result artifacts (not the jars); downloading all ~160 once
-      # failed after 5 retries, so try each set twice
-      - id: status1
-        uses: actions/download-artifact@v5
-        continue-on-error: true
-        with:
-          pattern: mc-*-status
-          path: artifacts
-      - if: steps.status1.outcome == 'failure'
-        uses: actions/download-artifact@v5
-        with:
-          pattern: mc-*-status
-          path: artifacts
-      - id: results1
-        uses: actions/download-artifact@v5
-        continue-on-error: true
-        with:
-          pattern: release-result-*
-          path: artifacts
-      - if: steps.results1.outcome == 'failure'
-        uses: actions/download-artifact@v5
-        with:
-          pattern: release-result-*
-          path: artifacts
+      - name: Download newest records from every attempt
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: python3 tools/release/download_records.py "$GITHUB_RUN_ID" artifacts
       - name: Write release-report.md
         env:
           VERSION: ${{ inputs.version }}
@@ -233,3 +216,11 @@ jobs:
             gh release create "$tag" "$name" --target "$GITHUB_SHA" --title "MCVoice $VERSION" \
               --notes "Release overview: backend images, per-Minecraft-version releases (tags v$VERSION-mc<version>) and the release report." $flags
           fi
+      - name: Require complete publication records
+        env:
+          EXPECTED_MINECRAFT: ${{ needs.plan.outputs.matrix }}
+          TEST_RESULT: ${{ needs.test.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          IMAGES_RESULT: ${{ needs.images.result }}
+          IMAGES_REQUESTED: ${{ inputs.images }}
+        run: python3 tools/release/report.py artifacts --require-complete > /dev/null
