@@ -92,7 +92,10 @@ speech quality, recovery availability in every codec mode, or a general CPU or
 latency improvement. No human voice was used. Timing is JIT-sensitive; raw
 measurements are in [the benchmark record](benchmarks/loss-recovery-0.1.15.json).
 
-Release/runtime/deployment results will be recorded after their checks finish.
+Stable 0.1.15 is released and the Rust backend is deployed. See
+[release and runtime evidence](release-0.1.15.md), the
+[byte-verification record](release-0.1.15-verification.json) and
+[deployment checks](deployment-0.1.15.md).
 100,000 concurrent users remains a scaling target, not proven capacity. Shared
 state, routing shards, regional relays and production load/latency measurements
 remain necessary; see [the scaling plan](hardening-0.1.10.md) and
