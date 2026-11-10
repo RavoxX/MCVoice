@@ -49,6 +49,8 @@ pub(crate) async fn worker(srv: Arc<Server>, sock: Arc<UdpSocket>) {
                 if srv.shutdown.load(Relaxed) {
                     return;
                 }
+                // A socket that keeps failing must not monopolise this runtime thread.
+                tokio::task::yield_now().await;
                 continue;
             }
         };
@@ -88,6 +90,11 @@ impl Server {
         };
         let now = Instant::now();
         let mut u = sess.udp.lock().unwrap();
+        if u.gone {
+            // Unregistered between the lookup above and this lock.
+            self.metrics.invalid("unknown_session");
+            return false;
+        }
         let is_cur = u.is_cur(h.key_id);
         let has_prev = u.prev.is_some();
         let Some(key) = u.key_for(h.key_id, now) else {
@@ -117,6 +124,10 @@ impl Server {
                     self.metrics.invalid("uuid_mismatch");
                     return false;
                 }
+                if !u.probe_bucket.allow(now) {
+                    self.metrics.drop("rate_limited");
+                    return false;
+                }
                 let first = u.addr.is_none();
                 if first || new_top {
                     u.addr = Some(from);
@@ -139,6 +150,10 @@ impl Server {
             TYPE_PING => {
                 if u.addr.is_none() {
                     self.metrics.drop("no_hello");
+                    return false;
+                }
+                if !u.probe_bucket.allow(now) {
+                    self.metrics.drop("rate_limited");
                     return false;
                 }
                 if new_top {

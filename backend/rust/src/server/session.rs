@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 use std::net::SocketAddr;
-use std::sync::atomic::{AtomicBool, AtomicI64, Ordering};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
@@ -89,12 +89,36 @@ pub struct UdpState {
     pub addr: Option<SocketAddr>,
     pub udp_ok_sent: bool,
     pub voice_bucket: TokenBucket,
+    /// HELLO and PING budget: each one is answered, so it must not be unlimited.
+    pub probe_bucket: TokenBucket,
+    /// Set once the session left the hub; late datagrams must not revive its voice path.
+    pub gone: bool,
     pub jitter: f64,
     pub last_transit: Option<f64>,
     pub last_voice: Option<Instant>,
 }
 
+/// HELLO/PING datagrams per second and burst (a client sends well under one per second).
+pub const PROBE_RATE: f64 = 10.0;
+pub const PROBE_BURST: f64 = 40.0;
+
 impl UdpState {
+    pub fn new(ttl: Duration, now: Instant, voice_rate: f64, voice_burst: f64) -> UdpState {
+        UdpState {
+            cur: KeySlot::new(0, ttl, now),
+            prev: None,
+            send_with_new: false,
+            addr: None,
+            udp_ok_sent: false,
+            voice_bucket: TokenBucket::new(voice_rate, voice_burst),
+            probe_bucket: TokenBucket::new(PROBE_RATE, PROBE_BURST),
+            gone: false,
+            jitter: 0.0,
+            last_transit: None,
+            last_voice: None,
+        }
+    }
+
     /// Key for an incoming datagram's key id.
     pub fn key_for(&mut self, id: u8, now: Instant) -> Option<&mut KeySlot> {
         if self.cur.id == id && now < self.cur.expires_at {
@@ -141,7 +165,6 @@ pub struct Session {
     close_code: Mutex<&'static str>,
     closed: AtomicBool,
     pub udp: Mutex<UdpState>,
-    pub last_seen: AtomicI64,
 }
 
 impl Session {
@@ -164,7 +187,6 @@ impl Session {
             close_code: Mutex::new(""),
             closed: AtomicBool::new(false),
             udp: Mutex::new(udp),
-            last_seen: AtomicI64::new(0),
         }
     }
 
@@ -181,7 +203,8 @@ impl Session {
     pub fn close(&self, code: &'static str) {
         if !self.closed.swap(true, Ordering::SeqCst) {
             *self.close_code.lock().unwrap() = code;
-            let _ = self.closed_tx.send(true);
+            // send() stores nothing while no receiver exists; the tasks subscribe later.
+            self.closed_tx.send_replace(true);
         }
     }
 
@@ -196,6 +219,12 @@ impl Session {
     pub fn closed_rx(&self) -> watch::Receiver<bool> {
         self.closed_tx.subscribe()
     }
+}
+
+/// Resolves once the session is closed, including when it was closed before
+/// `rx` was created (a new watch receiver does not report earlier changes).
+pub async fn wait_closed(rx: &mut watch::Receiver<bool>) {
+    let _ = rx.wait_for(|closed| *closed).await;
 }
 
 /// Routing-relevant state of a session, guarded by the hub lock.
