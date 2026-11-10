@@ -294,6 +294,20 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
+* **0.1.16 released for 26.3 + backend images, Rust deployed:** source
+  `bf197b49` (PR #27) fixes seven Rust backend bugs (missed close signal,
+  uncounted FEC drops, mtime-based ban reload, outage counted as auth failure,
+  NaN/zero config, gauge drift, `dash_uuid` panic) and hardens it: bounded
+  resume chains (`RESUME_MAX_LIFETIME_SECONDS`, Rust only), rate-limited UDP
+  HELLO/PING, per-address pre-auth slots, IPv6 /64 limiter keys, abort on
+  panic. Wire protocol and client code are unchanged; the Go backend only got
+  the version. Rust has 28 unit tests; shared conformance is 44/44. Main CI
+  `42895594666` and release `42896428425` pass (16/16 jobs: 2/2 jars, 1/1
+  GitHub Release, 2/2 Maven packages, both images). The owner chose 26.3 only:
+  the other 61 versions stay on 0.1.15. No 26.3 runtime startup test and no
+  SVC interop run were made for 0.1.16. See `docs/rust-backend-review-0.1.16.md`,
+  `docs/release-0.1.16.md` and `docs/deployment-0.1.16.md`.
+
 * **Stable 0.1.15 released:** source `66b9f7a5` (PR #24/#25) adds negotiated
   proximity Opus recovery, encoder context resets, corrected jitter estimation,
   automatic SVC retry/speech-break renewal and observed `remove_state` handling.
@@ -481,18 +495,18 @@ git show FETCH_HEAD:<path>`).
   1.8.1–1.8.8 Legacy Fabric, 1.13.2 and a retry of Forge 1.21.11
   (`release-report-run36115472419.md`). Maven: every jar is in GitHub
   Packages; re-runs record `exists`. Backend images `0.1.0`/`latest` pushed.
-* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.15,
-  source `66b9f7a5`, image selected by `MCVOICE_VERSION=0.1.15` in
+* **Public backend:** `wss://mcvoice.ravoxx.dev/v1/control` (Rust 0.1.16,
+  source `bf197b49`, image selected by `MCVOICE_VERSION=0.1.16` in
   `/opt/mcvoice/.env` on 5.83.145.152). Published digest
-  `sha256:bd8ab7606e3fadf8a270baa2c23c02ae5298e94cc7c31d7f9440bb757ceba987`.
+  `sha256:9aba27d37a98d5849001e9fa529b217119aed69496788c46c606c001d01ee362`.
   Deployed after isolated staging, image verification and completed release checks.
   Exact gateway `172.24.0.1/32` remains trusted; Mojang auth and ports preserved.
   Local/public/workstation readiness and protocol 1.1 (`opus_fec`, `groups`,
   `group_paging`, `group_directory`, `group_modes`) pass; all 33 unrelated
-  container ids unchanged. Previous production 0.1.13 and protected environment
+  container ids unchanged. Previous production 0.1.15 and protected environment
   backup remain for rollback; operational instructions stay local. See
-  `docs/deployment-0.1.15.md` for public evidence. Earlier deployment details
-  remain in `docs/deployment-0.1.13.md`, `docs/deployment-0.1.12.md`,
+  `docs/deployment-0.1.16.md` for public evidence. Earlier deployment details
+  remain in `docs/deployment-0.1.15.md`, `docs/deployment-0.1.13.md`, `docs/deployment-0.1.12.md`,
   `docs/deployment-0.1.11.md` and `docs/deployment-0.1.10.md`.
   Host nginx vhost `mcvoice.ravoxx.dev` → `127.0.0.1:18455`, certbot
   `dns-cloudflare` certificate, DNS not proxied. UDP 24455 is opened in the
