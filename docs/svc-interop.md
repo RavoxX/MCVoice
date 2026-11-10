@@ -88,7 +88,7 @@ check first.
 |---|---|
 | Unit tests vs in-process fake SVC server (GCM, CBC rejection, replay, renewal and fail-safe paths) | automated, passing |
 | Headless 3-player hybrid test (A, B MCVoice + C SVC-only through a fake SVC relay; no duplicates) | automated, passing |
-| Real SVC server (`.github/workflows/svc-interop.yml`): handshake, GCM UDP, keepalives, incoming synthetic speech, sender disconnect/rejoin and fresh-key renewal | **passing** against Simple Voice Chat 2.6.26 (Bukkit) on Paper 1.18.2, 1.19.4, 1.20.1 and 1.21.4: compatibility version 20, cipher `GCM_IV12`. Earlier probes also verified 2.6.24; re-run weekly |
+| Real SVC server (`.github/workflows/svc-interop.yml`): handshake, GCM UDP, keepalives, incoming synthetic speech, sender disconnect/rejoin, departed-user removal, automatic recovery and fresh-key renewal | **passing** against Simple Voice Chat 2.6.27 (Bukkit) on Paper 1.18.2, 1.19.4, 1.20.1 and 1.21.4: compatibility version 20, cipher `GCM_IV12`. Earlier probes also verified 2.6.24 and 2.6.26; re-run weekly |
 | Older compatibility versions 19-16 | implemented with the same v1 wire format and tried as fallbacks, **not verified** against a real server |
 | Two real Minecraft clients (one with the SVC mod) | manual test plan below |
 
@@ -102,7 +102,15 @@ additional two-bot probe checks incoming synthetic audio and a sender restart;
 two full Minecraft clients and audible playback remain covered by the manual
 test below.
 
-The 0.1.13 source passes real-server runs
+The SVC implementation in 0.1.15 matches the source tested against SVC 2.6.27 in runs
+[1.18.2](https://github.com/RavoxX/MCVoice/actions/runs/41880220109),
+[1.19.4](https://github.com/RavoxX/MCVoice/actions/runs/41880226501),
+[1.20.1](https://github.com/RavoxX/MCVoice/actions/runs/41880233064) and
+[1.21.4](https://github.com/RavoxX/MCVoice/actions/runs/41880166900).
+Their artifacts confirm incoming synthetic speech, sender restarts, departed
+users, automatic recovery and a different renewal key.
+
+Earlier, the 0.1.13 source passed real-server runs
 [1.18.2](https://github.com/RavoxX/MCVoice/actions/runs/40121617258),
 [1.19.4](https://github.com/RavoxX/MCVoice/actions/runs/40121620451),
 [1.20.1](https://github.com/RavoxX/MCVoice/actions/runs/40121623642) and
