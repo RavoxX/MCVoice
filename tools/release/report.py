@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Render release-report.md from the artifacts of a release.yml run.
 
-    report.py <artifacts-dir>   (environment: VERSION, TEST_RESULT, BUILD_RESULT,
+    report.py <artifacts-dir> [--require-complete]
+                               (environment: VERSION, TEST_RESULT, BUILD_RESULT,
                                  IMAGES_RESULT, IMAGES_REQUESTED, LATEST, RUN_URL, GITHUB_REPOSITORY)
 
 Only facts found in the artifacts are reported: a jar, release or package that
 is not recorded as successful is listed as failed or missing, with the reason.
+--require-complete also requires EXPECTED_MINECRAFT (JSON array) and loader
+manifests; incomplete publications or validation gates return a failing exit.
 """
 import json
 import os
@@ -16,6 +19,47 @@ import sys
 
 def vkey(v):
     return tuple(int(p) for p in re.findall(r"\d+", v))
+
+
+def require_complete(root, builds, releases):
+    expected = set(json.loads(os.environ["EXPECTED_MINECRAFT"]))
+    errors = []
+    if not expected or set(builds) != expected or set(releases) != expected:
+        errors.append("build/release versions do not match the release plan")
+    manifests = {}
+    for file in Path(root).rglob("expected-loaders.txt"):
+        rows = [json.loads(p.read_text(encoding="utf-8")) for p in file.parent.glob("*.json")]
+        rows = [r for r in rows if "loader" in r and "minecraft" in r]
+        versions = {r["minecraft"] for r in rows}
+        loaders = file.read_text(encoding="utf-8").split()
+        if len(versions) != 1 or not loaders or len(set(loaders)) != len(loaders):
+            errors.append(f"invalid loader manifest: {file.name}")
+            continue
+        mc = next(iter(versions))
+        if mc in manifests or {r["loader"] for r in rows} != set(loaders) or len(rows) != len(loaders):
+            errors.append(f"incomplete/duplicate loader records: {mc}")
+        manifests[mc] = set(loaders)
+    if set(manifests) != expected:
+        errors.append("missing expected-loader manifests")
+    for mc, loaders in builds.items():
+        if set(loaders) != manifests.get(mc, set()):
+            errors.append(f"unexpected loader records: {mc}")
+        for loader, row in loaders.items():
+            maven = row.get("maven", "")
+            if row["status"] != "pass" or not row.get("jar"):
+                errors.append(f"build not complete: {mc}/{loader}")
+            if not (maven == "published" or maven.startswith("exists:")) or not re.fullmatch(r"[0-9a-f]{64}", row.get("maven_sha256", "")):
+                errors.append(f"Maven read-back not verified: {mc}/{loader}")
+    for mc, row in releases.items():
+        if row["release"] not in ("created", "updated"):
+            errors.append(f"GitHub release not complete: {mc}: {row['release']}")
+    for gate in ("TEST_RESULT", "BUILD_RESULT"):
+        if os.environ.get(gate) != "success":
+            errors.append(f"{gate} did not pass")
+    if os.environ.get("IMAGES_REQUESTED", "true") == "true" and os.environ.get("IMAGES_RESULT") != "success":
+        errors.append("requested backend images did not pass")
+    if errors:
+        raise ValueError("Incomplete release: " + "; ".join(errors))
 
 
 def main():
@@ -91,6 +135,8 @@ def main():
     w("Versions without a release above, and every Minecraft version outside this release, are listed "
       "with their reasons in `versions/supported.md` (generated from CI build results).")
     print("\n".join(out))
+    if "--require-complete" in sys.argv[2:]:
+        require_complete(root, builds, releases)
 
 
 if __name__ == "__main__":
