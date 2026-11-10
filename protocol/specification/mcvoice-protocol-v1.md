@@ -174,7 +174,9 @@ survive short disconnects without another Mojang round trip. The token is an
 HS256 JWT signed with `JWT_SIGNING_SECRET`, claims
 `{"sub":<uuid>,"name":<username>,"iat":…,"exp":…,"typ":"resume"}`, lifetime
 `RESUME_TOKEN_TTL_SECONDS` (default 3600). A resume always creates a *new*
-voice key and connection id.
+voice key and connection id. A backend MAY add an `auth_time` claim (time of
+the last `auth`) and refuse to resume long after it; a client whose resume is
+refused authenticates again. Unknown claims MUST be ignored.
 
 On success the backend replies:
 
