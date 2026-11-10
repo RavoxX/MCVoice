@@ -3,7 +3,7 @@ use crate::auth::Identity;
 use crate::config::Config;
 use crate::protocol::control::{GroupCreate, GroupJoin};
 use crate::routing::Peer;
-use crate::server::session::{KeySlot, PeerState, TokenBucket, UdpState};
+use crate::server::session::{wait_closed, PeerState, UdpState, PROBE_BURST};
 use std::collections::HashSet;
 use std::time::Duration;
 use tokio::sync::mpsc;
@@ -20,15 +20,9 @@ fn unregistered_player(srv: &Server, id: u8) -> (Arc<Session>, PeerState, mpsc::
         [id; 16],
         tx,
         UdpState {
-            cur: KeySlot::new(0, Duration::from_secs(600), now),
-            prev: None,
-            send_with_new: false,
             addr: Some(SocketAddr::from(([127, 0, 0, 1], 20000 + id as u16))),
             udp_ok_sent: true,
-            voice_bucket: TokenBucket::new(75.0, 150.0),
-            jitter: 0.0,
-            last_transit: None,
-            last_voice: None,
+            ..UdpState::new(Duration::from_secs(600), now, 75.0, 150.0)
         },
     ));
     let ps = PeerState {
@@ -386,4 +380,138 @@ fn reply_counter_exhaustion_closes_without_nonce_wrap() {
     srv.reply(&sess, TYPE_PONG, 0, &mut Scratch::new());
     assert_eq!(sess.close_code(), "key_exhausted");
     assert_eq!(sess.udp.lock().unwrap().cur.send_counter, u64::MAX);
+}
+
+fn client_datagram(sess: &Session, ptype: u8, counter: u64, plain: &[u8]) -> Vec<u8> {
+    let u = sess.udp.lock().unwrap();
+    let h = Header {
+        ptype,
+        key_id: u.cur.id,
+        connection_id: sess.conn_id,
+        counter,
+    };
+    let mut dg = Vec::new();
+    u.cur.key.seal(&mut dg, DIR_C2S, &h, plain);
+    dg
+}
+
+#[tokio::test]
+async fn close_before_subscribing_is_still_observed() {
+    let srv = Server::new(Config::from_env().unwrap());
+    let (sess, _rx) = player(&srv, 1);
+    // A newer session or a ban can close this one before its tasks subscribe.
+    sess.close("session_replaced");
+    let mut closed = sess.closed_rx();
+    tokio::time::timeout(Duration::from_secs(1), wait_closed(&mut closed))
+        .await
+        .expect("a close that happened before the subscription must not be missed");
+}
+
+#[test]
+fn unnegotiated_fec_drops_are_counted() {
+    let srv = Server::new(Config::from_env().unwrap());
+    let (sender, _rx) = player(&srv, 1);
+    let (recipient, _rx2) = player(&srv, 2);
+    visible(&srv, &sender, &recipient);
+    let mut scratch = Scratch::new();
+    let mut frame = voice(1);
+    frame.flags = FLAG_FEC_SAFE;
+    srv.relay_voice(&sender, &frame, &mut scratch);
+    assert!(scratch.outgoing.is_empty());
+    assert!(srv
+        .metrics
+        .render("test")
+        .contains("mcvoice_packets_dropped_total{reason=\"unnegotiated_fec\"} 1"));
+}
+
+#[test]
+fn every_drop_and_invalid_reason_has_a_counter() {
+    use crate::metrics::{Metrics, DROP_REASONS, INVALID_REASONS};
+    let m = Metrics::default();
+    for r in DROP_REASONS {
+        m.drop(r);
+    }
+    for r in INVALID_REASONS {
+        m.invalid(r);
+    }
+    let text = m.render("test");
+    for r in DROP_REASONS {
+        assert!(text.contains(&format!("mcvoice_packets_dropped_total{{reason=\"{r}\"}} 1")), "{r}");
+    }
+    for r in INVALID_REASONS {
+        assert!(text.contains(&format!("mcvoice_invalid_packets_total{{reason=\"{r}\"}} 1")), "{r}");
+    }
+}
+
+#[test]
+fn ping_and_hello_replies_are_rate_limited() {
+    let srv = Server::new(Config::from_env().unwrap());
+    let (sess, _rx) = player(&srv, 1);
+    let from = SocketAddr::from(([127, 0, 0, 1], 20001));
+    let mut scratch = Scratch::new();
+    let sent = PROBE_BURST as u64 + 20;
+    for counter in 1..=sent {
+        let dg = client_datagram(&sess, TYPE_PING, counter, &0u64.to_be_bytes());
+        srv.handle_datagram(&dg, from, &mut scratch);
+    }
+    let replies = scratch.outgoing.len() as u64;
+    // The burst is answered; a slow machine may refill a few tokens meanwhile.
+    assert!(replies >= PROBE_BURST as u64 && replies < sent, "{replies} replies to {sent} pings");
+    recycle(&mut scratch);
+    let mut hello = [1u8; 24].to_vec();
+    hello[16..].copy_from_slice(&0u64.to_be_bytes());
+    let before = scratch.outgoing.len();
+    for counter in sent + 1..=sent + 20 {
+        let dg = client_datagram(&sess, TYPE_HELLO, counter, &hello);
+        srv.handle_datagram(&dg, from, &mut scratch);
+    }
+    assert!(scratch.outgoing.len() - before < 20, "HELLO shares the exhausted budget");
+    assert!(!srv
+        .metrics
+        .render("test")
+        .contains("mcvoice_packets_dropped_total{reason=\"rate_limited\"} 0"));
+}
+
+#[test]
+fn unregistered_session_cannot_regain_a_voice_path() {
+    let srv = Server::new(Config::from_env().unwrap());
+    let (sess, _rx) = player(&srv, 1);
+    let (replaced, ps, _rx2) = unregistered_player(&srv, 2);
+    assert!(srv.register(replaced.clone(), ps).is_ok());
+    let (newer, ps, _rx3) = unregistered_player(&srv, 2);
+    assert!(srv.register(newer.clone(), ps).is_ok());
+    srv.unregister(&sess);
+    for gone in [&sess, &replaced] {
+        let u = gone.udp.lock().unwrap();
+        assert!(u.gone && u.addr.is_none());
+    }
+    assert!(!newer.udp.lock().unwrap().gone);
+}
+
+#[test]
+fn bans_reload_follows_content_not_timestamps() {
+    let uuid = "00000000-0000-4000-8000-000000000007";
+    let path = std::env::temp_dir().join(format!(
+        "mcvoice-bans-{}.json",
+        hex::encode(crate::server::session::random_bytes::<8>())
+    ));
+    std::fs::write(&path, format!(r#"{{"banned":["{uuid}"]}}"#)).unwrap();
+    let mut cfg = Config::from_env().unwrap();
+    cfg.bans_file = path.to_string_lossy().into_owned();
+    let srv = Server::new(cfg);
+    srv.reload_bans();
+    assert!(srv.is_banned(uuid));
+
+    // Restore an older file: same path, earlier modification time.
+    let loaded = std::fs::metadata(&path).unwrap().modified().unwrap();
+    std::fs::write(&path, r#"{"banned":[]}"#).unwrap();
+    std::fs::File::options()
+        .write(true)
+        .open(&path)
+        .unwrap()
+        .set_modified(loaded - Duration::from_secs(3600))
+        .unwrap();
+    srv.reload_bans();
+    let _ = std::fs::remove_file(&path);
+    assert!(!srv.is_banned(uuid), "a changed file must be applied whatever its timestamp says");
 }
