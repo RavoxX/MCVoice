@@ -25,6 +25,14 @@ pub enum AuthError {
     Unavailable(String),
 }
 
+impl AuthError {
+    /// False when the session server could not be asked: that must not count
+    /// against the client's authentication-failure budget.
+    pub fn is_client_fault(&self) -> bool {
+        matches!(self, AuthError::Rejected)
+    }
+}
+
 pub struct MojangVerifier {
     url: String,
     client: reqwest::Client,
@@ -82,8 +90,8 @@ impl MojangVerifier {
 
 pub fn dash_uuid(s: &str) -> String {
     let s = s.to_ascii_lowercase();
-    if s.len() != 32 {
-        return s;
+    if s.len() != 32 || !s.is_ascii() {
+        return s; // not a hex id: left as is, rejected by is_uuid (and never sliced mid-character)
     }
     format!("{}-{}-{}-{}-{}", &s[0..8], &s[8..12], &s[12..16], &s[16..20], &s[20..32])
 }
@@ -95,6 +103,10 @@ struct ResumeClaims {
     iat: i64,
     exp: i64,
     typ: String,
+    /// When the player last proved the account to the session server. Absent in
+    /// tokens issued before 0.1.16, where `iat` is the best available bound.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    auth_time: Option<i64>,
 }
 
 fn mac(secret: &[u8], data: &[u8]) -> Vec<u8> {
@@ -109,14 +121,17 @@ fn mac_ok(secret: &[u8], data: &[u8], sig: &[u8]) -> bool {
     m.verify_slice(sig).is_ok()
 }
 
-pub fn issue_resume(secret: &[u8], id: &Identity, ttl_secs: u64, now_unix: i64) -> String {
+/// `auth_time` is the time of the last real authentication; it is copied from
+/// the presented token when a session was resumed.
+pub fn issue_resume(secret: &[u8], id: &Identity, ttl_secs: u64, now_unix: i64, auth_time: i64) -> String {
     let header = B64.encode(br#"{"alg":"HS256","typ":"JWT"}"#);
     let claims = serde_json::to_vec(&ResumeClaims {
         sub: id.uuid.clone(),
         name: id.username.clone(),
         iat: now_unix,
-        exp: now_unix + ttl_secs as i64,
+        exp: now_unix.saturating_add(i64::try_from(ttl_secs).unwrap_or(i64::MAX)),
         typ: "resume".into(),
+        auth_time: Some(auth_time),
     })
     .unwrap();
     let signing = format!("{header}.{}", B64.encode(claims));
@@ -124,7 +139,9 @@ pub fn issue_resume(secret: &[u8], id: &Identity, ttl_secs: u64, now_unix: i64) 
     format!("{signing}.{sig}")
 }
 
-pub fn verify_resume(secret: &[u8], token: &str, now_unix: i64) -> Option<Identity> {
+/// Returns the identity and the time of its last real authentication.
+/// Tokens renew on every resume, so `max_lifetime_secs` bounds the whole chain.
+pub fn verify_resume(secret: &[u8], token: &str, now_unix: i64, max_lifetime_secs: u64) -> Option<(Identity, i64)> {
     let mut parts = token.split('.');
     let (h, c, s) = (parts.next()?, parts.next()?, parts.next()?);
     if parts.next().is_some() {
@@ -146,10 +163,18 @@ pub fn verify_resume(secret: &[u8], token: &str, now_unix: i64) -> Option<Identi
     if claims.typ != "resume" || !is_uuid(&claims.sub) || now_unix >= claims.exp {
         return None;
     }
-    Some(Identity {
-        uuid: claims.sub,
-        username: claims.name,
-    })
+    let auth_time = claims.auth_time.unwrap_or(claims.iat);
+    let age = now_unix.saturating_sub(auth_time);
+    if age < -300 || age >= i64::try_from(max_lifetime_secs).unwrap_or(i64::MAX) {
+        return None;
+    }
+    Some((
+        Identity {
+            uuid: claims.sub,
+            username: claims.name,
+        },
+        auth_time,
+    ))
 }
 
 /// Verify a companion-plugin scope attestation (spec 6.3.1); returns "network/subserver".
@@ -195,13 +220,70 @@ mod tests {
             uuid: "069a79f4-44e9-4726-a5be-fca90e38aaf5".into(),
             username: "Notch".into(),
         };
-        let t = issue_resume(b"0123456789abcdef0123456789abcdef", &id, 60, 1000);
-        assert_eq!(verify_resume(b"0123456789abcdef0123456789abcdef", &t, 1001), Some(id));
-        assert!(verify_resume(b"0123456789abcdef0123456789abcdef", &t, 2000).is_none());
-        assert!(verify_resume(b"other-secret-other-secret-other-s", &t, 1001).is_none());
+        let t = issue_resume(b"0123456789abcdef0123456789abcdef", &id, 60, 1000, 1000);
+        assert_eq!(
+            verify_resume(b"0123456789abcdef0123456789abcdef", &t, 1001, 86400),
+            Some((id, 1000))
+        );
+        assert!(verify_resume(b"0123456789abcdef0123456789abcdef", &t, 2000, 86400).is_none());
+        assert!(verify_resume(b"other-secret-other-secret-other-s", &t, 1001, 86400).is_none());
         let mut bad = t.clone();
         bad.push('x');
-        assert!(verify_resume(b"0123456789abcdef0123456789abcdef", &bad, 1001).is_none());
+        assert!(verify_resume(b"0123456789abcdef0123456789abcdef", &bad, 1001, 86400).is_none());
+    }
+
+    #[test]
+    fn resume_chain_cannot_outlive_the_last_real_authentication() {
+        let secret = b"0123456789abcdef0123456789abcdef";
+        let id = Identity {
+            uuid: "069a79f4-44e9-4726-a5be-fca90e38aaf5".into(),
+            username: "Notch".into(),
+        };
+        // Renew every 30 minutes with a one-hour token and a two-hour cap.
+        let mut now = 1_000_000;
+        let mut token = issue_resume(secret, &id, 3600, now, now);
+        let mut renewals = 0;
+        loop {
+            now += 1800;
+            match verify_resume(secret, &token, now, 7200) {
+                Some((who, auth_time)) => {
+                    assert_eq!(who, id);
+                    assert_eq!(auth_time, 1_000_000, "renewal must keep the original authentication time");
+                    token = issue_resume(secret, &id, 3600, now, auth_time);
+                    renewals += 1;
+                }
+                None => break,
+            }
+        }
+        assert_eq!(renewals, 3, "accepted at +30, +60 and +90 minutes, rejected at the two-hour cap");
+
+        // A token without auth_time (issued before 0.1.16) is bounded by its iat.
+        let header = B64.encode(br#"{"alg":"HS256","typ":"JWT"}"#);
+        let claims = B64.encode(format!(
+            r#"{{"sub":"{}","name":"Notch","iat":1000,"exp":999999,"typ":"resume"}}"#,
+            id.uuid
+        ));
+        let signing = format!("{header}.{claims}");
+        let legacy = format!("{signing}.{}", B64.encode(mac(secret, signing.as_bytes())));
+        assert_eq!(verify_resume(secret, &legacy, 1500, 7200), Some((id, 1000)));
+        assert!(verify_resume(secret, &legacy, 1000 + 7200, 7200).is_none());
+    }
+
+    #[test]
+    fn only_rejections_count_against_the_client() {
+        assert!(AuthError::Rejected.is_client_fault());
+        assert!(!AuthError::Unavailable("session server status 503".into()).is_client_fault());
+    }
+
+    #[test]
+    fn dash_uuid_never_slices_inside_a_character() {
+        assert_eq!(
+            dash_uuid("069A79F444E94726A5BEFCA90E38AAF5"),
+            "069a79f4-44e9-4726-a5be-fca90e38aaf5"
+        );
+        let odd = "\u{e9}".repeat(16); // 32 bytes, 16 characters
+        assert_eq!(odd.len(), 32);
+        assert!(!is_uuid(&dash_uuid(&odd)));
     }
 }
 

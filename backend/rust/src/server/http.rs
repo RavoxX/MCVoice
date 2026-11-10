@@ -40,17 +40,19 @@ async fn control(
     headers: HeaderMap,
     ws: WebSocketUpgrade,
 ) -> Response {
-    let Ok(permit) = srv.pending_auth.clone().try_acquire_owned() else {
-        return (StatusCode::SERVICE_UNAVAILABLE, "authentication busy").into_response();
-    };
-    let ip = client_ip(&srv.cfg, peer.ip(), &headers).to_string();
     if srv.shutdown.load(Relaxed) {
         return (StatusCode::SERVICE_UNAVAILABLE, "shutting down").into_response();
     }
+    let ip = limiter_key(client_ip(&srv.cfg, peer.ip(), &headers));
     let now = Instant::now();
     if !srv.connect_limiter.allow(&ip, now) || srv.auth_fail_limiter.blocked(&ip, now) {
         return (StatusCode::TOO_MANY_REQUESTS, "rate limited").into_response();
     }
+    let permit = match srv.begin_auth(&ip) {
+        Ok(permit) => permit,
+        Err(super::AuthBusy::Server) => return (StatusCode::SERVICE_UNAVAILABLE, "authentication busy").into_response(),
+        Err(super::AuthBusy::Address) => return (StatusCode::TOO_MANY_REQUESTS, "too many pending connections").into_response(),
+    };
     let host = headers
         .get(header::HOST)
         .and_then(|h| h.to_str().ok())
@@ -125,7 +127,11 @@ pub async fn run(srv: Arc<Server>, shutdown: impl std::future::Future<Output = (
         loop {
             tokio::select! {
                 _ = presence.tick() => bg.presence_tick(&mut presence_updates),
-                _ = bans.tick() => bg.reload_bans(),
+                _ = bans.tick() => {
+                    // file I/O: keep it off the async worker threads
+                    let srv = bg.clone();
+                    let _ = tokio::task::spawn_blocking(move || srv.reload_bans()).await;
+                }
                 _ = jitter.tick() => bg.update_jitter_gauge(&mut sessions),
             }
         }
@@ -156,6 +162,18 @@ pub async fn run(srv: Arc<Server>, shutdown: impl std::future::Future<Output = (
         t.abort();
     }
     result
+}
+
+/// Identity used for per-address limits. An IPv6 host usually controls a whole
+/// /64, so its addresses share one budget; IPv4 addresses are used as they are.
+pub(crate) fn limiter_key(ip: std::net::IpAddr) -> String {
+    match ip {
+        std::net::IpAddr::V4(v4) => v4.to_string(),
+        std::net::IpAddr::V6(v6) => {
+            let s = v6.segments();
+            format!("{}/64", std::net::Ipv6Addr::new(s[0], s[1], s[2], s[3], 0, 0, 0, 0))
+        }
+    }
 }
 
 fn client_ip(cfg: &crate::config::Config, peer: std::net::IpAddr, headers: &HeaderMap) -> std::net::IpAddr {
@@ -196,6 +214,34 @@ fn client_ip(cfg: &crate::config::Config, peer: std::net::IpAddr, headers: &Head
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn ipv6_addresses_share_a_budget_per_64() {
+        let key = |s: &str| limiter_key(s.parse().unwrap());
+        assert_eq!(key("198.51.100.2"), "198.51.100.2");
+        assert_ne!(key("198.51.100.2"), key("198.51.100.3"));
+        assert_eq!(key("2001:db8:1:2::1"), key("2001:db8:1:2:ffff:ffff:ffff:ffff"));
+        assert_ne!(key("2001:db8:1:2::1"), key("2001:db8:1:3::1"));
+        assert_eq!(key("2001:db8:1:2::1"), "2001:db8:1:2::/64");
+    }
+
+    #[test]
+    fn pending_auth_is_capped_per_address_and_released() {
+        let mut cfg = crate::config::Config::from_env().unwrap();
+        cfg.rate_connect_per_min = 16; // four pending connections per address
+        let srv = Server::new(cfg);
+        let held: Vec<_> = (0..4).map(|_| srv.begin_auth("a").ok().unwrap()).collect();
+        assert!(matches!(srv.begin_auth("a"), Err(crate::server::AuthBusy::Address)));
+        assert!(srv.begin_auth("b").is_ok(), "other addresses are unaffected");
+        drop(held);
+        assert!(srv.begin_auth("a").is_ok(), "slots are released when the handshake ends");
+
+        let mut cfg = crate::config::Config::from_env().unwrap();
+        cfg.rate_connect_per_min = 0; // limits disabled (load tests)
+        let srv = Server::new(cfg);
+        let held: Vec<_> = (0..100).map(|_| srv.begin_auth("a").ok().unwrap()).collect();
+        assert_eq!(held.len(), 100);
+    }
     #[test]
     fn forwarded_header_requires_proxy_and_walks_from_the_right() {
         let mut cfg = crate::config::Config::from_env().unwrap();
