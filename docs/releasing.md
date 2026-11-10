@@ -52,7 +52,7 @@ test-only jar is never included in production or publication.
 | `build` | Read-only `mc-build.yml` builds/validates jars on `mc/<version>`. A separate publisher uploads prebuilt jars/sources with a minimal Maven-only build and verifies downloaded jar bytes | per loader: `status`, `reason`, `maven`, verified `maven_sha256`; missing publication results are explicit failures |
 | `github-release` | Per version: `checksums-sha256.txt`, creates or updates release `v<version>-mc<minecraft>` with the jars | skipped unless **every** loader of that version built; the `gh` error text is recorded on failure |
 | `images` | Read-only image build/container test, then a separate publisher loads and pushes the tested image without running it | job result |
-| `report` | `tools/release/report.py` → `release-report.md` (job summary, artifact, attached to `v<version>`) | always runs |
+| `report` | Selects newest status/result artifacts by creation time; renders and attaches `release-report.md` | fails if the planned version/loader inventory, GitHub publications, verified Maven read-back or required validation/image gates are incomplete |
 
 The report lists only recorded facts. If GitHub refuses an action (for
 example `packages: write` is not granted to the workflow token, or a tag
@@ -89,6 +89,16 @@ verification record through Actions; it does not rebuild or replace jars,
 republish Maven versions, or build images. The report renderer supports both
 flat single-artifact downloads and nested multi-artifact downloads.
 
+For a full stable release from `main`, set `minecraft: supported` in
+`release-report.yml`. This validates the supported plan at the original source
+revision and all original test/build/Maven/diagnostic/image gates. It selects
+the newest status/result artifact **by creation time** for each name across
+reruns; artifact IDs and API order are not chronological. The completeness
+check must pass before the recovered overview report is attached. This mode
+does not rebuild or replace jars, republish Maven packages, or build images.
+Independently verify actual release asset digests and runtime-tested jar identity
+before deploying; a green workflow alone is not publication evidence.
+
 ## Backend-only deployments
 
 When the client and protocol are unchanged, `backend.yml` also publishes
@@ -104,5 +114,7 @@ a protocol 1.1 WebSocket `hello_ok` advertising `groups`. Roll back by restoring
 the previous tag and rerunning the update. Do not change nginx, firewall rules,
 or other containers for an image-only deployment.
 
-The `report` job downloads only the `mc-*-status` and `release-result-*`
-artifacts, with one retry each, so a flaky jar download cannot drop the report.
+The `report` job downloads only `mc-*-status` and `release-result-*` artifacts,
+selecting the newest copy of each name by creation time. It reads only report
+records, not jar payloads or build logs. A download failure fails the job;
+retry the report or use the recovery workflow after the service recovers.
