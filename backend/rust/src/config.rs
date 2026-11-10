@@ -27,6 +27,8 @@ pub struct Config {
     pub distance_slack: f64,
     pub key_rotation_secs: u64,
     pub resume_token_ttl: u64,
+    /// Longest a chain of renewed resume tokens may live after the last real authentication.
+    pub resume_max_lifetime: u64,
     pub max_sessions: usize,
     pub session_timeout_secs: u64,
     pub rate_voice_per_sec: f64,
@@ -77,6 +79,46 @@ impl Env<'_> {
     }
 }
 
+/// Upper bound for configured durations (one year); keeps timer arithmetic far from overflow.
+const MAX_SECONDS: u64 = 366 * 24 * 3600;
+
+/// Reject values that parse but would break routing, timers or rate limits
+/// (`NaN` and `inf` are valid floats, and `0` is a valid integer).
+fn validate_values(c: &Config, errs: &mut Vec<String>) {
+    let positive = |v: f64| v.is_finite() && v > 0.0;
+    if !positive(c.normal_range)
+        || !positive(c.whisper_range)
+        || !positive(c.max_range)
+        || !c.distance_slack.is_finite()
+        || c.distance_slack < 0.0
+    {
+        errs.push("ranges must be positive finite numbers".into());
+    }
+    for (name, rate, burst) in [
+        ("VOICE", c.rate_voice_per_sec, c.rate_voice_burst),
+        ("CONTROL", c.rate_control_per_sec, c.rate_control_burst),
+    ] {
+        if !positive(rate) || !burst.is_finite() || burst < 1.0 {
+            errs.push(format!(
+                "RATE_LIMIT_{name}_PER_SEC must be positive and RATE_LIMIT_{name}_BURST at least 1"
+            ));
+        }
+    }
+    for (name, value, min) in [
+        ("KEY_ROTATION_SECONDS", c.key_rotation_secs, 2),
+        ("RESUME_TOKEN_TTL_SECONDS", c.resume_token_ttl, 1),
+        ("RESUME_MAX_LIFETIME_SECONDS", c.resume_max_lifetime, 1),
+        ("SESSION_TIMEOUT_SECONDS", c.session_timeout_secs, 1),
+    ] {
+        if !(min..=MAX_SECONDS).contains(&value) {
+            errs.push(format!("{name} must be between {min} and {MAX_SECONDS}"));
+        }
+    }
+    if c.max_sessions == 0 {
+        errs.push("MAX_SESSIONS must be at least 1".into());
+    }
+}
+
 fn random_secret() -> Vec<u8> {
     use rand::RngCore;
     let mut b = vec![0u8; 32];
@@ -112,6 +154,7 @@ impl Config {
             distance_slack: e.parse("ROUTING_DISTANCE_SLACK", 4.0, "a number"),
             key_rotation_secs: e.parse("KEY_ROTATION_SECONDS", 600, "an integer"),
             resume_token_ttl: e.parse("RESUME_TOKEN_TTL_SECONDS", 3600, "an integer"),
+            resume_max_lifetime: e.parse("RESUME_MAX_LIFETIME_SECONDS", 86400, "an integer"),
             max_sessions: e.parse("MAX_SESSIONS", 10000, "an integer"),
             session_timeout_secs: e.parse("SESSION_TIMEOUT_SECONDS", 20, "an integer"),
             rate_voice_per_sec: e.parse("RATE_LIMIT_VOICE_PER_SEC", 75.0, "a number"),
@@ -181,12 +224,7 @@ impl Config {
         if c.tls_cert_path.is_empty() != c.tls_key_path.is_empty() {
             errs.push("TLS_CERT_PATH and TLS_KEY_PATH must be set together".into());
         }
-        if c.normal_range <= 0.0 || c.whisper_range <= 0.0 || c.max_range <= 0.0 || c.distance_slack < 0.0 {
-            errs.push("ranges must be positive".into());
-        }
-        if c.key_rotation_secs < 2 {
-            errs.push("KEY_ROTATION_SECONDS must be >= 2".into());
-        }
+        validate_values(&c, &mut errs);
         if let Some(ks) = raw("SCOPE_ATTESTATION_KEYS") {
             for part in ks.split(',') {
                 let Some((name, key)) = part.trim().split_once(':').filter(|(n, _)| !n.is_empty()) else {
@@ -216,5 +254,39 @@ impl Config {
         } else {
             Err(format!("invalid configuration: {}", errs.join("; ")))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn errors(edit: impl FnOnce(&mut Config)) -> Vec<String> {
+        let mut c = Config::from_env().unwrap();
+        edit(&mut c);
+        let mut errs = Vec::new();
+        validate_values(&c, &mut errs);
+        errs
+    }
+
+    #[test]
+    fn defaults_are_valid() {
+        assert!(errors(|_| {}).is_empty());
+    }
+
+    #[test]
+    fn non_finite_and_zero_values_are_rejected() {
+        assert_eq!(errors(|c| c.normal_range = f64::NAN).len(), 1);
+        assert_eq!(errors(|c| c.max_range = f64::INFINITY).len(), 1);
+        assert_eq!(errors(|c| c.distance_slack = f64::NAN).len(), 1);
+        assert_eq!(errors(|c| c.rate_voice_per_sec = f64::NAN).len(), 1);
+        assert_eq!(errors(|c| c.rate_control_per_sec = 0.0).len(), 1);
+        assert_eq!(errors(|c| c.rate_control_burst = 0.5).len(), 1);
+        assert_eq!(errors(|c| c.session_timeout_secs = 0).len(), 1);
+        assert_eq!(errors(|c| c.key_rotation_secs = 1).len(), 1);
+        assert_eq!(errors(|c| c.key_rotation_secs = u64::MAX).len(), 1);
+        assert_eq!(errors(|c| c.resume_token_ttl = u64::MAX).len(), 1);
+        assert_eq!(errors(|c| c.resume_max_lifetime = 0).len(), 1);
+        assert_eq!(errors(|c| c.max_sessions = 0).len(), 1);
     }
 }
