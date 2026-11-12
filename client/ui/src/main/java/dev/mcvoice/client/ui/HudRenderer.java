@@ -156,7 +156,7 @@ public final class HudRenderer {
             if (labelX + labelWidth > c.width() - 6) {
                 labelX = Math.max(6, sx - labelWidth - 4);
             }
-            c.text(st.label, labelX, sy + (statusHeight - c.fontHeight()) / 2, color, true);
+            c.text(st.label, labelX, sy + (statusHeight - c.fontHeight()) / 2 + 1, color, true);
         }
 
         int rowHeight = Math.max(12, c.fontHeight() + 3);
@@ -199,7 +199,7 @@ public final class HudRenderer {
             int mic = t.muted ? MUTED_TALKING : t.group ? GROUP_TALKING : Theme.GOOD;
             voiceIcon(c, t.muted ? VoiceIcon.MICROPHONE_MUTED : VoiceIcon.MICROPHONE,
                 tx + 2, ty + (rowHeight - VoiceIcon.HUD_SIZE) / 2, mic);
-            c.playerName(t.uuid, t.name, tx + 15, ty + (rowHeight - c.fontHeight()) / 2, Theme.TEXT, true);
+            c.playerName(t.uuid, t.name, tx + 15, ty + (rowHeight - c.fontHeight()) / 2 + 1, Theme.TEXT, true);
             rows.add(new Row(t.uuid, t.name, t.local, tx, ty, tx + w, ty + rowHeight));
             if (layout.horizontal) {
                 rx += w + 2;
@@ -259,7 +259,7 @@ public final class HudRenderer {
                 c.fill(hx + size, hy, hx + size + 1, hy + size, 0xFFFFFFFF);
                 int nameWidth = Math.min(c.playerNameWidth(member.uuid, member.name), Math.max(0, nameSpace - 4));
                 c.playerName(member.uuid, member.name, hx - 6 - nameWidth,
-                    hy + (size - c.fontHeight()) / 2, speaking.muted ? MUTED_TALKING : 0xFFFFFFFF, true, nameWidth);
+                    hy + (size - c.fontHeight()) / 2 + 1, speaking.muted ? MUTED_TALKING : 0xFFFFFFFF, true, nameWidth);
             }
             rows.add(new Row(member.uuid, member.name, speaking != null && speaking.local,
                 speaking != null ? x : hx - 2, hy - 2, hx + size + 2, hy + size + 2));
