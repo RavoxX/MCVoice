@@ -10,8 +10,7 @@ import org.lwjgl.opengl.GL11;
 import dev.mcvoice.client.log.Category;
 import dev.mcvoice.client.log.VoiceLog;
 import dev.mcvoice.client.platform.ui.UiCanvas;
-import dev.mcvoice.client.platform.ui.VoiceIcon;
-import dev.mcvoice.client.ui.Theme;
+import dev.mcvoice.client.ui.NameTagVoiceState;
 
 /** Immediate-mode name-tag glyph for clients predating per-component fonts. */
 public final class LegacyNameTagIcon {
@@ -56,7 +55,7 @@ public final class LegacyNameTagIcon {
     }
 
     /** Coordinates and angles are the same camera-relative values used for the vanilla label. */
-    public static void draw(double x, double y, double z, float yaw, float pitch, float scale, int nameWidth) {
+    public static void draw(double x, double y, double z, float yaw, float pitch, float scale, int nameWidth, NameTagVoiceState indicator) {
         // Use GL directly and restore it directly: Minecraft's cached GL state remains untouched.
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glPushMatrix();
@@ -74,7 +73,7 @@ public final class LegacyNameTagIcon {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             CANVAS.fill(-1, -1, 9, 8, 0x40000000);
-            VoiceIcon.MICROPHONE.drawNameTag(CANVAS, 0, 0, Theme.GOOD);
+            indicator.icon.drawNameTag(CANVAS, 0, 0, indicator.tint);
         } finally {
             GL11.glPopMatrix();
             GL11.glPopAttrib();
