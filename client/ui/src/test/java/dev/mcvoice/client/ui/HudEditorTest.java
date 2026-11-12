@@ -152,15 +152,16 @@ class HudEditorTest {
         screen.mouseReleased(101, 91, 0);
         assertEquals(0, c.config.hudLayout.speakersX, "drag does not update live settings until Done");
         HudRenderer.Bounds mic = HudRenderer.preview(new Canvas(), c.config.hudLayout).status;
-        screen.mouseClicked(mic.x + 1, mic.y + 1, 0);
+        screen.mouseClicked(mic.x + mic.width / 2, mic.y + mic.height / 2, 0);
         screen.mouseDragged(21, 111, 0);
         screen.mouseReleased(21, 111, 0);
         canvas.click(screen, "List: Vertical");
         canvas.click(screen, "Background: On");
-        Widget slider = screen.widgets.get(2);
-        screen.mouseClicked(slider.x + 4, slider.y + 4, 0);
-        screen.mouseDragged(slider.x + slider.w - 4, slider.y + 4, 0);
-        screen.mouseReleased(slider.x + slider.w - 4, slider.y + 4, 0);
+        screen.render(canvas, 0, 0, 0);
+        int mx = 21 - mic.width / 2, my = 111 - mic.height / 2;
+        screen.mouseClicked(mx, my, 0);
+        screen.mouseDragged(mx - 40, my - 40, 0);
+        screen.mouseReleased(mx - 40, my - 40, 0);
         canvas.click(screen, "Done");
         assertEquals(1, c.saves);
         assertEquals(1, c.settings);
@@ -213,12 +214,12 @@ class HudEditorTest {
         Canvas canvas = new Canvas();
         screen.render(canvas, 0, 0, 0);
         HudRenderer.Bounds group = HudRenderer.preview(canvas, c.config.hudLayout).group;
-        screen.mouseClicked(group.x + group.width - 3, group.y + 3, 0);
-        screen.mouseDragged(group.x + group.width - 43, group.y - 27, 0);
+        screen.mouseClicked(group.x + group.width / 2, group.y + group.height / 2, 0);
+        screen.mouseDragged(group.x + group.width / 2 - 40, group.y + group.height / 2 - 30, 0);
         screen.mouseReleased(0, 0, 0);
-        Widget groupSize = screen.widgets.get(3);
-        screen.mouseClicked(groupSize.x + 4, groupSize.y + 4, 0);
-        screen.mouseDragged(groupSize.x + groupSize.w - 4, groupSize.y + 4, 0);
+        screen.render(canvas, 0, 0, 0);
+        screen.mouseClicked(group.x - 40, group.y - 30, 0);
+        screen.mouseDragged(group.x - 80, group.y - 150, 0);
         screen.mouseReleased(0, 0, 0);
         canvas.click(screen, "Group Background: Off");
         assertEquals(18, c.config.hudLayout.groupHeadSize);
@@ -229,6 +230,30 @@ class HudEditorTest {
         assertTrue(c.config.hudLayout.groupY < 0.5);
         assertEquals(0, c.config.hudLayout.speakersX);
         assertEquals(1, c.config.hudLayout.statusX);
+    }
+
+    @Test
+    void everyMicrophoneCornerResizesAroundTheOppositeCornerWithoutSavingEarly() {
+        for (int corner = 0; corner < 4; corner++) {
+            Controls c = new Controls();
+            c.config.hudLayout.statusX = 0.5; c.config.hudLayout.statusY = 0.5;
+            HudEditorScreen screen = new HudEditorScreen(c.voice); Canvas canvas = new Canvas();
+            screen.render(canvas, 0, 0, 0);
+            HudRenderer.Bounds before = HudRenderer.preview(canvas, c.config.hudLayout).status;
+            boolean right = (corner & 1) != 0, bottom = (corner & 2) != 0;
+            int x = before.x + (right ? before.width : 0), y = before.y + (bottom ? before.height : 0);
+            screen.mouseClicked(x, y, 1); screen.mouseDragged(x + 100, y + 100, 1); screen.mouseReleased(x, y, 1);
+            screen.mouseClicked(x, y, 0);
+            screen.mouseDragged(x + (right ? 10 : -10), y + (bottom ? 10 : -10), 0);
+            screen.mouseReleased(x, y, 0);
+            assertEquals(16, c.config.hudLayout.microphoneSize);
+            canvas.click(screen, "Done");
+            assertEquals(26, c.config.hudLayout.microphoneSize);
+            HudRenderer.Bounds after = HudRenderer.preview(canvas, c.config.hudLayout).status;
+            assertEquals(before.x + (right ? 0 : before.width), after.x + (right ? 0 : after.width), 1);
+            assertEquals(before.y + (bottom ? 0 : before.height), after.y + (bottom ? 0 : after.height), 1);
+            assertEquals(18, c.config.hudLayout.groupHeadSize);
+        }
     }
 
     @Test

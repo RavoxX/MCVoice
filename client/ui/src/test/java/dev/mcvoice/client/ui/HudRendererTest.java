@@ -33,6 +33,8 @@ class HudRendererTest {
         assertEquals(player, canvas.measuredPlayer);
         assertEquals(player, canvas.drawnPlayer);
         assertEquals("name", canvas.fallback);
+        assertEquals(rows.get(0).y0 + (rows.get(0).y1 - rows.get(0).y0 - canvas.fontHeight()) / 2 + 1,
+            canvas.nameY, "use the same visual baseline centering as Minecraft-style buttons");
         assertEquals(1, rows.size());
         assertEquals(player, rows.get(0).uuid);
         assertEquals("name", rows.get(0).name, "menu identity stays the plain name");
@@ -61,6 +63,7 @@ class HudRendererTest {
         UUID measuredPlayer, drawnPlayer;
         String fallback;
         boolean plainNameDrawn;
+        int nameY;
         public int width() { return 400; }
         public int height() { return 300; }
         public void fill(int x1, int y1, int x2, int y2, int color) { }
@@ -74,6 +77,7 @@ class HudRendererTest {
         public void playerName(UUID player, String name, int x, int y, int color, boolean shadow) {
             drawnPlayer = player;
             fallback = name;
+            nameY = y;
         }
     }
 }
