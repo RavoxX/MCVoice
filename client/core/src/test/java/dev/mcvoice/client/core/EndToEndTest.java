@@ -190,12 +190,24 @@ class EndToEndTest {
         a.track(vanilla);
         waitFor("quiet cloud user appears in player settings", () -> va.players().stream().anyMatch(p -> p.uuid.equals(b.uuid)), 5000);
         assertFalse(va.players().stream().anyMatch(p -> p.uuid.equals(vanilla.uuid)), "tracked entities alone do not prove voice presence");
+        assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.IDLE, va.nameTagState(b.uuid));
+        assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.HIDDEN, va.nameTagState(vanilla.uuid));
+        va.setPlayerMuted(b.uuid, true);
+        assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.MUTED, va.nameTagState(b.uuid), "mute is visible even without speech");
+        va.setPlayerMuted(b.uuid, false);
+        va.config().hideVoiceIcons = true;
+        assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.HIDDEN, va.nameTagState(b.uuid));
+        va.config().hideVoiceIcons = false;
 
         // --- nearby: Bob hears Alice, positioned to Bob's right-hand side? Alice is west of Bob.
         a.ptt = true;
         long t0 = System.currentTimeMillis();
         waitFor("Bob hears Alice", () -> loudness(b, t0) > 300, 10000);
         waitFor("Alice's speaking indicator", () -> vb.isSpeaking(a.uuid), 2000);
+        assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.SPEAKING, vb.nameTagState(a.uuid));
+        vb.setPlayerMuted(a.uuid, true);
+        assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.MUTED, vb.nameTagState(a.uuid), "mute overrides speaking");
+        vb.setPlayerMuted(a.uuid, false);
         waitFor("Alice sees herself in the speaker HUD", () -> va.talkers().stream()
             .anyMatch(t -> t.uuid.equals(a.uuid) && t.local && t.name.equals("Alice") && !t.group), 2000);
         assertEquals(1, va.talkers().stream().filter(t -> t.uuid.equals(a.uuid)).count(), "self appears once");
@@ -219,6 +231,7 @@ class EndToEndTest {
         Thread.sleep(1500);
         assertEquals(0.0, loudness(b, t1), 1.0, "no voice after dimension switch");
         assertFalse(vb.isSpeaking(a.uuid), "no name-tag indicator from the old world");
+        assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.HIDDEN, vb.nameTagState(a.uuid));
 
         // --- back to the overworld next to Alice: audible again
         b.dimension = "minecraft:overworld";
@@ -362,6 +375,7 @@ class EndToEndTest {
         waitFor("Gina sees her own group voice in the HUD", () -> va.talkers().stream()
             .anyMatch(t -> t.uuid.equals(a.uuid) && t.local && t.group), 2000);
         assertFalse(vb.isSpeaking(a.uuid), "remote group members have no local name tag");
+        assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.HIDDEN, vb.nameTagState(a.uuid));
         Thread.sleep(800);
         double[] e = b.audio.energySince(t0 + 300);
         assertTrue(e[0] > e[1] * 0.8 && e[1] > e[0] * 0.8, "group audio is centred, L=" + e[0] + " R=" + e[1]);
@@ -488,6 +502,15 @@ class EndToEndTest {
             c.start();
             waitFor("C connected to SVC", () -> c.state() == dev.mcvoice.client.svc.transport.SvcUdpClient.State.CONNECTED, 10000);
             Thread.sleep(1500);
+            assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.HIDDEN, va.nameTagState(cUuid), "an entity alone is not voice presence");
+            svcServer.plugin(a.uuid, "voicechat:state", dev.mcvoice.client.svc.protocol.SvcBuf.writer()
+                .writeBoolean(false).writeBoolean(false).writeUuid(cUuid).writeString("Cyd").writeBoolean(false).toByteArray());
+            assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.IDLE, va.nameTagState(cUuid), "quiet SVC users have an indicator");
+            va.setPlayerMuted(cUuid, true);
+            assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.MUTED, va.nameTagState(cUuid));
+            va.setPlayerMuted(cUuid, false);
+            svcServer.plugin(a.uuid, "voicechat:remove_state", dev.mcvoice.client.svc.protocol.SvcBuf.writer().writeUuid(cUuid).toByteArray());
+            assertEquals(dev.mcvoice.client.ui.NameTagVoiceState.HIDDEN, va.nameTagState(cUuid), "departed SVC users are not inferred from old audio");
 
             // --- B speaks for 3 s: A receives B on both transports but plays exactly one stream.
             long decodedBefore = va.decodedFrames();

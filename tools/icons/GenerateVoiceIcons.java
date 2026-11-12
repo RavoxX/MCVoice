@@ -32,7 +32,7 @@ public final class GenerateVoiceIcons {
     }
 
     private static void preview(BufferedImage hud, BufferedImage tags, Path output) throws Exception {
-        BufferedImage preview = new BufferedImage(720, 330, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage preview = new BufferedImage(20 + VoiceIcon.values().length * 232, 330, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = preview.createGraphics();
         g.setColor(new Color(0x171D25));
         g.fillRect(0, 0, preview.getWidth(), preview.getHeight());
@@ -43,8 +43,8 @@ public final class GenerateVoiceIcons {
         g.drawString("MCVoice — compact shaded pixel icons", 24, 28);
         g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 13));
         g.drawString("Artwork preview · enlarged 6× with nearest-neighbour scaling", 24, 51);
-        String[] labels = {"Microphone", "Muted", "Deafened"};
-        for (int i = 0; i < 3; i++) {
+        String[] labels = {"Microphone", "Muted", "Deafened", "Voice user", "Muted player"};
+        for (int i = 0; i < labels.length; i++) {
             int x = 30 + i * 232;
             glyph(g, hud, i, x, 80, 6);
             glyph(g, tags, i, x + 86, 86, 6);
@@ -54,8 +54,8 @@ public final class GenerateVoiceIcons {
             glyph(g, tags, i, x + 26, 203, 1);
         }
         g.drawString("HUD colours · 3× GUI scale", 24, 249);
-        int[] colors = {0xFF5BD46B, 0xFFE5534B, 0xFFE5534B};
-        for (int i = 0; i < 3; i++) glyph(g, atlas(false, colors[i]), i, 30 + i * 232, 271, 3);
+        int[] colors = {0xFF5BD46B, 0xFFE5534B, 0xFFE5534B, 0xFFFFFFFF, 0xFFFFFFFF};
+        for (int i = 0; i < colors.length; i++) glyph(g, atlas(false, colors[i]), i, 30 + i * 232, 271, 3);
         g.dispose();
         Files.createDirectories(output.toAbsolutePath().getParent());
         ImageIO.write(preview, "png", output.toFile());
