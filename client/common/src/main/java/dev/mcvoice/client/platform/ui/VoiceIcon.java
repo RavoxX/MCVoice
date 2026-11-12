@@ -4,7 +4,9 @@ package dev.mcvoice.client.platform.ui;
 public enum VoiceIcon {
     MICROPHONE('\uE000', microphone(), smallMicrophone()),
     MICROPHONE_MUTED('\uE001', muted(microphone()), muted(smallMicrophone())),
-    HEADPHONES_MUTED('\uE002', muted(headphones()), muted(smallHeadphones()));
+    HEADPHONES_MUTED('\uE002', muted(headphones()), muted(smallHeadphones())),
+    SPEAKER('\uE003', speaker(), smallSpeaker()),
+    SPEAKER_MUTED('\uE004', crossedSpeaker(speaker()), crossedSpeaker(smallSpeaker()));
 
     public static final int HUD_SIZE = 10;
     public static final int NAME_TAG_SIZE = 8;
@@ -41,6 +43,7 @@ public enum VoiceIcon {
                     int light = shade == '3' ? 255 : shade == '2' ? 213 : shade == '1' ? 162 : 108;
                     int color = (tint & 0xFF000000) | (((tint >> 16 & 255) * light / 255) << 16)
                         | (((tint >> 8 & 255) * light / 255) << 8) | ((tint & 255) * light / 255);
+                    if (shade == 'r') color = (tint & 0xFF000000) | 0xE5534B;
                     canvas.fill(x + col * size / line.length(), y + row * size / pixels.length,
                         x + end * size / line.length(), y + (row + 1) * size / pixels.length, color);
                 }
@@ -114,6 +117,28 @@ public enum VoiceIcon {
             cells[i + 1][i] = '0';
         }
         for (int i = 0; i < cells.length; i++) pixels[i] = new String(cells[i]);
+        return pixels;
+    }
+
+    private static String[] speaker() {
+        return new String[] {"....3.....", "...331.3..", ".33221..3.", ".32321.2.1", ".32221.2.1",
+            ".32221.2.1", ".22221..2.", "...211.1..", "....10....", ".........."};
+    }
+
+    private static String[] smallSpeaker() {
+        return new String[] {"..3.....", ".331.3..", "3221..3.", "3231.2.1", "3221.2.1",
+            ".221..2.", "..10.1..", "........"};
+    }
+
+    private static String[] crossedSpeaker(String[] pixels) {
+        char[][] cells = new char[pixels.length][];
+        for (int i = 0; i < pixels.length; i++) cells[i] = pixels[i].toCharArray();
+        for (int row = 1; row < cells.length - 1; row++) {
+            int col = cells.length - 1 - row;
+            cells[row][col] = 'r';
+            cells[row][col + 1] = 'r';
+        }
+        for (int i = 0; i < pixels.length; i++) pixels[i] = new String(cells[i]);
         return pixels;
     }
 }
