@@ -1,0 +1,117 @@
+name: mc-ui
+run-name: "mc-ui 26.2 + 26.3"
+
+# Separate test mod and native OS events against the production client jars.
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version of the non-publishing production test jars
+        required: true
+        default: "0.1.17"
+
+permissions:
+  contents: read
+
+jobs:
+  native-ui:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        minecraft: ["26.2", "26.3"]
+        loader: [fabric, forge]
+    env:
+      MC: ${{ matrix.minecraft }}
+      LOADER: ${{ matrix.loader }}
+      MOD_VERSION: ${{ inputs.version }}
+      MCVOICE_SMOKE_MC: ${{ matrix.minecraft }}
+      LIBGL_ALWAYS_SOFTWARE: "true"
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build validated production jar and isolated UI test mod
+        run: |
+          set -euo pipefail
+          python3 tools/port-version/port.py "$MC"
+          echo "apply from: '../../tools/mc-smoke/ui/build.gradle'" >> "minecraft/$LOADER/build.gradle"
+          (cd "minecraft/$LOADER" && ./gradlew build uiSmokeJar --no-daemon -Pmod_version="$MOD_VERSION")
+          jar="minecraft/$LOADER/build/libs/mcvoice-$MOD_VERSION-mc$MC-$LOADER.jar"
+          python3 tools/port-version/validate_jar.py "$jar" --loader "$LOADER" --minecraft "$MC" --java 25 --version "$MOD_VERSION"
+          if unzip -Z1 "$jar" | grep -q '^dev/mcvoice/smoke/'; then exit 1; fi
+          mkdir -p run/mods evidence browser-stub
+          cp "$jar" "minecraft/$LOADER/build/libs/mcvoice-ui-smoke.jar" run/mods/
+          if [ "$LOADER" = fabric ]; then
+            api=$(sed -n 's/^fabric_api=//p' minecraft/fabric/gradle.properties)
+            [[ "$api" =~ ^[0-9A-Za-z.+-]+$ ]]
+            curl -fsSL "https://github.com/FabricMC/fabric-api/releases/download/$api/fabric-api-$api.jar" -o run/mods/fabric-api.jar
+          fi
+      - uses: actions/cache@v4
+        with:
+          path: ~/.minecraft
+          key: native-ui-${{ matrix.minecraft }}-${{ matrix.loader }}-hmc-2.10.0
+      - name: Install pinned launcher and exact generated loader
+        run: |
+          set -euo pipefail
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xvfb xdotool imagemagick libgl1-mesa-dri libvulkan1 mesa-vulkan-drivers
+          mkdir -p HeadlessMC
+          cat > HeadlessMC/config.properties <<EOF
+          hmc.java.versions=$JAVA_HOME/bin/java
+          hmc.gamedir=$PWD/run
+          hmc.mcdir=$HOME/.minecraft
+          hmc.offline=true
+          hmc.rethrow.launch.exceptions=true
+          hmc.exit.on.failed.command=true
+          hmc.jvmargs=-Djava.awt.headless=true -Xmx3G
+          EOF
+          curl -fsSL https://github.com/3arthqu4ke/headlessmc/releases/download/2.10.0/headlessmc-launcher-2.10.0.jar -o hmc.jar
+          if [ ! -f "$HOME/.minecraft/versions/$MC/$MC.json" ]; then
+            timeout 300 java -jar hmc.jar --command download "$MC"
+          fi
+          if [ "$LOADER" = fabric ]; then
+            uid=$(sed -n 's/^fabric_loader=//p' minecraft/fabric/gradle.properties)
+            installed="fabric-loader-$uid-$MC"
+          else
+            uid=$(sed -n "s/^forge_version=$MC-//p" minecraft/forge/gradle.properties)
+            installed="$MC-forge-$uid"
+          fi
+          [[ "$uid" =~ ^[0-9]+(\.[0-9]+)+$ ]]
+          if [ ! -f "$HOME/.minecraft/versions/$installed/$installed.json" ]; then
+            timeout 300 java -jar hmc.jar --command "$LOADER" "$MC" --uid "$uid"
+          fi
+          echo "HMC_VERSION=$installed" >> "$GITHUB_ENV"
+          printf 'onboardAccessibility:false\npauseOnLostFocus:false\nmaxFps:60\n' > run/options.txt
+          # Capture the browser request without opening an actual browser in CI.
+          printf '#!/bin/sh\nset -eu\nprintf "%%s\\n" "$1" >> "$MCVOICE_BROWSER_LOG"\n' > browser-stub/xdg-open
+          chmod 700 browser-stub/xdg-open
+      - name: Exercise all update buttons and HUD resize corners with native mouse input
+        run: |
+          set -euo pipefail
+          export MCVOICE_BROWSER_LOG="$PWD/evidence/browser-request.txt"
+          export PATH="$PWD/browser-stub:$PATH"
+          timeout 600 xvfb-run -a python3 tools/mc-smoke/ui/run.py "$HMC_VERSION"
+          python3 tools/mc-smoke/check_log.py run/logs/latest.log "$MC" "$LOADER"
+          test -f run/ui-smoke.pass
+          printf '%s %s: native update actions, headless browser request and corner resizing PASS\n' "$MC" "$LOADER" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: native-ui-${{ matrix.minecraft }}-${{ matrix.loader }}
+          path: |
+            evidence/
+            run/logs/
+            run/crash-reports/
+            run/ui-smoke.pass
+            minecraft/${{ matrix.loader }}/build/libs/*.jar

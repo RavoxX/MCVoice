@@ -1,5 +1,5 @@
 name: mc-startup
-run-name: "mc-startup 26.3"
+run-name: "${{ inputs.native_ui && 'mc-ui 26.2 + 26.3' || 'mc-startup 26.3' }}"
 
 # The pinned mc-runtime-test mod has no 26.3 build. Use its pinned launcher
 # with our own test-only mod, against the production jars for both loaders.
@@ -9,13 +9,18 @@ on:
       version:
         description: Mod version for these non-publishing test builds
         required: false
-        default: "0.1.6"
+        default: "0.1.17"
+      native_ui:
+        description: Test native update-menu clicks and HUD corner resizing on 26.2 and 26.3
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
   startup:
+    if: ${{ !inputs.native_ui }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -152,3 +157,9 @@ jobs:
             run/crash-reports/
             run/smoke-*.pass
             minecraft/${{ matrix.loader }}/build/libs/*.jar
+
+  native-ui:
+    if: inputs.native_ui
+    uses: ./.github/workflows/mc-ui.yml
+    with:
+      version: ${{ inputs.version }}
