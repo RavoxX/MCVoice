@@ -18,14 +18,14 @@ Executing steps
  > Running 'listLibraries'
  > Running 'rename'
 Stopping at requested step: /home/runner/.gradle/caches/forge_gradle/mcp_repo/de/oceanlabs/mcp/mcp_config/1.19.3-20221207.122022/joined/rename/output.jar
-[21:31:12] [main/INFO]: Writing debug log file accesstransform.log
-[21:31:12] [main/INFO]: Access Transformer processor running version 8.2.14
-[21:31:12] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0/forge-1.19.3-44.1.0-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0_mapped_official_1.19.3/forge-1.19.3-44.1.0_mapped_official_1.19.3.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg]
-[21:31:12] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0/forge-1.19.3-44.1.0-injected.jar
-[21:31:12] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0_mapped_official_1.19.3/forge-1.19.3-44.1.0_mapped_official_1.19.3.jar
-[21:31:12] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg
-[21:31:12] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0_mapped_official_1.19.3/forge-1.19.3-44.1.0_mapped_official_1.19.3.jar, overwriting
-[21:31:16] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0_mapped_official_1.19.3/forge-1.19.3-44.1.0_mapped_official_1.19.3.jar
+[20:47:01] [main/INFO]: Writing debug log file accesstransform.log
+[20:47:01] [main/INFO]: Access Transformer processor running version 8.2.14
+[20:47:01] [main/INFO]: Command line arguments [--inJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0/forge-1.19.3-44.1.0-injected.jar, --outJar, /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0_mapped_official_1.19.3/forge-1.19.3-44.1.0_mapped_official_1.19.3.jar, --logFile, accesstransform.log, --atFile, /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg]
+[20:47:01] [main/INFO]: Reading from /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0/forge-1.19.3-44.1.0-injected.jar
+[20:47:01] [main/INFO]: Writing to /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0_mapped_official_1.19.3/forge-1.19.3-44.1.0_mapped_official_1.19.3.jar
+[20:47:01] [main/INFO]: Transformer file /home/runner/work/MCVoice/MCVoice/minecraft/forge/build/_atJar_4/parent_at.cfg
+[20:47:01] [main/WARN]: Found existing output jar /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0_mapped_official_1.19.3/forge-1.19.3-44.1.0_mapped_official_1.19.3.jar, overwriting
+[20:47:05] [main/INFO]: JAR transformation complete /home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.19.3-44.1.0_mapped_official_1.19.3/forge-1.19.3-44.1.0_mapped_official_1.19.3.jar
 Creating SRG -> MCP TSRG
 
 > Task :processResources
@@ -45,11 +45,11 @@ Creating SRG -> MCP TSRG
 > Task :test NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1794346186053.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1794516346288.json
 
-BUILD SUCCESSFUL in 1m 58s
+BUILD SUCCESSFUL in 1m 48s
 8 actionable tasks: 8 executed
-valid: mcvoice-0.1.16-mc1.19.3-forge.jar (423 classes, 17 platform classes, metadata ['META-INF/mods.toml'])
+valid: mcvoice-0.1.17-mc1.19.3-forge.jar (423 classes, 17 platform classes, metadata ['META-INF/mods.toml'])
   platform: dev/mcvoice/platform/forge/McVoiceForge
   platform: dev/mcvoice/platform/forge/McVoiceForge$ForgeSvcChannels
   platform: dev/mcvoice/platform/mc/McAdapter
