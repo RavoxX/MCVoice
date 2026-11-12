@@ -1,0 +1,288 @@
+::group::net.minecraft.client.gui.screens.Screen
+Compiled from "Screen.java"
+public abstract class net.minecraft.client.gui.screens.Screen extends net.minecraft.client.gui.components.events.AbstractContainerEventHandler implements net.minecraft.client.gui.components.Renderable {
+  public static final net.minecraft.resources.Identifier MENU_BACKGROUND;
+  public static final net.minecraft.resources.Identifier HEADER_SEPARATOR;
+  public static final net.minecraft.resources.Identifier FOOTER_SEPARATOR;
+  public static final net.minecraft.resources.Identifier INWORLD_HEADER_SEPARATOR;
+  public static final net.minecraft.resources.Identifier INWORLD_FOOTER_SEPARATOR;
+  public int width;
+  public int height;
+  public net.minecraft.network.chat.Component getTitle();
+  public net.minecraft.network.chat.Component getNarrationMessage();
+  public final void extractRenderStateWithTooltipAndSubtitles(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, float);
+  public void extractRenderState(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, float);
+  public boolean keyPressed(net.minecraft.client.input.KeyEvent);
+  public void clearFocus();
+  public boolean shouldCloseOnEsc();
+  public void onClose();
+  public static java.util.List<net.minecraft.network.chat.Component> getTooltipFromItem(net.minecraft.client.Minecraft, net.minecraft.world.item.ItemStack);
+  public final void init(int, int);
+  public java.util.List<? extends net.minecraft.client.gui.components.events.GuiEventListener> children();
+  public void tick();
+  public void removed();
+  public void added();
+  public void extractBackground(net.minecraft.client.gui.GuiGraphicsExtractor, int, int, float);
+  public static void extractMenuBackgroundTexture(net.minecraft.client.gui.GuiGraphicsExtractor, net.minecraft.resources.Identifier, int, int, float, float, int, int);
+  public void extractTransparentBackground(net.minecraft.client.gui.GuiGraphicsExtractor);
+  public boolean isPauseScreen();
+  public boolean isInGameUi();
+  public boolean isAllowedInPortal();
+  public void resize(int, int);
+  public void fillCrashDetails(net.minecraft.CrashReport);
+  public boolean isMouseOver(double, double);
+  public void onFilesDrop(java.util.List<java.nio.file.Path>);
+  public void afterMouseMove();
+  public void afterMouseAction();
+  public void afterKeyboardAction();
+  public void handleDelayedNarration();
+  public void triggerImmediateNarration(boolean);
+  public static net.minecraft.client.gui.screens.Screen$NarratableSearchResult findNarratableWidget(java.util.List<? extends net.minecraft.client.gui.narration.NarratableEntry>, net.minecraft.client.gui.narration.NarratableEntry);
+  public void updateNarratorStatus(boolean);
+  public net.minecraft.client.gui.Font getFont();
+  public boolean showsActiveEffects();
+  public boolean canInterruptWithAnotherScreen();
+  public net.minecraft.client.gui.navigation.ScreenRectangle getRectangle();
+  public net.minecraft.sounds.Music getBackgroundMusic();
+}
+::endgroup::
+::group::net.minecraft.client.MouseHandler
+Compiled from "MouseHandler.java"
+public class net.minecraft.client.MouseHandler {
+  public static final long DOUBLE_CLICK_THRESHOLD_MS;
+  public net.minecraft.client.MouseHandler(net.minecraft.client.Minecraft);
+  public void fillMousePositionDetails(net.minecraft.CrashReportCategory, com.mojang.blaze3d.platform.Window);
+  public void setup(com.mojang.blaze3d.platform.Window);
+  public void handleAccumulatedMovement();
+  public static double getScaledXPos(com.mojang.blaze3d.platform.Window, double);
+  public double getScaledXPos(com.mojang.blaze3d.platform.Window);
+  public static double getScaledYPos(com.mojang.blaze3d.platform.Window, double);
+  public double getScaledYPos(com.mojang.blaze3d.platform.Window);
+  public boolean isLeftPressed();
+  public boolean isMiddlePressed();
+  public boolean isRightPressed();
+  public double xpos();
+  public double ypos();
+  public void setIgnoreFirstMove();
+  public boolean isMouseGrabbed();
+  public void grabMouse();
+  public void releaseMouse();
+  public void cursorEntered();
+  public void drawDebugMouseInfo(net.minecraft.client.gui.Font, net.minecraft.client.gui.GuiGraphicsExtractor);
+}
+::endgroup::
+::group::net.minecraft.client.gui.Gui
+Compiled from "Gui.java"
+public class net.minecraft.client.gui.Gui {
+  public static final net.minecraft.network.chat.Component SAVING_LEVEL;
+  public final net.minecraft.client.gui.Hud hud;
+  public net.minecraft.client.gui.Gui(net.minecraft.client.Minecraft, net.minecraft.client.gui.Hud, net.minecraft.client.renderer.state.gui.GuiRenderState);
+  public void registerReloadListeners(net.minecraft.server.packs.resources.ReloadableResourceManager);
+  public void tick();
+  public void update();
+  public void extractRenderState(net.minecraft.client.DeltaTracker, boolean, boolean);
+  public net.minecraft.client.gui.screens.Screen screen();
+  public void setScreen(net.minecraft.client.gui.screens.Screen);
+  public net.minecraft.client.gui.screens.Overlay overlay();
+  public void setOverlay(net.minecraft.client.gui.screens.Overlay);
+  public boolean isPausing();
+  public net.minecraft.client.resources.SplashManager splashManager();
+  public net.minecraft.client.gui.components.toasts.ToastManager toastManager();
+  public net.minecraft.client.multiplayer.chat.ChatListener chatListener();
+  public void addSocialInteractionsToast();
+  public void setPauseScreen(boolean, boolean);
+  public void handleKeybinds();
+  public void openChatScreen(net.minecraft.client.gui.components.ChatComponent$ChatMethod);
+  public void openChatAndAddText(net.minecraft.client.gui.components.ChatComponent$ChatMethod, java.lang.String);
+  public java.lang.Runnable buildInitialScreens(net.minecraft.client.GameLoadCookie);
+  public boolean canInterruptScreen();
+  public void setClientLevelTeardownInProgress(boolean);
+}
+::endgroup::
+::group::net.minecraft.Util
+Error: class not found: net.minecraft.Util
+::endgroup::
+::group::com.mojang.blaze3d.platform.InputConstants
+Compiled from "InputConstants.java"
+public class com.mojang.blaze3d.platform.InputConstants {
+  public static final int KEY_0;
+  public static final int KEY_1;
+  public static final int KEY_2;
+  public static final int KEY_3;
+  public static final int KEY_4;
+  public static final int KEY_5;
+  public static final int KEY_6;
+  public static final int KEY_7;
+  public static final int KEY_8;
+  public static final int KEY_9;
+  public static final int KEY_A;
+  public static final int KEY_B;
+  public static final int KEY_C;
+  public static final int KEY_D;
+  public static final int KEY_E;
+  public static final int KEY_F;
+  public static final int KEY_G;
+  public static final int KEY_H;
+  public static final int KEY_I;
+  public static final int KEY_J;
+  public static final int KEY_K;
+  public static final int KEY_L;
+  public static final int KEY_M;
+  public static final int KEY_N;
+  public static final int KEY_O;
+  public static final int KEY_P;
+  public static final int KEY_Q;
+  public static final int KEY_R;
+  public static final int KEY_S;
+  public static final int KEY_T;
+  public static final int KEY_U;
+  public static final int KEY_V;
+  public static final int KEY_W;
+  public static final int KEY_X;
+  public static final int KEY_Y;
+  public static final int KEY_Z;
+  public static final int KEY_F1;
+  public static final int KEY_F2;
+  public static final int KEY_F3;
+  public static final int KEY_F4;
+  public static final int KEY_F5;
+  public static final int KEY_F6;
+  public static final int KEY_F7;
+  public static final int KEY_F8;
+  public static final int KEY_F9;
+  public static final int KEY_F10;
+  public static final int KEY_F11;
+  public static final int KEY_F12;
+  public static final int KEY_F13;
+  public static final int KEY_F14;
+  public static final int KEY_F15;
+  public static final int KEY_F16;
+  public static final int KEY_F17;
+  public static final int KEY_F18;
+  public static final int KEY_F19;
+  public static final int KEY_F20;
+  public static final int KEY_F21;
+  public static final int KEY_F22;
+  public static final int KEY_F23;
+  public static final int KEY_F24;
+  public static final int KEY_F25;
+  public static final int KEY_NUMLOCK;
+  public static final int KEY_NUMPAD0;
+  public static final int KEY_NUMPAD1;
+  public static final int KEY_NUMPAD2;
+  public static final int KEY_NUMPAD3;
+  public static final int KEY_NUMPAD4;
+  public static final int KEY_NUMPAD5;
+  public static final int KEY_NUMPAD6;
+  public static final int KEY_NUMPAD7;
+  public static final int KEY_NUMPAD8;
+  public static final int KEY_NUMPAD9;
+  public static final int KEY_NUMPADCOMMA;
+  public static final int KEY_NUMPADENTER;
+  public static final int KEY_NUMPADEQUALS;
+  public static final int KEY_DOWN;
+  public static final int KEY_LEFT;
+  public static final int KEY_RIGHT;
+  public static final int KEY_UP;
+  public static final int KEY_ADD;
+  public static final int KEY_APOSTROPHE;
+  public static final int KEY_BACKSLASH;
+  public static final int KEY_COMMA;
+  public static final int KEY_EQUALS;
+  public static final int KEY_GRAVE;
+  public static final int KEY_LBRACKET;
+  public static final int KEY_MINUS;
+  public static final int KEY_MULTIPLY;
+  public static final int KEY_PERIOD;
+  public static final int KEY_RBRACKET;
+  public static final int KEY_SEMICOLON;
+  public static final int KEY_SLASH;
+  public static final int KEY_SPACE;
+  public static final int KEY_TAB;
+  public static final int KEY_LALT;
+  public static final int KEY_LCONTROL;
+  public static final int KEY_LSHIFT;
+  public static final int KEY_LSUPER;
+  public static final int KEY_RALT;
+  public static final int KEY_RCONTROL;
+  public static final int KEY_RSHIFT;
+  public static final int KEY_RSUPER;
+  public static final int KEY_RETURN;
+  public static final int KEY_ESCAPE;
+  public static final int KEY_BACKSPACE;
+  public static final int KEY_DELETE;
+  public static final int KEY_END;
+  public static final int KEY_HOME;
+  public static final int KEY_INSERT;
+  public static final int KEY_PAGEDOWN;
+  public static final int KEY_PAGEUP;
+  public static final int KEY_CAPSLOCK;
+  public static final int KEY_PAUSE;
+  public static final int KEY_SCROLLLOCK;
+  public static final int KEY_PRINTSCREEN;
+  public static final int PRESS;
+  public static final int RELEASE;
+  public static final int REPEAT;
+  public static final int MOUSE_BUTTON_LEFT;
+  public static final int MOUSE_BUTTON_RIGHT;
+  public static final int MOUSE_BUTTON_MIDDLE;
+  public static final int MOUSE_BUTTON_4;
+  public static final int MOUSE_BUTTON_5;
+  public static final int MOUSE_BUTTON_6;
+  public static final int MOUSE_BUTTON_7;
+  public static final int MOUSE_BUTTON_8;
+  public static final int MOD_SHIFT;
+  public static final int MOD_CONTROL;
+  public static final int MOD_ALT;
+  public static final int MOD_SUPER;
+  public static final int MOD_CAPS_LOCK;
+  public static final int MOD_NUM_LOCK;
+  public static final int CURSOR;
+  public static final int CURSOR_DISABLED;
+  public static final int CURSOR_NORMAL;
+  public static final com.mojang.blaze3d.platform.InputConstants$Key UNKNOWN;
+  public com.mojang.blaze3d.platform.InputConstants();
+  public static com.mojang.blaze3d.platform.InputConstants$Key getKey(net.minecraft.client.input.KeyEvent);
+  public static com.mojang.blaze3d.platform.InputConstants$Key getKey(java.lang.String);
+  public static boolean isKeyDown(com.mojang.blaze3d.platform.Window, int);
+  public static void setupKeyboardCallbacks(com.mojang.blaze3d.platform.Window, org.lwjgl.glfw.GLFWKeyCallbackI, org.lwjgl.glfw.GLFWCharCallbackI, org.lwjgl.glfw.GLFWPreeditCallbackI, org.lwjgl.glfw.GLFWIMEStatusCallbackI);
+  public static void setupMouseCallbacks(com.mojang.blaze3d.platform.Window, org.lwjgl.glfw.GLFWCursorPosCallbackI, org.lwjgl.glfw.GLFWMouseButtonCallbackI, org.lwjgl.glfw.GLFWScrollCallbackI, org.lwjgl.glfw.GLFWDropCallbackI);
+  public static void grabOrReleaseMouse(com.mojang.blaze3d.platform.Window, int, double, double);
+  public static boolean isRawMouseInputSupported();
+  public static void updateRawMouseInput(com.mojang.blaze3d.platform.Window, boolean);
+}
+::endgroup::
+::group::net.minecraft.client.KeyMapping
+Compiled from "KeyMapping.java"
+public class net.minecraft.client.KeyMapping implements java.lang.Comparable<net.minecraft.client.KeyMapping> {
+  public static void click(com.mojang.blaze3d.platform.InputConstants$Key);
+  public static void set(com.mojang.blaze3d.platform.InputConstants$Key, boolean);
+  public static void setAll();
+  public static void releaseAll();
+  public static void restoreToggleStatesOnScreenClosed();
+  public static void resetToggleKeys();
+  public static void resetMapping();
+  public net.minecraft.client.KeyMapping(java.lang.String, int, net.minecraft.client.KeyMapping$Category);
+  public net.minecraft.client.KeyMapping(java.lang.String, com.mojang.blaze3d.platform.InputConstants$Type, int, net.minecraft.client.KeyMapping$Category);
+  public net.minecraft.client.KeyMapping(java.lang.String, com.mojang.blaze3d.platform.InputConstants$Type, int, net.minecraft.client.KeyMapping$Category, int);
+  public boolean isDown();
+  public net.minecraft.client.KeyMapping$Category getCategory();
+  public boolean consumeClick();
+  public java.lang.String getName();
+  public com.mojang.blaze3d.platform.InputConstants$Key getDefaultKey();
+  public void setKey(com.mojang.blaze3d.platform.InputConstants$Key);
+  public int compareTo(net.minecraft.client.KeyMapping);
+  public static java.util.function.Supplier<net.minecraft.network.chat.Component> createNameSupplier(java.lang.String);
+  public boolean same(net.minecraft.client.KeyMapping);
+  public boolean isUnbound();
+  public boolean matches(net.minecraft.client.input.KeyEvent);
+  public boolean matchesMouse(net.minecraft.client.input.MouseButtonEvent);
+  public boolean matches(com.mojang.blaze3d.platform.InputConstants$Key);
+  public net.minecraft.network.chat.Component getTranslatedKeyMessage();
+  public boolean isDefault();
+  public java.lang.String saveString();
+  public void setDown(boolean);
+  public static net.minecraft.client.KeyMapping get(java.lang.String);
+  public int compareTo(java.lang.Object);
+}
+::endgroup::
