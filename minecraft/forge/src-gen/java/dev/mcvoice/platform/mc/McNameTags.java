@@ -2,8 +2,7 @@
 package dev.mcvoice.platform.mc;
 
 import dev.mcvoice.client.core.VoiceClient;
-import dev.mcvoice.client.platform.ui.VoiceIcon;
-import dev.mcvoice.client.ui.Theme;
+import dev.mcvoice.client.ui.NameTagVoiceState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 
@@ -27,7 +26,7 @@ import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 
 
 
-/** Adds our own microphone glyph only to the renderer's name-tag text. */
+/** Adds our voice-state glyph only to the renderer's already visible name-tag text. */
 public final class McNameTags {
     private McNameTags() {
     }
@@ -53,14 +52,16 @@ public final class McNameTags {
 
 
     public static Component decorate(Entity entity, Component name, VoiceClient voice) {
-        if (name == null || !(entity instanceof Player) || voice == null || !voice.isSpeaking(entity.getUUID())) {
+        if (name == null || !(entity instanceof Player) || voice == null) {
             return name;
         }
+        NameTagVoiceState indicator = voice.nameTagState(entity.getUUID());
+        if (indicator == NameTagVoiceState.HIDDEN) return name;
         Style style = Style.EMPTY
 
 
 
-            .withColor(Theme.GOOD & 0xFFFFFF)
+            .withColor(indicator.tint & 0xFFFFFF)
 
 
 
@@ -70,7 +71,7 @@ public final class McNameTags {
         // A fresh root prevents the player's prefix style from leaking into the space or icon.
 
         return Component.empty().append(name.copy()).append(" ")
-            .append(Component.literal(String.valueOf(VoiceIcon.MICROPHONE.glyph)).setStyle(style));
+            .append(Component.literal(String.valueOf(indicator.icon.glyph)).setStyle(style));
 
 
 
