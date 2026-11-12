@@ -69,6 +69,7 @@ public final class HudSmoke {
                                 case OPEN_MENU -> "V"; case TOGGLE_MUTE -> "M"; case TOGGLE_DEAFEN -> "N"; case TOGGLE_ICONS -> "H"; default -> "Unbound";
                             };
                             case "availableUpdate" -> "0.1.12";
+                            case "updateLinkStatus" -> "";
                             case "updateReleaseUrl" -> "https://github.com/RavoxX/MCVoice/releases/tag/v0.1.12-mc26.3";
                             default -> method.getReturnType()==void.class ? null : false;
                         };
