@@ -10,7 +10,7 @@ import dev.mcvoice.client.ui.widget.Widget;
 
 class UpdateScreenTest {
     @Test void settingsNoticeLeadsToReadableReleaseLinkAndCheckPreferenceOnSmallGui() {
-        ClientConfig config = new ClientConfig(); int[] opened = {0,0};
+        ClientConfig config = new ClientConfig(); int[] opened = {0,0,0};
         VoiceControls v = (VoiceControls)Proxy.newProxyInstance(getClass().getClassLoader(),new Class<?>[]{VoiceControls.class},(p,m,a)->{
             switch(m.getName()) {
             case "config": return config;
@@ -18,6 +18,7 @@ class UpdateScreenTest {
             case "updateReleaseUrl": return config.checkForUpdates ? "https://github.com/RavoxX/MCVoice/releases/tag/v0.1.12-mc26.3" : "";
             case "openUpdates": opened[0]++; return null;
             case "openUpdateRelease": opened[1]++; return null;
+            case "openSettings": opened[2]++; return null;
             case "transportStatus": return TransportStatus.CLOUD;
             case "pushToTalkKey": return "V";
             default: if (m.getReturnType()==String.class) return ""; return false;
@@ -43,5 +44,7 @@ class UpdateScreenTest {
         assertFalse(config.checkForUpdates);
         texts.clear(); screen.render(c,0,0,0); assertTrue(texts.contains("Automatic checks are off."));
         assertEquals(2,screen.widgets.size(),"disabled checks remove the stale release link");
+        Widget done=screen.widgets.get(1); screen.mouseClicked(done.x+2,done.y+2,0);
+        assertEquals(1,opened[2],"Done returns to settings even after the release link disappears");
     }
 }
