@@ -7,11 +7,11 @@ can still be heard on servers that run the Simple Voice Chat plugin.
 
 <img src="docs/images/icon.png" width="96" alt="MCVoice icon">
 
-Stable **[0.1.15](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.15)** adds
-proximity Opus loss recovery, automatic SVC reconnection, speech-break key
-renewal and jitter fixes. The public backend is updated. See
-[release verification](docs/release-0.1.15.md) and
-[the seven proposal decisions and remaining limits](docs/audio-reliability-0.1.15.md).
+Stable **[0.1.17](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.17)** adds
+quiet/muted voice-user nametag icons, HUD corner resizing, centred HUD name text
+and working Updates links without headless AWT. See
+[release verification](docs/release-0.1.17.md) and
+[controls and limitations](docs/nametag-presence-and-hud.md).
 
 * Positional 3D audio (equal-power stereo panning, distance attenuation),
   Opus at 48 kHz in 20 ms frames, a jitter buffer and a whisper mode.
@@ -44,10 +44,10 @@ renewal and jitter fixes. The public backend is updated. See
 
 ## Supported Minecraft versions
 
-**[0.1.15](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.15)** is published
-for all 62 supported Minecraft versions (102 validated jars), with both backend
-images and 102 byte-verified Maven jars. The public Rust backend runs
-0.1.15. See [the release evidence](docs/release-0.1.15.md).
+**[0.1.17](https://github.com/RavoxX/MCVoice/releases/tag/v0.1.17)** is published
+for all 62 supported Minecraft versions (102 validated jars and 102 byte-verified
+Maven jars). This is a client-only update; the public Rust backend remains
+0.1.16. See [the release evidence](docs/release-0.1.17.md).
 Fabric 26.3 requires Fabric Loader **0.20.1 or newer** and Fabric API.
 
 The authoritative, CI-generated matrix is
@@ -111,10 +111,11 @@ Download the jar for your Minecraft version and loader from
      connected SVC users reported by the server, including quiet users;
    * HUD and debug options. **Edit HUD** in General settings lets you drag the
      speaker list and microphone, choose a vertical or horizontal list, toggle
-     its background, and resize the microphone with its corner handles (10–32 pixels). Done saves the
-     layout. The group roster can be dragged independently, with its own
-     background toggle and corner handles for head size (10–32 pixels, fitted down for large groups
-     on small screens). Cancel or Escape discards edits; Reset restores defaults in the editor.
+     its background, and resize the microphone with its corner handles (10–32
+     pixels). Done saves the layout. The group roster can be dragged independently,
+     with its own background toggle and corner handles for head size (10–32 pixels,
+     fitted down for large groups on small screens). Cancel or Escape discards
+     edits; Reset restores defaults in the editor.
      Positions follow changes in window size and GUI scale.
 
 Audio is never recorded or stored by the mod or by the backend.

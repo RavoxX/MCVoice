@@ -115,6 +115,7 @@ python3 tools/port-version/port.py 1.20.1           # writes ./minecraft/<loader
 | `mc-build.yml` | push `mc/**`, dispatch `{minecraft}` | builds each loader of one version with its own JDK, validates the jar, publishes log + status JSON to `tooling/probe-output:builds/<mc>/` |
 | `mc-probe.yml` | dispatch | **API lookup for porting**: official signatures (Mojang mappings or unobfuscated jar), extra jars (javap), Forge MDK build files, tiny/CSV mapping blocks, arbitrary URLs. Output → `tooling/probe-output:<mc>/latest.txt` |
 | `mc-smoke.yml` | dispatch `{minecraft}` (dispatch only: runs third-party code) | builds the versions, then starts the real client headlessly (headlesshq/mc-runtime-test 4.5.1 + HeadlessMC under Xvfb), joins a world and quits; passes only if MCVoice logged `initialised` and no MCVoice error; results → `tooling/probe-output:smoke/<mc>/` |
+| `mc-ui.yml` | dispatch, `workflow_call` (also `mc-startup.yml` with `native_ui: true`) | native OS mouse tests for Updates buttons/browser dispatch and HUD corner resizing on 26.2/26.3, Fabric + Forge; screenshots and exact production jars in Actions artifacts; test mod excluded from production |
 | `svc-interop.yml` | svc-compat changes, weekly, dispatch `{minecraft}` | Paper + real SVC plugin, bot + `SvcProbe`; verdict JSON → job summary and `tooling/probe-output:svc-interop/<mc>/` |
 | `version-matrix.yml` | tools/versions changes, weekly | regenerates `versions/versions.json` and **commits to main** (pull before pushing!) |
 | `release.yml` | dispatch `{version, minecraft, prerelease, images}` | full release; see `docs/releasing.md` |
@@ -294,14 +295,22 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
-* **0.1.17 client UI work in progress:** confirmed voice presence selects idle
-  speaker, speaking microphone and locally muted speaker nametag states across
-  all adapters. Renderer visibility and playback/routing guards stay mandatory.
-  HUD size sliders are replaced with corner handles; existing saved fields and
-  draft Done/Cancel/Reset semantics remain. Update links use validated OS browser
-  launch requests off the game thread instead of AWT. Native UI testing targets
-  26.2/26.3 on both loaders. No release claim yet; see
-  `docs/nametag-presence-and-hud.md`.
+* **0.1.17 client UI released:** source `db027280` (PR #28/#29) adds quiet
+  speaker/locally muted speaker nametag states, HUD corner resizing, centred
+  name text and validated OS browser launch requests off the game thread.
+  Native visibility, current presence/entity and all playback/routing checks
+  remain mandatory. Main CI `43299289712` passes: 148 client tests, core e2e
+  against both backends, Java 8 bytecode and 44 conformance scenarios per backend.
+  Native OS mouse run `43295660492` passes 26.2/26.3 on Fabric + Forge, and full
+  26.3 startup/world run `43294171286` passes both loaders. Release `43300510219`
+  passes: 102/102 jars, 62/62 Minecraft releases and 102/102 byte-verified Maven
+  jars. Every GitHub asset digest matches Maven and its checksum; all four
+  26.2/26.3 jars equal the native-UI-tested artifacts, and both 26.3 jars also
+  equal the full startup artifacts. Backend images are intentionally excluded;
+  production Rust stays 0.1.16, with no deployment for this client-only release.
+  PR #29 fixes a random no-op mutation in a conformance test without changing
+  production authentication. See `docs/nametag-presence-and-hud.md` and
+  `docs/release-0.1.17.md`.
 
 * **0.1.16 released for 26.3 + backend images, Rust deployed:** source
   `bf197b49` (PR #27) fixes seven Rust backend bugs (missed close signal,

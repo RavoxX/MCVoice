@@ -6,8 +6,9 @@ Local test builds are separate evidence and do not replace CI validation.
 
 ## Versioning
 
-* The mod and backend share one semantic version (`client/gradle.properties`
-  `mod_version`; backend `--version`).
+* A release uses a semantic version (`client/gradle.properties` `mod_version`;
+  backend `--version` when included). A client-only release increments the mod
+  version with `images: false`; the backend retains its previous version.
 * Jar: `mcvoice-<version>-mc<minecraft>-<loader>.jar`, for example
   `mcvoice-0.1.0-mc1.20.1-fabric.jar` or `mcvoice-0.1.0-mc1.8.9-legacyfabric.jar`.
 * Git tag per Minecraft version: `v<version>-mc<minecraft>` (`v0.1.0-mc1.20.1`),
@@ -42,6 +43,13 @@ with fresh default keys, then reuses the generated world/configuration and
 launches Quick Play with saved invalid MCVoice keys and valid custom binds.
 See `docs/version-porting.md` for the checks and pinned dependencies. Its
 test-only jar is never included in production or publication.
+
+For Updates buttons and HUD corner resizing, dispatch `mc-ui.yml`, or set
+`native_ui: true` in `mc-startup.yml`. This separate mode tests Fabric and Forge
+on both 26.2 and 26.3 through OS mouse events, captures screenshots and records a
+validated browser-launch request without opening a browser. It does not replace
+the default 26.3 startup/world tests. Production jars must contain no test-mod
+classes; compare their bytes with the eventual release assets.
 
 ## What the workflow does
 

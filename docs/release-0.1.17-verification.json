@@ -1,0 +1,931 @@
+{
+  "run": 43300510219,
+  "source": "db027280821f8adfdc0f3bd9c970598d9afb16c0",
+  "minecraft_releases": 62,
+  "jars": 102,
+  "maven_jars_byte_verified": 102,
+  "images": "skipped: client-only release",
+  "native_ui_run": 43295660492,
+  "startup_26_3_run": 43294171286,
+  "runtime_jars_byte_identical": 4,
+  "artifacts": [
+    {
+      "minecraft": "1.10",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.10-forge.jar",
+      "sha256": "d31454c99dac1c5fd386ea76c65b0f2c7275b6d0eade4d58b36131d95121a5c5",
+      "source": "9b1eb462f3e2e90f85fc1a4b0be6660d38b0b6a9",
+      "maven": "published",
+      "github_asset": 741100223
+    },
+    {
+      "minecraft": "1.10.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.10.2-forge.jar",
+      "sha256": "acd7bd3f29c906d28c430ba6b83ba8233acaf5324e0ac3f5da7cd0f97b96f590",
+      "source": "6030011339fdbc2119134a7ca4e99df6babca542",
+      "maven": "published",
+      "github_asset": 741100292
+    },
+    {
+      "minecraft": "1.10.2",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.10.2-legacyfabric.jar",
+      "sha256": "819e631f8d2df6f0662509580c1a978451780b30467a9635d0cbaa493118dce9",
+      "source": "6030011339fdbc2119134a7ca4e99df6babca542",
+      "maven": "published",
+      "github_asset": 741100280
+    },
+    {
+      "minecraft": "1.11",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.11-forge.jar",
+      "sha256": "2c6ed80fc03259970daf66a409d4dd8529f7efcf246abafdc5638f249f8755a3",
+      "source": "a9e56916dfbf59bebbc711364dfafd4c27010d51",
+      "maven": "published",
+      "github_asset": 741100205
+    },
+    {
+      "minecraft": "1.11.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.11.2-forge.jar",
+      "sha256": "b5218ba30d2df91a4de0a47e38d3a3913f57855494330bf08e9668b89a7d4fdc",
+      "source": "c2d7c50d72a40d0decdf12913289b801e418da58",
+      "maven": "published",
+      "github_asset": 741100158
+    },
+    {
+      "minecraft": "1.11.2",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.11.2-legacyfabric.jar",
+      "sha256": "583e076e7a4ec8d7666854a8d4a5ee7e2c49df34f9d5730233b201833b04332e",
+      "source": "c2d7c50d72a40d0decdf12913289b801e418da58",
+      "maven": "published",
+      "github_asset": 741100169
+    },
+    {
+      "minecraft": "1.12",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.12-forge.jar",
+      "sha256": "68c0a92133d787266001cb87f4dae2f3ab01d06d605e373e3eb06ca060e708eb",
+      "source": "69f7bd6bac8f5aa059f2648510589694e3f192bf",
+      "maven": "published",
+      "github_asset": 741100112
+    },
+    {
+      "minecraft": "1.12.1",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.12.1-forge.jar",
+      "sha256": "83d3ff1cc6aa85842b9470121ab9bb6d1fba126a5d3f242b31310335a617ca15",
+      "source": "91c3d54e93f9a2995c2909860f31181490f654c7",
+      "maven": "published",
+      "github_asset": 741100981
+    },
+    {
+      "minecraft": "1.12.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.12.2-forge.jar",
+      "sha256": "612337eda8a05bca1d7641f0db5aaf626b377ba4178eccfe33bba3a93b6ba92e",
+      "source": "bf9dda0f4b0569ef2be45b3381ad1bbffc2b1555",
+      "maven": "published",
+      "github_asset": 741100725
+    },
+    {
+      "minecraft": "1.12.2",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.12.2-legacyfabric.jar",
+      "sha256": "aedd00494224595cce099434c63d80aca274cda92878c515ed9d44d144934367",
+      "source": "bf9dda0f4b0569ef2be45b3381ad1bbffc2b1555",
+      "maven": "published",
+      "github_asset": 741100729
+    },
+    {
+      "minecraft": "1.13.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.13.2-forge.jar",
+      "sha256": "03e9a347f366eb783f1631a25e66808bbd23d923238471c4d54d1bc8ca2ee603",
+      "source": "7500e36e6ea1102b7bf5bff9ff38ad4c6c9ced94",
+      "maven": "published",
+      "github_asset": 741100260
+    },
+    {
+      "minecraft": "1.14.4",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.14.4-fabric.jar",
+      "sha256": "7fba23f563936a4fc45885e93378c7c5d9c608d98772d85383b513dbc95b7437",
+      "source": "ea908442e8f88d09c2cf818f0d281232da9308b6",
+      "maven": "published",
+      "github_asset": 741100250
+    },
+    {
+      "minecraft": "1.14.4",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.14.4-forge.jar",
+      "sha256": "867a4379c60f23a199ce93b6066e9890f78b851fad49c96b815da1a8ed2f31fd",
+      "source": "ea908442e8f88d09c2cf818f0d281232da9308b6",
+      "maven": "published",
+      "github_asset": 741100252
+    },
+    {
+      "minecraft": "1.15",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.15-forge.jar",
+      "sha256": "b5c68742f58ab27f1694d1bf35f86845ee7b238be38c7554343f830d74a13ea7",
+      "source": "3a2ed5f8cd69714fa667f611a71c9ceced66fa06",
+      "maven": "published",
+      "github_asset": 741100570
+    },
+    {
+      "minecraft": "1.15.1",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.15.1-forge.jar",
+      "sha256": "c155ca33bec30637956ca73d8f53c7854cd1e790041637f1e35a790cf8cef9d8",
+      "source": "f73e9cb96d25b81814c845ad681e2c3dd8daa54b",
+      "maven": "published",
+      "github_asset": 741100196
+    },
+    {
+      "minecraft": "1.15.2",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.15.2-fabric.jar",
+      "sha256": "20cdeea9b8a35033d14037f7b799c74e28e367bb97384f7aa387a1b746f92e3a",
+      "source": "bb0a02d093b38cdfdd5a3dd1b8cd86a17c120ea6",
+      "maven": "published",
+      "github_asset": 741100816
+    },
+    {
+      "minecraft": "1.15.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.15.2-forge.jar",
+      "sha256": "ce2d23d85d9519cbb583cf0e84386951d8c9c1eabd3fca76fa44e17104f4dc61",
+      "source": "bb0a02d093b38cdfdd5a3dd1b8cd86a17c120ea6",
+      "maven": "published",
+      "github_asset": 741100814
+    },
+    {
+      "minecraft": "1.16.1",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.16.1-forge.jar",
+      "sha256": "55e9334702a893b6bdf96d60fa65b97881cf9cb4baed0b4d047ba439de8f518f",
+      "source": "f8a783b95f49b3ce1a9b653c72de2721a29e052c",
+      "maven": "published",
+      "github_asset": 741100222
+    },
+    {
+      "minecraft": "1.16.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.16.2-forge.jar",
+      "sha256": "82ac2d84d39cde74cd9fba3d3f819c96aa86b41712a2ef80622db13d64e41b55",
+      "source": "a8cd60033cb6db31e8b4c40754ac7c61bed97cfb",
+      "maven": "published",
+      "github_asset": 741100166
+    },
+    {
+      "minecraft": "1.16.3",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.16.3-forge.jar",
+      "sha256": "fc2adf2db42bf6dd569cffd294110f736e28443ed201359b18034dc1357a091d",
+      "source": "fb92528c65393a786200676c5cc7e1f1b477bc55",
+      "maven": "published",
+      "github_asset": 741100055
+    },
+    {
+      "minecraft": "1.16.4",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.16.4-forge.jar",
+      "sha256": "9f11d7b82b25f067be039ffea1bec610a76f96ebadc14e4a6a4bdf38f5450f8b",
+      "source": "5bc21c0c68015a4ef50ede61d8dbe9375b3e48ba",
+      "maven": "published",
+      "github_asset": 741100276
+    },
+    {
+      "minecraft": "1.16.5",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.16.5-fabric.jar",
+      "sha256": "226457494f3cec7cd731947dffbac2aa95e69a6e73a38f005f6f65abccedea38",
+      "source": "20ba70ba7f615bf6097156351e14b6a5a7afb516",
+      "maven": "published",
+      "github_asset": 741100084
+    },
+    {
+      "minecraft": "1.16.5",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.16.5-forge.jar",
+      "sha256": "f38957cf61235a8efb634f56770969f880a66d5a23f65f1eb6106fc1db534134",
+      "source": "20ba70ba7f615bf6097156351e14b6a5a7afb516",
+      "maven": "published",
+      "github_asset": 741100083
+    },
+    {
+      "minecraft": "1.17.1",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.17.1-fabric.jar",
+      "sha256": "32f3c37e388a0eb61c7ad7e95596bc7bee431d57f16a7426006dfe79762c65d3",
+      "source": "d63cee266c79fb21499c245e682bdf3791ec91b5",
+      "maven": "published",
+      "github_asset": 741100074
+    },
+    {
+      "minecraft": "1.17.1",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.17.1-forge.jar",
+      "sha256": "7042a0277f9c4aef652cfd06e2ed17df3c4dad38d69d167e9d752af62a6c0c34",
+      "source": "d63cee266c79fb21499c245e682bdf3791ec91b5",
+      "maven": "published",
+      "github_asset": 741100071
+    },
+    {
+      "minecraft": "1.18",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.18-fabric.jar",
+      "sha256": "8484a0159243522f175dd6321ab20f8b9b7e02c158ba7862d8be216962fef828",
+      "source": "5a0f26f76f7b9d27716c580f4fd879ba662802f6",
+      "maven": "published",
+      "github_asset": 741100258
+    },
+    {
+      "minecraft": "1.18",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.18-forge.jar",
+      "sha256": "015e1847ce3fd7f6d14aac74595a6be54411225d51af7707ab6d748d97b01676",
+      "source": "5a0f26f76f7b9d27716c580f4fd879ba662802f6",
+      "maven": "published",
+      "github_asset": 741100257
+    },
+    {
+      "minecraft": "1.18.1",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.18.1-forge.jar",
+      "sha256": "81aa32ea25037582c9dce1eaea818dd3ed83cad5d51bfa86a3c70479f91ace82",
+      "source": "49d01647c80b564c76b9fd4e3d518845177e5cc7",
+      "maven": "published",
+      "github_asset": 741100105
+    },
+    {
+      "minecraft": "1.18.2",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.18.2-fabric.jar",
+      "sha256": "f06cfa0b227d4bc8820ee4301ffb2b0c908a968b6d3e17480c2623605ee9586a",
+      "source": "d1a87ddf0c6e73e0380eaa47ea3b1c480f887f59",
+      "maven": "published",
+      "github_asset": 741101256
+    },
+    {
+      "minecraft": "1.18.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.18.2-forge.jar",
+      "sha256": "9ee4cc23b56e982c75fa0c6d9adb7c4d3a2b2336191255986401dcb20726dcd0",
+      "source": "d1a87ddf0c6e73e0380eaa47ea3b1c480f887f59",
+      "maven": "published",
+      "github_asset": 741101254
+    },
+    {
+      "minecraft": "1.19",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.19-fabric.jar",
+      "sha256": "17708f51e2a3f3150a306b7f078f10fb7acf45074cdcfabcb9db2e27e77b1e19",
+      "source": "b4f461533ced7c3b4bd609def62bd8b7e8c526bd",
+      "maven": "published",
+      "github_asset": 741100174
+    },
+    {
+      "minecraft": "1.19",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.19-forge.jar",
+      "sha256": "d3edb87e0801a6ca35fe90b6485cc5b699f5efdaa3e5ed81823d7b2278495b5c",
+      "source": "b4f461533ced7c3b4bd609def62bd8b7e8c526bd",
+      "maven": "published",
+      "github_asset": 741100171
+    },
+    {
+      "minecraft": "1.19.1",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.19.1-fabric.jar",
+      "sha256": "d0a06276baafa4e3db6eb921793d0a3a3137e8066da0ad2f22dae674a74d3a56",
+      "source": "39d18f016e23ecfd0ad87e1a3de14471d45a83e6",
+      "maven": "published",
+      "github_asset": 741100247
+    },
+    {
+      "minecraft": "1.19.1",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.19.1-forge.jar",
+      "sha256": "9ebac9491f54d42c85a00746b4e940964c31d4f33b6f7bd664c088eba0ae6cf0",
+      "source": "39d18f016e23ecfd0ad87e1a3de14471d45a83e6",
+      "maven": "published",
+      "github_asset": 741100243
+    },
+    {
+      "minecraft": "1.19.2",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.19.2-fabric.jar",
+      "sha256": "eaf392e600d30cd5bba2a2e3d1f2eedfc60c695937aa77d627cf43afd0d9000f",
+      "source": "16de9a85ee90924dff7b3c14084597dc98d74a96",
+      "maven": "published",
+      "github_asset": 741100183
+    },
+    {
+      "minecraft": "1.19.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.19.2-forge.jar",
+      "sha256": "96967a87b179e61dafec11a3a9bd42e4ae79047cc0558170bd739579c2097134",
+      "source": "16de9a85ee90924dff7b3c14084597dc98d74a96",
+      "maven": "published",
+      "github_asset": 741100178
+    },
+    {
+      "minecraft": "1.19.3",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.19.3-fabric.jar",
+      "sha256": "f20f76254b1b3adde996d991bd8f9d622bfd4a2a0acb38e2ce4d6903a1100ea1",
+      "source": "ac9c01c9db135e336baccef57c6389f6b8f656b4",
+      "maven": "published",
+      "github_asset": 741100264
+    },
+    {
+      "minecraft": "1.19.3",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.19.3-forge.jar",
+      "sha256": "983f1ad2b4b8bfa33980b819db62234ab52749acefe58e2a60624d16f8150941",
+      "source": "ac9c01c9db135e336baccef57c6389f6b8f656b4",
+      "maven": "published",
+      "github_asset": 741100265
+    },
+    {
+      "minecraft": "1.19.4",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.19.4-fabric.jar",
+      "sha256": "cc690469fb612394fd516b95644a221c337853d9098026053d52bb395c163a97",
+      "source": "2d733ddd55b349077cd3368fba57b0a4b26b5973",
+      "maven": "published",
+      "github_asset": 741100249
+    },
+    {
+      "minecraft": "1.19.4",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.19.4-forge.jar",
+      "sha256": "210655928e32f4af53c1b060dbfc7d6e74f2e33a820f313da51f7703cb027f3b",
+      "source": "2d733ddd55b349077cd3368fba57b0a4b26b5973",
+      "maven": "published",
+      "github_asset": 741100246
+    },
+    {
+      "minecraft": "1.20",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.20-fabric.jar",
+      "sha256": "21a8a05787e5205062b26b2d20b355f56f954a4e96987b8018aad08b75daf704",
+      "source": "630ad04ec525aebae81b0f2d04c34986580fed87",
+      "maven": "published",
+      "github_asset": 741100303
+    },
+    {
+      "minecraft": "1.20",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.20-forge.jar",
+      "sha256": "17f3847f4574149afc9c65435afb7e3af5eb9409ce458ada5dc4faf51daf19a4",
+      "source": "630ad04ec525aebae81b0f2d04c34986580fed87",
+      "maven": "published",
+      "github_asset": 741100307
+    },
+    {
+      "minecraft": "1.20.1",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.20.1-fabric.jar",
+      "sha256": "835ee66b9c746e30c6ab01f27e45585dedfccd41f12a3a8ae72edc250ff28b96",
+      "source": "81bd78b8aa0219b6d9c33b62dcf9540c00e34cf0",
+      "maven": "published",
+      "github_asset": 741100680
+    },
+    {
+      "minecraft": "1.20.1",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.20.1-forge.jar",
+      "sha256": "9a4f4223ff4cbe3ac2bdf13d7cc30e5fb4ba0e8d1ae2321d28d507fd6c7432a9",
+      "source": "81bd78b8aa0219b6d9c33b62dcf9540c00e34cf0",
+      "maven": "published",
+      "github_asset": 741100678
+    },
+    {
+      "minecraft": "1.20.2",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.20.2-fabric.jar",
+      "sha256": "5dafe8b4c483f1152ea74b6e4a2d8021663aa12d7d9b857497d0091e32228891",
+      "source": "796e7689ad666fcc10314cc3dcbb43ed0d9b845e",
+      "maven": "published",
+      "github_asset": 741100790
+    },
+    {
+      "minecraft": "1.20.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.20.2-forge.jar",
+      "sha256": "3d89a98cfdcef20efae3aeb7ee74d4ffc523540ac45940a752068903baa226f8",
+      "source": "796e7689ad666fcc10314cc3dcbb43ed0d9b845e",
+      "maven": "published",
+      "github_asset": 741100795
+    },
+    {
+      "minecraft": "1.20.3",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.20.3-fabric.jar",
+      "sha256": "9b56a99d13a91899f6e925b3f110821b7134e897a274afa83110f38e833be325",
+      "source": "1fcde3807ed02f50db58566a7a03440808766070",
+      "maven": "published",
+      "github_asset": 741100232
+    },
+    {
+      "minecraft": "1.20.3",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.20.3-forge.jar",
+      "sha256": "8c47264a0d81e511610d85fe7d0a22702daa86f1861a2c0250c0b963d3175dd8",
+      "source": "1fcde3807ed02f50db58566a7a03440808766070",
+      "maven": "published",
+      "github_asset": 741100233
+    },
+    {
+      "minecraft": "1.20.4",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.20.4-fabric.jar",
+      "sha256": "80a62bf8d7a7850ac8447a772faa74613d2056874236eb2f7cc04ee708ef15f4",
+      "source": "a46a64d5300579c2b0bc98527c6d354a69eda7fa",
+      "maven": "published",
+      "github_asset": 741100100
+    },
+    {
+      "minecraft": "1.20.4",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.20.4-forge.jar",
+      "sha256": "3baefc33cc86e533ad7f211765a094c5ed7d663251598739ad3afa37b2b6b7b5",
+      "source": "a46a64d5300579c2b0bc98527c6d354a69eda7fa",
+      "maven": "published",
+      "github_asset": 741100101
+    },
+    {
+      "minecraft": "1.20.5",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.20.5-fabric.jar",
+      "sha256": "8065bd4d68823415b288dc9cc5e5b0bc306130e604b515ecc2c624c73c032d9a",
+      "source": "89262ac0ef4d9e1f59d94e293d1975e939a5fe07",
+      "maven": "published",
+      "github_asset": 741100262
+    },
+    {
+      "minecraft": "1.20.6",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.20.6-fabric.jar",
+      "sha256": "5987d97d52561f436166852581dacce318c17b9a5a1cc2269edb1b03867b6852",
+      "source": "bfc23d046f3e61a89849d56aae6785a62701cd70",
+      "maven": "published",
+      "github_asset": 741100160
+    },
+    {
+      "minecraft": "1.20.6",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.20.6-forge.jar",
+      "sha256": "08d123a77fa3c70ebb76a33eea89c66f8a7201404e47f3f36e4bba770da10b87",
+      "source": "bfc23d046f3e61a89849d56aae6785a62701cd70",
+      "maven": "published",
+      "github_asset": 741100159
+    },
+    {
+      "minecraft": "1.21",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21-fabric.jar",
+      "sha256": "24686dda93c10a1198dba81ab44a9ca4a38e8164d41ce9650479cc132913102e",
+      "source": "60754d42f33a4ec2dd6f8b624d2cdb3488f35423",
+      "maven": "published",
+      "github_asset": 741100316
+    },
+    {
+      "minecraft": "1.21",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21-forge.jar",
+      "sha256": "12578a5603d91a7ac890e4c024889899352655db01241bac7f8ab6570e68e7c5",
+      "source": "60754d42f33a4ec2dd6f8b624d2cdb3488f35423",
+      "maven": "published",
+      "github_asset": 741100321
+    },
+    {
+      "minecraft": "1.21.1",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.1-fabric.jar",
+      "sha256": "b8dd29e034c038b7d87722a2868120b06def00b75ce1a6b8c4a43ed11164f070",
+      "source": "8af41fe7b5fe4af2c44a84fcc4a7d0c431f5378d",
+      "maven": "published",
+      "github_asset": 741100283
+    },
+    {
+      "minecraft": "1.21.1",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21.1-forge.jar",
+      "sha256": "230641f91b9e54972d6094a82e8a9f7701db8e675370116088a82bfa76a77efa",
+      "source": "8af41fe7b5fe4af2c44a84fcc4a7d0c431f5378d",
+      "maven": "published",
+      "github_asset": 741100271
+    },
+    {
+      "minecraft": "1.21.10",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.10-fabric.jar",
+      "sha256": "28c36ea1f4ff9eb6999266bf68e114d93368dacabcbbc6b2c7db94ff52f459f5",
+      "source": "d8e9c3fc9fcd9c91baf1416c1688e66774863c40",
+      "maven": "published",
+      "github_asset": 741100659
+    },
+    {
+      "minecraft": "1.21.10",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21.10-forge.jar",
+      "sha256": "40d3f6bb39d7e1efbaa88ad5c6c4e9ad16861059b758a2b391e15e04e53c6aa6",
+      "source": "d8e9c3fc9fcd9c91baf1416c1688e66774863c40",
+      "maven": "published",
+      "github_asset": 741100663
+    },
+    {
+      "minecraft": "1.21.11",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.11-fabric.jar",
+      "sha256": "d6bc200945da432eac1c30f7139cb7cbadddf4af0e583690ee1fa5f431e95f44",
+      "source": "334b3462e3c264d4ce63f95312b6ed84dd4f88ae",
+      "maven": "published",
+      "github_asset": 741100843
+    },
+    {
+      "minecraft": "1.21.11",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21.11-forge.jar",
+      "sha256": "bb8a08d2af5e8506b820ff34025e1fe7a075ac8c807e38cc024e6dd85ad18ec6",
+      "source": "334b3462e3c264d4ce63f95312b6ed84dd4f88ae",
+      "maven": "published",
+      "github_asset": 741100842
+    },
+    {
+      "minecraft": "1.21.2",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.2-fabric.jar",
+      "sha256": "19928ca77b19b3c21ee2564d1a9319acb884b60a389ff7ac35ac42ee5d68dcc5",
+      "source": "4e309d56b8598855d21cada127fd427223c84f4c",
+      "maven": "published",
+      "github_asset": 741100834
+    },
+    {
+      "minecraft": "1.21.3",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.3-fabric.jar",
+      "sha256": "5a040839a53495be2e9d88d9103df8ef1a5588190c603b90fd3860d858c8dc39",
+      "source": "9e4a43e537fe1fd2056a395a34585f3b6b95bd15",
+      "maven": "published",
+      "github_asset": 741100275
+    },
+    {
+      "minecraft": "1.21.3",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21.3-forge.jar",
+      "sha256": "fe401f0caa0b4f66c3e051395c46d1b62855742f4363343bf9a2ce41648d2749",
+      "source": "9e4a43e537fe1fd2056a395a34585f3b6b95bd15",
+      "maven": "published",
+      "github_asset": 741100288
+    },
+    {
+      "minecraft": "1.21.4",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.4-fabric.jar",
+      "sha256": "3513a955e826c5d458b7fc04537877ebc7b0290e09ecc31682057958b8646987",
+      "source": "92f780ca4b06018d7e18bf965d4794520570bd46",
+      "maven": "published",
+      "github_asset": 741100993
+    },
+    {
+      "minecraft": "1.21.4",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21.4-forge.jar",
+      "sha256": "24aeac7406cb2174dfef66b415c6b377b1567183de36f8490a506376223fd75a",
+      "source": "92f780ca4b06018d7e18bf965d4794520570bd46",
+      "maven": "published",
+      "github_asset": 741101008
+    },
+    {
+      "minecraft": "1.21.5",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.5-fabric.jar",
+      "sha256": "b03098018b754771a234a3d384fc94f225a023702dc7be26a77fca9c321d2f04",
+      "source": "5eeb555b7a0b47f03ce8fb1c90e5f599effa268b",
+      "maven": "published",
+      "github_asset": 741100314
+    },
+    {
+      "minecraft": "1.21.5",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21.5-forge.jar",
+      "sha256": "7c7b808ebf36daa084b3c40a8ed225ce826d03835e555aa96f0666d6467fa3af",
+      "source": "5eeb555b7a0b47f03ce8fb1c90e5f599effa268b",
+      "maven": "published",
+      "github_asset": 741100310
+    },
+    {
+      "minecraft": "1.21.6",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.6-fabric.jar",
+      "sha256": "4dd53e1f7a4d7a7e67915c783a310c30e578e2112f1a96e543d681761559d98b",
+      "source": "7fbf6213f699b93f862f48983e33c5ab44181c0d",
+      "maven": "published",
+      "github_asset": 741100738
+    },
+    {
+      "minecraft": "1.21.6",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21.6-forge.jar",
+      "sha256": "a4bfc46b0ebbd753e78fadd9382feb53f0299a8a92683519cd992ca4c1a35fc8",
+      "source": "7fbf6213f699b93f862f48983e33c5ab44181c0d",
+      "maven": "published",
+      "github_asset": 741100737
+    },
+    {
+      "minecraft": "1.21.7",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.7-fabric.jar",
+      "sha256": "45c379fa24cd9981ec1db4ec043a47e3d37b757a2a02c874cfe7f68de52be90c",
+      "source": "3e59d950e8e5b8a083657c0e239f932cdbaadd20",
+      "maven": "published",
+      "github_asset": 741101321
+    },
+    {
+      "minecraft": "1.21.7",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21.7-forge.jar",
+      "sha256": "d1553c1f7004702d296ed8d16b4fa95d991752ed2eecf8be3769d75c9a635216",
+      "source": "3e59d950e8e5b8a083657c0e239f932cdbaadd20",
+      "maven": "published",
+      "github_asset": 741101323
+    },
+    {
+      "minecraft": "1.21.8",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.8-fabric.jar",
+      "sha256": "c3f3a8dfaf4fdc32d8e0840f9dc0c1dadf4eb0d727a43f1b643f5447d07a3002",
+      "source": "1d7a3e4a603595f8440c38c2dd39cf80dea211b5",
+      "maven": "published",
+      "github_asset": 741100676
+    },
+    {
+      "minecraft": "1.21.8",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21.8-forge.jar",
+      "sha256": "85a13f139cbffe48fa73d54536aeefb95bb64582f38f204900e0891721b5e818",
+      "source": "1d7a3e4a603595f8440c38c2dd39cf80dea211b5",
+      "maven": "published",
+      "github_asset": 741100675
+    },
+    {
+      "minecraft": "1.21.9",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc1.21.9-fabric.jar",
+      "sha256": "d2262e6c3a8ac9fe68f6d390f876abe7fcb1db5887e1ebd1d230cb190f83da2b",
+      "source": "093b6b7fa0f48e10f3c973061e1798714736c596",
+      "maven": "published",
+      "github_asset": 741100674
+    },
+    {
+      "minecraft": "1.21.9",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.21.9-forge.jar",
+      "sha256": "15576ee7087fcedeb9df1e0c734a3c14a71253ecdea3e1b292f47ad6dce18ceb",
+      "source": "093b6b7fa0f48e10f3c973061e1798714736c596",
+      "maven": "published",
+      "github_asset": 741100673
+    },
+    {
+      "minecraft": "1.8",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.8-forge.jar",
+      "sha256": "bd0863d0090e66f06630ecea80e0e085650985d73a0ba5806fcf5aaa300fbdac",
+      "source": "27eb7661d87d63a0c885fd738790820e63d215c3",
+      "maven": "published",
+      "github_asset": 741100087
+    },
+    {
+      "minecraft": "1.8",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.8-legacyfabric.jar",
+      "sha256": "356bfd493530e6dca91153c2d8f6dec3c125f3f721aee471a930d7e4a442040b",
+      "source": "27eb7661d87d63a0c885fd738790820e63d215c3",
+      "maven": "published",
+      "github_asset": 741100091
+    },
+    {
+      "minecraft": "1.8.1",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.8.1-legacyfabric.jar",
+      "sha256": "728eea6b33c46cf7540b9c62f60e06625617a31593d80e002e75360d43536593",
+      "source": "c359bce649e7e445306ac12247b5d050c53fb454",
+      "maven": "published",
+      "github_asset": 741100815
+    },
+    {
+      "minecraft": "1.8.2",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.8.2-legacyfabric.jar",
+      "sha256": "20df01043d4d7603e3ed88450d1638ee498f09befad5adcc871da2914f073a83",
+      "source": "cbbeced9ba7e5e11bbd5b9005d111340fb9431f1",
+      "maven": "published",
+      "github_asset": 741100747
+    },
+    {
+      "minecraft": "1.8.3",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.8.3-legacyfabric.jar",
+      "sha256": "90e2430c7675a61e8a25500b1b9f040df314f20bae0cc281b61c35b540589e6a",
+      "source": "83529afb25d846608a0f8e1fe124728a3763dc99",
+      "maven": "published",
+      "github_asset": 741100153
+    },
+    {
+      "minecraft": "1.8.4",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.8.4-legacyfabric.jar",
+      "sha256": "7e80c9ee71019579e7c650f3f6b3c0251abf71e3a5fba4af168d303088c2ba8f",
+      "source": "20fb5a645a6df3c35f26fa563b3c45ab0d4212c5",
+      "maven": "published",
+      "github_asset": 741100822
+    },
+    {
+      "minecraft": "1.8.5",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.8.5-legacyfabric.jar",
+      "sha256": "be05f115a8bc69b4838d2d9bd2882327a23aba888ceec5aea3ddeb06d067e26b",
+      "source": "3a5f9643f4ab58a1e1883873d1aaaf6c3e7a0b47",
+      "maven": "published",
+      "github_asset": 741100835
+    },
+    {
+      "minecraft": "1.8.6",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.8.6-legacyfabric.jar",
+      "sha256": "10f04ad80401bcc3ed0e9ea851e23c7f0143c0649e521599f32a1a2d6ee59a81",
+      "source": "3d58a9c25fc80fc942745d93e56a56adb957b2d7",
+      "maven": "published",
+      "github_asset": 741100255
+    },
+    {
+      "minecraft": "1.8.7",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.8.7-legacyfabric.jar",
+      "sha256": "d9be75825a5a3690bc59557bd4531185bab9608fa1633603730edc7dfe8f8367",
+      "source": "13e212040576bd4652230e1b77d1644b48be19ab",
+      "maven": "published",
+      "github_asset": 741101155
+    },
+    {
+      "minecraft": "1.8.8",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.8.8-forge.jar",
+      "sha256": "481fdc2a9410f5ad2f107fa3a75f3c5c7faddcf0fc8a854e5b0c41a0380c9c7b",
+      "source": "7ee6be0767715ce77c703d4545a2875a35063594",
+      "maven": "published",
+      "github_asset": 741100872
+    },
+    {
+      "minecraft": "1.8.8",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.8.8-legacyfabric.jar",
+      "sha256": "0f84557f16496a74161d03dbe37313f2ce09d86e177e0ec55937b1a75092211d",
+      "source": "7ee6be0767715ce77c703d4545a2875a35063594",
+      "maven": "published",
+      "github_asset": 741100869
+    },
+    {
+      "minecraft": "1.8.9",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.8.9-forge.jar",
+      "sha256": "5d68f0ed28487365b28b43abcd8159bb630eb3f507a789ab9e2fe7109da5331e",
+      "source": "12c089f19483aacf7a698088b83f46c52d20ab42",
+      "maven": "published",
+      "github_asset": 741101285
+    },
+    {
+      "minecraft": "1.8.9",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.8.9-legacyfabric.jar",
+      "sha256": "e6d31ad0b1b2407182a64569749cc200b7308994bd4758812ad138b05e654fa1",
+      "source": "12c089f19483aacf7a698088b83f46c52d20ab42",
+      "maven": "published",
+      "github_asset": 741101282
+    },
+    {
+      "minecraft": "1.9",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.9-forge.jar",
+      "sha256": "cd1b33f89ac7c93348baa3852dbaf7e34cc6d5d178e72a8cecfb393320013085",
+      "source": "13ea6a254ffaf8ba522d4268af85e3d73013b6f7",
+      "maven": "published",
+      "github_asset": 741100296
+    },
+    {
+      "minecraft": "1.9.4",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc1.9.4-forge.jar",
+      "sha256": "f78f9d4d41c690389ca012044c293b17ffc3d81a8566010da34abf6e0eb0817c",
+      "source": "8f407340304fab54817b8c42bff92391883311dd",
+      "maven": "published",
+      "github_asset": 741100197
+    },
+    {
+      "minecraft": "1.9.4",
+      "loader": "legacyfabric",
+      "file": "mcvoice-0.1.17-mc1.9.4-legacyfabric.jar",
+      "sha256": "61eefb5cb6054206c029cc58188e5d3f9386153cd79115ea41e8d64a42fb801c",
+      "source": "8f407340304fab54817b8c42bff92391883311dd",
+      "maven": "published",
+      "github_asset": 741100199
+    },
+    {
+      "minecraft": "26.1",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc26.1-fabric.jar",
+      "sha256": "c34fcf5e2ab1c28d13313b2d9a5ec330e24ec74ea38137b8c7d130b7797aa25b",
+      "source": "c45f1f6c7826e9a29461e6a799fee007ce3b1ba1",
+      "maven": "published",
+      "github_asset": 741100990
+    },
+    {
+      "minecraft": "26.1",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc26.1-forge.jar",
+      "sha256": "70da23808b7d5f8eedc8dce0409fccf617324e25b7adf9c041ad98641d80a34f",
+      "source": "c45f1f6c7826e9a29461e6a799fee007ce3b1ba1",
+      "maven": "published",
+      "github_asset": 741100996
+    },
+    {
+      "minecraft": "26.1.1",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc26.1.1-fabric.jar",
+      "sha256": "9d21d4c45abb5adf196444e7a995afa995c232d3028c5d5aac2678e7036ede0a",
+      "source": "ad16fa0438a2e47c69f4b50b5fc3c41e563039e1",
+      "maven": "published",
+      "github_asset": 741100190
+    },
+    {
+      "minecraft": "26.1.1",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc26.1.1-forge.jar",
+      "sha256": "500186a2d610bcc685332f5ee5921aa80c1b642b487ef782c97b34bf87a6e43f",
+      "source": "ad16fa0438a2e47c69f4b50b5fc3c41e563039e1",
+      "maven": "published",
+      "github_asset": 741100189
+    },
+    {
+      "minecraft": "26.1.2",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc26.1.2-fabric.jar",
+      "sha256": "273fbc166e4b5171996e5718b65f7d1d79befc8059aa7beadf90d3796323fbf0",
+      "source": "6f67280cac6a031e49608a01bff825e417d3de1f",
+      "maven": "published",
+      "github_asset": 741100933
+    },
+    {
+      "minecraft": "26.1.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc26.1.2-forge.jar",
+      "sha256": "8250db84b756608252b763466d66a3b71b1f4162f0dfa68345611ff865e482ac",
+      "source": "6f67280cac6a031e49608a01bff825e417d3de1f",
+      "maven": "published",
+      "github_asset": 741100926
+    },
+    {
+      "minecraft": "26.2",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc26.2-fabric.jar",
+      "sha256": "e146b89bb60406918338ab86aa1f39912b529b224a404ec8fc7d4b73ff106748",
+      "source": "3393522770f13f3cc58713be3e1e22345887185d",
+      "maven": "published",
+      "github_asset": 741100282
+    },
+    {
+      "minecraft": "26.2",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc26.2-forge.jar",
+      "sha256": "a665d343d54b96989da24114b29bff2376e84e2a8a213ea1a908f871c0599022",
+      "source": "3393522770f13f3cc58713be3e1e22345887185d",
+      "maven": "published",
+      "github_asset": 741100290
+    },
+    {
+      "minecraft": "26.3",
+      "loader": "fabric",
+      "file": "mcvoice-0.1.17-mc26.3-fabric.jar",
+      "sha256": "d66c6a9b0a79aef619657ac449b51ba43e284db4d0d791e276f883804934672c",
+      "source": "b5adc76f1cc12ab0c6ebaffe778c3d48751ec192",
+      "maven": "published",
+      "github_asset": 741100783
+    },
+    {
+      "minecraft": "26.3",
+      "loader": "forge",
+      "file": "mcvoice-0.1.17-mc26.3-forge.jar",
+      "sha256": "e6bb48d11111ea008c23b9f93d99a3c21b2297ca3f4882e584602161ab00d6ed",
+      "source": "b5adc76f1cc12ab0c6ebaffe778c3d48751ec192",
+      "maven": "published",
+      "github_asset": 741100784
+    }
+  ]
+}

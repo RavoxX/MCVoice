@@ -37,4 +37,23 @@ GitHub release pages are accepted. The menu shows browser-request feedback and
 keeps the readable URL available if launching fails. Update checks and Done remain
 ordinary screen buttons.
 
-Verification and release results will be recorded after their checks complete.
+## Verification
+
+The Java client suite has 148 tests; core end-to-end tests also run against the
+other backend. Quiet/muted/departed cloud and SVC users, all four microphone
+resize corners, draft settings and release URL validation have regression
+coverage. CI also checks Java 8 bytecode and all 44 shared conformance scenarios
+against each backend.
+
+[Native UI run 43295660492](https://github.com/RavoxX/MCVoice/actions/runs/43295660492)
+passes Fabric and Forge on both 26.2 and 26.3. Real OS mouse events click every
+Updates button and drag microphone/group corners. The headless browser launcher
+records the exact expected release URL; this proves launch dispatch, not that an
+external browser displayed a page. The isolated test mod never enters production
+jars. Screenshots and positive completion markers are retained in the run artifacts.
+
+[26.3 startup run 43294171286](https://github.com/RavoxX/MCVoice/actions/runs/43294171286)
+passes both loaders with fresh and saved configuration, world entry, native input,
+HUD rendering and clean shutdown. Both production jars match the later native UI
+artifacts byte for byte. The SVC wire implementation is unchanged, so no new
+real-server SVC interop result is claimed.
