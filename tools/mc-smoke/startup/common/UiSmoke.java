@@ -220,15 +220,16 @@ final class UiSmoke {
         McScreen screen = new McScreen(editor);
         Canvas canvas = new Canvas(); canvas.draw(editor);
         HudRenderer.Bounds bounds = HudRenderer.preview(canvas, config.hudLayout).group;
-        int x = bounds.x + bounds.width - 3, y = bounds.y + 3;
+        int x = bounds.x + bounds.width / 2, y = bounds.y + bounds.height / 2;
         screen.mouseClicked(mouse(x, y, InputConstants.MOUSE_BUTTON_LEFT), false);
         screen.mouseDragged(mouse(x - 30, y - 25, InputConstants.MOUSE_BUTTON_LEFT), -30, -25);
         screen.mouseReleased(mouse(x - 30, y - 25, InputConstants.MOUSE_BUTTON_LEFT));
         click(screen, canvas.find("Group Background: Off"));
-        Text size = canvas.find("Group Head Size: ");
-        screen.mouseClicked(mouse(size.x + 1, size.y + 1, InputConstants.MOUSE_BUTTON_LEFT), false);
-        screen.mouseDragged(mouse(1000, size.y + 1, InputConstants.MOUSE_BUTTON_LEFT), 1000, 0);
-        screen.mouseReleased(mouse(1000, size.y + 1, InputConstants.MOUSE_BUTTON_LEFT));
+        canvas.draw(editor);
+        int hx = bounds.x - 30, hy = bounds.y - 25;
+        screen.mouseClicked(mouse(hx, hy, InputConstants.MOUSE_BUTTON_LEFT), false);
+        screen.mouseDragged(mouse(hx - 50, hy - 150, InputConstants.MOUSE_BUTTON_LEFT), -50, -150);
+        screen.mouseReleased(mouse(hx - 50, hy - 150, InputConstants.MOUSE_BUTTON_LEFT));
         click(screen, canvas.find("Done"));
         require(saved[0] == 1 && config.hudLayout.groupHeadSize == 32 && config.hudLayout.groupBackground,
             "SDL group HUD editor did not save size/background");
