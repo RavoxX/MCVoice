@@ -105,6 +105,7 @@ public interface VoiceControls {
     default String updateReleaseUrl() { return ""; }
 
     default void openUpdateRelease() { }
+    default String updateLinkStatus() { return ""; }
     default void openUpdates() { }
 
     /** Request the next batch, if available; duplicate requests are coalesced. */
