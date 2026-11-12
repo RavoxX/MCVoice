@@ -1,6 +1,7 @@
 package dev.mcvoice.platform.mc;
 
 import dev.mcvoice.client.core.VoiceClient;
+import dev.mcvoice.client.ui.NameTagVoiceState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -12,9 +13,11 @@ public final class McNameTags {
     }
 
     public static void render(LivingEntity entity, double x, double y, double z, VoiceClient voice) {
-        if (!(entity instanceof PlayerEntity) || voice == null || !voice.isSpeaking(entity.getUuid())) {
+        if (!(entity instanceof PlayerEntity) || voice == null) {
             return;
         }
+        NameTagVoiceState indicator = voice.nameTagState(entity.getUuid());
+        if (indicator == NameTagVoiceState.HIDDEN) return;
         MinecraftClient mc = MinecraftClient.getInstance();
         Entity camera = mc.getCameraEntity();
         if (camera == null) return;
@@ -43,6 +46,6 @@ public final class McNameTags {
         if (mc.options.perspective == 2) pitch = -pitch;
 
         LegacyNameTagIcon.draw(x, y + height, z, mc.getEntityRenderManager().yaw, pitch, scale,
-            mc.textRenderer.getStringWidth(name));
+            mc.textRenderer.getStringWidth(name), indicator);
     }
 }
