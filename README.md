@@ -86,7 +86,10 @@ Download the jar for your Minecraft version and loader from
    a red crossed icon while the indicator is visible. Open the chat and click another
    player's name to change their volume or mute them.
    The adapters preserve server name colours and prefixes in the
-   HUD and add a green microphone beside visible speaking players' name tags.
+   HUD. Visible players with confirmed MCVoice/SVC presence have a speaker
+   beside their name tag while idle, a green microphone while speaking, and
+   a crossed speaker when you mute them locally. See [voice indicators and
+   HUD editing](docs/nametag-presence-and-hud.md).
    Compact, shaded pixel icons use a 10-pixel grid in speaker rows and an 8-pixel
    grid on name tags. The microphone indicator defaults to 16 pixels, using the
    same shaded artwork. Older adapters draw the same pixel artwork directly, preserving vanilla
@@ -108,9 +111,9 @@ Download the jar for your Minecraft version and loader from
      connected SVC users reported by the server, including quiet users;
    * HUD and debug options. **Edit HUD** in General settings lets you drag the
      speaker list and microphone, choose a vertical or horizontal list, toggle
-     its background, and set microphone size (10–32 pixels). Done saves the
+     its background, and resize the microphone with its corner handles (10–32 pixels). Done saves the
      layout. The group roster can be dragged independently, with its own
-     background toggle and head size (10–32 pixels, fitted down for large groups
+     background toggle and corner handles for head size (10–32 pixels, fitted down for large groups
      on small screens). Cancel or Escape discards edits; Reset restores defaults in the editor.
      Positions follow changes in window size and GUI scale.
 
