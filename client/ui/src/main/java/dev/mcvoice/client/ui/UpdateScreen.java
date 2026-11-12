@@ -38,6 +38,11 @@ public final class UpdateScreen extends BaseScreen {
         c.text(message, panelX, panelY + 32, Theme.LABEL, true);
         String url = v.updateReleaseUrl();
         int y = panelY + 78;
+        String status = v.updateLinkStatus();
+        if (status != null && !status.isEmpty()) {
+            c.text(status, panelX, y, Theme.LABEL_DIM, true);
+            y += c.fontHeight() + 4;
+        }
         while (!url.isEmpty() && y + c.fontHeight() < c.height() - 31) {
             int end = url.length();
             while (end > 0 && c.textWidth(url.substring(0, end)) > panelW) end--;
