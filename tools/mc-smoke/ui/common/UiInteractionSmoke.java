@@ -54,7 +54,7 @@ public final class UiInteractionSmoke {
         try {
             if (FAILURE.get() != null) throw new AssertionError("Browser request failed", FAILURE.get());
             if (!started) {
-                if (!(mc.gui.screen() instanceof TitleScreen)) return;
+                if (!mc.isGameLoadFinished() || mc.gui.overlay() != null || !(mc.gui.screen() instanceof TitleScreen)) return;
                 started = true; root = mc.gameDirectory.toPath();
                 mc.gui.setScreen(new McScreen(new Tracked(new UpdateScreen(CONTROLS))));
             }
@@ -134,7 +134,10 @@ public final class UiInteractionSmoke {
                 request(c,b.x,b.y,stage == 4 ? -16 : -14,stage == 4 ? -16 : -42,true);
             }
         }
-        public void mouseClicked(int x,int y,int b){screen.mouseClicked(x,y,b);}
+        public void mouseClicked(int x,int y,int b){
+            LogUtils.getLogger().info("MCVOICE_SMOKE native-ui click stage={} button={}",stage,b);
+            screen.mouseClicked(x,y,b);
+        }
         public void mouseDragged(int x,int y,int b){screen.mouseDragged(x,y,b);}
         public void mouseReleased(int x,int y,int b){screen.mouseReleased(x,y,b);}
         public void mouseScrolled(int x,int y,double d){screen.mouseScrolled(x,y,d);}

@@ -16,6 +16,8 @@ and routing check is preserved; indicators never grant audio permission.
 
 The shared Java 8 pixel art generates both the modern font atlas and legacy
 immediate-mode rendering. No SVC artwork is included.
+Speaker rows and group names use the same visual baseline centering as the
+Minecraft-style buttons, keeping text centred beside the icon/head.
 
 ## Edit HUD
 

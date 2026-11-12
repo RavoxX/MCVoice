@@ -114,4 +114,5 @@ jobs:
             run/logs/
             run/crash-reports/
             run/ui-smoke.pass
+            run/ui-request.json
             minecraft/${{ matrix.loader }}/build/libs/*.jar

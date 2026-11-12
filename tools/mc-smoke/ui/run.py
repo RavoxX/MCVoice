@@ -43,7 +43,7 @@ def main():
             time.sleep(0.15)
             Path(f'run/ui-action-done-{action["id"]}').write_text('native event sent\n')
             previous = action['id']
-            print('Native mouse action:',previous,flush=True)
+            print('Native mouse action:',action,flush=True)
         if game.poll() is None:
             raise TimeoutError('native UI game timeout')
         if game.returncode:
