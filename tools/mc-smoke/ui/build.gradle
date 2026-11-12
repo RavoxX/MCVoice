@@ -1,0 +1,15 @@
+// Separate CI-only test mod; production jars never contain these classes.
+def suite = new File(rootDir, '../../tools/mc-smoke/ui')
+sourceSets {
+    uiSmoke {
+        java.srcDirs = [new File(suite, 'common'), new File(suite, rootDir.name)]
+        compileClasspath = sourceSets.main.compileClasspath + sourceSets.main.output
+    }
+}
+tasks.register('uiSmokeJar', Jar) {
+    dependsOn tasks.named('uiSmokeClasses')
+    archiveFileName = 'mcvoice-ui-smoke.jar'
+    from sourceSets.uiSmoke.output
+    from new File(suite, "${rootDir.name}/resources")
+    from(sourceSets.main.output.resourcesDir) { include 'pack.mcmeta' }
+}

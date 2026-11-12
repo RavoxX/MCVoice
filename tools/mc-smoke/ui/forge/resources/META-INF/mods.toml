@@ -1,0 +1,14 @@
+modLoader="javafml"
+loaderVersion="[64,)"
+license="MIT"
+clientSideOnly=true
+[[mods]]
+modId="mcvoice_ui_smoke"
+version="1.0.0"
+displayName="MCVoice native UI test (CI only)"
+[[dependencies.mcvoice_ui_smoke]]
+modId="mcvoice"
+mandatory=true
+versionRange="[0,)"
+ordering="AFTER"
+side="CLIENT"
