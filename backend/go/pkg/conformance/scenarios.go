@@ -1201,7 +1201,15 @@ func scResume(e *Env) error {
 	if c2.Session.PlayerUUID != uuid || c2.Session.Voice.ConnectionID == c.Session.Voice.ConnectionID {
 		return errorf("resume must keep identity and issue a new connection id")
 	}
-	_, err = voiceclient.Dial(ctx, voiceclient.Options{ControlURL: e.T.ControlURL, ResumeToken: tok[:len(tok)-2] + "xx", Username: "x"})
+	// Change significant signature bits; replacing a suffix can leave the decoded
+	// signature unchanged because raw base64url has unused trailing bits.
+	signature := strings.LastIndexByte(tok, '.') + 1
+	replacement := "A"
+	if tok[signature] == 'A' {
+		replacement = "B"
+	}
+	tampered := tok[:signature] + replacement + tok[signature+1:]
+	_, err = voiceclient.Dial(ctx, voiceclient.Options{ControlURL: e.T.ControlURL, ResumeToken: tampered, Username: "x"})
 	if err == nil || !strings.Contains(err.Error(), "session_expired") {
 		return errorf("tampered token: expected session_expired, got %v", err)
 	}
