@@ -1,0 +1,50 @@
+{
+  "native_run": 43295660492,
+  "startup_run": 43294171286,
+  "records": [
+    {
+      "kind": "native-ui",
+      "minecraft": "26.2",
+      "loader": "fabric",
+      "sha256": "e146b89bb60406918338ab86aa1f39912b529b224a404ec8fc7d4b73ff106748",
+      "bytes": 833736
+    },
+    {
+      "kind": "native-ui",
+      "minecraft": "26.2",
+      "loader": "forge",
+      "sha256": "a665d343d54b96989da24114b29bff2376e84e2a8a213ea1a908f871c0599022",
+      "bytes": 825280
+    },
+    {
+      "kind": "native-ui",
+      "minecraft": "26.3",
+      "loader": "fabric",
+      "sha256": "d66c6a9b0a79aef619657ac449b51ba43e284db4d0d791e276f883804934672c",
+      "bytes": 835003
+    },
+    {
+      "kind": "native-ui",
+      "minecraft": "26.3",
+      "loader": "forge",
+      "sha256": "e6bb48d11111ea008c23b9f93d99a3c21b2297ca3f4882e584602161ab00d6ed",
+      "bytes": 826620
+    },
+    {
+      "kind": "startup",
+      "minecraft": "26.3",
+      "loader": "fabric",
+      "sha256": "d66c6a9b0a79aef619657ac449b51ba43e284db4d0d791e276f883804934672c",
+      "bytes": 835003
+    },
+    {
+      "kind": "startup",
+      "minecraft": "26.3",
+      "loader": "forge",
+      "sha256": "e6bb48d11111ea008c23b9f93d99a3c21b2297ca3f4882e584602161ab00d6ed",
+      "bytes": 826620
+    }
+  ],
+  "native_source": "848cac42af31182310b508b06ab88c0dc48fa914",
+  "startup_source": "d0183085ca12fd0a2f6f24a6e84305a900a1258a"
+}
