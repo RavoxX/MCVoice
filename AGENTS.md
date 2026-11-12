@@ -294,6 +294,15 @@ git show FETCH_HEAD:<path>`).
 
 ## Current state and next work (keep this section updated)
 
+* **0.1.17 client UI work in progress:** confirmed voice presence selects idle
+  speaker, speaking microphone and locally muted speaker nametag states across
+  all adapters. Renderer visibility and playback/routing guards stay mandatory.
+  HUD size sliders are replaced with corner handles; existing saved fields and
+  draft Done/Cancel/Reset semantics remain. Update links use validated OS browser
+  launch requests off the game thread instead of AWT. Native UI testing targets
+  26.2/26.3 on both loaders. No release claim yet; see
+  `docs/nametag-presence-and-hud.md`.
+
 * **0.1.16 released for 26.3 + backend images, Rust deployed:** source
   `bf197b49` (PR #27) fixes seven Rust backend bugs (missed close signal,
   uncounted FEC drops, mtime-based ban reload, outage counted as auth failure,
