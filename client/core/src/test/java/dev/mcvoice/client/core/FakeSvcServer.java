@@ -26,6 +26,7 @@ final class FakeSvcServer implements Runnable {
     final Map<UUID, UUID> secrets = new ConcurrentHashMap<UUID, UUID>();
     final Map<UUID, SvcCipher> ciphers = new ConcurrentHashMap<UUID, SvcCipher>();
     final Map<UUID, InetSocketAddress> clients = new ConcurrentHashMap<UUID, InetSocketAddress>();
+    final Map<UUID, SimpleVoiceChatAdapter.Receiver> receivers = new ConcurrentHashMap<UUID, SimpleVoiceChatAdapter.Receiver>();
     volatile boolean running = true;
 
     FakeSvcServer() throws Exception {
@@ -55,7 +56,10 @@ final class FakeSvcServer implements Runnable {
 
             public boolean supported() { return true; }
             public boolean serverAcceptsChannel(String c) { return c.startsWith("voicechat:"); }
-            public void setReceiver(Receiver r) { receiver = r; }
+            public void setReceiver(Receiver r) {
+                receiver = r;
+                if (r == null) receivers.remove(player); else receivers.put(player, r);
+            }
 
             public boolean send(String channel, byte[] payload) {
                 if ("voicechat:request_secret".equals(channel) && receiver != null) {
@@ -65,6 +69,8 @@ final class FakeSvcServer implements Runnable {
             }
         };
     }
+
+    void plugin(UUID to, String channel, byte[] payload) { receivers.get(to).onPayload(channel, payload); }
 
     private void send(UUID to, byte[] plain) throws Exception {
         InetSocketAddress addr = clients.get(to);
