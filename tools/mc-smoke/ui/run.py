@@ -1,10 +1,28 @@
 """Drive real X11 mouse events; the test mod supplies GUI-to-window coordinates."""
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
 import time
+
+
+def game_window(action):
+    # SDL/Vulkan windows need not have a Minecraft title. This Xvfb display is
+    # dedicated to the one test client; match its actual window dimensions.
+    tree = subprocess.run(['xwininfo','-root','-tree'],capture_output=True,text=True,check=True)
+    for window in re.findall(r'^\s*(0x[0-9a-fA-F]+)\s', tree.stdout, re.MULTILINE):
+        result = subprocess.run(['xdotool','getwindowgeometry','--shell',window],capture_output=True,text=True)
+        if result.returncode:
+            continue
+        geometry = dict(line.split('=',1) for line in result.stdout.splitlines() if '=' in line)
+        if geometry.get('WIDTH') != str(action['width']) or geometry.get('HEIGHT') != str(action['height']):
+            continue
+        info = subprocess.run(['xwininfo','-id',window],capture_output=True,text=True)
+        if 'IsViewable' in info.stdout:
+            return window
+    return None
 
 
 def main():
@@ -24,12 +42,10 @@ def main():
             if action['id'] == previous:
                 time.sleep(0.1)
                 continue
-            result = subprocess.run(['xdotool', 'search', '--onlyvisible', '--name', 'Minecraft'], capture_output=True, text=True)
-            if result.returncode or not result.stdout.splitlines():
+            window = game_window(action)
+            if window is None:
                 time.sleep(0.1)
                 continue
-            window = result.stdout.splitlines()[-1]
-            assert window.isdigit()
             subprocess.run(['xdotool','windowfocus','--sync',window],check=True)
             if action['id'] in (0,4,6):
                 subprocess.run(['import','-window',window,str(evidence / f'native-ui-{action["id"]}.png')],check=True)

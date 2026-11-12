@@ -49,7 +49,8 @@ jobs:
           jar="minecraft/$LOADER/build/libs/mcvoice-$MOD_VERSION-mc26.3-$LOADER.jar"
           python3 tools/port-version/validate_jar.py "$jar" --loader "$LOADER" --minecraft 26.3 --java 25
           # No test classes may enter the published jar.
-          if unzip -Z1 "$jar" | grep -q '^dev/mcvoice/smoke/'; then exit 1; fi
+          unzip -Z1 "$jar" > jar-entries.txt
+          if grep -q '^dev/mcvoice/smoke/' jar-entries.txt; then exit 1; fi
           mkdir -p run/mods evidence
           cp "$jar" "minecraft/$LOADER/build/libs/mcvoice-startup-smoke.jar" run/mods/
           if [ "$LOADER" = fabric ]; then

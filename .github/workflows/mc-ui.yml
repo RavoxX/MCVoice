@@ -50,7 +50,8 @@ jobs:
           (cd "minecraft/$LOADER" && ./gradlew build uiSmokeJar --no-daemon -Pmod_version="$MOD_VERSION")
           jar="minecraft/$LOADER/build/libs/mcvoice-$MOD_VERSION-mc$MC-$LOADER.jar"
           python3 tools/port-version/validate_jar.py "$jar" --loader "$LOADER" --minecraft "$MC" --java 25 --version "$MOD_VERSION"
-          if unzip -Z1 "$jar" | grep -q '^dev/mcvoice/smoke/'; then exit 1; fi
+          unzip -Z1 "$jar" > jar-entries.txt
+          if grep -q '^dev/mcvoice/smoke/' jar-entries.txt; then exit 1; fi
           mkdir -p run/mods evidence browser-stub
           cp "$jar" "minecraft/$LOADER/build/libs/mcvoice-ui-smoke.jar" run/mods/
           if [ "$LOADER" = fabric ]; then
@@ -65,7 +66,7 @@ jobs:
       - name: Install pinned launcher and exact generated loader
         run: |
           set -euo pipefail
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xvfb xdotool imagemagick libgl1-mesa-dri libvulkan1 mesa-vulkan-drivers
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xvfb xdotool x11-utils imagemagick libgl1-mesa-dri libvulkan1 mesa-vulkan-drivers
           mkdir -p HeadlessMC
           cat > HeadlessMC/config.properties <<EOF
           hmc.java.versions=$JAVA_HOME/bin/java

@@ -91,8 +91,9 @@ public final class UiInteractionSmoke {
             double sx = mc.getWindow().getScreenWidth() / (double) c.width();
             double sy = mc.getWindow().getScreenHeight() / (double) c.height();
             String value = String.format(java.util.Locale.ROOT,
-                "{\"id\":%d,\"x\":%d,\"y\":%d,\"toX\":%d,\"toY\":%d,\"drag\":%s}",
-                stage, Math.round(x*sx), Math.round(y*sy), Math.round((x+dx)*sx), Math.round((y+dy)*sy), drag);
+                "{\"id\":%d,\"x\":%d,\"y\":%d,\"toX\":%d,\"toY\":%d,\"width\":%d,\"height\":%d,\"drag\":%s}",
+                stage, Math.round(x*sx), Math.round(y*sy), Math.round((x+dx)*sx), Math.round((y+dy)*sy),
+                mc.getWindow().getScreenWidth(), mc.getWindow().getScreenHeight(), drag);
             Path temporary = root.resolve("ui-request.tmp");
             Files.writeString(temporary, value);
             Files.move(temporary, root.resolve("ui-request.json"), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
