@@ -2,7 +2,8 @@
 package dev.mcvoice.platform.mc;
 
 import dev.mcvoice.client.core.VoiceClient;
-import dev.mcvoice.client.ui.Theme;
+import dev.mcvoice.client.ui.NameTagVoiceState;
+import dev.mcvoice.client.platform.ui.VoiceIcon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -15,13 +16,16 @@ import net.minecraft.client.renderer.RenderType;
 
 /** The pre-1.16 renderer has no per-component font; draw the same eight-pixel glyph alongside it. */
 public final class McLegacyNameTags {
+    private static final int ICON_COUNT = VoiceIcon.values().length;
     private McLegacyNameTags() {
     }
 
 
     public static void render(Entity entity, String name, PoseStack poses, MultiBufferSource buffers,
             int light, boolean addScoreOffset, VoiceClient voice) {
-        if (!(entity instanceof Player) || voice == null || !voice.isSpeaking(entity.getUUID()) || name == null) return;
+        if (!(entity instanceof Player) || voice == null || name == null) return;
+        NameTagVoiceState indicator = voice.nameTagState(entity.getUUID());
+        if (indicator == NameTagVoiceState.HIDDEN) return;
         Minecraft mc = Minecraft.getInstance();
         double distance = mc.getEntityRenderDispatcher().distanceToSqr(entity);
         if (distance > 4096) return;
@@ -36,20 +40,24 @@ public final class McLegacyNameTags {
             poses.scale(-0.025f, -0.025f, 0.025f);
             poses.translate(mc.font.width(name) / 2f + 3, name.equals("deadmau5") ? -10 : 0, 0);
             VertexConsumer out = buffers.getBuffer(RenderType.text(McIds.id("mcvoice", "textures/font/voice_tags.png")));
-            vertex(out, poses, 0, 0, 0, 0, light);
-            vertex(out, poses, 0, 8, 0, 1, light);
-            vertex(out, poses, 8, 8, 1f / 3, 1, light);
-            vertex(out, poses, 8, 0, 1f / 3, 0, light);
+            float left = indicator.icon.ordinal() / (float) ICON_COUNT;
+            float right = (indicator.icon.ordinal() + 1) / (float) ICON_COUNT;
+            vertex(out, poses, 0, 0, left, 0, light, indicator.tint);
+            vertex(out, poses, 0, 8, left, 1, light, indicator.tint);
+            vertex(out, poses, 8, 8, right, 1, light, indicator.tint);
+            vertex(out, poses, 8, 0, right, 0, light, indicator.tint);
         } finally {
             poses.popPose();
         }
     }
 
-    private static void vertex(VertexConsumer out, PoseStack poses, float x, float y, float u, float v, int light) {
+    private static void vertex(VertexConsumer out, PoseStack poses, float x, float y, float u, float v, int light, int tint) {
         out.vertex(poses.last().pose(), x, y, 0)
-            .color(Theme.GOOD >> 16 & 255, Theme.GOOD >> 8 & 255, Theme.GOOD & 255, 255)
+            .color(tint >> 16 & 255, tint >> 8 & 255, tint & 255, 255)
             .uv(u, v).uv2(light).endVertex();
     }
+
+
 
 
 
