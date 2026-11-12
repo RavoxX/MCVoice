@@ -51,6 +51,7 @@ import dev.mcvoice.client.ui.PlayerScreen;
 import dev.mcvoice.client.ui.HudRenderer;
 import dev.mcvoice.client.ui.HudEditorScreen;
 import dev.mcvoice.client.ui.SettingsScreen;
+import dev.mcvoice.client.ui.NameTagVoiceState;
 import dev.mcvoice.client.ui.TransportStatus;
 import dev.mcvoice.client.ui.VoiceControls;
 
@@ -80,6 +81,8 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
     private volatile ControlClient control;
     private volatile ControlClient.Session session;
+    private final java.util.concurrent.atomic.AtomicBoolean openingRelease = new java.util.concurrent.atomic.AtomicBoolean();
+    private volatile String releaseLinkStatus = "";
     private volatile CloudVoiceChannel cloud;
     private volatile ScheduledFuture<?> udpTask;
     private volatile boolean udpOk;
@@ -356,6 +359,23 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
     }
 
     /** Platform hook: decorate an already visible player name tag, never reveal hidden entities. */
+    public NameTagVoiceState nameTagState(UUID player) {
+        WorldSnapshot s = tracker.snapshot();
+        if (player == null || !s.inWorld || config.hideVoiceIcons || (!config.cloudEnabled && !config.svcInteropEnabled))
+            return NameTagVoiceState.HIDDEN;
+        boolean local = player.equals(s.localUuid);
+        if (!local && s.player(player) == null) return NameTagVoiceState.HIDDEN;
+        boolean present = config.cloudEnabled && session != null && (local || selector.isCloudPeer(player));
+        if (!present && config.svcInteropEnabled) present = local ? svc.connected() : svc.onlinePlayers().containsKey(player);
+        Group current = group;
+        if (!present && config.cloudEnabled && session != null && current != null) {
+            for (Member member : current.members) if (member.uuid.equals(player)) { present = true; break; }
+        }
+        if (!present) return NameTagVoiceState.HIDDEN;
+        if (local ? micMuted() || config.deafened : config.mutedPlayers.contains(player)) return NameTagVoiceState.MUTED;
+        return isSpeaking(player) ? NameTagVoiceState.SPEAKING : NameTagVoiceState.IDLE;
+    }
+
     public boolean isSpeaking(UUID player) {
         WorldSnapshot s = tracker.snapshot();
         if (!s.inWorld || config.hideVoiceIcons || (!config.cloudEnabled && !config.svcInteropEnabled) || config.deafened) {
@@ -1064,16 +1084,20 @@ public final class VoiceClient implements VoiceControls, WorldTracker.Listener, 
 
     @Override public void openUpdateRelease() {
         final String url = updateReleaseUrl();
-        if (url.isEmpty()) return;
+        if (url.isEmpty() || !openingRelease.compareAndSet(false, true)) return;
+        releaseLinkStatus = "Opening browser...";
         Thread browser = new Thread(new Runnable() {
             public void run() {
-                try { java.awt.Desktop.getDesktop().browse(new java.net.URI(url)); }
-                catch (Exception unavailable) { VoiceLog.info(Category.CONTROL, "Update release: " + url); }
+                try { ReleaseLinks.open(url); releaseLinkStatus = "Release requested in your browser."; }
+                catch (Exception unavailable) { releaseLinkStatus = "Could not open browser. Use the link below."; }
+                finally { openingRelease.set(false); }
             }
         }, "MCVoice-Release-Link");
         browser.setDaemon(true);
         browser.start();
     }
+
+    @Override public String updateLinkStatus() { return releaseLinkStatus; }
 
     @Override public void openUpdates() {
         if (mc.gui() != null) mc.gui().open(new dev.mcvoice.client.ui.UpdateScreen(this));

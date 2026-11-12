@@ -4,7 +4,6 @@ import dev.mcvoice.client.config.HudLayout;
 import dev.mcvoice.client.platform.ui.UiCanvas;
 import dev.mcvoice.client.ui.widget.Button;
 import dev.mcvoice.client.ui.widget.Widget;
-import dev.mcvoice.client.ui.widget.Slider;
 
 /** Drag the same elements rendered in-game; changes are committed only by Done. */
 public final class HudEditorScreen extends BaseScreen {
@@ -13,6 +12,9 @@ public final class HudEditorScreen extends BaseScreen {
     private HudRenderer.Frame preview;
     private boolean dragging, speakers, group;
     private int offsetX, offsetY, width, height;
+    private int corner = -1, resizeX, resizeY, originalSize;
+    private HudRenderer.Bounds originalBounds;
+    private int resizeRows;
 
     public HudEditorScreen(VoiceControls controls) {
         this.controls = controls;
@@ -45,16 +47,6 @@ public final class HudEditorScreen extends BaseScreen {
         }, new Button.Action() {
             public void run() { draft.background = !draft.background; }
         }), panelX + half + 4, height - 113);
-        place(new Slider(half, "Microphone Size", 10, 32, new Slider.Model() {
-            public double get() { return draft.microphoneSize; }
-            public void set(double value) { draft.microphoneSize = (int) Math.round(value); }
-            public String format(double value) { return Math.round(value) + " px"; }
-        }), panelX, height - 89);
-        place(new Slider(half, "Group Head Size", 10, 32, new Slider.Model() {
-            public double get() { return draft.groupHeadSize; }
-            public void set(double value) { draft.groupHeadSize = (int) Math.round(value); }
-            public String format(double value) { return Math.round(value) + " px"; }
-        }), panelX + half + 4, height - 89);
         place(new Button(panelW, 20, new Button.Label() {
             public String get() { return "Group Background: " + (draft.groupBackground ? "On" : "Off"); }
         }, new Button.Action() {
@@ -77,12 +69,33 @@ public final class HudEditorScreen extends BaseScreen {
 
     @Override
     protected void drawContent(UiCanvas c, int mouseX, int mouseY) {
-        String hint = "Drag speakers, microphone and group";
+        String hint = "Drag to move; drag corners to resize";
         c.text(hint, (c.width() - c.textWidth(hint)) / 2, 31, Theme.LABEL_DIM, true);
         preview = HudRenderer.preview(c, draft);
         outline(c, preview.speakers, dragging && speakers || preview.speakers.contains(mouseX, mouseY));
         outline(c, preview.status, dragging && !speakers && !group || preview.status.contains(mouseX, mouseY));
         outline(c, preview.group, dragging && group || preview.group.contains(mouseX, mouseY));
+        handles(c, preview.status);
+        handles(c, preview.group);
+    }
+
+    private static int cornerX(HudRenderer.Bounds b, int corner) { return b.x + ((corner & 1) == 0 ? 0 : b.width); }
+    private static int cornerY(HudRenderer.Bounds b, int corner) { return b.y + ((corner & 2) == 0 ? 0 : b.height); }
+
+    private static int cornerAt(HudRenderer.Bounds b, int x, int y) {
+        if (b.width <= 0 || b.height <= 0) return -1;
+        for (int i = 0; i < 4; i++)
+            if (Math.abs(x - cornerX(b, i)) <= 3 && Math.abs(y - cornerY(b, i)) <= 3) return i;
+        return -1;
+    }
+
+    private static void handles(UiCanvas c, HudRenderer.Bounds b) {
+        if (b.width <= 0 || b.height <= 0) return;
+        for (int i = 0; i < 4; i++) {
+            int x = cornerX(b, i), y = cornerY(b, i);
+            c.fill(x - 2, y - 2, x + 3, y + 3, Theme.BUTTON_OUTLINE);
+            c.fill(x - 1, y - 1, x + 2, y + 2, Theme.LABEL);
+        }
     }
 
     private static void outline(UiCanvas c, HudRenderer.Bounds b, boolean selected) {
@@ -96,6 +109,7 @@ public final class HudEditorScreen extends BaseScreen {
     @Override
     public void mouseClicked(int x, int y, int button) {
         dragging = false;
+        corner = -1;
         for (Widget w : widgets) {
             if (w.contains(x, y)) {
                 super.mouseClicked(x, y, button);
@@ -103,6 +117,16 @@ public final class HudEditorScreen extends BaseScreen {
             }
         }
         if (button != 0 || preview == null) {
+            return;
+        }
+        corner = cornerAt(preview.status, x, y);
+        group = false;
+        if (corner < 0) { corner = cornerAt(preview.group, x, y); group = corner >= 0; }
+        if (corner >= 0) {
+            originalBounds = group ? preview.group : preview.status;
+            originalSize = group ? draft.groupHeadSize : draft.microphoneSize;
+            resizeRows = group ? Math.max(1, originalBounds.height / (originalSize + 4)) : 1;
+            resizeX = x; resizeY = y;
             return;
         }
         speakers = preview.speakers.contains(x, y);
@@ -117,6 +141,20 @@ public final class HudEditorScreen extends BaseScreen {
 
     @Override
     public void mouseDragged(int x, int y, int button) {
+        if (corner >= 0 && button == 0) {
+            int sx = (corner & 1) == 0 ? -1 : 1, sy = (corner & 2) == 0 ? -1 : 1;
+            double change = ((x - resizeX) * sx + (y - resizeY) * sy / (double) resizeRows) / 2;
+            int size = (int) Math.max(10, Math.min(32, Math.round(originalSize + change)));
+            int delta = size - originalSize;
+            int w = originalBounds.width + delta, h = originalBounds.height + delta * resizeRows;
+            int left = originalBounds.x + (sx < 0 ? originalBounds.width - w : 0);
+            int top = originalBounds.y + (sy < 0 ? originalBounds.height - h : 0);
+            int padding = group ? 4 : 6;
+            double px = HudLayout.position(left, width, w, padding), py = HudLayout.position(top, height, h, padding);
+            if (group) { draft.groupHeadSize = size; draft.groupX = px; draft.groupY = py; }
+            else { draft.microphoneSize = size; draft.statusX = px; draft.statusY = py; }
+            return;
+        }
         if (!dragging || button != 0 || preview == null) {
             super.mouseDragged(x, y, button);
             return;
@@ -140,6 +178,7 @@ public final class HudEditorScreen extends BaseScreen {
     @Override
     public void mouseReleased(int x, int y, int button) {
         dragging = false;
+        corner = -1;
         super.mouseReleased(x, y, button);
     }
 
