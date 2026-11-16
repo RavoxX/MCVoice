@@ -9,7 +9,7 @@ Mojang/Fabric/Legacy Fabric/Forge metadata) and `versions/build-status.json` (CI
   This is *not* support.
 * **N/A** - no loader build exists upstream for this Minecraft version.
 
-Matrix generated at 2026-11-09T12:54:06Z; latest release in Mojang manifest: `26.3`.
+Matrix generated at 2026-11-16T12:47:23Z; latest release in Mojang manifest: `26.3`.
 
 | Minecraft | Java | Forge | Fabric / Legacy Fabric | Forge version | Fabric loader |
 |---|---|---|---|---|---|
@@ -87,7 +87,7 @@ Matrix generated at 2026-11-09T12:54:06Z; latest release in Mojang manifest: `26
 | 26.1.1 | 25 | PASS | PASS | 26.1.1-63.0.2 | 0.20.1 |
 | 26.1.2 | 25 | PASS | PASS | 26.1.2-64.1.5 | 0.20.1 |
 | 26.2 | 25 | PASS | PASS | 26.2-65.1.5 | 0.20.1 |
-| 26.3 | 25 | PASS | PASS | 26.3-66.1.0 | 0.20.1 |
+| 26.3 | 25 | PASS | PASS | 26.3-66.1.8 | 0.20.1 |
 
 **102** Minecraft/loader combinations currently pass CI.
 
