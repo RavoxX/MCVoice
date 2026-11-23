@@ -241,6 +241,16 @@
   },
   "simple-voice-chat": [
     {
+      "version": "fabric-2.6.27+26.4-snapshot-10",
+      "loaders": [
+        "fabric"
+      ],
+      "game_versions": [
+        "26.4-snapshot-10"
+      ],
+      "published": "2026-11-17T18:29:07.368716Z"
+    },
+    {
       "version": "fabric-2.6.27+26.4-snapshot-8",
       "loaders": [
         "fabric"
@@ -645,16 +655,6 @@
         "1.21.1"
       ],
       "published": "2026-10-28T08:15:35.981468Z"
-    },
-    {
-      "version": "quilt-1.21.1-2.6.27",
-      "loaders": [
-        "quilt"
-      ],
-      "game_versions": [
-        "1.21.1"
-      ],
-      "published": "2026-10-28T08:14:30.958210Z"
     }
   ]
 }
